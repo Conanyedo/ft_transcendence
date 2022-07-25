@@ -6,4 +6,25 @@
 
 * {
 	box-sizing: border-box;
+	background-color: #1C1C1E;
+}
+
+
+.search-input {
+	color: #C6E1FF;
+	font-weight: 300;
+}
+
+.section {
+	background-color: #242426;
+}
+
+.max-h {
+	height: 90vh;
+}
+
+.width-header {
+	width: calc(100% - 8rem);
+	margin-left: 8rem;
+	margin-top: 2rem;
 }
