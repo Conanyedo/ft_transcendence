@@ -1,15 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
 
-.sidenav {
-    background-color: #242426;
-    width: 90px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-between;
-    padding-top: 232px;
-    height: 100%;
-}
 
 .topBar {
     position: absolute;
@@ -51,33 +41,11 @@
 }
 
 .avatarContainer {
+    cursor: pointer;
     display: flex;
     align-items: center;
-    /* gap: 1rem; */
 
     margin-right: 50px;
     width: 100%;
     justify-content: right;
-}
-
-.sideItems {
-    background-color: #242426;
-    /* background-color: lightblue; */
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-    z-index: 999;
-    gap: 50px;
-}
-
-.backIcons {
-    padding-left: 1rem;
-    background-color: #242426;
-    /* margin-bottom: 2rem; */
-}
-
-.logOut {
-    margin-bottom: 2rem;
 }

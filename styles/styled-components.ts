@@ -9,7 +9,7 @@ interface Props{
 }
 
 
-export const Text: React.FC<Props> = styled.span`
+export const Text = styled.span`
     font-size: 18px;
     color: #FCFDFF;
     font-weight: 400;

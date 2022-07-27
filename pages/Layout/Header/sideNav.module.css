@@ -1,0 +1,33 @@
+
+.sidenav {
+    background-color: #242426;
+    width: 90px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 232px;
+    height: 100%;
+}
+
+
+.sideItems {
+    background-color: #242426;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    z-index: 999;
+    gap: 50px;
+}
+
+.backIcons {
+    padding-left: 1rem;
+    background-color: #242426;
+    cursor: pointer;
+}
+
+.logOut {
+    margin-bottom: 2rem;
+}

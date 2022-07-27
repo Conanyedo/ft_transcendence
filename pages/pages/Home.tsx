@@ -1,24 +1,38 @@
 import { BrowserRouter, Switch, Route, Link } from "react-router-dom";
 import Profile from "./Profile";
 import UserPage from "./user";
-import SideBar from "../components/sideBar";
-import OverView from '../Layout/overView'
+
+import Skeleton from "../Layout/skeleton";
 
 const HomePage = () => {
-  return (
-    <BrowserRouter>
-      <OverView elm={
-        <Switch>
-          <Route exact path="/">
-            <Profile />
-          </Route>
-          <Route path="/users">
-            <UserPage />
-          </Route>
-        </Switch>
-      }/>
-    </BrowserRouter>
-  );
+	return (
+		<BrowserRouter>
+			<Skeleton
+				elm={
+					<Switch>
+						<Route exact path="/Profile">
+							<Profile />
+						</Route>
+						<Route path="/LiveGames">
+							<UserPage />
+						</Route>
+						<Route path="/Game">
+							<UserPage />
+						</Route>
+						<Route path="/Chat">
+							<UserPage />
+						</Route>
+						<Route path="/Logout">
+							<UserPage />
+						</Route>
+						<Route path="/*">
+							<Profile />
+						</Route>
+					</Switch>
+				}
+			/>
+		</BrowserRouter>
+	);
 };
 
 export default HomePage;
