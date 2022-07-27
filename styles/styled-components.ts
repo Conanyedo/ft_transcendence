@@ -1,0 +1,16 @@
+import React from "react";
+import styled from "styled-components";
+
+
+interface Props{
+    className?: string;
+    fontSize?: any;
+    color?: string;
+}
+
+
+export const Text: React.FC<Props> = styled.span`
+    font-size: 18px;
+    color: #FCFDFF;
+    font-weight: 400;
+`
