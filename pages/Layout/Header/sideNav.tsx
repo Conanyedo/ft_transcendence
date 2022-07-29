@@ -19,130 +19,110 @@ import Logout from "../../../public/Logout.svg";
 import classes from "./sideNav.module.css";
 import { MouseEventHandler, useRef, useState } from "react";
 
+interface N_ITEMS {
+	alt: string;
+	src: any;
+	onNav: any;
+}
+
+const ItemsNav: React.FC<N_ITEMS> = (props) => {
+	return (
+		<div className={classes.backIcons}>
+			<Image
+				alt={props.alt}
+				onClick={props.onNav}
+				src={props.src}
+				width={34}
+				height={34}
+				style={{ backgroundColor: `#242426` }}
+			/>
+		</div>
+	);
+};
+
 const SideNav: React.FC<{ onNav: (page: string) => void }> = (props) => {
 	const [page, setPage] = useState("Profile");
+	const [marginTop, setMarginTop] = useState(15.5);
 
 	const onClick: MouseEventHandler<HTMLImageElement> = (e) => {
 		const target = e.target as HTMLElement;
-
 		const alt = target.alt;
 		setPage(alt);
 		props.onNav(alt);
+
+		(alt === 'Profile') ? setMarginTop(15.5) : (alt === 'LiveGames') ? setMarginTop(21.5) : (alt === 'Game') ?  setMarginTop(27.5) : (alt === 'Chat') ? setMarginTop(33.5) : setMarginTop(-100);
+		console.log(marginTop);
+		
 	};
-
+	const NAVITEMS: N_ITEMS[] = [
+		{
+			alt: "Profile",
+			src: page !== "Profile" ? User : UserSelected,
+			onNav: props.onNav,
+		},
+		{
+			alt: "LiveGames",
+			src: page !== "LiveGames" ? LiveGame : LiveGameSelected,
+			onNav: props.onNav,
+		},
+		{
+			alt: "Game",
+			src: page !== "Game" ? Game : GameSelected,
+			onNav: props.onNav,
+		},
+		{
+			alt: "Chat",
+			src: page !== "Chat" ? Chat : ChatSelected,
+			onNav: props.onNav,
+		},
+	];
 	return (
-		<div className={`absolute top-0 left-0 bottom-0 ${classes.sidenav}`}>
-			<div className={`${classes.sidenav}`}>
-				<div className={`${classes.sideItems}`}>
-					<div className={classes.backIcons}>
-						<Image
-							alt="Profile"
-							onClick={onClick}
-							src={(page === "Profile") ? UserSelected : User}
-							width={34}
-							height={34}
-							style={{ backgroundColor: "#242426" }}
-						/>
-						<Image
-							src={Indicator}
-							width={34}
-							height={34}
-							style={{
-								backgroundColor: "#242426",
-								visibility: `${
-									page === "Profile" ? "visible" : "hidden"
-								}`,
-							}}
-						/>
+		<>
+			<div
+				className={`absolute top-0 left-0 bottom-0 ${classes.sidenav}`}
+			>
+				<div className={`${classes.sidenav}`}>
+					<div className={`${classes.sideItems}`}>
+						{NAVITEMS.map((item) => (
+							<ItemsNav
+								alt={item.alt}
+								src={item.src}
+								onNav={onClick}
+							/>
+						))}
 					</div>
-
-					<div className={classes.backIcons}>
+					<div className={`${classes.backIcons} ${classes.logOut}`}>
 						<Image
-							alt="LiveGames"
+							alt="Logout"
 							onClick={onClick}
-							src={(page === "LiveGames") ? LiveGameSelected : LiveGame}
+							src={page === "Logout" ? LogoutSelected : Logout}
 							width={34}
 							height={34}
 							style={{ backgroundColor: "#242426" }}
-						/>
-						<Image
-							src={Indicator}
-							width={34}
-							height={34}
-							style={{
-								backgroundColor: "#242426",
-								visibility: `${
-									page === "LiveGames" ? "visible" : "hidden"
-								}`,
-							}}
-						/>
-					</div>
-					<div className={classes.backIcons}>
-						<Image
-							alt="Game"
-							onClick={onClick}
-							src={(page === "Game") ? GameSelected : Game}
-							width={34}
-							height={34}
-							style={{ backgroundColor: "#242426" }}
-						/>
-						<Image
-							src={Indicator}
-							width={34}
-							height={34}
-							style={{
-								backgroundColor: "#242426",
-								visibility: `${
-									page === "Game" ? "visible" : "hidden"
-								}`,
-							}}
-						/>
-					</div>
-					<div className={classes.backIcons}>
-						<Image
-							alt="Chat"
-							onClick={onClick}
-							src={(page === "Chat") ? ChatSelected : Chat}
-							width={34}
-							height={34}
-							style={{ backgroundColor: "#242426" }}
-						/>
-						<Image
-							src={Indicator}
-							width={34}
-							height={34}
-							style={{
-								backgroundColor: "#242426",
-								visibility: `${
-									page === "Chat" ? "visible" : "hidden"
-								}`,
-							}}
 						/>
 					</div>
 				</div>
 			</div>
-			<div className={`${classes.backIcons} ${classes.logOut}`}>
-				<Image
-					alt="Logout"
-					onClick={onClick}
-					src={(page === "Logout") ? LogoutSelected : Logout}
-					width={34}
-					height={34}
-					style={{ backgroundColor: "#242426" }}
-				/>
-				<Image
-					src={Indicator}
-					width={34}
-					height={34}
-					style={{
-						backgroundColor: "#242426",
-						visibility: `${
-							page === "Logout" ? "visible" : "hidden"
-						}`,
-					}}
-				/>
+			<div
+				className={`absolute top-0 left-0 bottom-0 ${classes.sidenavInd}`}
+			>
+				<div style={
+					{
+						marginTop: `${marginTop}rem`,
+						backgroundColor: '#242426'
+					}
+				}>
+					<Image
+						src={Indicator}
+						width={34}
+						height={34}
+						style={{
+							backgroundColor: "#242426",
+						}}
+					/>
+				</div>
 			</div>
-		</div>
+		</>
 	);
 };
 
