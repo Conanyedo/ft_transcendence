@@ -1,13 +1,42 @@
-import type { NextPage } from 'next';
-import HomePage from './pages/Home';
+import {
+	BrowserRouter,
+	Switch,
+	Route,
+	Link,
+	useHistory,
+} from "react-router-dom";
+import Profile from "./profile/profile";
 
+import Skeleton from "../components/skeleton";
 
-const Home: NextPage = () => {
-  return (
-	<div>
-		<HomePage/>
-	</div>
-  );
-}
+const HomePage = () => {
+	
 
-export default Home
+	return (
+		<BrowserRouter>
+			<Skeleton
+				elm={
+					<Switch>
+						<Route exact path="/">
+							<Profile />
+						</Route>
+						<Route path="/live-games">
+							<Profile />
+						</Route>
+						<Route path="/game">
+							<Profile />
+						</Route>
+						<Route path="/chat">
+							<Profile />
+						</Route>
+						<Route path="/Logout">
+							<p>Good Bay!!!!</p>
+						</Route>
+					</Switch>
+				}
+			/>
+		</BrowserRouter>
+	);
+};
+
+export default HomePage;

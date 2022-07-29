@@ -1,4 +1,4 @@
-import classes from './sideBar.module.css'
+import classes from "../styles/sideBar.module.css";
 
 const Section = (props: {elm: any}) => {
     return (

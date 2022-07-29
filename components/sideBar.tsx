@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import classes from "./sideBar.module.css";
+import classes from "../styles/sideBar.module.css";
 
 const SubMenu = () => {
   return (

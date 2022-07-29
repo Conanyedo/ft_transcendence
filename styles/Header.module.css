@@ -1,0 +1,84 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
+
+.topBar {
+    position: absolute;
+    top: 0;
+    height: 4rem;
+    left: 0;
+    right: 0;
+    margin-left: 6rem;
+    padding: 0 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 2rem;
+}
+
+.searchInput {
+    padding: 0.56rem 0.8rem;
+    width: 30rem;
+    border-radius: 0.333rem;
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: #c6e1ff80;
+    font-family: 'Inter';
+
+}
+
+.searchInput::placeholder {
+    color: #c6e1ff80;
+}
+
+.searchInput:focus,
+.searchInput:active {
+    outline: none;
+}
+
+.inputContainer {
+    display: flex;
+
+    margin-left: 3.3rem;
+}
+
+.avatarContainer {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+
+    margin-right: 3.3rem;
+    width: 100%;
+    justify-content: right;
+    gap: 1.5rem;
+}
+
+
+@media only screen and (max-width: 930px) {
+    .topBar {
+        display: block;
+        position: static;
+        padding: 0;
+        margin: 0;
+        /* margin-left: 3rem; */
+    }
+
+    .inputContainer {
+        margin-left: 8rem;
+        padding-top: 2rem;
+    }
+
+.userName {
+    display: none;
+}
+    .avatarContainer {
+        gap: .5em;
+        position: absolute;
+        top: 2rem;
+        right: 0;
+        background-color: transparent;
+        margin-right: 1rem;
+        /* margin-top: 1rem; */
+    }
+}
+
+

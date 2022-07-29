@@ -1,10 +1,10 @@
-import { Link } from 'react-router-dom';
+
+import classes from '../../styles/Profile.module.css';
 
 const Profile = () => {
 	return (
 		<div className='max-h'>
-			{/* <input type="text" placeholder="Search" className="search-input border-white ml-32 mt-10 font-light" /> */}
-			<div className='grid grid-cols-2 width-header border-blue-300 h-full gap-6'>
+			<div className='grid grid-cols-1 width-header  h-full gap-6 '>
 				<div className="section rounded-lg">
 					&nbsp;
 				</div>

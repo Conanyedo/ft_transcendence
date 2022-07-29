@@ -1,8 +1,8 @@
 import { Link, useHistory } from "react-router-dom";
 import React, { useRef, useState } from "react";
-import AppContent from "../components/Appcontent";
+import AppContent from "./Appcontent";
 import Header from "./Header/Header";
-import classes from "../components/sideBar.module.css";
+import classes from "../styles/sideBar.module.css";
 import SideNav from "./Header/sideNav";
 
 
