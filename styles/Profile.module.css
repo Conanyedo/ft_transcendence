@@ -1,0 +1,150 @@
+.profile {
+	/* border: 1px solid green; */
+	background-color: #2c2c2e80;
+	border-radius: 15px;
+	display: flex;
+	flex-direction: column;
+	flex: 67.3670387393%;
+	padding: 20px 40px 30px;
+	/* justify-content: flex-end; */
+}
+
+.editBtn {
+	background-color: transparent;
+	text-align: right;
+	margin: 0 0 20px 0;
+}
+
+.editBtn>button {
+	background-color: transparent;
+	border: 2px solid #409CFF;
+	border-radius: 5px;
+	padding: 7px;
+	color: #409CFF;
+	line-height: 14.52px;
+	font-size: 12px;
+	font-weight: 600;
+	font-family: 'inter', sans-serif;
+}
+
+.editBtn span {
+	background-color: transparent;
+	padding-left: 15px;
+}
+
+/* // 1523 */
+
+
+.overview {
+	background-color: #2c2c2e80;
+	border-radius: 15px;
+	flex: 67.3670387393%;
+}
+
+.history {
+	background-color: #2c2c2e80;
+	border-radius: 15px;
+	flex: 31.0571240972%;
+}
+
+.name {
+	color: #EFF3FE;
+	padding-left: 20px;
+	margin: 0;
+	background-color: transparent;
+}
+
+.lvl,
+.gp,
+.rank,
+.tier {
+	padding-left: 20px;
+	font-size: 12px;
+	line-height: 14.52px;
+	font-family: inherit;
+	color: #758293;
+	margin: 0;
+	padding-bottom: 5px;
+	background-color: transparent;
+}
+
+.avatar {
+	width: 147px;
+	height: 147px;
+	border-radius: 10px;
+	background-color: transparent;
+	/* background: inherit; */
+}
+
+.profileSection {
+	display: flex;
+	flex-direction: column;
+	border-color: transparent;
+	background-color: transparent;
+}
+
+
+.gold {
+	color: #E4C18D;
+	background-color: inherit;
+}
+
+.lvlContainer {
+	margin-top: 20px;
+	padding: 8px;
+	border: 2px solid #3A3A3C;
+	border-radius: 8px;
+	height: 60px;
+	/* width: 952px; */
+	background-color: transparent;
+	position: relative;
+	display: flex;
+	align-items: center;
+}
+
+.lvlpercent {
+	background: #409CFF;
+	height: 100%;
+	border-radius: 5px 0px 0px 5px;
+	text-align: center;
+}
+
+.lvldata {
+	background-color: transparent;
+	text-align: center;
+	position: absolute;
+	width: 100%;
+	font-family: 'Inter';
+	font-style: normal;
+	font-weight: 700;
+	font-size: 18px;
+	line-height: 22px;
+
+	/* identical to box height */
+
+	color: #ECF5FF;
+
+}
+
+.profileInfo {
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	background-color: transparent;
+	/* margin-bottom: 31px; */
+	/* border: 1px solid green; */
+}
+
+/* .profileTier {
+	display: flex;
+	border: 1px solid yellow;
+	background-color: transparent;
+} */
+
+.tierIcon {
+	background-color: transparent;
+	margin-left: auto;
+	border: 1px solid blue;
+	width: 156px;
+	height: 168.64px;
+}

@@ -45,21 +45,19 @@ const SideNav: React.FC<{ onNav: (page: string) => void }> = (props) => {
 	const [page, setPage] = useState("");
 	const [posIndicator, setPosIndicator] = useState(classes.profilePos);
 
-	const onClick: MouseEventHandler<HTMLImageElement> = (e:any) => {
-		const target = e.target ;
+	const onClick: MouseEventHandler<HTMLImageElement> = (e: any) => {
+		const target = e.target;
 		const alt = target.alt;
 		setPage(alt);
 		props.onNav(alt);
 
 		alt === ""
-		? setPosIndicator(classes.profilePos)
-		: alt === "live-games"
-		? setPosIndicator(classes.liveGamePos)
-		: alt === "game"
-		? setPosIndicator(classes.gamePos)
-		: alt === "chat"
-		? setPosIndicator(classes.chatPos)
-		: setPosIndicator(classes.hidePos);
+			? setPosIndicator(classes.profilePos)
+			: alt === "live-games"
+			? setPosIndicator(classes.liveGamePos)
+			: alt === "game"
+			? setPosIndicator(classes.gamePos)
+			: setPosIndicator(classes.chatPos);
 	};
 	const NAVITEMS: N_ITEMS[] = [
 		{
@@ -88,39 +86,41 @@ const SideNav: React.FC<{ onNav: (page: string) => void }> = (props) => {
 			<div
 				className={`absolute top-0 left-0 bottom-0 ${classes.sidenav}`}
 			>
-				<div className={`${classes.sidenav}`}>
-					<div className={`${classes.sideItems}`}>
-						{NAVITEMS.map((item) => (
-							<ItemsNav
-								alt={item.alt}
-								src={item.src}
-								onNav={onClick}
-							/>
-						))}
-					</div>
-					<div className={`${classes.backIcons} ${classes.logOut}`}>
-						<Image
-							onClick={onClick}
-							src={page === "Logout" ? LogoutSelected : Logout}
-							width={34}
-							height={34}
-							style={{ backgroundColor: "#242426" }}
+				<div className={`${classes.sideItems}`}>
+					{NAVITEMS.map((item) => (
+						<ItemsNav
+							alt={item.alt}
+							src={item.src}
+							onNav={onClick}
 						/>
-					</div>
+					))}
+				</div>
+				<div className={`${classes.backIcons} ${classes.logOut}`}>
+					<Image
+						onClick={onClick}
+						src={page === "Logout" ? LogoutSelected : Logout}
+						width={34}
+						height={34}
+						style={{ backgroundColor: "#242426" }}
+					/>
 				</div>
 			</div>
 			<div
 				className={`absolute top-0 left-0 bottom-0 ${classes.sidenavInd}`}
 			>
-				<motion.div exit={{ opacity: 0 }}  className={`${posIndicator}`} animate='animate'>
-						<Image
-							src={Indicator}
-							width={34}
-							height={28}
-							style={{
-								backgroundColor: "#242426",
-							}}
-						/>
+				<motion.div
+					exit={{ opacity: 0 }}
+					className={`${posIndicator}`}
+					animate="animate"
+				>
+					<Image
+						src={Indicator}
+						width={34}
+						height={28}
+						style={{
+							backgroundColor: "#242426",
+						}}
+					/>
 				</motion.div>
 			</div>
 		</>

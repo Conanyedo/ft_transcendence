@@ -8,6 +8,7 @@
 	justify-content: space-between;
 	padding-top: 15.5rem;
 	height: 100%;
+	/* margin: 0; */
 }
 
 .sidenavInd {
@@ -19,7 +20,7 @@
 	flex-direction: column;
 	align-items: center;
 	justify-content: space-between;
-	padding-top: 15.5rem;
+	padding-top: 11rem;
 	height: 100%;
 	transition: 0.6s;
 }
@@ -32,38 +33,31 @@
 
 .profilePos {
 	opacity: 1;
-	margin-top: 15.8rem;
+	margin-top: 4.8rem;
 	background-color: #242426;
 	transition: all .2s ease-in-out;
 }
 
 .liveGamePos {
 	opacity: 1;
-	margin-top: 21.7rem;
+	margin-top: 10.75rem;
 	background-color: #242426;
 	transition: all .2s ease-in-out;
 }
 
 .gamePos {
 	opacity: 1;
-	margin-top: 27.67rem;
+	margin-top: 16.7rem;
 	background-color: #242426;
 	transition: all .2s ease-in-out;
 }
 
 .chatPos {
 	opacity: 1;
-	margin-top: 33.6rem;
+	margin-top: 22.65rem;
 	background-color: #242426;
 	transition: all .2s ease-in-out;
 }
-
-.hidePos {
-	opacity: 0;
-	background-color: #242426;
-	transition: all .2s ease-in-out;
-}
-
 
 @media only screen and (max-height: 900px) {
 	.sidenav {
@@ -71,7 +65,7 @@
 	}
 	.sidenavInd {
 
-		padding-top: 10rem;
+		padding-top: 0.05rem;
 	}
 	.profilePos {
 		opacity: 1;
@@ -85,7 +79,7 @@
 	
 	.gamePos {
 		opacity: 1;
-		margin-top: 22.17rem;
+		margin-top: 22.13rem;
 	}
 	
 	.chatPos {

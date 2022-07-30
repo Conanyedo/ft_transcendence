@@ -5,11 +5,11 @@ import "../styles/globals.css";
 function MyApp({ Component, pageProps }: AppProps) {
 	return (
 		<AnimatePresence exitBeforeEnter>
-			<div suppressHydrationWarning className="container">
+			{/* <div suppressHydrationWarning className="container"> */}
 				{typeof window === "undefined" ? null : (
 					<Component {...pageProps} />
 				)}
-			</div>
+			{/* </div> */}
 		</AnimatePresence>
 	);
 }

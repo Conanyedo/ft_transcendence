@@ -1,0 +1,30 @@
+.containerSection {
+	/* border: 1px solid blue; */
+	/* top: 148px; */
+	/* top: 9.8669rem; */
+	/* left: 155px; */
+	/* left: 10.33334rem; */
+	/* right: 50px; */
+	/* right: 3.336rem; */
+	/* right: 1%; */
+	/* bottom: 50px; */
+	/* bottom: 3.336rem; */
+	gap: 24px;
+
+	margin-top: 8.5648148148%;
+	margin-left: 8.9699074074%;
+	margin-bottom: 2.8935185185%;
+	margin-right: 2.8935185185%;
+	/* width: 88.1365740741%; */
+	display: flex;
+	flex-wrap: wrap;
+	/* flex-direction: row; */
+	/* align-items: stretch; */
+	/* max-height: 90vh; */
+}
+
+/* @media only screen and (max-width: 1726px) {
+	.containerSection {
+		flex-direction: column;
+	}
+} */

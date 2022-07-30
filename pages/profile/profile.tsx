@@ -1,27 +1,23 @@
-
-import classes from '../../styles/Profile.module.css';
+import classes from "../../styles/Profile.module.css";
+import profile from "../../public/profileImage.png";
+import Image from "next/image";
+import pen from "../../public/editPen.svg";
+import Gold from "../../public/GoldTier.svg";
+import ProfileInfo from "../../components/profile/profileInfo";
+import Achievements from "../../components/profile/achievements";
 
 const Profile = () => {
+	// const XP = 5690;
+	// const lvl = Math.floor(XP / 1000);
+	// const lvlP = XP % 1000 / 10;
 	return (
-		<div className='max-h'>
-			<div className='grid grid-cols-1 width-header  h-full gap-6 '>
-				<div className="section rounded-lg">
-					&nbsp;
-				</div>
-
-				<div className="section rounded-lg">
-					&nbsp;
-				</div>
-				<div className="section row-span-2 rounded-lg">
-					&nbsp;
-				</div>
-				<div className="section row-span-2 rounded-lg">
-					&nbsp;
-				</div>
-			</div>
-		</div>
-
+		<>
+			<ProfileInfo />
+			<Achievements />
+			<div className={classes.overview}></div>
+			<div className={classes.history}></div>
+		</>
 	);
-}
+};
 
 export default Profile;

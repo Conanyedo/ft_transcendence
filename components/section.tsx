@@ -1,8 +1,8 @@
-import classes from "../styles/sideBar.module.css";
+import classes from "../styles/Section.module.css";
 
 const Section = (props: {elm: any}) => {
     return (
-        <div className={classes["projects-section"]}>
+        <div className={classes.containerSection}>
             {props.elm}
         </div>
     );
