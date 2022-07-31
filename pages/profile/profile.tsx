@@ -5,6 +5,8 @@ import pen from "../../public/editPen.svg";
 import Gold from "../../public/GoldTier.svg";
 import ProfileInfo from "../../components/profile/profileInfo";
 import Achievements from "../../components/profile/achievements";
+import Overview from "../../components/profile/overView";
+import MatchHistory from "../../components/profile/matchHistory";
 
 const Profile = () => {
 	// const XP = 5690;
@@ -15,8 +17,8 @@ const Profile = () => {
 			<div className={classes.profileContainer}>
 				<ProfileInfo />
 				<Achievements />
-				<div className={classes.overview}>&nbsp;</div>
-				<div className={classes.history}>&nbsp;</div>
+				<Overview />
+				<MatchHistory />
 			</div>
 
 		</>

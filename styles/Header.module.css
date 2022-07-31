@@ -22,6 +22,7 @@
     font-weight: 500;
     color: #c6e1ff80;
     font-family: 'Inter';
+    background-color: #1C1C1E;
 }
 
 .searchInput::placeholder {

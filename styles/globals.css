@@ -24,7 +24,6 @@ a {
 
 * {
 	box-sizing: border-box;
-	background-color: #1C1C1E;
 }
 
 .search-input {
@@ -58,7 +57,7 @@ div#__next {
   bottom: 0;
   left: 0;
   right: 0;
-  /* border: 2px solid red; */
+  background-color: #1C1C1E;
 }
 
 @media only screen and (max-width: 600px) {
