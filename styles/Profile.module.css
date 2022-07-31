@@ -4,8 +4,9 @@
 	border-radius: 15px;
 	display: flex;
 	flex-direction: column;
-	flex: 67.3670387393%;
-	padding: 20px 40px 30px;
+	/* flex: 67.3670387393%; */
+	padding: 20px 40px 30px; 
+	/* width: 100%; */
 	/* justify-content: flex-end; */
 }
 
@@ -144,7 +145,35 @@
 .tierIcon {
 	background-color: transparent;
 	margin-left: auto;
-	border: 1px solid blue;
+	/* border: 1px solid blue; */
 	width: 156px;
 	height: 168.64px;
+	display: flex;
+	align-items: center;
 }
+
+.profileContainer {
+	/* border: 2px solid lightblue; */
+	width: 100%;
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	grid-gap: 24px;
+}
+
+.overview {
+	height: 545px;
+}
+
+@media screen and (max-width: 1207px) {
+	.profileContainer {
+	  display: flex;
+	  flex-direction: column;
+	  justify-content: center;
+	  padding: 1.5rem;
+	  margin-top: 2rem;
+	}
+
+	.profile {
+		padding: 1rem;
+	}
+  }

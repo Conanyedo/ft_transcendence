@@ -12,10 +12,13 @@ const Profile = () => {
 	// const lvlP = XP % 1000 / 10;
 	return (
 		<>
-			<ProfileInfo />
-			<Achievements />
-			<div className={classes.overview}></div>
-			<div className={classes.history}></div>
+			<div className={classes.profileContainer}>
+				<ProfileInfo />
+				<Achievements />
+				<div className={classes.overview}>&nbsp;</div>
+				<div className={classes.history}>&nbsp;</div>
+			</div>
+
 		</>
 	);
 };

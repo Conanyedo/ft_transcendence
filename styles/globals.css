@@ -67,4 +67,9 @@ div#__next {
     margin: 0;
     padding: 1.5rem;
   }
+
+  div#__next {
+    position: static;
+    width: 100%;
+  }
 }
