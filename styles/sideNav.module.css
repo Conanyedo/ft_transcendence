@@ -59,7 +59,7 @@
 	transition: all .2s ease-in-out;
 }
 
-@media only screen and (max-height: 900px) {
+/* @media only screen and (max-width: 900px) {
 	.sidenav {
 		padding-top: 10rem;
 	}
@@ -86,18 +86,15 @@
 		opacity: 1;
 		margin-top: 28.1rem;
 	}
-}
+} */
 
 
-@media only screen and (max-width: 1207px) {
+@media only screen and (max-width: 600px) {
 	.sidenav {
-		/* We should hide the whole item not just lower its opacity */
-		/* opacity: 0; */
-		display: none;
+		opacity: 0;
 	}
 	.sidenavInd {
-		/* opacity: 0; */
-		display: none;
+		opacity: 0;
 	}
 }
 

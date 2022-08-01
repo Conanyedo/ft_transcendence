@@ -24,15 +24,16 @@ const Header = () => {
 	const [userData] = useState<DATA>(dataUser);
 	return (
 		<div className={classes.topBar}>
-			<div className={classes.inputContainer}>
-				<Image src={Search} width={24} height={24} />
-				<input
-					type="text"
-					className={classes.searchInput}
-					placeholder="Search"
-				/>
-			</div>
-			<div className={classes.avatarContainer}>
+			<div className={classes.tmpctn}>
+				<div className={classes.inputContainer}>
+					<Image src={Search} width={24} height={24} />
+					<input
+						type="text"
+						className={classes.searchInput}
+						placeholder="Search"
+					/>
+				</div>
+				<div className={classes.avatarContainer}>
 					<Image
 						src={userData.image}
 						width={36}
@@ -41,7 +42,8 @@ const Header = () => {
 					/>
 					<Text className={classes.userName}>{userData.name}</Text>
 
-				<Image src={DownArrow} width={24} height={24} />
+					<Image src={DownArrow} width={24} height={24} />
+				</div>
 			</div>
 		</div>
 	);

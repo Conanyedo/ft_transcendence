@@ -6,6 +6,7 @@ const Achievements = () => {
 	return (
 		<div className={classes.achievements}>
 			<div className={classes.title}>Achievements</div>
+			{/* {true && <p className={classes.noAchievements}>No Achievements yet!!</p>} */}
 			<div className={classes.achievementctn}>
 				<Image src={Gold} className={classes.badge} />
 				<div className={classes.achievement}>

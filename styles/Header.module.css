@@ -1,82 +1,96 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
 
+
 .topBar {
-    position: absolute;
-    top: 0;
-    height: 4rem;
-    left: 0;
-    right: 0;
-    margin-left: 6rem;
-    padding: 0 1.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-top: 2rem;
+	z-index: 999;
+	/* background-color: rgb(44, 56, 56); */
+	position: fixed;
+	top: 0;
+	right: 0;
+	left: 0;
+	margin-top: 3.7037037037%;
+	margin-left: calc(2.8935185185% + 90px);
+	margin-right: 2.8935185185%;
+	padding: 6px;
+	display: flex;
+	justify-content: center;
+	/* border: 1px solid lightcoral; */
+}
+.tmpctn {
+	display: flex;
+	width: 100%;
+	max-width: 1724px;
+	justify-content: space-between;
 }
 
 .searchInput {
-    padding: 0.56rem 0.8rem;
-    width: 30rem;
-    border-radius: 0.333rem;
-    font-size: 1.2rem;
-    font-weight: 500;
-    color: #c6e1ff80;
-    font-family: 'Inter';
-    background-color: #1C1C1E;
+	/* padding: 0.56rem 0.8rem; */
+	border-radius: 0.333rem;
+	font-family: 'Inter';
+	font-style: normal;
+	font-weight: 500;
+	font-size: 18px;
+	line-height: 22px;
+	width: 90%;
+	color: rgba(198, 225, 255, 0.5);
+	background-color: transparent;
+	margin-left: 18px;
 }
 
 .searchInput::placeholder {
-    color: #c6e1ff80;
+	color: #c6e1ff80;
 }
 
 .searchInput:focus,
 .searchInput:active {
-    outline: none;
+	outline: none;
 }
 
 .inputContainer {
-    display: flex;
-    margin-left: 3.3rem;
+	display: flex;
+	width: 67%;
+	max-width: 1150px;
+	/* margin-left: 3.3rem; */
 }
 
 .avatarContainer {
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-
-    margin-right: 3.3rem;
-    width: 100%;
-    justify-content: right;
-    gap: 1.5rem;
+	cursor: pointer;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	justify-self: center;
+	/* position: absolute; */
+	/* right: 15px; */
+	/* border: 1px solid lightblue; */
+	gap: 1.5rem;
 }
-
-
-@media only screen and (max-width: 1207px) {
-    .topBar {
-        display: block;
-        position: static;
-        padding: 0;
-        margin: 0;
-        /* margin-left: 3rem; */
-    }
-
-    .inputContainer {
-        margin-left: 2rem;
-        padding-top: 2rem;
-    }
 
 .userName {
-    display: none;
+	text-align: center;
+	margin: auto 0;
 }
-    .avatarContainer {
-        gap: .5em;
-        position: absolute;
-        top: 2rem;
-        right: 0;
-        background-color: transparent;
-        margin-right: 1rem;
-        /* margin-top: 1rem; */
-    }
+@media only screen and (min-width: 1926px) {
+	.topBar {
+		margin-top: 64px;
+	}
 }
 
+@media only screen and (max-width: 930px) {
+	.userName {
+		display: none;
+	}
 
+	.avatarContainer {
+		gap: .5em;
+		/* top: 2rem; */
+		background-color: transparent;
+		/* margin-right: 1rem; */
+		/* margin-top: 1rem; */
+	}
+}
+
+@media only screen and (max-width: 600px) {
+	.topBar {
+		margin-left: 2.8935185185%;
+	}
+}

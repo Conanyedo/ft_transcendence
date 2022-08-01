@@ -5,8 +5,18 @@
 	padding: 20px 28px 12px;
 	display: flex;
 	flex-direction: column;
-	justify-content: space-around;
+	justify-content: start;
+	/* max-width: 50%; */
+	max-width: 550px;
+	/* min-width: 430px; */
 }
+/* @media screen {
+	.achievements {
+		flex: 50%;
+	}	
+} */
+
+
 
 .badge {
 	background-color: transparent;
@@ -58,4 +68,15 @@
 	font-size: 12px;
 	line-height: 15px;
 	color: #D9D9D9;
+}
+
+.noAchievements {
+	text-align: center;
+	color: #758293;
+	font-family: 'Inter';
+	font-style: normal;
+	font-weight: 300;
+	font-size: 17px;
+	line-height: 15px;
+
 }
