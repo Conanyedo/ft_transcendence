@@ -1,0 +1,30 @@
+.containerSection {
+	margin-bottom: 2.8935185185%;
+	margin-right: 2.8935185185%;
+	margin-top: 9.4907407407%;
+	margin-left: calc(2.8935185185% + 90px);
+	display: flex;
+	flex-wrap: wrap;
+	gap: 24px;
+	justify-content: center;
+}
+
+@media only screen and (min-width: 1926px) {
+	.containerSection {
+		margin-top: 150px;
+		
+	}
+}
+
+@media only screen and (max-width: 600px) {
+	.containerSection {
+		margin-left: 2.8935185185%;
+	}
+}
+
+
+@media only screen and (max-width: 803px) {
+	.containerSection {
+		margin-top: 90px;
+	}
+}
