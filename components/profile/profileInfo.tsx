@@ -3,6 +3,7 @@ import profile from "../../public/profileImage.png";
 import Image from "next/image";
 import pen from "../../public/editPen.svg";
 import Gold from "../../public/GoldTier.svg";
+import TierGold from "../../public/LeaderBoard/Tier_Gold.svg";
 
 const ProfileInfo = () => {
 	const XP = 5690;
@@ -38,7 +39,7 @@ const ProfileInfo = () => {
 				<div className={classes.tierIcon}>
 					<Image
 						style={{ backgroundColor: "transparent" }}
-						src={Gold}
+						src={TierGold}
 					/>
 				</div>
 			</div>

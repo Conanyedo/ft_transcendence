@@ -1,0 +1,341 @@
+.overviewCtn {
+	background-color: #2c2c2e80;
+	border-radius: 15px;
+	flex: 67.3670387393%;
+	/* justify-content: flex-end; */
+	max-width: 1150px;
+}
+
+.ctnIndic {
+	/* border: 1px solid red; */
+	margin-bottom: 28px;
+	height: 3px;
+	margin-left: 30px;
+	border-radius: 2px;
+}
+
+.Indic {
+	background: #409CFF;
+	border-radius: 2px;
+	width: 80px;
+	height: 3px;
+	transition: all .3s ease-in-out;
+}
+
+.IndicFriend {
+	background: #409CFF;
+	border-radius: 2px;
+	width: 80px;
+	height: 3px;
+	margin-left: 123px;
+	width: 62px;
+	transition: all .3s ease-in-out;
+}
+
+.leaderBoardTable {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	width: 100%;
+}
+
+.navView {
+	display: flex;
+	justify-content: flex-start;
+	margin: 28px 28px;
+	margin-bottom: 0;
+}
+
+.TitleOverView {
+	cursor: pointer;
+	font-family: 'Inter';
+	font-style: normal;
+	font-weight: 600;
+	font-size: 18px;
+	line-height: 22px;
+	color: #C6E1FF;
+	padding-bottom: 5px;
+}
+
+.TitleOverView:first-of-type {
+	margin-right: 40px;
+}
+
+/* .overViewbtn {
+	border-bottom: 3px solid #409CFF;
+}
+
+.FriendsBtn {
+	border-bottom: 3px solid #409CFF;
+} */
+
+.overview {
+	/* display: flex; */
+	width: 100%;
+	/* flex-wrap: wrap; */
+	gap: 24px;
+	/* width: 100%; */
+	/* justify-content: start; */
+}
+
+
+.leaderBoard {
+	display: flex;
+	width: 100%;
+	justify-content: space-between;
+	align-items: flex-start;
+	padding: 30px;
+	padding-top: 14px;
+	padding-bottom: 20px;
+}
+
+.LeaderBordTitle {
+	font-family: 'Inter';
+	font-style: normal;
+	font-weight: 500;
+	font-size: 16px;
+	line-height: 19px;
+	color: #758293;
+	margin-bottom: 14px;
+	margin-bottom: 14px;
+}
+
+.leaderBoardctn {
+	display: flex;
+	justify-content: space-between;
+	flex: 74.9484536082%;
+
+	background: #3A3A3C;
+	box-shadow: 5px 5px 25px #1c1c1ecc;
+	border-radius: 15px;
+	padding: 14px 25px;
+	padding-top: 15px;
+	/* border: 1px solid lightcoral; */
+	flex: 60%;
+	margin-right: 18px;
+}
+
+.tableTitles {
+	display: flex;
+	align-items: center;
+	/* justify-content: space-between; */
+	padding: 0 5px;
+}
+
+.tableTitle {
+	font-family: 'Inter';
+	font-style: normal;
+	font-weight: 400;
+	font-size: 12px;
+	line-height: 15px;
+	color: #FCFDFF;
+	width: 100%;
+	margin-bottom: 8px;
+}
+
+.tableTitle:last-of-type {
+	text-align: center;
+}
+
+.tableElments {
+	display: flex;
+	align-items: center;
+	background: #2B2B2D;
+	border-radius: 5px;
+	padding: 9px 5px;
+	margin-bottom: 10px;
+	height: 50px;
+}
+
+.tableElments:last-of-type {
+	margin-bottom: 0;
+}
+
+
+.tableElments div {
+	color: #D9D9D9;
+}
+
+.Rank {
+	flex: 11.5442278861%;
+}
+
+.User {
+	flex: 31.905465288%;
+}
+
+.games {
+	flex: 16.2481536189%;
+}
+
+.WinRatio {
+	flex: 33.6779911374%;
+}
+
+.WinRatioCalc {
+	font-family: 'Inter';
+	font-style: normal;
+	font-weight: 500;
+	font-size: 8px;
+	line-height: 10px;
+	color: #D9D9D9;
+	margin-bottom: 4px;
+}
+
+.Tier {
+	flex: 5.6129985229%;
+	display: flex;
+	justify-content: center;
+}
+
+.SvgSize {
+	display: flex;
+	justify-content: center;
+	width: 36.18px;
+	height: 31;
+	font-family: 'Inter';
+	font-style: normal;
+	font-weight: 500;
+	font-size: 16px;
+	line-height: 19px;
+
+	color: #D9D9D9;
+}
+
+.profileUser {
+	height: 28px;
+	width: 28px;
+}
+
+.UserTR {
+	display: flex;
+	align-items: center;
+	justify-content: start;
+	font-family: 'Inter';
+	font-style: normal;
+	font-weight: 500;
+	font-size: 12px;
+	line-height: 15px;
+	color: #D9D9D9;
+}
+
+.pourcentagectn {
+	width: 70%;
+	height: 6px;
+	background: #555D67;
+	border-radius: 5px;
+	padding: 0;
+	margin: 0;
+}
+
+.pourcentage {
+	background: #409CFF;
+	height: 6px;
+	border-radius: 5px 0px 0px 5px;
+}
+
+.profileUser {
+	margin-right: 6px;
+}
+
+.table {
+	flex: 70.8576998051%;
+}
+
+/* Stats -------------------------- */
+.stat {
+	flex: 21.9298245614%;
+}
+
+.statsctn {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	background: #3A3A3C;
+	box-shadow: 5px 5px 25px #1c1c1ecc;
+	border-radius: 15px;
+	flex: 23.1958762887%;
+}
+
+.imageCTN {
+	display: flex;
+	justify-content: center;
+
+	margin: 49px;
+	margin-top: 24px;
+	margin-bottom: 31px;
+	width: 127px;
+	height: 127px;
+}
+
+.cntBTNstat {
+	padding: 14px 48px;
+	margin-bottom: 9px;
+	text-align: center;
+	width: 205px;
+	height: 50px;
+	background: #2D2F31;
+	border-radius: 5px;
+	font-family: 'Inter';
+	font-style: normal;
+	font-weight: 500;
+	font-size: 18px;
+	line-height: 22px;
+	color: #C6E1FF;
+
+}
+
+.textprogress {
+	font-family: 'Inter' !important;
+	font-style: normal !important;
+	font-weight: 500 !important;
+	font-size: 24px !important;
+	line-height: 29px !important;
+	color: #D9D9D9 !important;
+}
+
+.WinRateTitle {
+	font-family: 'Inter';
+	font-style: normal;
+	font-weight: 400;
+	font-size: 18px;
+	line-height: 22px;
+	color: #D9D9D9;
+	margin-top: 14px;
+}
+
+
+@media only screen and (max-width: 1070px) {
+
+	/* .games {
+		display:none;
+	} */
+	.WinRatio {
+		display: none;
+	}
+}
+
+
+@media only screen and (max-width: 810px) {
+	.leaderBoard {
+		flex-direction: column;
+	}
+
+	.table {
+		width: 100%;
+		margin-bottom: 15px;
+	}
+
+	.leaderBoardctn {
+		margin-right: 0;
+	}
+
+	.stat {
+		width: 100%;
+	}
+
+	.profileUser {
+		display: none;
+	}
+}
