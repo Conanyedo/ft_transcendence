@@ -1,21 +1,14 @@
 .achievements {
-	background-color: #2c2c2e80;
+	background-color: #2c2c2e;
 	border-radius: 15px;
 	flex: 31.0571240972%;
-	padding: 20px 28px 12px;
+	padding: 20px 22px 18px 28px;
 	display: flex;
 	flex-direction: column;
-	justify-content: start;
-	/* max-width: 50%; */
+	justify-content: flex-start;
 	max-width: 550px;
-	/* min-width: 430px; */
+	max-height: 365px;
 }
-/* @media screen {
-	.achievements {
-		flex: 50%;
-	}	
-} */
-
 
 
 .badge {
@@ -33,6 +26,12 @@
 	margin-bottom: 24px;
 }
 
+.ctnScroll{
+	overflow: auto;
+	scrollbar-color: #2B2B2D #3A3A3C;
+	max-height: 264px;
+}
+
 .achievementctn {
 	background-color: transparent;
 	display: flex;
@@ -42,7 +41,8 @@
 	border-radius: 8px;
 	padding: 5px 14px;
 	margin-bottom: 8px;
-
+	margin-right: 5px;
+	height: 60px;
 }
 
 .achievement {
@@ -79,4 +79,24 @@
 	font-size: 17px;
 	line-height: 15px;
 
+}
+
+
+@media only screen and (max-width: 1300px) {
+	.achievements {
+		order: 2;
+		max-height: 536px;
+	}
+	.ctnScroll {
+
+		max-height: 536px;
+	}
+}
+
+@media only screen and (max-width: 1180px) {
+	.achievements {
+		flex: 100%;
+		width: 100%;
+		max-width: none;
+	}
 }

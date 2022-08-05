@@ -1,30 +1,15 @@
 .profile {
 	/* border: 1px solid green; */
-	background-color: #2c2c2e80;
+	background-color: #2c2c2e;
 	border-radius: 15px;
 	display: flex;
 	flex-direction: column;
 	flex: 67.3670387393%;
-	padding: 20px 40px 30px;
+	padding: 25px 40px 25px;
 	justify-content: flex-end;
 	max-width: 1150px;
 }
 
-
-/* @media only screen and (max-width: 802px) {
-	.profileSection .name {
-		font-size: 140%;
-		align-items: center;
-		padding: 0;
-	}
-} */
-
-/* @media only screen and (max-width: 850px) {
-	.profile {
-		flex: 60%;
-		
-	}
-} */
 .editBtn {
 	background-color: transparent;
 	text-align: right;
@@ -50,14 +35,6 @@
 
 /* // 1523 */
 
-
-.history {
-	background-color: #2c2c2e80;
-	border-radius: 15px;
-	flex: 31.0571240972%;
-	max-width: 550px;
-}
-
 .name {
 	padding-left: 20px;
 	margin: 0;
@@ -67,9 +44,10 @@
 	font-weight: 700;
 	font-size: 28px;
 	line-height: 34px;
+	margin-bottom: 10px;
 	color: #EFF3FE;
 }
-
+.status,
 .lvl,
 .gp,
 .rank,
@@ -169,11 +147,58 @@
 
 
 
+/* Profil friend ++++++++++++++++++++++++++++++++ */
+
+.frindBtns {
+	/* display: flex;
+	justify-content: flex-end; */
+	align-items: center;
+	margin-bottom: 20px;
+	margin-left: auto;
+}
+
+.optionBtnFriend {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	width: auto;
+	position: relative;
+}
+
+.optionMenu {
+	z-index: 1000;
+	position: absolute;
+	background: #3A3A3C;
+	box-shadow: 0px 0px 25px rgba(0, 0, 0, 0.5);
+	border-radius: 5px;
+	top: 38px;
+	display: flex;
+	padding: 4px;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+.OptionIcon {
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	height: 45px;
+	margin-left: 22px;
+}
+
+.status {
+	font-family: 'Inter';
+	font-style: normal;
+	font-weight: 500;
+	font-size: 14px;
+	line-height: 17px;
+	color: #C6E1FF;
+	padding-bottom: 10px;
+	padding-top: 6px;
+}
+
 @media only screen and (max-width: 802px) {
-	.profile {
-		/* width: 80vw; */
-		/* border: 1px solid red; */
-	}
 	.tierIcon {
 		display: none;
 	}
@@ -182,7 +207,7 @@
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
-		
+
 	}
 
 	.profileSection {
@@ -194,6 +219,8 @@
 		font-size: 130%;
 		align-items: center;
 		padding: 0;
+		margin: 0;
+		margin-top: 5px;
 	}
 
 	.profileSection .name,
@@ -201,11 +228,13 @@
 	.profileSection .gp,
 	.profileSection .rank,
 	.profileSection .tier {
-		padding: 0 0 0 0;
+		padding: 0 0 5px 0;
 	}
+
 	.lvldata {
 		font-size: 14px;
 	}
+
 	.editBtn span {
 		display: none;
 	}
@@ -214,7 +243,5 @@
 @media only screen and (min-width: 1300px) {
 	.profile {
 		flex: 60%;
-
-		/* border: 2px solid red; */
 	}
 }

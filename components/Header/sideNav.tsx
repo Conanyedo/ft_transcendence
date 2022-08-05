@@ -18,69 +18,76 @@ import LogoutSelected from "../../public/SelectedSideNav/LogOutSelected.svg";
 import Logout from "../../public/Logout.svg";
 
 import classes from "../../styles/sideNav.module.css";
-import { MouseEventHandler, useRef, useState } from "react";
+import { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/router";
 
 interface N_ITEMS {
 	alt: string;
 	src: any;
-	onNav: any;
+	move: any;
 }
 
 const ItemsNav: React.FC<N_ITEMS> = (props) => {
+	const moveHndler = () => {
+		props.move(() => {
+			if (props.alt === "/profile") return classes.profilePos;
+			if (props.alt === "/live-games") return classes.liveGamePos;
+			if (props.alt === "/game") return classes.gamePos;
+			if (props.alt === "/chat") return classes.chatPos;
+			return classes.profilePos;
+		});
+	};
 	return (
-		<div className={classes.backIcons}>
+		<Link href={props.alt} className={classes.backIcons}>
 			<Image
+				onClick={moveHndler}
 				alt={props.alt}
-				onClick={props.onNav}
 				src={props.src}
 				width={34}
 				height={34}
-				style={{ backgroundColor: `#242426` }}
-			/>
-		</div>
+				className={classes.backIcons}
+			></Image>
+		</Link>
 	);
 };
 
 const SideNav: React.FC<{ onNav: (page: string) => void }> = (props) => {
-	const [page, setPage] = useState("");
-	const [posIndicator, setPosIndicator] = useState(classes.profilePos);
+	const ctn = useRouter();
+	// console.log(ctn.pathname.split('/')[1]);
+	const NamePage = '/' + ctn.pathname.split('/')[1];
+	
+	const [posIndicator, setPosIndicator] = useState(() => {
+		if (NamePage === "/profile") return classes.profilePos;
+		if (NamePage === "/live-games") return classes.liveGamePos;
+		if (NamePage === "/game") return classes.gamePos;
+		if (NamePage === "/chat") return classes.chatPos;
+		return classes.profilePos;
+	});
 
-	const onClick: MouseEventHandler<HTMLImageElement> = (e: any) => {
-		const target = e.target;
-		const alt = target.alt;
-		setPage(alt);
-		props.onNav(alt);
-
-		alt === ""
-			? setPosIndicator(classes.profilePos)
-			: alt === "live-games"
-			? setPosIndicator(classes.liveGamePos)
-			: alt === "game"
-			? setPosIndicator(classes.gamePos)
-			: setPosIndicator(classes.chatPos);
-	};
 	const NAVITEMS: N_ITEMS[] = [
 		{
-			alt: "",
-			src: page !== "" ? User : UserSelected,
-			onNav: props.onNav,
+			alt: "/profile",
+			src: NamePage !== "/profile" ? User : UserSelected,
+			move: setPosIndicator,
 		},
 		{
-			alt: "live-games",
-			src: page !== "live-games" ? LiveGame : LiveGameSelected,
-			onNav: props.onNav,
+			alt: "/live-games",
+			src: NamePage !== "/live-games" ? LiveGame : LiveGameSelected,
+			move: setPosIndicator,
 		},
 		{
-			alt: "game",
-			src: page !== "game" ? Game : GameSelected,
-			onNav: props.onNav,
+			alt: "/game",
+			src: NamePage !== "/game" ? Game : GameSelected,
+			move: setPosIndicator,
 		},
 		{
-			alt: "chat",
-			src: page !== "chat" ? Chat : ChatSelected,
-			onNav: props.onNav,
+			alt: "/chat",
+			src: NamePage !== "/chat" ? Chat : ChatSelected,
+			move: setPosIndicator,
 		},
 	];
+
 	return (
 		<>
 			<div
@@ -89,16 +96,17 @@ const SideNav: React.FC<{ onNav: (page: string) => void }> = (props) => {
 				<div className={`${classes.sideItems}`}>
 					{NAVITEMS.map((item) => (
 						<ItemsNav
+							move={item.move}
 							alt={item.alt}
 							src={item.src}
-							onNav={onClick}
 						/>
 					))}
 				</div>
 				<div className={`${classes.backIcons} ${classes.logOut}`}>
 					<Image
-						onClick={onClick}
-						src={page === "Logout" ? LogoutSelected : Logout}
+						src={
+							NamePage === "Logout" ? LogoutSelected : Logout
+						}
 						width={34}
 						height={34}
 						style={{ backgroundColor: "#242426" }}
@@ -108,11 +116,7 @@ const SideNav: React.FC<{ onNav: (page: string) => void }> = (props) => {
 			<div
 				className={`absolute top-0 left-0 bottom-0 ${classes.sidenavInd}`}
 			>
-				<motion.div
-					exit={{ opacity: 0 }}
-					className={`${posIndicator}`}
-					animate="animate"
-				>
+				<motion.div className={`${posIndicator}`} animate="animate">
 					<Image
 						src={Indicator}
 						width={34}

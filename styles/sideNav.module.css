@@ -1,6 +1,7 @@
 .sidenav {
 	/* border: 1px solid green; */
 	background-color: #242426;
+	position: fixed;
 	width: 4rem;
 	display: flex;
 	flex-direction: column;
@@ -14,6 +15,7 @@
 .sidenavInd {
 	/* border: 1px solid red; */
 	background-color: #242426;
+	position: fixed;
 	margin-left: 4rem;
 	width: 2rem;
 	display: flex;
@@ -33,28 +35,28 @@
 
 .profilePos {
 	opacity: 1;
-	margin-top: 4.8rem;
+	margin-top: 4.83rem;
 	background-color: #242426;
 	transition: all .2s ease-in-out;
 }
 
 .liveGamePos {
 	opacity: 1;
-	margin-top: 10.75rem;
+	margin-top: 10.32rem;
 	background-color: #242426;
 	transition: all .2s ease-in-out;
 }
 
 .gamePos {
 	opacity: 1;
-	margin-top: 16.7rem;
+	margin-top: 15.94rem;
 	background-color: #242426;
 	transition: all .2s ease-in-out;
 }
 
 .chatPos {
 	opacity: 1;
-	margin-top: 22.65rem;
+	margin-top: 21.46rem;
 	background-color: #242426;
 	transition: all .2s ease-in-out;
 }
@@ -91,10 +93,10 @@
 
 @media only screen and (max-width: 600px) {
 	.sidenav {
-		opacity: 0;
+		display: none;
 	}
 	.sidenavInd {
-		opacity: 0;
+		display: none;
 	}
 }
 
@@ -103,7 +105,7 @@
 	width: 100%;
 	height: 100%;
 	display: flex;
-	align-items: center;
+	align-items:flex-end;
 	flex-direction: column;
 	z-index: 999;
 	gap: 3.3rem;

@@ -1,12 +1,11 @@
-import React, { useState } from "react";
+import React, { FormEventHandler, useEffect, useRef, useState } from "react";
 import classes from "../../styles/Header.module.css";
 import { Text } from "../../styles/styled-components";
 import Image from "next/image";
 import Search from "../../public/Icon.svg";
-import NotificationsOn from "../../public/notificationsOn.svg";
-import NotificationsOff from "../../public/notificationsOff.svg";
 import Avatar from "../../public/profile.jpg";
 import DownArrow from "../../public/Caret down.svg";
+import { useRouter } from "next/router";
 
 interface DATA {
 	image: any;
@@ -21,17 +20,33 @@ const dataUser: DATA = {
 };
 
 const Header = () => {
+	const input = useRef(null);
+	const router = useRouter();
+	const searchHanler:FormEventHandler = (e) => {
+		e.preventDefault();
+		router.push({
+			pathname: '/search',
+			query: { search: `${input.current!.value}` },
+		})
+	}
+	useEffect(() => {
+		input.current!.value = (router.query.data) ? router.query.data : '';
+	}, [input])
+
 	const [userData] = useState<DATA>(dataUser);
 	return (
 		<div className={classes.topBar}>
 			<div className={classes.tmpctn}>
 				<div className={classes.inputContainer}>
 					<Image src={Search} width={24} height={24} />
-					<input
-						type="text"
-						className={classes.searchInput}
-						placeholder="Search"
-					/>
+					<form className={classes.inputContainer} onSubmit={searchHanler}>
+						<input
+							ref={input}
+							type="text"
+							className={classes.searchInput}
+							placeholder="Search"
+						/>
+					</form>
 				</div>
 				<div className={classes.avatarContainer}>
 					<Image

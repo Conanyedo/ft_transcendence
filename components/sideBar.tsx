@@ -1,5 +1,4 @@
-import React, { useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import React from "react";
 import classes from "../styles/sideBar.module.css";
 
 const SubMenu = () => {

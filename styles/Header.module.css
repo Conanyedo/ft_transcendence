@@ -3,12 +3,10 @@
 
 .topBar {
 	z-index: 999;
-	/* background-color: rgb(44, 56, 56); */
 	position: fixed;
 	top: 0;
 	right: 0;
 	left: 0;
-	/* margin-top: 3.7037037037%; */
 	margin-left: calc(2.8935185185% + 90px);
 	margin-right: 2.8935185185%;
 	padding: 6px;
@@ -16,7 +14,6 @@
 	display: flex;
 	justify-content: center;
 	background-color: #1C1C1E;
-	/* border: 1px solid lightcoral; */
 }
 .tmpctn {
 	display: flex;
@@ -26,7 +23,6 @@
 }
 
 .searchInput {
-	/* padding: 0.56rem 0.8rem; */
 	border-radius: 0.333rem;
 	font-family: 'Inter';
 	font-style: normal;
@@ -52,7 +48,6 @@
 	display: flex;
 	width: 67%;
 	max-width: 1150px;
-	/* margin-left: 3.3rem; */
 }
 
 .avatarContainer {
@@ -61,9 +56,6 @@
 	padding: 0;
 	display: flex;
 	justify-self: center;
-	/* position: absolute; */
-	/* right: 15px; */
-	/* border: 1px solid lightblue; */
 	gap: 1.5rem;
 }
 
@@ -73,8 +65,7 @@
 }
 @media only screen and (min-width: 1926px) {
 	.topBar {
-		margin-top: 64px;
-		padding-top: 0;
+		 padding-top: 84px; 
 	}
 }
 
@@ -85,15 +76,14 @@
 
 	.avatarContainer {
 		gap: .5em;
-		/* top: 2rem; */
 		background-color: transparent;
-		/* margin-right: 1rem; */
-		/* margin-top: 1rem; */
 	}
 }
 
 @media only screen and (max-width: 600px) {
 	.topBar {
-		margin-left: 2.8935185185%;
+		margin: 0;
+		padding-left: 2.8935185185%;
+		padding-right: 2.8935185185%;
 	}
 }

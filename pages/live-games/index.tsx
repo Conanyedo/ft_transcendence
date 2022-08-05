@@ -1,8 +1,15 @@
 
-import Router from 'next/router'
-
 const Game = () => {
-    Router.replace('/');
-    return <></>
-}
+	return (
+		<>
+			<p
+				style={{
+					color: "white",
+				}}
+			>
+				Live Game
+			</p>
+		</>
+	);
+};
 export default Game;
