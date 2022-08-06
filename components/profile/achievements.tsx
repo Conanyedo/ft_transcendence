@@ -1,6 +1,6 @@
 import classes from "../../styles/achievements.module.css";
 import Gold from "../../public/GoldKing.svg";
-import Image from "next/Image";
+import Image from "next/image";
 import React from "react";
 
 interface TypeAchievement {
