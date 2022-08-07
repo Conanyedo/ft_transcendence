@@ -1,0 +1,168 @@
+.chatContainer {
+    display: flex;
+    background-color: #2C2C2E;
+    width: 100%;
+    height: 940px;
+    max-width: 1724px;
+    border-radius: 15px;
+}
+
+.chatLeft {
+    width: 30%;
+    height: 100%;
+    background-color: #2C2C2E;
+    border-radius: 15px 0 0 15px;
+}
+
+.chatRight {
+    width: 70%;
+    height: 100%;
+    background-color: #2C2C2E;
+    border-radius:  0 15px 15px 0;
+    background-color: #242426;
+}
+
+.leftContent {
+    height: 100%;
+    width: 100%;
+    padding: 28px 20px 20px 20px;
+    overflow-y: scroll;
+}
+
+.topSection {
+    display: flex;
+    justify-content: space-between;
+}
+
+.msg {
+    color: #C6E1FF;
+    font-weight: 700;
+    font-size: 24px;
+}
+
+.chatInput {
+    border: 0;
+    background-color: #2C2C2E;
+}
+
+.chatSearch {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 10px;
+}
+
+.chatUser {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    height: 72px;
+    margin-top: 20px;
+}
+
+.avatarName {
+    display: flex;
+    gap: 20px;
+}
+
+.username { 
+    color: #D9D9D9;
+    font-weight: 500;
+    font-size: 18px;
+}
+
+.avatar {
+    border-radius: 8px;
+}
+
+.status {
+    color: #C6E1FF;
+    font-size: 14px;
+
+}
+
+.bottomSection {
+    height: inherit;
+    width: 100%;
+}
+
+.topDetails {
+    display: flex;
+    justify-content: space-between;
+    height: 112px;
+    background-color: #28282A;
+    border-radius: 0 15px 0 0;
+    padding: 18px 24px;
+}
+
+.flex {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+}
+
+.chatUsername {
+    color: #D9D9D9;
+    font-size: 24px;
+    font-weight: 500;
+}
+
+.chatUserStatus {
+    color: #C6E1FF;
+    font-size: 16px;
+}
+
+.flex > div {
+    height: fit-content;
+}
+
+.flex > div > h1 {
+    margin: 0;
+}
+
+.rightContent {
+    height: 100%;
+    /* background-color: coral; */
+    position: relative;
+}
+
+.chatSection {
+    width: 100%;
+    padding: 30px 21px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    /* background-color: pink; */
+    position: absolute;
+    bottom: 0;
+    top: 112px;
+}
+
+.msgsDisplay {
+    /* background-color: lightblue; */
+    height: 100%;
+    overflow-y: scroll;
+}
+
+.msgInput {
+    width: 100%;
+    height: 50px;
+    background-color: #28282A;
+    border-radius: 5px;
+    margin-right: 30px;
+    display: flex;
+    align-items: center;
+    padding: 12px 14px;
+    justify-content: space-between;
+}
+
+.msgInput > input {
+    background-color: #28282A;
+    color: #D9D9D9;
+}
+
+
+.msgInput > input:focus {
+    outline: none;
+}
