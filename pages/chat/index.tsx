@@ -5,9 +5,18 @@ import Search from "../../public/Icon.svg";
 import Avatar from "../../public/profile.jpg";
 import Menu from "../../public/Options-gray.svg";
 import Console from "../../public/Console.svg";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 
 const Game = () => {
+
+	// Defining references
+	const msgsDisplayDiv = useRef<any>();
+
+	const [chatMsgs, setChatMsgs] = useState([
+		{msgContent: "Test1", time: "07:19 PM", type: "sender", name: "You"}, 
+		{msgContent: "Test2", time: "07:19 PM", type: "receiver", name: "Ikram Kharbouch"}, 
+		{msgContent: "Test3", time: "07:19 PM", type: "sender", name: "You"}
+	]);
 
 	const lastUsers = [
 		{ id: 0, imgSrc: Avatar, firstName: "Ikram", lastName: "Kharbouch", status: "Online" },
@@ -25,8 +34,24 @@ const Game = () => {
 
 	const [currentUser, setCurrentUser] = useState(lastUsers[0]);
 
-	// const [lastUsers, setLastUsers] = useState()
+	const [enteredMsg, setEnteredMsg] = useState("");
 
+	// Introducing in scope functions here
+	const setMsg = (enteredMessage: string, e:KeyboardEvent) => {
+
+		let keycode:number = e.keyCode;
+
+		if (keycode == 13) {
+			console.log(keycode);
+			setChatMsgs([...chatMsgs, { msgContent: enteredMessage, time: "07:19 PM", type: "sender", name: "You" }]);
+			setEnteredMsg("");
+		}
+	}
+
+	// UseEffect here
+	useEffect(() => {
+		msgsDisplayDiv.current.scrollBottom = msgsDisplayDiv.current.scrollHeight;
+	}, [])
 
 	return (
 		<>
@@ -66,9 +91,19 @@ const Game = () => {
 							<Image src={Menu} width={30} height={30} />
 						</div>
 						<div className={Styles.chatSection}>
-							<div className={Styles.msgsDisplay}>&nbsp;</div>
+							<div className={Styles.msgsDisplay} ref={msgsDisplayDiv}>
+								{
+									chatMsgs.map((chatMsg) => <div className={Styles.chatMsg} style={{ left: chatMsg.type == "receiver" ? "0" : "auto", right: chatMsg.type == "sender" ? "0" : "auto" }}>
+										<div className={Styles.msgBox} style={{ justifyContent: chatMsg.type == "receiver" ? "flex-start" : "flex-end" }}>
+											<div className={Styles.msgContent} style={{backgroundColor: chatMsg.type == "receiver" ? "#3A3A3C" : "#409CFF", borderRadius: chatMsg.type == "receiver" ? "0 5px 5px 5px" : "5px 5px 0 5px"}}>
+												<h3>{chatMsg.msgContent}</h3>
+											</div>
+										</div>
+									</div>)
+								}
+							</div>
 							<div className={Styles.msgInput}>
-								<input type="text" placeholder="message" />
+								<input type="text" placeholder="message"  value={enteredMsg} onChange={(e) => setEnteredMsg(e.target.value)} onKeyDown={(event) => setMsg(enteredMsg, event)} />
 								<Image src={Console} width={23} height={23} />
 							</div>
 						</div>

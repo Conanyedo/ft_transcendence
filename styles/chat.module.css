@@ -18,7 +18,7 @@
     width: 70%;
     height: 100%;
     background-color: #2C2C2E;
-    border-radius:  0 15px 15px 0;
+    border-radius: 0 15px 15px 0;
     background-color: #242426;
 }
 
@@ -66,7 +66,7 @@
     gap: 20px;
 }
 
-.username { 
+.username {
     color: #D9D9D9;
     font-weight: 500;
     font-size: 18px;
@@ -113,11 +113,11 @@
     font-size: 16px;
 }
 
-.flex > div {
+.flex>div {
     height: fit-content;
 }
 
-.flex > div > h1 {
+.flex>div>h1 {
     margin: 0;
 }
 
@@ -133,16 +133,15 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    /* background-color: pink; */
     position: absolute;
     bottom: 0;
     top: 112px;
 }
 
 .msgsDisplay {
-    /* background-color: lightblue; */
     height: 100%;
     overflow-y: scroll;
+    position: relative;
 }
 
 .msgInput {
@@ -157,12 +156,40 @@
     justify-content: space-between;
 }
 
-.msgInput > input {
+.msgInput>input {
     background-color: #28282A;
     color: #D9D9D9;
+    width: 100%;
 }
 
 
-.msgInput > input:focus {
+.msgInput>input:focus {
     outline: none;
+}
+
+
+.msgBox {
+    display: flex;
+    align-items: center;
+}
+
+.msgContent {
+    padding: 20;
+    word-break: break-all;
+    text-align: center;
+    height: fit-content;
+    width: fit-content;
+    padding: 8px 20px;
+    margin-top: 21px;
+}
+
+.msgContent>h3 {
+    color: #FFFFFF;
+    font-weight: 500;
+    font-size: 16px;
+}
+
+.msgContent>p {
+    font-weight: 600;
+    font-size: 10px;
 }
