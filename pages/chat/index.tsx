@@ -1,16 +1,27 @@
 import Styles from "../../styles/chat.module.css"
-import Image from "next/image"
+import Image, { StaticImageData } from "next/image"
 import NewMessage from "../../public/new-message.svg"
 import Search from "../../public/Icon.svg";
 import Avatar from "../../public/profile.jpg";
 import Menu from "../../public/Options-gray.svg";
 import Console from "../../public/Console.svg";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, RefObject } from "react";
+import { setMsg, showConversation } from "../../functions/chat";
 
-const Game = () => {
+interface chatUser {
+	id: number;
+	imgSrc: StaticImageData;
+	firstName: string;
+	lastName: string;
+	status: string
+  }
+
+const Chat = () => {
 
 	// Defining references
 	const msgsDisplayDiv = useRef<any>();
+	const messagesEndRef = useRef<HTMLDivElement>(null);
+	const chatUsersRefs: Array<HTMLDivElement> | any = useRef([]);
 
 	const [chatMsgs, setChatMsgs] = useState([
 		{msgContent: "Test1", time: "07:19 PM", type: "sender", name: "You"}, 
@@ -32,32 +43,40 @@ const Game = () => {
 		{ id: 10, imgSrc: Avatar, firstName: "Ikram", lastName: "Kharbouch", status: "Offline" },
 	]
 
-	const [currentUser, setCurrentUser] = useState(lastUsers[0]);
-
+	const [currentUser, setCurrentUser] = useState<chatUser>(lastUsers[0]);
 	const [enteredMsg, setEnteredMsg] = useState("");
+	const [prevUser, setPrevUser] = useState<number>(0)
 
-	// Introducing in scope functions here
-	const setMsg = (enteredMessage: string, e:KeyboardEvent) => {
+	// functions here
+	const scrollToBottom = () => {
+		messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+	}
 
-		let keycode:number = e.keyCode;
+	const setChatUser = (user: chatUser, chatUsersRefs:Array<HTMLDivElement>, i:number) => {
 
-		if (keycode == 13) {
-			console.log(keycode);
-			setChatMsgs([...chatMsgs, { msgContent: enteredMessage, time: "07:19 PM", type: "sender", name: "You" }]);
-			setEnteredMsg("");
-		}
+		// Unselect the previous user
+		chatUsersRefs.current[prevUser].classList.remove(`${Styles.chatUserClicked}`);
+
+		console.log("clicked")
+		//Set current state of the user
+		setCurrentUser(user);
+		
+		// Make the clicked div selectable
+		chatUsersRefs.current[i].classList.add(`${Styles.chatUserClicked}`);
+		setPrevUser(i);
 	}
 
 	// UseEffect here
 	useEffect(() => {
-		msgsDisplayDiv.current.scrollBottom = msgsDisplayDiv.current.scrollHeight;
-	}, [])
+		scrollToBottom();
+	}, [chatMsgs])
 
+	
 	return (
 		<>
 			<div className={Styles.chatContainer}>
 				<div className={Styles.chatLeft}>
-					<div className={Styles.leftContent}>
+					<div className={Styles.leftContent} onClick={showConversation}>
 						<div className={Styles.topSection}>
 							<h1 className={Styles.msg}>Message</h1>
 							<Image src={NewMessage} width={20} height={20} />
@@ -67,7 +86,7 @@ const Game = () => {
 							<input type="Text" className={Styles.chatInput} placeholder="Search" />
 						</div>
 						<div className={Styles.bottomSection}>
-							{lastUsers.map((user, i) => <div className={Styles.chatUser} onClick={() => setCurrentUser(lastUsers[i])}>
+							{lastUsers.map((user, i) => <div ref={(element) => {chatUsersRefs.current[i] = element}} className={Styles.chatUser} onClick={() => setChatUser(user, chatUsersRefs, i)}>
 								<div className={Styles.avatarName}>
 									<Image src={user.imgSrc} width={49.06} height={49} className={Styles.avatar} />
 									<h3 className={Styles.username}>{user.firstName} {user.lastName}</h3>
@@ -95,15 +114,15 @@ const Game = () => {
 								{
 									chatMsgs.map((chatMsg) => <div className={Styles.chatMsg} style={{ left: chatMsg.type == "receiver" ? "0" : "auto", right: chatMsg.type == "sender" ? "0" : "auto" }}>
 										<div className={Styles.msgBox} style={{ justifyContent: chatMsg.type == "receiver" ? "flex-start" : "flex-end" }}>
-											<div className={Styles.msgContent} style={{backgroundColor: chatMsg.type == "receiver" ? "#3A3A3C" : "#409CFF", borderRadius: chatMsg.type == "receiver" ? "0 5px 5px 5px" : "5px 5px 0 5px"}}>
-												<h3>{chatMsg.msgContent}</h3>
+											<div ref={messagesEndRef} className={Styles.msgContent} style={{backgroundColor: chatMsg.type == "receiver" ? "#3A3A3C" : "#409CFF", borderRadius: chatMsg.type == "receiver" ? "0 5px 5px 5px" : "5px 5px 0 5px"}}>
+												{chatMsg.msgContent}
 											</div>
 										</div>
 									</div>)
 								}
 							</div>
 							<div className={Styles.msgInput}>
-								<input type="text" placeholder="message"  value={enteredMsg} onChange={(e) => setEnteredMsg(e.target.value)} onKeyDown={(event) => setMsg(enteredMsg, event)} />
+								<input type="text" placeholder="message"  value={enteredMsg} onChange={(e) => setEnteredMsg(e.target.value)} onKeyDown={(event) => setMsg(enteredMsg, event, setChatMsgs, chatMsgs, setEnteredMsg)} />
 								<Image src={Console} width={23} height={23} />
 							</div>
 						</div>
@@ -113,4 +132,4 @@ const Game = () => {
 		</>
 	);
 };
-export default Game;
+export default Chat;
