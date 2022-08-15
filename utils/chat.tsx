@@ -12,3 +12,7 @@ export const setMsg = (enteredMessage: string, e:React.KeyboardEvent<HTMLDivElem
 export function showConversation() {
     console.log("Show");
 }
+
+export const scrollToBottom = (messagesEndRef: HTMLDivElement) => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+}

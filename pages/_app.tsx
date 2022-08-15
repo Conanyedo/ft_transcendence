@@ -1,7 +1,14 @@
 import { AppProps } from "next/app";
 import { AnimatePresence } from "framer-motion";
-import "../styles/globals.css";
+import "@styles/globals.css"
 import Skeleton from "../components/skeleton";
+import {
+	RecoilRoot,
+	atom,
+	selector,
+	useRecoilState,
+	useRecoilValue,
+  } from 'recoil';
 
 let i = 0;
 

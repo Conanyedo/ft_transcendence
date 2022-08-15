@@ -86,3 +86,14 @@ div#__next {
     padding: 1.5rem;
   }
 } */
+
+@keyframes bounce-3 {
+  0%   { transform: translateY(0); }
+  30%  { transform: translateY(-100px); }
+  50%  { transform: translateY(0); }
+  100% { transform: translateY(0); }
+}
+
+svg:hover {
+  fill: #409CFF;
+}
