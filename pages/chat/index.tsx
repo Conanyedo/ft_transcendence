@@ -142,7 +142,7 @@ const Chat = () => {
 									</div>)
 								}
 							</div>
-							<div className={Styles.sendDiv}>
+							<div className={Styles.sendDiv} style={{ gap: enteredMsg != "" ?  "1.5rem" : "0"}}>
 								<div className={Styles.msgInput}>
 									<input type="text" placeholder="message" value={enteredMsg} onChange={(e) => setEnteredMsg(e.target.value)} onKeyDown={(event) => setMsg(enteredMsg, event, setChatMsgs, chatMsgs, setEnteredMsg)} />
 									<div onClick={sendInvite} className={Styles.console}><GameIconAsset color="#D9D9D9" /></div>

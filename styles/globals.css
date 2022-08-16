@@ -20,7 +20,7 @@ body {
   /* overflow: auto; */
 }
 
-::-webkit-scrollbar-thumb {
+/* ::-webkit-scrollbar-thumb {
   background: #242426;
   border-radius: 10px;
   height: 100%;
@@ -34,7 +34,7 @@ body {
   padding-left: 1rem;
   margin-top: 50px;
   height: 100%;
-}
+} */
 
 /* html, body, #app, #app>div {
   height: 100vh;
