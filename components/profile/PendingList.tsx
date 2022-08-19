@@ -2,7 +2,9 @@ import classes from "../../styles/PendingList.module.css";
 import Image from "next/image";
 
 import profile from "../../public/profileImage.png";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { UserType } from "../../Types/dataTypes";
+import axios from "axios";
 
 let hideList = `${classes.listOptions} ${classes.hideListOption}`;
 
@@ -11,7 +13,7 @@ const Pendingfriend: React.FC<friendDataType> = (props) => {
 		<div className={classes.friend}>
 			<div className={classes.Avatar_name}>
 				<div className={classes.avatar}>
-					<Image src={props.Avatar} />
+					<img src={props.Avatar} />
 				</div>
 				<div className={classes.friendName}>{props.fullName}</div>
 			</div>
@@ -37,16 +39,40 @@ const PendingList = () => {
 			: `${classes.listOptions}  ${classes.hideListOption}`;
 	};
 
+	const [listPanding, setListPanding] = useState<UserType[]>();
+	let users:UserType[] = [];
+	useEffect(() => {
+		const fetchData = async () => {
+			const data = await axios
+				.get("https://test-76ddc-default-rtdb.firebaseio.com/friend.json")
+				.then((res) => {
+					const entries = Object.entries(res.data);
+					entries.map((user) => {
+						users.push(user[1]);
+					});
+					setListPanding(users);
+				});
+		};
+		if (!listPanding) fetchData();
+	}, []);
+
 	return (
 		<div className={classes.listFriends}>
-			<Pendingfriend fullName="Ayoub boulbaz" Avatar={profile} />
-			<Pendingfriend fullName="Younnes Bouddou" Avatar={profile} />
-			<Pendingfriend fullName="Abdellah Belhachmi" Avatar={profile} />
-			<Pendingfriend fullName="Fati Mryoula" Avatar={profile} />
-			<Pendingfriend fullName="mol lban" Avatar={profile} />
-			<Pendingfriend fullName="molat Dar lklba" Avatar={profile} />
-			<Pendingfriend fullName="mol lban" Avatar={profile} />
-			<Pendingfriend fullName="molat Dar lklba" Avatar={profile} />
+			{
+				listPanding?.map((user) => <Pendingfriend fullName={user.fullName} Avatar={user.avatar} />)	
+			}{
+				listPanding?.map((user) => <Pendingfriend fullName={user.fullName} Avatar={user.avatar} />)	
+			}{
+				listPanding?.map((user) => <Pendingfriend fullName={user.fullName} Avatar={user.avatar} />)	
+			}{
+				listPanding?.map((user) => <Pendingfriend fullName={user.fullName} Avatar={user.avatar} />)	
+			}{
+				listPanding?.map((user) => <Pendingfriend fullName={user.fullName} Avatar={user.avatar} />)	
+			}{
+				listPanding?.map((user) => <Pendingfriend fullName={user.fullName} Avatar={user.avatar} />)	
+			}{
+				listPanding?.map((user) => <Pendingfriend fullName={user.fullName} Avatar={user.avatar} />)	
+			}
 		</div>
 	);
 };
