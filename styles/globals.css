@@ -16,84 +16,26 @@
 html,
 body {
   width: 100%;
+  height: 100%;
   background-color: #1C1C1E;
-  /* overflow: auto; */
 }
-
-/* ::-webkit-scrollbar-thumb {
-  background: #242426;
-  border-radius: 10px;
-  height: 100%;
-  padding-left: 1rem;
-}
-
-::-webkit-scrollbar {
-  background-color: #2D2F31;
-  width: 5px;
-  border: 3px solid #2D2F31;
-  padding-left: 1rem;
-  margin-top: 50px;
-  height: 100%;
-} */
-
-/* html, body, #app, #app>div {
-  height: 100vh;
-} */
 
 a {
   color: inherit;
   text-decoration: none;
 }
 
-/* .search-input {
-	color: #C6E1FF;
-	font-weight: 300;
-} */
-
 .section {
 	background-color: #242426;
 }
 
-/* .max-h {
-	height: 90vh;
-} */
-
-/* .width-header {
-	width: calc(100% - 8rem);
-	margin-left: 8rem;
-	margin-top: 2rem;
-} */
-
-/* .container {
-  border: 2px solid lightblue;
-  height: 100%;
-  width: 100%;
-} */
-
 div#__next {
-  /* position: absolute; */
-  /* top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0; */
-  /* border: 2px solid red; */
+  height: 100%;
 }
-
-/* @media only screen and (max-width: 600px) {
-  .width-header {
-    width: 100%;
-    margin: 0;
-    padding: 1.5rem;
-  }
-} */
 
 @keyframes bounce-3 {
   0%   { transform: translateY(0); }
   30%  { transform: translateY(-100px); }
   50%  { transform: translateY(0); }
   100% { transform: translateY(0); }
-}
-
-svg:hover {
-  fill: #409CFF;
 }

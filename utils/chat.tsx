@@ -1,7 +1,5 @@
 // Introducing in scope functions here
-export const setMsg = (enteredMessage: string, e:React.KeyboardEvent<HTMLDivElement>, setChatMsgs: Function, chatMsgs:Array<Object>, setEnteredMsg: Function) => {
-
-    let keycode:number = e.keyCode;
+export const setMsg = (enteredMessage: string, keycode: number, setChatMsgs: Function, chatMsgs:Array<Object>, setEnteredMsg: Function) => {
 
     if (keycode == 13) {
         setChatMsgs([...chatMsgs, { msgContent: enteredMessage, time: "07:19 PM", type: "sender", name: "You" }]);

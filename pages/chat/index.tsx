@@ -5,10 +5,10 @@ import Avatar from "@public/profile.jpg";
 import Menu from "@public/Options-gray.svg";
 import sendArrow from "@public/send-arrow.svg";
 import { useState, useRef, useEffect, RefObject } from "react";
-import { setMsg, showConversation, scrollToBottom } from "@utils/chat";
-import { chatUser, chatMsg, color } from "@interfaces/chat";
-
-import { GameIconAsset, ChannelAsset } from "./svg/index"
+import { setMsg, scrollToBottom } from "@utils/chat";
+import { chatUser, chatMsg } from "@interfaces/chat";
+import { ModalBox } from "@components/Modal";
+import { GameIconAsset, ChannelAsset } from "./svg/index";
 
 // Making a component for the invite msg
 
@@ -70,6 +70,7 @@ const Chat = () => {
 	const [currentUser, setCurrentUser] = useState<chatUser>(lastUsers[0]);
 	const [enteredMsg, setEnteredMsg] = useState("");
 	const [prevUser, setPrevUser] = useState<number>(0);
+	const [show, setShow] = useState<boolean>(false)
 
 	const [chatMsgs, setChatMsgs] = useState<Array<chatMsg>>([
 		{ msgContent: "Test1", time: "07:19 PM", type: "sender", name: "You" },
@@ -85,7 +86,7 @@ const Chat = () => {
 	}
 
 	function createChannel() {
-		console.log("Create channel here!")
+		setShow(!show);
 	}
 
 	// UseEffect here
@@ -101,6 +102,7 @@ const Chat = () => {
 						<div className={Styles.topSection}>
 							<h1 className={Styles.msg}>Message</h1>
 							<div onClick={createChannel} className={Styles.channel}><ChannelAsset color="#758293"/></div>
+							<ModalBox show={show} setShow={setShow} />
 						</div>
 						<div className={Styles.chatSearch}>
 							<Image src={Search} width={20} height={20} />
@@ -144,10 +146,10 @@ const Chat = () => {
 							</div>
 							<div className={Styles.sendDiv} style={{ gap: enteredMsg != "" ?  "1.5rem" : "0"}}>
 								<div className={Styles.msgInput}>
-									<input type="text" placeholder="message" value={enteredMsg} onChange={(e) => setEnteredMsg(e.target.value)} onKeyDown={(event) => setMsg(enteredMsg, event, setChatMsgs, chatMsgs, setEnteredMsg)} />
+									<input type="text" placeholder="message" value={enteredMsg} onChange={(e) => setEnteredMsg(e.target.value)} onKeyDown={(event) => setMsg(enteredMsg, event.keyCode, setChatMsgs, chatMsgs, setEnteredMsg)} />
 									<div onClick={sendInvite} className={Styles.console}><GameIconAsset color="#D9D9D9" /></div>
 								</div>
-								<div className={Styles.sendCtr}>{enteredMsg && <Image src={sendArrow} width={40} height={40} className={Styles.animatedBtn} />}</div>
+								<div onClick={() => setMsg(enteredMsg, 13,  setChatMsgs, chatMsgs, setEnteredMsg)} className={Styles.sendCtr}>{enteredMsg && <Image src={sendArrow} width={40} height={40} className={Styles.animatedBtn} />}</div>
 							</div>
 
 						</div>
