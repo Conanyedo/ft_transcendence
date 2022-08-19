@@ -6,6 +6,14 @@ import Search from "../../public/Icon.svg";
 import Avatar from "../../public/profile.jpg";
 import DownArrow from "../../public/Caret down.svg";
 import { useRouter } from "next/router";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
+
+import { Toggle, ToggleValue } from "../store/UI-Slice";
+import { useOutsideAlerter } from "../profile/ProfileInfoEdit";
+import axios from "axios";
+import { UserType } from "../../Types/dataTypes";
+import { initialState as emtyUser } from "../store/userSlice";
+import { motion } from "framer-motion";
 
 interface DATA {
 	image: any;
@@ -13,33 +21,83 @@ interface DATA {
 	ntf: boolean;
 }
 
-const dataUser: DATA = {
-	image: Avatar,
-	name: "Halima Elgmal",
-	ntf: true,
+const UserSection = () => {
+	const menu = useRef(null);
+	const dispatch = useAppDispatch();
+	const [dropDown, setDropDown] = useState(false);
+	const [UserData, setUserData] = useState<UserType>(emtyUser);
+	const ClickHandler = () => setDropDown(!dropDown);
+	const toggleHandler = () => {
+		dispatch(Toggle());
+		ClickHandler();
+	};
+	useOutsideAlerter(menu, setDropDown);
+
+	useEffect(() => {
+		const fetchData = async () => {
+			const data = await axios
+				.get(
+					`https://test-76ddc-default-rtdb.firebaseio.com/owner.json`
+				)
+				.then((res) => {
+					setUserData(res.data);
+				});
+		};
+		if (UserData?.fullName === "") fetchData();
+	}, []);
+	// console.log(route.pathname);
+	
+	return (
+		<div className={classes.avatarContainer} onClick={ClickHandler}>
+			<img src={UserData?.avatar} className={classes.avatar} />
+			<Text className={classes.userName}>{UserData?.fullName}</Text>
+			<Image src={DownArrow} width={24} height={24} />
+			{dropDown && (
+				<motion.div
+					initial={{ scale: 0.5 }}
+					animate={{ scale: 1 }}
+					className={classes.DropDown}
+					ref={menu}
+				>
+					<div className={classes.EditP} onClick={toggleHandler}>
+						Edit profile
+					</div>
+					<div className={classes.LogOut}>Log out</div>
+				</motion.div>
+			)}
+		</div>
+	);
 };
 
-const Header = () => {
+const Header: React.FC<{ setPos: (page: string) => void }> = (props) => {
 	const input = useRef(null);
 	const router = useRouter();
-	const searchHanler:FormEventHandler = (e) => {
+	if (router.pathname === '/')
+		return <></>
+	const searchHanler: FormEventHandler = (e) => {
+		let current: any = input.current;
 		e.preventDefault();
+		props.setPos("hide");
 		router.push({
-			pathname: '/search',
-			query: { search: `${input.current!.value}` },
-		})
-	}
+			pathname: "/search",
+			query: { search: `${current.value}` },
+		});
+	};
 	useEffect(() => {
-		input.current!.value = (router.query.data) ? router.query.data : '';
-	}, [input])
+		let current: any = input.current;
+		current.value = router.query.data ? router.query.data : "";
+	}, [input]);
+	// const route = useRouter();
 
-	const [userData] = useState<DATA>(dataUser);
 	return (
 		<div className={classes.topBar}>
 			<div className={classes.tmpctn}>
 				<div className={classes.inputContainer}>
 					<Image src={Search} width={24} height={24} />
-					<form className={classes.inputContainer} onSubmit={searchHanler}>
+					<form
+						className={classes.inputContainer}
+						onSubmit={searchHanler}
+					>
 						<input
 							ref={input}
 							type="text"
@@ -48,17 +106,7 @@ const Header = () => {
 						/>
 					</form>
 				</div>
-				<div className={classes.avatarContainer}>
-					<Image
-						src={userData.image}
-						width={36}
-						height={36}
-						style={{ borderRadius: "10px" }}
-					/>
-					<Text className={classes.userName}>{userData.name}</Text>
-
-					<Image src={DownArrow} width={24} height={24} />
-				</div>
+				<UserSection />
 			</div>
 		</div>
 	);

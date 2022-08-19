@@ -2,23 +2,23 @@
 
 
 .topBar {
-	z-index: 999;
+	z-index: 997;
 	position: fixed;
 	top: 0;
 	right: 0;
 	left: 0;
 	margin-left: calc(2.8935185185% + 90px);
 	margin-right: 2.8935185185%;
-	padding: 6px;
-	padding-top: calc(3.7037037037% + 6px);
+	padding: 0.4rem;
+	padding-top: 3.8rem;
 	display: flex;
 	justify-content: center;
 	background-color: #1C1C1E;
 }
+
 .tmpctn {
 	display: flex;
 	width: 100%;
-	max-width: 1724px;
 	justify-content: space-between;
 }
 
@@ -27,12 +27,12 @@
 	font-family: 'Inter';
 	font-style: normal;
 	font-weight: 500;
-	font-size: 18px;
+	font-size: 1.2rem;
 	line-height: 22px;
 	width: 90%;
 	color: rgba(198, 225, 255, 0.5);
 	background-color: transparent;
-	margin-left: 18px;
+	margin-left: 1.2rem;
 }
 
 .searchInput::placeholder {
@@ -47,7 +47,7 @@
 .inputContainer {
 	display: flex;
 	width: 67%;
-	max-width: 1150px;
+	max-width: 76.667rem;
 }
 
 .avatarContainer {
@@ -56,34 +56,89 @@
 	padding: 0;
 	display: flex;
 	justify-self: center;
-	gap: 1.5rem;
+	position: relative;
+}
+
+.avatar {
+	width: 3.5rem;
+	height: 3.5rem;
+	border-radius: 5px;
 }
 
 .userName {
 	text-align: center;
 	margin: auto 0;
-}
-@media only screen and (min-width: 1926px) {
-	.topBar {
-		 padding-top: 84px; 
-	}
+	margin-left: 0.533rem;
 }
 
-@media only screen and (max-width: 930px) {
+/* DropDown */
+
+.DropDown {
+	position: absolute;
+	top: 3.4rem;
+	right: 0;
+	padding: 0.267rem;
+	background: #3A3A3C;
+	box-shadow: 0px 0px 25px #00000080;
+	border-radius: 5px;
+}
+
+.EditP {
+	font-family: 'Inter';
+	font-style: normal;
+	font-weight: 400;
+	font-size: 1.2rem;
+	line-height: 17px;
+	color: #FFFFFF;
+	padding: .7rem 2rem;
+	text-align: center;
+
+}
+
+.LogOut {
+	font-family: 'Inter';
+	font-style: normal;
+	font-weight: 400;
+	font-size: 1.2rem;
+	line-height: 17px;
+	color: #FF6482;
+	padding: .7rem 2rem;
+	text-align: center;
+}
+
+.EditP:hover,
+.LogOut:hover {
+	background: #2B2B2D;
+	border-radius: 5px;
+}
+
+@media only screen and (max-width: 880px) {
+	.DropDown {
+		top: 4.5rem;
+	}
 	.userName {
 		display: none;
 	}
-
+	.topBar {
+		padding-top: 2rem;
+	}
 	.avatarContainer {
-		gap: .5em;
 		background-color: transparent;
+	}
+	.DropDown {
+		width: max-content;
+	}
+	.avatar {
+		width: 4.5rem;
+		height: 4.5rem;
+		border-radius: 5px;
 	}
 }
 
 @media only screen and (max-width: 600px) {
 	.topBar {
 		margin: 0;
-		padding-left: 2.8935185185%;
-		padding-right: 2.8935185185%;
+		padding-left: 6rem;
+		padding-right: 0.8rem;
 	}
 }
