@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import AppContent from "./Appcontent";
 import Header from "./Header/Header";
-import classes from "../styles/sideBar.module.css";
 import SideNav from "./Header/sideNav";
 import classesNav from "../styles/sideNav.module.css";
 import { useRouter } from "next/router";
@@ -33,7 +32,7 @@ const Skeleton = (props: { elm: any }) => {
 	const dispatch = useAppDispatch();
 	const toggleHandler = () => dispatch(Toggle());
 	return (
-		<div className={classes["app-container"]}>
+		<div >
 			{displayCard && <ProfileInfoEdit setTagle={toggleHandler} />}
 			<Header setPos={navBarHandler} />
 			<SideNav onNav={navBarHandler} currentPos={posIndicator} />
