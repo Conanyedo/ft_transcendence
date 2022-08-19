@@ -15,7 +15,7 @@ import { GameIconAsset, ChannelAsset } from "./svg/index";
 function InviteMsg(invitedUser: chatUser) {
 	return (<div className={Styles.inviteMsg}>
 		<div>
-			<Image src={invitedUser.imgSrc} width={38} height={38} />
+			<Image src={invitedUser.imgSrc} width={38} height={38} className={Styles.inviteAvatar} />
 			<div>
 				{invitedUser.firstName + " " + invitedUser.lastName}
 				<p>You invite them to play pong game</p>
@@ -123,7 +123,9 @@ const Chat = () => {
 					<div className={Styles.rightContent}>
 						<div className={Styles.topDetails}>
 							<div className={Styles.flex}>
-								<Image src={currentUser.imgSrc} width={76} height={76} className={Styles.avatar} />
+								<div className={Styles.avatarProps}>
+									<Image src={currentUser.imgSrc} width={76} height={76} className={Styles.avatar} />
+								</div>
 								<div>
 									<h1 className={Styles.chatUsername}>{currentUser.firstName + " " + currentUser.lastName}</h1>
 									<p className={Styles.chatUserStatus}>{currentUser.status}</p>

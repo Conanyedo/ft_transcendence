@@ -32,7 +32,7 @@ const Skeleton = (props: { elm: any }) => {
 	const dispatch = useAppDispatch();
 	const toggleHandler = () => dispatch(Toggle());
 	return (
-		<div >
+		<div className="root-div" >
 			{displayCard && <ProfileInfoEdit setTagle={toggleHandler} />}
 			<Header setPos={navBarHandler} />
 			<SideNav onNav={navBarHandler} currentPos={posIndicator} />

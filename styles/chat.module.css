@@ -2,7 +2,7 @@
     display: flex;
     background-color: #2C2C2E;
     width: 100%;
-    max-height: 100%;
+    max-height: 85%;
     border-radius: 15px;
     margin-top: 0 !important;
 }
@@ -109,9 +109,10 @@
     position: relative;
     width: 100%;
     overflow-y: scroll;
+    overflow-x: hidden;
     margin-top: 1rem;
     height: 100%;
-    max-height: 58.75rem;
+    /* max-height: 58.75rem; */
 }
 
 .bottomSection::-webkit-scrollbar {
@@ -235,16 +236,17 @@
 }
 
 .msgContent {
-    padding: 20;
+    padding: 1.25rem;
     word-break: break-all;
     text-align: left;
     height: fit-content;
     width: fit-content;
-    padding: 10px 20px;
-    margin-top: 21px;
-    max-width: 433px;
+    padding: 0.625rem 1.25rem;
+    margin-top: 1.313rem;
+    /* width: 40%; */
+    max-width: 27.063rem;
     margin-bottom: 1rem;
-    font-size: 16px;
+    font-size: 1rem;
     color: #fff;
     font-weight: 500;
 }
@@ -495,7 +497,9 @@
 @media only screen and (max-width: 600px) {
 
     .chatContainer {
-        /* border: 2px solid red; */
+        position: static;
+        height: 100%;
+        background-color: #242426;
     }
 
     .leftContent {
@@ -510,27 +514,37 @@
         width: 100%;
         height: 100%;
         border-radius: 15px;
-        position: inherit;
-        max-height: 100%;
-        display: flex;
-        flex-direction: column;
+        position: static;
+        padding: 0;
+        align-items: center;
+        /* border: 3px solid blue; */
+        background-color: #242426;
     }
 
     .rightContent {
-
-        height: 100%;
+        
     }
 
     .chatRight {
         width: 100%;
-        height: 100%;
-        border-radius: 15px;
+        height: 90%;
         max-height: 100%;
+        border-radius: 15px;
     }
 
     .topDetails {
         border-radius: 15px;
         width: 100%;
+        height: 80px;
+    }
+
+    .topDetails > .flex > div > h1 {
+        font-size: 2rem;
+    }
+
+    .avatarProps {
+        width: 50px;
+        height: 50px;
     }
 
     .flex {
@@ -538,6 +552,11 @@
     }
 
     .msgsDisplay {
+        position: static;
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        background-color: #242426;
     }
     
 }
