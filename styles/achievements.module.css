@@ -1,18 +1,16 @@
 .achievements {
 	background-color: #2c2c2e;
 	border-radius: 15px;
-	flex: 31.0571240972%;
-	padding: 20px 22px 18px 28px;
+	width: 30%;
+	padding: 1.333rem 1.467rem 1.2rem 1.867rem;
 	display: flex;
 	flex-direction: column;
 	justify-content: flex-start;
-	max-width: 550px;
-	max-height: 365px;
 }
 
-
 .badge {
-	background-color: transparent;
+	width: 3.333rem !important;
+	height: 3.333rem !important;
 }
 
 .title {
@@ -21,15 +19,15 @@
 	font-family: 'Inter';
 	font-style: normal;
 	font-weight: 600;
-	font-size: 18px;
+	font-size: 1.4rem;
 	line-height: 22px;
-	margin-bottom: 24px;
+	margin-bottom: 1.6rem;
 }
 
-.ctnScroll{
-	overflow: auto;
+.ctnScroll {
+	overflow-y: auto;
 	scrollbar-color: #2B2B2D #3A3A3C;
-	max-height: 264px;
+	max-height: 22.2rem;
 }
 
 .achievementctn {
@@ -39,15 +37,15 @@
 	align-items: center;
 	background: #3A3A3C;
 	border-radius: 8px;
-	padding: 5px 14px;
-	margin-bottom: 8px;
-	margin-right: 5px;
-	height: 60px;
+	padding: 0.333rem 0.933rem;
+	margin-bottom: 0.533rem;
+	margin-right: 0.333rem;
+	height: 4rem;
 }
 
 .achievement {
 	background-color: transparent;
-	padding-left: 26.6px;
+	padding-left: 1.773rem;
 }
 
 .achievementTitle {
@@ -55,7 +53,7 @@
 	font-family: 'Inter';
 	font-style: normal;
 	font-weight: 600;
-	font-size: 14px;
+	font-size: 1.1rem;
 	line-height: 17px;
 	color: #D9D9D9;
 }
@@ -65,9 +63,10 @@
 	font-family: 'Inter';
 	font-style: normal;
 	font-weight: 300;
-	font-size: 12px;
+	font-size: 0.9rem;
 	line-height: 15px;
 	color: #D9D9D9;
+	margin-top: 0.5rem;
 }
 
 .noAchievements {
@@ -76,27 +75,18 @@
 	font-family: 'Inter';
 	font-style: normal;
 	font-weight: 300;
-	font-size: 17px;
+	font-size: 1.133rem;
 	line-height: 15px;
-
 }
 
 
-@media only screen and (max-width: 1300px) {
+@media only screen and (max-width: 1000px) {
 	.achievements {
 		order: 2;
 		max-height: 536px;
-	}
-	.ctnScroll {
-
-		max-height: 536px;
-	}
-}
-
-@media only screen and (max-width: 1180px) {
-	.achievements {
-		flex: 100%;
 		width: 100%;
-		max-width: none;
+	}
+	.disc {
+		margin-top: 0.01rem;
 	}
 }

@@ -1,40 +1,59 @@
 import classes from "../../styles/overView.module.css";
+import { initialState as emtyUser } from "../store/userSlice";
 
 import TierGold from "../../public/LeaderBoard/Tier_Gold.svg";
 import Rank_1 from "../../public/LeaderBoard/FirstPlace.svg";
 import Rank_2 from "../../public/LeaderBoard/Second.svg";
 import Rank_3 from "../../public/LeaderBoard/thirdPlace.svg";
-import { Progress } from "react-sweet-progress";
 import Image from "next/image";
-import {isMobile} from 'react-device-detect';
-import profile from "../../public/profileImage.png";
+import { isMobile } from "react-device-detect";
+import { useRouter } from "next/router";
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { UserType } from "../../Types/dataTypes";
+import Chart from "../chart/chartProgress";
 
 interface matchDataType {
 	badge: number;
 	fullName: string;
 	games: number;
-	WinRatio: string;
+	Win: number;
 	lvlP: number;
+	avatar: string;
 }
 
 const ElmRank: React.FC<matchDataType> = (props) => {
-	const avatar = (props.badge === 1) ? Rank_1 : (props.badge === 2) ? Rank_2 : (props.badge === 3) ? Rank_3 : null;
+	const avatar =
+		props.badge === 1
+			? Rank_1
+			: props.badge === 2
+			? Rank_2
+			: props.badge === 3
+			? Rank_3
+			: null;
 	return (
 		<div className={classes.tableElments}>
 			<div className={classes.Rank}>
 				<div className={classes.SvgSize}>
-					{props.badge > 3 && props.badge || avatar && <Image src={avatar} />}
+					{(props.badge > 3 && props.badge) ||
+						(avatar && <Image src={avatar} />)}
 				</div>
 			</div>
 			<div className={`${classes.User} ${classes.UserTR}`}>
 				<div className={classes.profileUser}>
-					<Image src={profile} />
+					{/* <Image src={profile} /> */}
+					<img src={props.avatar} />
 				</div>
 				{props.fullName}
 			</div>
-			<div className={classes.games}>{props.games}</div>
+			<div className={`${classes.games} ${classes.gamesTotal}`}>
+				{props.games}
+			</div>
 			<div className={classes.WinRatio}>
-				<div className={classes.WinRatioCalc}>{props.WinRatio}</div>
+				<div className={classes.WinRatioCalc}>{`${Math.floor(
+					(props.Win / props.games) * 100
+				)} % - ${props.Win}W / ${props.games - props.Win}L`}</div>{" "}
+				{/*  70 % - 864W / 336L  */}
 				<div className={classes.pourcentagectn}>
 					<div
 						className={classes.pourcentage}
@@ -53,14 +72,78 @@ const ElmRank: React.FC<matchDataType> = (props) => {
 	);
 };
 
-const LeaderBoard = () => {
+const Stats = () => {
+	const [user, setUser] = useState<UserType>(emtyUser);
+	const rout = useRouter();
+	useEffect(() => {
+		const fetchData = async () => {
+			const data = await axios
+				.get(
+					`https://test-76ddc-default-rtdb.firebaseio.com/${
+						rout.query.id || "owner"
+					}.json`
+				)
+				.then((res) => {
+					setUser(res.data);
+				});
+		};
+		if (user.fullName === "") fetchData();
+	}, []);
+	return (
+		<div className={classes.stat}>
+			<div className={classes.LeaderBordTitle}>Stats</div>
+			<div className={classes.statsctn}>
+				<div className={classes.statDig}>
+					<div className={classes.WinRateTitle}>Win Rate</div>
+					<div className={classes.imageCTN}>
+						<Chart
+							amount={Math.floor((user.wins / user.games) * 100)}
+						/>
+					</div>
+				</div>
+				<div className={classes.statbtns}>
+					<div className={classes.cntBTNstat}>{user.games} games</div>
+					<div className={classes.cntBTNstat}>{user.wins} Wins</div>
+					<div className={classes.cntBTNstat}>
+						{user.games - user.wins} Losses
+					</div>
+				</div>
+			</div>
+		</div>
+	);
+};
+
+const LeaderBoard: React.FC<{ owner: UserType }> = (props) => {
+	const [listUsers, setListUsers] = useState<UserType[]>();
+	let users: UserType[] = [];
+	useEffect(() => {
+		const fetchData = async () => {
+			const data = await axios
+				.get("https://test-76ddc-default-rtdb.firebaseio.com/all.json")
+				.then((res) => {
+					const entries = Object.entries(res.data);
+					entries.map((user) => {
+						users.push(user[1]);
+					});
+					setListUsers(users);
+				});
+		};
+		if (!listUsers) fetchData();
+	}, []);
+
 	const lvlP = 72;
 	return (
 		<div className={classes.leaderBoard}>
 			<div className={classes.table}>
 				<div className={classes.LeaderBordTitle}>LeaderBoard</div>
 				<div className={classes.leaderBoardctn}>
-					<div className={`${classes.tableTitles} ${isMobile ? classes.tableTitlesInMobile : ' '}`}>
+					<div
+						className={`${
+							isMobile
+								? classes.tableTitlesInMobile
+								: classes.tableTitles
+						}`}
+					>
 						<div
 							className={` ${classes.Rank} ${classes.tableTitle} `}
 						>
@@ -88,48 +171,32 @@ const LeaderBoard = () => {
 						</div>
 					</div>
 					<div className={classes.leaderBoardTable}>
-						<ElmRank fullName="Choaib Abouelwafa" games={1200} WinRatio='72 % - 864W / 336L' lvlP={lvlP} badge={1} />
-						<ElmRank fullName="Anas Elmqas" games={958} WinRatio='70 % - 864W / 336L' lvlP={70} badge={2} />
-						<ElmRank fullName="Imane kachmiri" games={650} WinRatio='65 % - 864W / 336L' lvlP={65} badge={3} />
-						<ElmRank fullName="Fati Fleur" games={481} WinRatio='60 % - 864W / 336L' lvlP={60} badge={4} />
-						<ElmRank fullName="Asmae Lmkhantar" games={250} WinRatio='59 % - 864W / 336L' lvlP={59} badge={5} />
-						<ElmRank fullName="Yassine Karma     " games={69} WinRatio='50 % - 864W / 336L' lvlP={50} badge={6} />
-						<ElmRank fullName="Imane kachmiri" games={15} WinRatio='45 % - 864W / 336L' lvlP={45} badge={7} />
-						<ElmRank fullName="Choaib Abouelwafa" games={0} WinRatio='0 % - 864W / 336L' lvlP={0} badge={8} />
-						
+						{listUsers &&
+							listUsers.map((user) => (
+								<ElmRank
+									fullName={user.fullName}
+									games={user.games}
+									Win={user.wins}
+									lvlP={(user.lvl % 1000) / 10}
+									badge={user.RankPos}
+									avatar={user.avatar}
+								/>
+							))}
+						{listUsers &&
+							listUsers.map((user) => (
+								<ElmRank
+									fullName={user.fullName}
+									games={user.games}
+									Win={user.wins}
+									lvlP={(user.lvl % 1000) / 10}
+									badge={user.RankPos}
+									avatar={user.avatar}
+								/>
+							))}
 					</div>
 				</div>
 			</div>
-			<div className={classes.stat}>
-				<div className={classes.LeaderBordTitle}>Stats</div>
-				<div className={classes.statsctn}>
-					<div className={classes.statDig}>
-						<div className={classes.WinRateTitle}>Win Rate</div>
-						<div className={classes.imageCTN}>
-							<Progress
-								type="circle"
-								status="active"
-								theme={{
-									active: {
-										trailColor: "#555D67",
-										color: "#31BAAE",
-									},
-								}}
-								symbolClassName={classes.textprogress}
-								strokeWidth={10}
-								width={128}
-								percent={30}
-								className={classes.progress}
-							/>
-						</div>
-					</div>
-					<div className={classes.statbtns}>
-						<div className={classes.cntBTNstat}>1200 games</div>
-						<div className={classes.cntBTNstat}>864 Wins</div>
-						<div className={classes.cntBTNstat}>336 Losses</div>
-					</div>
-				</div>
-			</div>
+			<Stats />
 		</div>
 	);
 };

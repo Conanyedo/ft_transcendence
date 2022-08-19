@@ -7,8 +7,9 @@ import Friend from "../../public/FriendIcons/FriendIcon.svg";
 import Option from "../../public/FriendIcons/OptionIcon.svg";
 import Pending from "../../public/FriendIcons/Pending.svg";
 import AddFriend from "../../public/FriendIcons/ADDFriend.svg";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
+import { useOutsideAlerter } from "../../components/profile/ProfileInfoEdit";
 
 interface friendDataType {
 	Avatar: any;
@@ -16,9 +17,10 @@ interface friendDataType {
 	stat: string;
 }
 
-export const FriendButton = () => {
+export const FriendButton = (props: { remove: (act: string) => void }) => {
+	const handler = () => props.remove("remove");
 	return (
-		<div className={classes.btnfriend}>
+		<div className={classes.btnfriend} onClick={handler}>
 			<div className={classes.Hover}>
 				<Image src={Union} />
 			</div>
@@ -31,9 +33,10 @@ export const FriendButton = () => {
 	);
 };
 
-export const ADDButton = () => {
+export const ADDButton = (props: { add: (act: string) => void }) => {
+	const handler = () => props.add("add");
 	return (
-		<div className={classes.btnFriendADD}>
+		<div className={classes.btnFriendADD} onClick={handler}>
 			<div className={classes.icon}>
 				<Image src={AddFriend} />
 			</div>
@@ -57,15 +60,21 @@ export const PendingButton = () => {
 	);
 };
 
-export const OptionMenu:React.FC<{FirstBtn: string, SecondBtn: string, width: string}> = (props) => {
+export const OptionMenu: React.FC<{
+	FirstBtn: string;
+	SecondBtn: string;
+	width: string;
+	ref_cmp: React.MutableRefObject<null>;
+}> = (props) => {
 	return (
 		<motion.div
+			ref={props.ref_cmp}
 			initial={{ scale: 0.5 }}
 			animate={{ scale: 1 }}
 			className={classes.optionMenu}
-			style={{width:`${props.width}`}}
+			style={{ width: `${props.width}` }}
 		>
-			<div className={classes.itemListoption}>{props.FirstBtn}</div>
+			<div className={classes.itemListoption} onClick={alert}>{props.FirstBtn}</div>
 			<div className={classes.itemListoptionBlock}>{props.SecondBtn}</div>
 		</motion.div>
 	);
@@ -80,6 +89,8 @@ const User: React.FC<friendDataType> = (props) => {
 		if (props.stat === "pending") setClassBtn(classes.pendingvalue);
 		if (props.stat === "notFriend") setClassBtn(classes.notFriendvalue);
 	}, [classBtn]);
+	const wrapperRef = useRef(null);
+	useOutsideAlerter(wrapperRef, setOption);
 	return (
 		<div className={classes.friend}>
 			<div className={classes.Avatar_name}>
@@ -92,22 +103,15 @@ const User: React.FC<friendDataType> = (props) => {
 				{props.stat === "notFriend" && <ADDButton />}
 				{props.stat === "pending" && <PendingButton />}
 				{props.stat === "friend" && <FriendButton />}
-				<div className={classes.optionsbtnctn} onClick={TaggleHandler}>
+				<div className={classes.optionsbtnctn} onClick={TaggleHandler} >
 					<Image src={Option} />
 					{option && (
-						<OptionMenu FirstBtn="Direct message" SecondBtn="Block user" width="105px" />
-						// <motion.div
-						// 	initial={{ scale: 0.5 }}
-						// 	animate={{ scale: 1 }}
-						// 	className={classes.optionMenu}
-						// >
-						// 	<div className={classes.itemListoption}>
-						// 		Direct message
-						// 	</div>
-						// 	<div className={classes.itemListoptionBlock}>
-						// 		Block user
-						// 	</div>
-						// </motion.div>
+						<OptionMenu
+							ref_cmp={wrapperRef}
+							FirstBtn="Direct message"
+							SecondBtn="Block user"
+							width="9rem"
+						/>
 					)}
 				</div>
 			</div>
@@ -117,7 +121,7 @@ const User: React.FC<friendDataType> = (props) => {
 
 const Search = () => {
 	const router = useRouter();
-	console.log(router.query.search);
+	// console.log(router.query.search);
 	const Searchkey = router.query.search;
 	return (
 		<div className={classes.SearchCTN}>

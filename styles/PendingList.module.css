@@ -1,14 +1,20 @@
+
 .listFriends {
 	display: flex;
 	flex-direction: column;
-	height: 355px;
-	overflow: auto;
+	height: 48.5rem;
+	overflow-y: auto;
 	scrollbar-color: #2B2B2D #3A3A3C;
 	/* border: 1px solid red; */
-	padding-right: 9px;
-	margin-top: 20px;
+	padding-right: 0.6rem;
+	margin-top: 1.333rem;
 }
 
+.FriendCtn {
+	padding: 2rem;
+	padding-top: 0;
+	padding-bottom: 1.867rem;
+}
 
 .friend {
 	display: flex;
@@ -16,16 +22,15 @@
 	align-items: center;
 	background: #2B2B2D;
 	border-radius: 5px;
-	padding: 10px 12px;
-	margin: 10px 0 0 0;
-	height: 50px;
-	max-height: 50px;
+	padding: 0.667rem 0.8rem;
+	margin: 0.667rem 0 0 0;
+	/* max-height: 3.333rem; */
+	width: 100%;
 }
 
 .friend:first-of-type {
-	margin-top: 2px;
+	margin-top: 0.133rem;
 }
-
 .friend:last-of-type {
 	margin-bottom: 0px;
 }
@@ -34,31 +39,32 @@
 	display: flex;
 	justify-content: flex-start;
 	align-items: center;
-	flex: 10%;
+	flex: 30%;
 }
 
 .avatar {
-	width: 28px;
-	height: 28px;
+	width: 3rem;
+	height: 3rem;
 	border-radius: 5px;
-
+	overflow: hidden;
 }
 
 .friendName {
 	font-family: 'Inter';
 	font-style: normal;
 	font-weight: 500;
-	font-size: 14px;
+	font-size: 1.2rem;
 	line-height: 17px;
 	color: #D9D9D9;
-	margin-left: 10px;
+	margin-left: 0.667rem;
 }
 
 .optionFriend {
 	display: flex;
-	justify-content: space-between;
+	justify-content: flex-end;
 	align-items: center;
-	width: 15%;
+	width: 20%;
+
 }
 
 .sendMsg {
@@ -66,16 +72,18 @@
 	font-family: 'Inter';
 	font-style: normal;
 	font-weight: 500;
-	font-size: 14px;
+	font-size: 1rem;
 	line-height: 17px;
 	color: #409CFF;
 	padding-top: 7px;
 	height: 30px;
+	margin-right: 1rem;
 }
 
 
 
 .sendMsg:last-of-type {
+	margin-right: 0;
 	color: #758293;
 }
 
@@ -86,8 +94,23 @@
 	color: #C6E1FF;
 }
 
+@media only screen and (max-width: 1728px) {
+	.listFriends {
+		height: 70rem;
+	}
+	.friends {
+		height: 100%;
+	}
+}
+
+@media only screen and (max-width: 1000px) {
+	.listFriends {
+		height: 40rem;
+	}
+}
 
 
+/*
 
 @media only screen and (max-width: 1024px) {
 	.optionFriend {
@@ -143,4 +166,4 @@
 	.optionFriend {
 		width: 17%;
 	}
-}
+}*/

@@ -3,51 +3,17 @@
 	display: flex;
 	flex-direction: column;
 	border-radius: 15px;
-	flex: 67.3670387393%;
-	/* justify-content: flex-end; */
-	max-width: 1150px;
-	min-width: 375px;
-	max-height: 545px;
-}
-
-.ctnIndic {
-	margin-bottom: 28px;
-	height: 3px;
-	margin-left: 30px;
-	border-radius: 2px;
-}
-
-.Indic {
-	background: #409CFF;
-	border-radius: 2px;
-	width: 80px;
-	height: 3px;
-	transition: all .3s ease-in-out;
-}
-
-.IndicFriend {
-	background: #409CFF;
-	border-radius: 2px;
-	width: 80px;
-	height: 3px;
-	margin-left: 123px;
-	width: 62px;
-	transition: all .3s ease-in-out;
-}
-
-.leaderBoardTable {
-	width: 100%;
-	margin-top: 9px;
-	overflow: auto;
-	scrollbar-color: #2B2B2D #3A3A3C;
-	/* padding-right: 9px; */
+	flex: 60%;
+	/* min-width: 375px;
+	max-width: 2000px;
+	max-height: 545px; */
 }
 
 .navView {
 	display: flex;
 	justify-content: flex-start;
-	margin: 28px 28px;
-	margin-bottom: 0;
+	margin:  2rem  2rem;
+	margin-bottom: 5px;
 }
 
 .TitleOverView {
@@ -55,111 +21,137 @@
 	font-family: 'Inter';
 	font-style: normal;
 	font-weight: 600;
-	font-size: 18px;
+	font-size: 1.4rem;
 	line-height: 22px;
 	color: #C6E1FF;
-	padding-bottom: 5px;
+	padding-bottom: 0.333rem;
 }
 
 .TitleOverView:first-of-type {
-	margin-right: 40px;
+	margin-right: 2.667rem;
 }
 
-/* .overViewbtn {
-	border-bottom: 3px solid #409CFF;
+.ctnIndic {
+	margin-bottom: 1.867rem;
+	height: 0.333rem;
+	margin-left: 2rem;
+	border-radius: 2px;
 }
 
-.FriendsBtn {
-	border-bottom: 3px solid #409CFF;
-} */
+.Indic {
+	background: #409CFF;
+	border-radius: 2px;
+	width: 6.1rem;
+	height: 0.333rem;
+	transition: all .3s ease-in-out;
+}
 
-.overview {
-	/* display: flex; */
-	width: 100%;
-	/* flex-wrap: wrap; */
-	gap: 24px;
-	/* width: 100%; */
-	/* justify-content: start; */
+.IndicFriend {
+	background: #409CFF;
+	border-radius: 2px;
+	height: 0.333rem;
+	margin-left: 9.2rem;
+	width: 5rem;
+	transition: all .3s ease-in-out;
 }
 
 
 .leaderBoard {
 	display: flex;
 	width: 100%;
+	flex-direction: row;
 	justify-content: space-between;
-	align-items: flex-start;
-	padding: 30px;
+	padding: 2rem;
 	padding-top: 0;
-	padding-bottom: 28px;
+	padding-bottom: 1.867rem;
+}
+
+.overview {
+	padding-bottom: 0;
+	width: 100%;
+	gap: 1.6rem;
 }
 
 .LeaderBordTitle {
 	font-family: 'Inter';
 	font-style: normal;
 	font-weight: 500;
-	font-size: 16px;
+	font-size: 1.2rem;
 	line-height: 19px;
 	color: #758293;
-	margin-bottom: 14px;
-	margin-bottom: 14px;
+	margin-bottom: 0.933rem;
 }
 
 .leaderBoardctn {
 	display: flex;
 	flex-direction: column;
-	justify-content: space-between;
-	flex: 74.9484536082%;
-
 	background: #3A3A3C;
 	box-shadow: 5px 5px 25px #1c1c1ecc;
 	border-radius: 15px;
-	padding: 14px 25px;
+	padding: 0.933rem 1.667rem;
 	padding-top: 0;
-	margin-top: 15px;
-	/* border: 1px solid lightcoral; */
-	flex: 60%;
-	height: 402px;
-	margin-right: 25px;
+	margin-top: 1rem;
+	height: 52rem;
+	margin-right: 1.667rem;
+}
+
+.table {
+	/* margin-bottom: 1.333rem; */
+	width: 100%;
+	height: 54.8rem;
 }
 
 .tableTitles {
 	display: flex;
 	align-items: center;
-	padding-right: 20px;
-	padding-left: 5px;
-	margin-top: 15px;
-	height: 16px;
+	padding-right: 1.733rem;
+	padding-left: 0.667rem;
+	margin-top: 1rem;
+	height: 2rem;
 }
 
 .tableTitlesInMobile {
-	padding-right: 5px;
-	padding-left: 3px; /* TODO */
+	display: flex;
+	align-items: center;
+	margin-top: 1rem;
+	height: 2rem;
+	padding-right: 0.733rem;
+	padding-left: 0.667rem;
 }
-
 
 .tableTitle {
 	font-family: 'Inter';
 	font-style: normal;
 	font-weight: 400;
-	font-size: 12px;
+	font-size: 1.067rem;
 	line-height: 15px;
 	color: #FCFDFF;
 	width: 100%;
-	margin-bottom: 8px;
+	margin-bottom: 0.533rem;
 }
 
 .tableTitle:last-of-type {
 	text-align: center;
 }
 
+.leaderBoardTable {
+	width: 100%;
+	margin-top: 0.6rem;
+	overflow-y: auto;
+	z-index: 3;
+	scrollbar-color: #2B2B2D #3A3A3C;
+	max-height: 50rem;
+}
+
+
 .tableElments {
 	display: flex;
 	align-items: center;
 	background: #2B2B2D;
 	border-radius: 5px;
-	padding: 9px 5px;
-	margin-bottom: 10px;
-	height: 50px;
+	padding: 0.6rem 0.667rem;
+	margin-bottom: 0.667rem;
+	height: 5.333rem;
 }
 
 .tableElments:last-of-type {
@@ -172,54 +164,67 @@
 }
 
 .Rank {
-	flex: 11.5442278861%;
+	width: 15%;
 }
 
 .User {
-	flex: 31.905465288%;
+	width: 30%;
+}
+
+.gamesTotal {
+	font-family: 'Inter';
+	font-style: normal;
+	font-weight: 500;
+	font-size: 1.2rem;
+	line-height: 17px;
+	color: #D9D9D9;
 }
 
 .games {
-	flex: 16.2481536189%;
+	width: 15%;
 }
 
 .WinRatio {
-	flex: 33.6779911374%;
+	width: 30%;
+}
+
+.Tier {
+	width: 10%;
+	display: flex;
+	justify-content: center;
 }
 
 .WinRatioCalc {
 	font-family: 'Inter';
 	font-style: normal;
 	font-weight: 500;
-	font-size: 8px;
+	font-size: 0.933rem;
 	line-height: 10px;
 	color: #D9D9D9;
-	margin-bottom: 4px;
-}
-
-.Tier {
-	flex: 5.6129985229%;
-	display: flex;
-	justify-content: center;
+	margin-bottom: 0.267rem;
 }
 
 .SvgSize {
 	display: flex;
 	justify-content: center;
-	width: 36.18px;
-	height: 31;
+	width: 4rem;
+	height: 4rem;
 	font-family: 'Inter';
 	font-style: normal;
 	font-weight: 500;
-	font-size: 16px;
+	font-size: 1.067rem;
 	line-height: 19px;
-
 	color: #D9D9D9;
+	text-align: center;
+	align-items: center;
 }
 
 .profileUser {
-	height: 28px;
-	width: 28px;
+	height: 2.667rem;
+	width: 2.667rem;
+	margin-right: 0.8rem;
+	border-radius: 0.333rem;
+	overflow: hidden;
 }
 
 .UserTR {
@@ -229,14 +234,14 @@
 	font-family: 'Inter';
 	font-style: normal;
 	font-weight: 500;
-	font-size: 12px;
+	font-size: 1.333rem;
 	line-height: 15px;
 	color: #D9D9D9;
 }
 
 .pourcentagectn {
 	width: 70%;
-	height: 6px;
+	height: 0.6rem;
 	background: #555D67;
 	border-radius: 5px;
 	padding: 0;
@@ -245,24 +250,23 @@
 
 .pourcentage {
 	background: #409CFF;
-	height: 6px;
+	height: 0.6rem;
 	border-radius: 5px 0px 0px 5px;
 }
 
-.profileUser {
-	margin-right: 6px;
-}
-
-.table {
-	flex: 70.8576998051%;
-}
 
 /* Stats -------------------------- */
+
 .stat {
-	flex: 21.9298245614%;
+	height: 52rem;
+}
+
+.statDig {
+	height: 100%;
 }
 
 .statsctn {
+	height: 100%;
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
@@ -270,162 +274,153 @@
 	background: #3A3A3C;
 	box-shadow: 5px 5px 25px #1c1c1ecc;
 	border-radius: 15px;
-	flex: 23.1958762887%;
-	padding: 10px;
-	max-height: 402px;
-}
-
-.imageCTN {
-	display: flex;
-	justify-content: center;
-
-	margin: 49px;
-	margin-top: 24px;
-	margin-bottom: 31px;
-	width: 127px;
-	height: 127px;
-}
-
-.cntBTNstat {
-	padding: 14px 48px;
-	margin-bottom: 9px;
-	text-align: center;
-	width: 205px;
-	height: 50px;
-	background: #2D2F31;
-	border-radius: 5px;
-	font-family: 'Inter';
-	font-style: normal;
-	font-weight: 500;
-	font-size: 18px;
-	line-height: 22px;
-	color: #C6E1FF;
-
-}
-
-.textprogress {
-	font-family: 'Inter' !important;
-	font-style: normal !important;
-	font-weight: 500 !important;
-	font-size: 24px !important;
-	line-height: 29px !important;
-	color: #D9D9D9 !important;
 }
 
 .WinRateTitle {
 	font-family: 'Inter';
 	font-style: normal;
 	font-weight: 400;
-	font-size: 18px;
+	font-size: 1.467rem;
 	line-height: 22px;
 	color: #D9D9D9;
-	margin-top: 14px;
+	margin-top: 0.933rem;
 	text-align: center;
 }
 
-@media only screen and (min-width: 1300px) {
-	.overviewCtn {
-		flex: 60%;
+.imageCTN {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin: 3.267rem;
+	margin-top: 1.6rem;
+	margin-bottom: 2.067rem;
+	width: 10rem;
+	height: 10rem;
+}
+
+.cntBTNstat {
+	padding: 1.2rem 3.467rem;
+	margin-bottom: 1.2rem;
+	text-align: center;
+	background: #2D2F31;
+	border-radius: 5px;
+	font-family: 'Inter';
+	font-style: normal;
+	font-weight: 500;
+	font-size: 1.2rem;
+	line-height: 22px;
+	color: #C6E1FF;
+
+}
+
+.progress {
+	width: 100%;
+	
+}
+
+.textprogress {
+	font-family: 'Inter' !important;
+	font-style: normal !important;
+	font-weight: 500 !important;
+	font-size: 28px !important;
+	line-height: 29px !important;
+	color: #D9D9D9 !important;
+}
+
+@media only screen and (max-width: 2200px) {
+	.UserTR {
+		font-size: 1.1rem;
 	}
 }
 
-@media only screen and (max-width: 1300px) {
-	.overviewCtn {
-		flex: 70%;
-		order: 0;
-		max-height: none;
+@media only screen and (max-width: 1728px) {
+	.UserTR {
+		font-size: 1rem;
 	}
 
-	.WinRatio {
-		display: inline;
+	.ctnIndic {
+		margin-left: 2.2rem;
 	}
-
-	.overview{
-		margin: 0;
-		padding: 0;
-	}
-
-	.leaderBoard {
-		flex-direction: column;
-	}
-	.table {
-		width: 100%;
-		margin-bottom: 15px;
+	.IndicFriend {
+		margin-left: 8.9rem;
 	}
 
 	.leaderBoardctn {
-		margin-right: 0;
-	}
-	.stat {
-		width: 100%;
+		margin: 0;
 	}
 
-	.profileUser {
-		display: none;
+	.leaderBoard {
+		display: flex;
+		width: 100%;
+		flex-direction: column;
+		padding: 2rem;
 	}
+
+	.stat {
+		height: 100%;
+	}
+
 	.statsctn {
-
-		padding: 24px;
+		/* height: 100%; */
+		padding: 1.6rem;
 		flex-direction: row;
-		justify-content: center;
-		width: 100%;
+		align-items: center;
 	}
-	.stat {
-		flex: 0;
-		width: 100%;
+
+	.WinRateTitle {
+		margin-top: 0;
+		margin-bottom: 1rem;
 	}
+
+	.imageCTN {
+		/* padding-top: 2rem; */
+		margin: 0;
+		width: 10rem;
+	}
+
 	.statDig {
-		width: 177px;
+		height: 100%;
+		margin-left: 2rem;
 		display: flex;
 		flex-direction: column;
 		align-items: center;
 		order: 1;
 	}
-}
 
-@media only screen and (max-width: 1032px) {
-	.leaderBoard {
+	.statbtns {
+		display: flex;
 		flex-direction: column;
+		justify-content: space-between;
+		height: 100%;
+	}
+
+	.cntBTNstat:last-of-type {
+		margin: 0;
 	}
 
 	.table {
-		flex: 0;
-		width: 100%;
-		margin: 0;
+		margin-bottom: 1.333rem;
 	}
-
-	.leaderBoardctn {
-		margin: 0;
-		margin-bottom: 24px;
-	}
-
 }
 
-
-
-@media only screen and (max-width: 750px) {
+@media only screen and (max-width: 700px) {
 	.WinRatio {
 		display: none;
 	}
 
-}
-@media only screen and (max-width: 550px) {
-	.statsctn {
-		flex-direction: column;
+	.Rank {
+		width: 20%;
 	}
-	.statDig {
-		order: 0;
-	}
-	.leaderBoard {
-		/* TODO */
-	}
-	.overviewCtn {
-		min-width: 0;
-	}
-}
 
-@media screen and (min-width:1300px) and (max-width:1600px) {
-	.WinRatio {
-		display: none;
+	.User {
+		width: 45%;
+	}
+
+	.games {
+		width: 20%;
+	}
+
+	.Tier {
+		width: 10%;
 	}
 }

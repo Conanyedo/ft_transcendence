@@ -1,28 +1,25 @@
 .history {
 	background-color: #2c2c2e;
 	border-radius: 15px;
-	flex: 31.0571240972%;
-	max-width: 550px;
-
-	max-height: 545px;
-	padding: 28px 28px;
-	padding-bottom: 12px;
+	width: 30%;
+	padding: 1.867rem;
+	padding-bottom: 0.8rem;
 }
 
 .titleMatchHistory {
 	font-family: 'Inter';
 	font-style: normal;
 	font-weight: 600;
-	font-size: 18px;
+	font-size: 1.4rem;
 	line-height: 22px;
 	color: #C6E1FF;
 }
 
 .historyMatchCtn {
 	height: 100%;
-	margin-top: 30px;
-	max-height: 444px;
-	overflow: auto;
+	margin-top: 2rem;
+	max-height: 55rem;
+	overflow-y: auto;
 	scrollbar-color: #2B2B2D #3A3A3C;
 }
 
@@ -30,9 +27,9 @@
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	margin: 24px 0 0 0;
-	max-height: 58px;
-	padding-right: 10px;
+	margin: 1rem 0 0 0;
+	max-height: 3.867rem;
+	padding-right: 0.667rem;
 }
 
 .match:last-of-type {
@@ -48,21 +45,24 @@
 	align-items: center;
 	justify-content: space-between;
 	flex: 50%;
+	gap: 1rem;
 }
 
 .avatar {
-	width: 28px;
-	margin-right: 10px;
+	display: flex;
+	width: 3.8rem;
+	/* margin-right: 0.667rem; */
 }
 
 .dataMatch {
 	font-family: 'Inter';
 	font-style: normal;
 	font-weight: 500;
-	font-size: 14px;
+	font-size: 1.2rem;
 	line-height: 17px;
 	color: #758293;
 	flex: 20%;
+	margin-right: 1rem;
 }
 
 .Result {
@@ -71,11 +71,21 @@
 	font-family: 'Inter';
 	font-style: normal;
 	font-weight: 700;
-	font-size: 14px;
+	font-size: 0.933rem;
+	line-height: 17px;
+}
+
+.won,
+.loss {
+	font-family: 'Inter';
+	font-style: normal;
+	font-weight: 700;
+	font-size: 1rem;
 	line-height: 17px;
 }
 
 .won {
+
 	color: #31BAAE;
 }
 
@@ -83,7 +93,41 @@
 	color: #FF6482;
 }
 
+@media only screen and (max-width: 1728px) {
+	.res {
+		display: none;
+	}
 
+	.dataMatch {
+		font-size: 1rem;
+	}
+
+	.won,
+	.loss {
+		font-size: .8rem;
+	}
+	.historyMatchCtn {
+		max-height: 78.3rem;
+	}
+}
+
+@media only screen and (max-width: 1000px) {
+	.history {
+		order: 2;
+		max-height: 35.733rem;
+		width: 100%;
+		padding-bottom: 1.867rem;
+	}
+	.historyMatchCtn {
+		max-height: 18rem;
+	}
+
+	.res {
+		display: inline;
+	}
+}
+
+/*
 @media screen and (min-width:1300px) and (max-width:1550px) {
 	.res {
 		display: none;
@@ -107,4 +151,4 @@
 	.dataMatch {
 		font-size: 12px;
 	}
-}
+}*/

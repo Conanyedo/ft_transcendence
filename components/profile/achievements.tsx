@@ -12,7 +12,9 @@ interface TypeAchievement {
 const Achievement: React.FC<TypeAchievement> = (props) => {
 	return (
 		<div className={classes.achievementctn}>
-			<Image src={props.logo} className={classes.badge} />
+			<div className={classes.badge}>
+				<Image src={props.logo} />
+			</div>
 			<div className={classes.achievement}>
 				<p className={classes.achievementTitle}>{props.title}</p>
 				<p className={classes.disc}>{props.disc}</p>
