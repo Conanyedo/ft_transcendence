@@ -33,6 +33,7 @@ const FriendProfileList = () => {
 		friendClass = classes.btnFriend;
 	}
 	return (
+		<div className={classes.FriendCtn}>
 		<div className={classes.friends}>
 			<div className={classes.friendHeader}>
 				<div className={classes.btnCtn}>
@@ -56,10 +57,10 @@ const FriendProfileList = () => {
 					</div>
 				</form>
 			</div>
-			{indexCtn === 0 && <ListFriends />}
-			{indexCtn === 1 && <PendingList />}
-			{indexCtn === 2 && <BlockList />}
-		</div>
+			{indexCtn === 0 && <ListFriends /> ||
+			indexCtn === 1 && <PendingList /> ||
+			indexCtn === 2 && <BlockList />}
+		</div></div>
 	);
 };
 
