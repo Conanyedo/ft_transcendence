@@ -7,19 +7,22 @@ import React, { useState } from "react";
 
 import FriendProfileList from "./FriendProfileList";
 import LeaderBoard from "./LeaderBord";
+import { useRouter } from "next/router";
+import { useSelector } from "react-redux";
+import { selectUser } from "../store/userSlice";
 // import Message from ''
 
 
-interface TYPEOVERVIEW {
-	me: boolean
-}
-
-const OverView:React.FC<TYPEOVERVIEW> = (props) => {
+const OverView:React.FC = () => {
+	const rout = useRouter();
 	const [overViewShow, setOverViewShow] = useState(true);
-
+	const [showFriend, setShowFriend] = useState( rout.query.id === undefined );
+	const user = useSelector(selectUser);
+	
 	const showOverView = () => {
 		setOverViewShow(true);
 	};
+	
 	const hideOverView = () => setOverViewShow(false);
 	let underLineOverView = overViewShow ? classes.overViewbtn : " ";
 	let underLinefriends = !overViewShow ? classes.FriendsBtn : " ";
@@ -34,7 +37,7 @@ const OverView:React.FC<TYPEOVERVIEW> = (props) => {
 					>
 						Overview
 					</div>
-					{props.me && <div
+					{showFriend && <div
 						className={`${classes.TitleOverView} ${underLinefriends} `}
 						onClick={hideOverView}
 					>
@@ -49,8 +52,8 @@ const OverView:React.FC<TYPEOVERVIEW> = (props) => {
 					></motion.div>
 				</div>
 			</div>
-			<div className={classes.overview}>
-				{overViewShow && <LeaderBoard />}
+			<div className={classes.overview} style={{paddingBottom: '0'}}>
+				{overViewShow && <LeaderBoard owner={user} />}
 				{!overViewShow && <FriendProfileList />}
 			</div>
 		</div>
