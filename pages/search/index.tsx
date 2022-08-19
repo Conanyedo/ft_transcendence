@@ -9,8 +9,6 @@ import Pending from "../../public/FriendIcons/Pending.svg";
 import AddFriend from "../../public/FriendIcons/ADDFriend.svg";
 import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
-import { useAppDispatch, useAppSelector } from "../../components/store/hooks";
-import { addFriend, selectUser } from "../../components/store/userSlice";
 import { useOutsideAlerter } from "../../components/profile/ProfileInfoEdit";
 
 interface friendDataType {
