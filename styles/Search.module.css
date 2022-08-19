@@ -4,29 +4,28 @@
 	flex: auto;
 	background: #2C2C2E80;
 	border-radius: 15px;
-	padding: 20px;
+	padding: 1.333rem;
 	margin: auto;
-	max-width: 1728px;
 }
 
 .SearchCTNIN {
-	padding-right: 10px;
+	padding-right: 0.667rem;
 	/* margin: 5px; */
 	overflow-y: auto;
 	scrollbar-color: #2B2B2D #3A3A3C;
 	height: 98%;
-	max-height: 1480px;
+	max-height: 88vh;
 }
 
 .friend {
 	display: flex;
 	justify-content: flex-start;
-	max-height: 100px;
+	max-height: 6.667rem;
 	width: 100%;
-	margin-bottom: 10px;
+	margin-bottom: 0.667rem;
 	background: #2B2B2D;
 	border-radius: 5px;
-	padding: 10px 20px;
+	padding: 0.667rem 1.333rem;
 }
 
 
@@ -42,16 +41,16 @@
 }
 
 .avatar {
-	width: 80px;
-	height: 80px;
-	margin-right: 24px;
+	width: 5.333rem;
+	height: 5.333rem;
+	margin-right: 1.6rem;
 }
 
 .friendName {
 	font-family: 'Inter';
 	font-style: normal;
 	font-weight: 500;
-	font-size: 24px;
+	font-size: 1.6rem;
 	line-height: 29px;
 	color: #FFFFFF;
 }
@@ -69,43 +68,38 @@
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	width: 30px;
-	height: 30px;
-	/* background-color: #3A3A3C;
-	border-radius: 50%; */
+	width: 2rem;
+	height: 2rem;
 	cursor: pointer;
-	margin-left: 15px;
+	margin-left: 1rem;
 }
 
 .optionMenu {
-	/* width: 100%; */
 	z-index: 1000;
 	position: absolute;
 	background: #3A3A3C;
-	box-shadow: 0px 0px 25px rgba(0, 0, 0, 0.5);
+	box-shadow: 0px 0px 25px #00000080;
 	border-radius: 5px;
-	top: 33px;
-	right: 0;
+	top: 2.2rem;
+	right: .4rem;
 	display: flex;
-	padding: 4px;
+	padding: 0.3rem;
 	flex-direction: column;
 	justify-content: center;
 	align-items: left;
-
-	/* min-width: 105px; */
+	width: 120%;
 }
 
 .itemListoption {
-	/* height: 23px; */
 	text-align: left;
 	font-family: 'Inter';
 	font-style: normal;
 	font-weight: 400;
-	font-size: 12px;
+	font-size: 1rem;
 	line-height: 15px;
 	color: #FFFFFF;
-	margin-bottom: 4px;
-	padding: 4px;
+	margin-bottom: 0.3rem;
+	padding: 0.3rem;
 	border-radius: 5px;
 	cursor: pointer;
 }
@@ -115,15 +109,14 @@
 }
 
 .itemListoptionBlock {
-	/* height: 23px; */
 	text-align: left;
 	font-family: 'Inter';
 	font-style: normal;
 	font-weight: 400;
-	font-size: 12px;
+	font-size: 1rem;
 	line-height: 15px;
 	color: #FF6482;
-	padding: 4px 4px;
+	padding: 0.3rem;
 	border-radius: 5px;
 	cursor: pointer;
 }
@@ -138,8 +131,8 @@
 .notHover {
 	display: flex;
 	align-items: center;
-	width: 24px;
-	height: 24px;
+	width: 1.6rem;
+	height: 1.6rem;
 }
 
 .Hover,
@@ -152,7 +145,7 @@
 	font-family: 'Inter';
 	font-style: normal;
 	font-weight: 600;
-	font-size: 16px;
+	font-size: 1.067rem;
 	line-height: 19px;
 	color: #409CFF;
 }
@@ -164,16 +157,16 @@
 .btnfriend {
 	border: 2px solid #409CFF;
 	border-radius: 5px;
-	width: 140px;
+	width: 9.333rem;
 	/* height: 40px; */
-	padding: 10px 0;
+	padding: 0.667rem 0;
 	display: flex;
 	justify-content: space-evenly;
 	align-items: center;
 	font-family: 'Inter';
 	font-style: normal;
 	font-weight: 600;
-	font-size: 16px;
+	font-size: 1.067rem;
 	line-height: 19px;
 	cursor: pointer;
 }
@@ -197,8 +190,8 @@
 .PendingnotHover {
 	display: flex;
 	align-items: center;
-	width: 24px;
-	height: 24px;
+	width: 1.6rem;
+	height: 1.6rem;
 }
 
 
@@ -213,7 +206,7 @@
 	font-family: 'Inter';
 	font-style: normal;
 	font-weight: 600;
-	font-size: 16px;
+	font-size: 1.067rem;
 	line-height: 19px;
 	color: #C6E1FF;
 }
@@ -225,16 +218,16 @@
 .btnPending {
 	border: 2px solid #C6E1FF;
 	border-radius: 5px;
-	width: 140px;
+	width: 9.333rem;
 	/* max-height: 39px; */
-	padding: 10px 0;
+	padding: 0.667rem 0;
 	display: flex;
 	justify-content: space-evenly;
 	align-items: center;
 	font-family: 'Inter';
 	font-style: normal;
 	font-weight: 600;
-	font-size: 16px;
+	font-size: 1.067rem;
 	line-height: 19px;
 	cursor: pointer;
 }
@@ -259,16 +252,16 @@
 .btnFriendADD {
 	border: 2px solid #409CFF;
 	border-radius: 5px;
-	width: 140px;
+	width: 9.333rem;
 	/* height: 40px; */
-	padding: 10px 0;
+	padding: 0.667rem 0;
 	display: flex;
 	justify-content: space-evenly;
 	align-items: center;
 	font-family: 'Inter';
 	font-style: normal;
 	font-weight: 600;
-	font-size: 16px;
+	font-size: 1.067rem;
 	line-height: 19px;
 	cursor: pointer;
 }
@@ -277,12 +270,47 @@
 	font-family: 'Inter';
 	font-style: normal;
 	font-weight: 600;
-	font-size: 16px;
+	font-size: 1.067rem;
 	line-height: 19px;
 	color: #409CFF;
 }
 
+@media screen and (max-width:450px) {
 
+	.Hover,
+	.notHover,
+	.icon,
+	.PendingHover,
+	.PendingnotHover {
+		display: none !important;
+	}
+
+	.friendName {
+		font-size: 1.3rem;
+	}
+
+	.avatar {
+		width: 4rem;
+		height: 4rem;
+	}
+
+	.btnfriend,
+	.btnFriendADD,
+	.btnPending {
+		padding: .4rem 0;
+		width: 7rem;
+	}
+
+	.AddBTNHover,
+	.AddBTN,
+	.FriendADD,
+	.PendingBTNHover,
+	.PendingBTN {
+		font-size: 1rem;
+	}
+}
+
+/*
 @media screen and (max-width:900px) {
 	.friendName {
 		font-size: 18px;
@@ -355,7 +383,7 @@
 	.avatar {
 		width: 40px;
 		height: 40px;
-		/* margin: 0; */
+		/* margin: 0; 
 	}
 
 	.SearchCTN {
@@ -374,4 +402,4 @@
 		margin-right: 0;
 	}
 
-}
+}*/
