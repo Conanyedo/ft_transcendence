@@ -39,25 +39,25 @@ input {
 
 @media only screen and (max-width: 2880px) {
 	:root {
-		font-size: 15px !important;
+		font-size: 13px !important;
 	}
 }
 
 @media only screen and (max-width: 2600px) {
 	:root {
-		font-size: 14px !important;
+		font-size: 12px !important;
 	}
 }
 
 @media only screen and (max-width: 2200px) {
 	:root {
-		font-size: 13px !important;
+		font-size: 12px !important;
 	}
 }
 
 @media only screen and (max-width: 1900px) {
 	:root {
-		font-size: 11px !important;
+		font-size: 12px !important;
 	}
 }
 
