@@ -2,15 +2,14 @@
 
 
 .topBar {
-	z-index: 997;
+	z-index: 99;
 	position: fixed;
 	top: 0;
 	right: 0;
 	left: 0;
-	margin-left: calc(2.8935185185% + 90px);
-	margin-right: 2.8935185185%;
-	padding: 0.4rem;
-	padding-top: 3.8rem;
+	margin-left: 6rem;
+	padding: 3rem 3rem;
+	padding-bottom: 1rem;
 	display: flex;
 	justify-content: center;
 	background-color: #1C1C1E;
@@ -45,6 +44,7 @@
 }
 
 .inputContainer {
+	padding-left: .5rem;
 	display: flex;
 	width: 67%;
 	max-width: 76.667rem;
@@ -119,9 +119,6 @@
 	.userName {
 		display: none;
 	}
-	.topBar {
-		padding-top: 2rem;
-	}
 	.avatarContainer {
 		background-color: transparent;
 	}
@@ -137,8 +134,8 @@
 
 @media only screen and (max-width: 600px) {
 	.topBar {
-		margin: 0;
+		margin-left: 0;
+		padding-top: 2rem;
 		padding-left: 6rem;
-		padding-right: 0.8rem;
 	}
 }

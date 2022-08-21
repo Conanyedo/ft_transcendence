@@ -1,6 +1,6 @@
 .burger {
 	display: none;
-	z-index: 999;
+	z-index: 2000;
 	position: fixed;
 	top: 3.2rem;
 	left: 1rem;
@@ -10,6 +10,7 @@
 }
 
 .sidenav {
+	z-index: 1999;
 	background-color: #242426;
 	position: fixed;
 	width: 4rem;
