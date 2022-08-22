@@ -3,7 +3,7 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import Router from "next/router";
 
-import Message from "../../public/SelectedSideNav/ChatSelected.svg";
+import Message from "../../public/ChatIcon.svg";
 import Options from "../../public/LeaderBoard/Options.svg";
 import { OptionMenu } from "../../pages/search";
 import { useOutsideAlerter } from "./ProfileInfoEdit";

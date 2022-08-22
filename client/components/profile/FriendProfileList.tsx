@@ -4,63 +4,104 @@ import Image from "next/image";
 import Search from "../../public/Icon.svg";
 import ListFriends from "./ListFriends";
 import PendingList from "./PendingList";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import BlockList from "./BlockList";
 
 let friendClass = `${classes.btnFriend}  ${classes.btnSelected}`;
 let pendingClass = `${classes.btnFriend} `;
 let blockClass = `${classes.btnFriend} `;
 
+const SearchFriend: React.FC<{ ref_input: any; searchHandler: () => void }> = (
+	props
+) => {
+	const [isOpen, setIsOpen] = useState(false);
+	const ClickHandler = () => {
+		
+		if (props.ref_input.current.value === '')
+			setIsOpen((value) => !value);
+		else
+			props.searchHandler();
+	};
+	return (
+		<form
+			action="#"
+			className={`${classes.searchCtn} ${
+				!isOpen ? classes.resizeCtnSearch : ""
+			}`}
+		>
+			<input
+				type="text"
+				className={`${!isOpen ? classes.hideSearch : classes.search}`}
+				ref={props.ref_input}
+			/>
+			<div className={classes.btnSearch} onClick={ClickHandler}>
+				<Image src={Search} />
+			</div>
+		</form>
+	);
+};
+
 const FriendProfileList = () => {
 	const [indexCtn, setIndexCtn] = useState(0);
+	const ref_input = useRef(null);
 
 	const FirendListHandler = () => {
 		setIndexCtn(0);
-		friendClass =`${classes.btnFriend}  ${classes.btnSelected}`;
+		friendClass = `${classes.btnFriend}  ${classes.btnSelected}`;
 		pendingClass = classes.btnFriend;
 		blockClass = classes.btnFriend;
 	};
 	const PendingListHandler = () => {
-		setIndexCtn(1)
-		pendingClass =`${classes.btnFriend}  ${classes.btnSelected}`;
+		setIndexCtn(1);
+		pendingClass = `${classes.btnFriend}  ${classes.btnSelected}`;
 		friendClass = classes.btnFriend;
 		blockClass = classes.btnFriend;
-	}
+	};
 	const BlockedListHandler = () => {
 		setIndexCtn(2);
-		blockClass =`${classes.btnFriend}  ${classes.btnSelected}`;
+		blockClass = `${classes.btnFriend}  ${classes.btnSelected}`;
 		pendingClass = classes.btnFriend;
 		friendClass = classes.btnFriend;
-	}
+	};
+	const searchHandler = () => {
+		console.log(ref_input.current.value);
+	};
 	return (
 		<div className={classes.FriendCtn}>
-		<div className={classes.friends}>
-			<div className={classes.friendHeader}>
-				<div className={classes.btnCtn}>
-					<div
-						onClick={FirendListHandler}
-						className={friendClass}
-					>
-						Friend List
+			<div className={classes.friends}>
+				<div className={classes.friendHeader}>
+					<div className={classes.btnCtn}>
+						<div
+							onClick={FirendListHandler}
+							className={friendClass}
+						>
+							Friend List
+						</div>
+						<div
+							onClick={PendingListHandler}
+							className={pendingClass}
+						>
+							Pending
+						</div>
+						<div
+							onClick={BlockedListHandler}
+							className={blockClass}
+						>
+							Blocked Users
+						</div>
 					</div>
-					<div 
-						onClick={PendingListHandler} className={pendingClass}>Pending</div>
-					<div 
-						onClick={BlockedListHandler} className={blockClass}>
-						Blocked Users
-					</div>
+					<SearchFriend
+						ref_input={ref_input}
+						searchHandler={searchHandler}
+					/>
 				</div>
-				<form action="#" className={classes.searchCtn}>
-					<input type="text" className={classes.search} />
-					<div className={classes.btnSearch}>
-						<Image src={Search} />
-					</div>
-				</form>
+				{
+					(indexCtn === 0 && <ListFriends />) || //TODO filter with ref_input.current.value
+						(indexCtn === 1 && <PendingList />) || //TODO filter with ref_input.current.value
+						(indexCtn === 2 && <BlockList />) //TODO filter with ref_input.current.value
+				}
 			</div>
-			{indexCtn === 0 && <ListFriends /> ||
-			indexCtn === 1 && <PendingList /> ||
-			indexCtn === 2 && <BlockList />}
-		</div></div>
+		</div>
 	);
 };
 
