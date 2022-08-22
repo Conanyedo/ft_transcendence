@@ -112,7 +112,7 @@ const Chat = () => {
 							{lastUsers.map((user, i) => <div ref={(element) => { chatUsersRefs.current[i] = element }} className={Styles.chatUser} onClick={() => setChatUser(user, chatUsersRefs, i)}>
 								<div className={Styles.avatarName}>
 									<Image src={user.imgSrc} width={49.06} height={49} className={Styles.avatar} />
-									<h3 className={Styles.username}>{user.firstName} {user.lastName}</h3>
+									<div className={Styles.username}>{user.firstName} {user.lastName}</div>
 								</div>
 								<p className={Styles.status}>{user.status}</p>
 							</div>)}
@@ -151,7 +151,7 @@ const Chat = () => {
 									<input type="text" placeholder="message" value={enteredMsg} onChange={(e) => setEnteredMsg(e.target.value)} onKeyDown={(event) => setMsg(enteredMsg, event.keyCode, setChatMsgs, chatMsgs, setEnteredMsg)} />
 									<div onClick={sendInvite} className={Styles.console}><GameIconAsset color="#D9D9D9" /></div>
 								</div>
-								<div onClick={() => setMsg(enteredMsg, 13,  setChatMsgs, chatMsgs, setEnteredMsg)} className={Styles.sendCtr}>{enteredMsg && <Image src={sendArrow} width={40} height={40} className={Styles.animatedBtn} />}</div>
+								<div onClick={() => setMsg(enteredMsg, 13,  setChatMsgs, chatMsgs, setEnteredMsg)} className={Styles.sendCtr}>{enteredMsg && <Image src={sendArrow} width={30} height={30} className={Styles.animatedBtn} />}</div>
 							</div>
 
 						</div>
