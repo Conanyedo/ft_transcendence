@@ -39,19 +39,19 @@ input {
 
 @media only screen and (max-width: 2880px) {
 	:root {
-		font-size: 13px !important;
+		font-size: 16px !important;
 	}
 }
 
 @media only screen and (max-width: 2600px) {
 	:root {
-		font-size: 12px !important;
+		font-size: 15px !important;
 	}
 }
 
 @media only screen and (max-width: 2200px) {
 	:root {
-		font-size: 12px !important;
+		font-size: 14px !important;
 	}
 }
 
@@ -63,11 +63,30 @@ input {
 
 @media only screen and (max-width: 1350px) {
 	:root {
-		font-size: 10px !important;
+		font-size: 11px !important;
 	}
 }
 
 @media only screen and (max-width: 700px) {
+	:root {
+		font-size: 9px !important;
+	}
+}
+
+@media only screen and (max-height: 1620px) and (width < height) {
+	:root {
+		border: 5px solid red;
+		font-size: 14.5px !important;
+	}
+}
+
+@media only screen and (max-height: 1440px) {
+	:root {
+		font-size: 12.5px !important;
+	}
+}
+
+@media only screen and (max-height: 1160px) {
 	:root {
 		font-size: 9px !important;
 	}

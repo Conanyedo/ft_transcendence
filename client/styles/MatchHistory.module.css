@@ -1,7 +1,7 @@
 .history {
 	background-color: #2c2c2e;
 	border-radius: 15px;
-	width: 30%;
+	width: 29.5%;
 	padding: 1.867rem;
 	padding-bottom: 0.8rem;
 }
@@ -93,7 +93,7 @@
 	color: #FF6482;
 }
 
-@media only screen and (max-width: 1728px) {
+@media only screen and (max-width: 2200px) {
 	.res {
 		display: none;
 	}
@@ -107,7 +107,7 @@
 		font-size: 1rem;
 	}
 	.historyMatchCtn {
-		max-height: 78.3rem;
+		max-height: 79rem;
 	}
 }
 

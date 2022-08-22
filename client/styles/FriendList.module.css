@@ -29,9 +29,15 @@
 	border-radius: 3px;
 	height: 2rem;
 	width: 12rem;
+	transition: width 1s;
+}
+
+.resizeCtnSearch {
+	width: 2rem;
 }
 
 .search {
+	display: inline;
 	background: #2B2B2D;
 	border-radius: 3px;
 	color: #758293;
@@ -45,8 +51,9 @@
 
 .btnSearch {
 	display: flex;
-	max-width: 0.867rem;
-	max-height: 0.867rem;
+	max-width: 2rem;
+	max-height: 2rem;
+	cursor: pointer;
 }
 
 .btnFriend {
@@ -174,13 +181,17 @@
 	position: relative;
 }
 
+.hideSearch {
+	display: none;
+}
+
 @media only screen and (max-width: 2050px) {
 	.statusFriend {
 		flex: 30%;
 	}
 }
 
-@media only screen and (max-width: 1728px) {
+@media only screen and (max-width: 2200px) {
 	.listFriends {
 		height: 70rem;
 	}
@@ -196,9 +207,6 @@
 }
 
 @media only screen and (max-width: 880px) {
-	.searchCtn {
-		display: none;
-	}
 	.friend {
 		display: flex;
 		justify-content: space-between;
@@ -212,6 +220,9 @@
 }
 
 @media only screen and (max-width: 530px) {
+	.searchCtn {
+		/* display: none; */
+	}
 	.statusFriend {
 		flex: 5%;
 		font-size: 1rem;
