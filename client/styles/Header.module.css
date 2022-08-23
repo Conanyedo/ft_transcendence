@@ -22,8 +22,8 @@
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	width: 3rem;
-	height: 3rem;
+	width: 1.8rem;
+	height: 1.8rem;
 }
 
 .form {
@@ -39,7 +39,7 @@
 	font-family: 'Inter';
 	font-style: normal;
 	font-weight: 500;
-	font-size: 1.2rem;
+	font-size: 1.5rem;
 	line-height: 22px;
 	width: 90%;
 	color: rgba(198, 225, 255, 0.5);
