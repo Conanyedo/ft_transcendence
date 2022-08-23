@@ -1,0 +1,31 @@
+.loginBtn {
+    /* z-index: 9999; */
+    position: absolute;
+    top: 50vh;
+    left: 50vw;
+    /* width: 12rem; */
+    border: 2px solid #409CFF;
+    border-radius: 5px;
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 600;
+    font-size: 1.5rem;
+    line-height: 15px;
+    color: #409CFF;
+    text-align: center;
+    padding: 1rem 5rem;
+    cursor: pointer;
+}
+
+.loginBtn:hover {
+    border: 2px solid white;
+    background-color: #409CFF;
+    color: white;
+}
+
+.box {
+	width: 15rem;
+	height: 15rem;
+	border-radius: 50%;
+	background: #ff0066;
+}
