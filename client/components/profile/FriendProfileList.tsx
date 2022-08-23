@@ -1,7 +1,7 @@
 import classes from "../../styles/FriendList.module.css";
 import Image from "next/image";
 
-import Search from "../../public/Icon.svg";
+import Search from "../../public/SearchIcon.svg";
 import ListFriends from "./ListFriends";
 import PendingList from "./PendingList";
 import { useRef, useState } from "react";
