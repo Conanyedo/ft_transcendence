@@ -2,7 +2,7 @@ import React, { FormEventHandler, useEffect, useRef, useState } from "react";
 import classes from "../../styles/Header.module.css";
 import { Text } from "../../styles/styled-components";
 import Image from "next/image";
-import Search from "../../public/Icon.svg";
+import Search from "../../public/SearchIcon.svg";
 import DownArrow from "../../public/Caret down.svg";
 import { useRouter } from "next/router";
 import { useAppDispatch } from "../store/hooks";
