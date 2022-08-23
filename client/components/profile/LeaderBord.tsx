@@ -10,17 +10,9 @@ import { isMobile } from "react-device-detect";
 import { useRouter } from "next/router";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { UserType } from "../../Types/dataTypes";
+import { matchDataType, UserType } from "../../Types/dataTypes";
 import Chart from "../chart/chartProgress";
-
-interface matchDataType {
-	badge: number;
-	fullName: string;
-	games: number;
-	Win: number;
-	lvlP: number;
-	avatar: string;
-}
+import { motion } from "framer-motion";
 
 const ElmRank: React.FC<matchDataType> = (props) => {
 	const avatar =
@@ -41,7 +33,6 @@ const ElmRank: React.FC<matchDataType> = (props) => {
 			</div>
 			<div className={`${classes.User} ${classes.UserTR}`}>
 				<div className={classes.profileUser}>
-					{/* <Image src={profile} /> */}
 					<img src={props.avatar} />
 				</div>
 				{props.fullName}
@@ -52,8 +43,7 @@ const ElmRank: React.FC<matchDataType> = (props) => {
 			<div className={classes.WinRatio}>
 				<div className={classes.WinRatioCalc}>{`${Math.floor(
 					(props.Win / props.games) * 100
-				)} % - ${props.Win}W / ${props.games - props.Win}L`}</div>{" "}
-				{/*  70 % - 864W / 336L  */}
+				)} % - ${props.Win}W / ${props.games - props.Win}L`}</div>
 				<div className={classes.pourcentagectn}>
 					<div
 						className={classes.pourcentage}
@@ -123,7 +113,7 @@ const LeaderBoard: React.FC<{ owner: UserType }> = (props) => {
 				.then((res) => {
 					const entries = Object.entries(res.data);
 					entries.map((user) => {
-						users.push(user[1]);
+						users.push(user[1] as UserType);
 					});
 					setListUsers(users);
 				});
@@ -137,40 +127,35 @@ const LeaderBoard: React.FC<{ owner: UserType }> = (props) => {
 			<div className={classes.table}>
 				<div className={classes.LeaderBordTitle}>LeaderBoard</div>
 				<div className={classes.leaderBoardctn}>
-					<div
-						className={`${
+					<div className={`${
 							isMobile
 								? classes.tableTitlesInMobile
 								: classes.tableTitles
 						}`}
 					>
-						<div
-							className={` ${classes.Rank} ${classes.tableTitle} `}
-						>
+						<div className={`${classes.Rank} ${classes.tableTitle}`} >
 							Rank
 						</div>
-						<div
-							className={`${classes.User} ${classes.tableTitle}  `}
-						>
+						<div className={`${classes.User} ${classes.tableTitle}`} >
 							Users
 						</div>
-						<div
-							className={`${classes.games} ${classes.tableTitle}  `}
-						>
+						<div className={`${classes.games} ${classes.tableTitle}`} >
 							Games
 						</div>
-						<div
-							className={`${classes.WinRatio} ${classes.tableTitle}  `}
-						>
+						<div className={`${classes.WinRatio} ${classes.tableTitle}`} >
 							Win Ratio
 						</div>
-						<div
-							className={`${classes.Tier} ${classes.tableTitle}  `}
-						>
+						<div className={`${classes.Tier} ${classes.tableTitle}`} >
 							Tier
 						</div>
 					</div>
-					<div className={classes.leaderBoardTable}>
+					<motion.div
+						initial={{ y: 10, opacity: 0 }}
+						animate={{ y: 0, opacity: 1 }}
+						exit={{ y: -10, opacity: 0 }}
+						transition={{ duration: 0.5 }}
+						className={classes.leaderBoardTable}
+					>
 						{listUsers &&
 							listUsers.map((user) => (
 								<ElmRank
@@ -193,7 +178,7 @@ const LeaderBoard: React.FC<{ owner: UserType }> = (props) => {
 									avatar={user.avatar}
 								/>
 							))}
-					</div>
+					</motion.div>
 				</div>
 			</div>
 			<Stats />
