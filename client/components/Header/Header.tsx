@@ -1,8 +1,8 @@
 import React, { FormEventHandler, useEffect, useRef, useState } from "react";
 import classes from "../../styles/Header.module.css";
-import { Text } from "../../styles/styled-components";
 import Image from "next/image";
 import Search from "../../public/SearchIcon.svg";
+import Notification from "../../public/Notification.svg";
 import DownArrow from "../../public/Caret down.svg";
 import { useRouter } from "next/router";
 import { useAppDispatch } from "../store/hooks";
@@ -13,19 +13,23 @@ import axios from "axios";
 import { UserType } from "../../Types/dataTypes";
 import { initialState as emtyUser } from "../store/userSlice";
 import { motion } from "framer-motion";
-
+//
 const UserSection = () => {
 	const menu = useRef(null);
+	const notifMenu = useRef(null);
 	const dispatch = useAppDispatch();
 	const [dropDown, setDropDown] = useState(false);
 	const [UserData, setUserData] = useState<UserType>(emtyUser);
-	const ClickHandler = () => setDropDown(!dropDown);
+	const ClickHandler = () => setDropDown((value) => !value);
+
+	const [isOpen, setisOpen] = useState(false);
+	const clicknotifHandler = () => {
+		setisOpen((value) => !value);
+	};
 	const toggleHandler = () => {
 		dispatch(Toggle());
 		ClickHandler();
 	};
-	useOutsideAlerter(menu, setDropDown);
-
 	useEffect(() => {
 		const fetchData = async () => {
 			const data = await axios
@@ -38,26 +42,73 @@ const UserSection = () => {
 		};
 		if (UserData?.fullName === "") fetchData();
 	}, []);
-
+	useOutsideAlerter(notifMenu, setisOpen);
+	useOutsideAlerter(menu, setDropDown);
 	return (
-		<div className={classes.avatarContainer} onClick={ClickHandler}>
-			<img src={UserData?.avatar} className={classes.avatar} />
-			<Text className={classes.userName}>{UserData?.fullName}</Text>
-			<Image src={DownArrow} width={24} height={24} />
-			{dropDown && (
-				<motion.div
-					initial={{ scale: 0.5 }}
-					animate={{ scale: 1 }}
-					className={classes.DropDown}
-					ref={menu}
-				>
-					<div className={classes.EditP} onClick={toggleHandler}>
-						Edit profile
-					</div>
-					<div className={classes.LogOut}>Log out</div>
-				</motion.div>
-			)}
-		</div>
+		<>
+			<div
+				className={classes.NotifIcon}
+				ref={notifMenu}
+				onClick={clicknotifHandler}
+			>
+				<div className={classes.dot} />
+				<Image src={Notification} />
+				{isOpen && (
+					<motion.div
+						id="notifmenu"
+						initial={{ scale: 0.5 }}
+						animate={{ scale: 1 }}
+						className={classes.ctnNotif}
+					>
+						<span className={classes.notif}>
+							<span className={classes.notifTitle}>
+								Friend Request
+							</span>
+							abdellah want to be your friend
+						</span>
+						<span className={classes.notif}>
+							<span className={classes.notifTitle}>
+								Challenge Request
+							</span>
+							abdellah Invite you to play pong game
+						</span>
+						<span className={classes.notif}>
+							<span className={classes.notifTitle}>
+								Friend Request
+							</span>
+							ayoub want to be your friend
+						</span>
+						<span className={classes.notif}>
+							<span className={classes.notifTitle}>
+								Challenge Request
+							</span>
+							younes Invite you to play pong game
+						</span>
+					</motion.div>
+				)}
+			</div>
+			<div
+				ref={menu}
+				className={classes.avatarContainer}
+				onClick={ClickHandler}
+			>
+				<img src={UserData?.avatar} className={classes.avatar} />
+				<p className={classes.userName}>{UserData?.fullName}</p>
+				<Image src={DownArrow} width={24} height={24} />
+				{dropDown && (
+					<motion.div
+						initial={{ scale: 0.5 }}
+						animate={{ scale: 1 }}
+						className={classes.DropDown}
+					>
+						<div className={classes.EditP} onClick={toggleHandler}>
+							Edit profile
+						</div>
+						<div className={classes.LogOut}>Log out</div>
+					</motion.div>
+				)}
+			</div>
+		</>
 	);
 };
 
