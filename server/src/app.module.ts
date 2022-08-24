@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
+import { JwtAuthModule } from './jwt-auth/jwt-auth.module';
 
 @Module({
 	imports: [UserModule, TypeOrmModule.forRoot({
@@ -15,6 +16,6 @@ import { AuthModule } from './auth/auth.module';
 		autoLoadEntities: true,
 		synchronize: true,
 		// logging: true, // log sql queries
-	}), AuthModule]
+	}), AuthModule, JwtAuthModule]
 })
 export class AppModule { }
