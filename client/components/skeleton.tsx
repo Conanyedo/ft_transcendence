@@ -1,12 +1,18 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import Header from "./Header/Header";
 import SideNav from "./Header/sideNav";
 import classesNav from "../styles/sideNav.module.css";
 import { useRouter } from "next/router";
 import ProfileInfoEdit from "./profile/ProfileInfoEdit";
 import { useAppDispatch, useAppSelector } from "./store/hooks";
-import { Toggle, ToggleValue } from "./store/UI-Slice";
+import {
+	HideErrorMsg,
+	Toggle,
+	ToggleErrorValue,
+	ToggleValue,
+} from "./store/UI-Slice";
 import Section from "./section";
+import classes from "../styles/Profile.module.css";
 
 const Skeleton = (props: { elm: any }) => {
 	const ctn = useRouter();
@@ -31,6 +37,13 @@ const Skeleton = (props: { elm: any }) => {
 	const displayCard = useAppSelector(ToggleValue);
 	const dispatch = useAppDispatch();
 	const toggleHandler = () => dispatch(Toggle());
+	const ShowError = useAppSelector(ToggleErrorValue);
+	if (ShowError) {
+		setTimeout(() => {
+			dispatch(HideErrorMsg());
+		}, 3000);
+	}
+	// useEffect()
 	return (
 		<>
 			<style global jsx>{`
@@ -38,6 +51,11 @@ const Skeleton = (props: { elm: any }) => {
 					height: 100%;
 				}
 			`}</style>
+			{ShowError && (
+				<div className={classes.Errorctn}>
+					<span className={classes.msgError}>User Not found</span>
+				</div>
+			)}
 			{displayCard && <ProfileInfoEdit setTagle={toggleHandler} />}
 			<Header setPos={navBarHandler} />
 			<SideNav onNav={navBarHandler} currentPos={posIndicator} />
