@@ -12,7 +12,7 @@
 	display: flex;
 	flex-direction: column;
 	width: 70%;
-	padding: 1.667rem 2rem 1.667rem 2rem;
+	padding: 1.333rem 2rem 1.333rem 2rem;
 	justify-content: flex-start;
 }
 
@@ -41,11 +41,12 @@
 	cursor: pointer;
 }
 
-.editBtn> button span {
+.editBtn>button span {
 	background-color: transparent;
 	padding-left: 1.2rem;
 }
-.editBtn > span {
+
+.editBtn>span {
 	text-align: right;
 	font-family: 'Inter';
 	font-style: normal;
@@ -55,18 +56,47 @@
 	color: #C6E1FF;
 }
 
+.optionBtnFriend {
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+}
+
+.DotOption {
+	position: relative;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 3.111rem;
+	height: 3.111rem;
+	margin-left: 1.111rem;
+	cursor: pointer;
+}
+
+
 /* // 1523 */
 
 .name {
 	padding-left: 1.333rem;
-	margin: 0;
 	background-color: transparent;
 	font-family: 'Inter';
 	font-style: normal;
 	font-weight: 700;
 	font-size: 2.133rem;
-	line-height: 34px;
-	margin-bottom: 10px;
+	line-height: 3.778rem;
+	margin-bottom: 1.111rem;
+	color: #EFF3FE;
+}
+
+.nameFriend {
+	padding-left: 1.333rem;
+	margin-bottom: 1.111rem;
+	background-color: transparent;
+	font-family: 'Inter';
+	font-style: normal;
+	font-weight: 700;
+	font-size: 2.133rem;
+	line-height: 3.778rem;
 	color: #EFF3FE;
 }
 
@@ -77,7 +107,7 @@
 .tier {
 	padding-left: 1.333rem;
 	font-size: 1.067rem;
-	line-height: 16px;
+	line-height: 1.667rem;
 	font-family: inherit;
 	color: #758293;
 	margin: 0;
@@ -154,10 +184,54 @@
 	height: 13.333rem !important;
 }
 
+@keyframes example {
+	0% {
+		opacity: 0;
+		top: -25px;
+	}
+	50% {
+		opacity: 1;
+		top: 0;
+	}
+	100% {
+		opacity: 0;
+		top: -25px;
+	}
+}
+
+.Errorctn {
+	z-index: 100;
+	position: absolute;
+	text-align: center;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 100%;
+	animation-name: example;
+	animation-duration: 3s;
+}
+
+.msgError {
+	padding: .8rem 1rem;
+	border-radius: 15px;
+	background-color: #FF6482;
+	font-family: 'Inter';
+	font-style: normal;
+	font-weight: 700;
+	font-size: 1.3rem;
+	line-height: 22px;
+	color: #ECF5FF;
+	text-align: center;
+	width: fit-content;
+	margin-top: .5rem;
+
+}
+
 @media only screen and (max-width: 1300px) {
 	.profile {
 		width: 100%;
 	}
+
 	.buttom {
 		background-color: transparent;
 		height: 1rem;
@@ -197,7 +271,7 @@
 		padding: 0 0 0.333rem 0;
 	}
 
-	.editBtn span {
+	.editBtn>button span {
 		display: none;
 	}
 }
@@ -206,6 +280,7 @@
 	.profileCtn {
 		margin-left: 0;
 	}
+
 	.buttom {
 		height: 4rem;
 	}

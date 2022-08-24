@@ -2,24 +2,10 @@ import classes from "../../../styles/overView.module.css";
 import { motion } from "framer-motion";
 import "react-sweet-progress/lib/style.css";
 import React, { useEffect, useState } from "react";
-import { useRouter } from "next/router";
 import LeaderBoard from "../LeaderBord";
 import axios from "axios";
 
-const OverViewFriend: React.FC = () => {
-	const rout = useRouter();
-	if (!rout.query.id) rout.replace("/");
-	const [user, setuser] = useState();
-	const fetchData = async (id: number) => {
-		const data = await axios
-			.get(`https://test-76ddc-default-rtdb.firebaseio.com/${id}.json`)
-			.then((res) => {
-				setuser(res.data);
-			});
-	};
-	useEffect(() => {
-		fetchData(Number(rout.query.id));
-	}, []);
+const OverViewFriend: React.FC<{id: number}> = (props) => {
 	return (
 		<div className={classes.overviewCtn}>
 			<div>
@@ -39,7 +25,7 @@ const OverViewFriend: React.FC = () => {
 				</div>
 			</div>
 			<div className={classes.overview}>
-				{user && <LeaderBoard owner={user} />}
+				<LeaderBoard {...props}/>
 			</div>
 		</div>
 	);

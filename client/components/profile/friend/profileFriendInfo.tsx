@@ -17,6 +17,8 @@ import { useAppDispatch } from "../../store/hooks";
 import { addFriend, initialState, RemoveFriend } from "../../store/userSlice";
 import axios from "axios";
 import { UserType } from "../../../Types/dataTypes";
+import { useSelector } from "react-redux";
+import { ShowErrorMsg, ToggleErrorValue } from "../../store/UI-Slice";
 
 const OptionOfFriend: React.FC<{ isFriend: boolean }> = (props) => {
 	const ctn = useRouter();
@@ -35,22 +37,16 @@ const OptionOfFriend: React.FC<{ isFriend: boolean }> = (props) => {
 	const optionTaggleHandler = () => setoptionTaggle(!optionTaggle);
 
 	return (
-		<div className={classes.frindBtns} ref={wrapperRef}>
 			<div className={classes.optionBtnFriend}>
 				{(ctn.query.id === "1337" && <PendingButton />) ||
 					(props.isFriend && (
 						<FriendButton remove={RemoveFriendHandler} />
 					)) || <ADDButton add={AddFriendHandler} />}
-				<div className={classes.OptionIcon}>
+				<div className={classes.DotOption}ref={wrapperRef}>
 					<Image
 						src={option_friend}
 						onClick={optionTaggleHandler}
-						style={{
-							backgroundColor: "transparent",
-							cursor: "pointer",
-						}}
 					/>
-				</div>
 				{optionTaggle && (
 					<OptionMenu
 						FirstBtn={props.isFriend ? "Message" : "Unfriend"}
@@ -58,15 +54,16 @@ const OptionOfFriend: React.FC<{ isFriend: boolean }> = (props) => {
 						width="78px"
 					/>
 				)}
+				</div>
 			</div>
-		</div>
 	);
 };
 
-const ProfileFriendInfo: React.FC<{ id: number }> = (props) => {
-	const [userInfo, setUserInfo] = useState<UserType>(initialState);
+const ProfileFriendInfo: React.FC<{ id: number | undefined }> = (props) => {
+	const [userInfo, setUserInfo] = useState<UserType | null>(initialState);
 	let ownerId = 0;
 	const route = useRouter();
+	const dispatch = useAppDispatch();
 	const fetchData = async (id: number) => {
 		await axios
 			.get(`https://test-76ddc-default-rtdb.firebaseio.com/${id}.json`)
@@ -78,32 +75,35 @@ const ProfileFriendInfo: React.FC<{ id: number }> = (props) => {
 		if (props.id) fetchData(Number(props.id));
 	}, [props.id]);
 	ownerId = Number(window.localStorage.getItem("owner"));
-	let XP = userInfo.lvl;
+	let XP = userInfo?.lvl || 0;
 	let lvl = Math.floor(XP / 1000);
 	let lvlP = (XP % 1000) / 10;
-	let isFriend = userInfo.friendsID.includes(ownerId);
-
-	if (userInfo.id === ownerId) route.replace("/profile");
+	let isFriend = userInfo?.friendsID.includes(ownerId) || false;
+	if (!userInfo) {
+		dispatch(ShowErrorMsg());
+		route.replace("/profile");
+	}
+	if (!userInfo || userInfo?.id === ownerId) route.replace("/profile");
 	return (
 		<div className={`${classes.profile} `}>
 			<OptionOfFriend isFriend={isFriend} />
 			<div className={classes.profileInfo}>
 				<div className={classes.avatar}>
-					<Image src={profile} />
+					{userInfo && <img src={userInfo?.avatar} />}
 				</div>
 				<div className={classes.profileSection}>
-					<div className={classes.name}>{userInfo.fullName}</div>
-					{isFriend && (
-						<div className={classes.status}>{userInfo.stat}</div>
-					)}
-					<div className={classes.lvl}>Level: {userInfo.lvl} XP</div>
+					<div className={classes.nameFriend}>{userInfo?.fullName}</div>
+					{/* {isFriend && (
+						<div className={classes.status}>{userInfo?.stat}</div>
+					)} */}
+					<div className={classes.lvl}>Level: {userInfo?.lvl} XP</div>
 					<div className={classes.gp}>
-						Game Poinrs: {userInfo.GamePoint} GP
+						Game Poinrs: {userInfo?.GamePoint} GP
 					</div>
-					<div className={classes.rank}>Rank: {userInfo.Rank}</div>
+					<div className={classes.rank}>Rank: {userInfo?.Rank}</div>
 					<div className={classes.tier}>
-						Tier:{" "}
-						<span className={classes.gold}>{userInfo.Tier}</span>
+						Status:
+						<span className={classes.gold}> {userInfo?.stat}</span>
 					</div>
 				</div>
 				<div className={classes.tierIcon}>
