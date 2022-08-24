@@ -7,7 +7,6 @@ import Rank_2 from "../../public/LeaderBoard/Second.svg";
 import Rank_3 from "../../public/LeaderBoard/thirdPlace.svg";
 import Image from "next/image";
 import { isMobile } from "react-device-detect";
-import { useRouter } from "next/router";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { matchDataType, UserType } from "../../Types/dataTypes";
@@ -62,22 +61,21 @@ const ElmRank: React.FC<matchDataType> = (props) => {
 	);
 };
 
-const Stats = () => {
+const Stats: React.FC<{ id: number }> = (props) => {
 	const [user, setUser] = useState<UserType>(emtyUser);
-	const rout = useRouter();
+	const fetchData = async () => {
+		const data = await axios
+			.get(
+				`https://test-76ddc-default-rtdb.firebaseio.com/${props.id}.json`
+			)
+			.then((res) => {
+				setUser(res.data);
+			});
+	};
 	useEffect(() => {
-		const fetchData = async () => {
-			const data = await axios
-				.get(
-					`https://test-76ddc-default-rtdb.firebaseio.com/${
-						rout.query.id || "owner"
-					}.json`
-				)
-				.then((res) => {
-					setUser(res.data);
-				});
-		};
-		if (user.fullName === "") fetchData();
+		if (user?.fullName === "") fetchData();
+		else
+			return 
 	}, []);
 	return (
 		<div className={classes.stat}>
@@ -86,24 +84,36 @@ const Stats = () => {
 				<div className={classes.statDig}>
 					<div className={classes.WinRateTitle}>Win Rate</div>
 					<div className={classes.imageCTN}>
-						<Chart
-							amount={Math.floor((user.wins / user.games) * 100)}
-						/>
+						{user && (
+							<Chart
+								amount={Math.floor(
+									(user.wins / user.games) * 100
+								)}
+							/>
+						)}
 					</div>
 				</div>
 				<div className={classes.statbtns}>
-					<div className={classes.cntBTNstat}>{user.games} games</div>
-					<div className={classes.cntBTNstat}>{user.wins} Wins</div>
-					<div className={classes.cntBTNstat}>
-						{user.games - user.wins} Losses
-					</div>
+					{user && (
+						<>
+							<div className={classes.cntBTNstat}>
+								{user.games} games
+							</div>
+							<div className={classes.cntBTNstat}>
+								{user.wins} Wins
+							</div>
+							<div className={classes.cntBTNstat}>
+								{user.games - user.wins} Losses
+							</div>
+						</>
+					)}
 				</div>
 			</div>
 		</div>
 	);
 };
 
-const LeaderBoard: React.FC<{ owner: UserType }> = (props) => {
+const LeaderBoard: React.FC<{ id: number }> = (props) => {
 	const [listUsers, setListUsers] = useState<UserType[]>();
 	let users: UserType[] = [];
 	useEffect(() => {
@@ -127,25 +137,36 @@ const LeaderBoard: React.FC<{ owner: UserType }> = (props) => {
 			<div className={classes.table}>
 				<div className={classes.LeaderBordTitle}>LeaderBoard</div>
 				<div className={classes.leaderBoardctn}>
-					<div className={`${
+					<div
+						className={`${
 							isMobile
 								? classes.tableTitlesInMobile
 								: classes.tableTitles
 						}`}
 					>
-						<div className={`${classes.Rank} ${classes.tableTitle}`} >
+						<div
+							className={`${classes.Rank} ${classes.tableTitle}`}
+						>
 							Rank
 						</div>
-						<div className={`${classes.User} ${classes.tableTitle}`} >
+						<div
+							className={`${classes.User} ${classes.tableTitle}`}
+						>
 							Users
 						</div>
-						<div className={`${classes.games} ${classes.tableTitle}`} >
+						<div
+							className={`${classes.games} ${classes.tableTitle}`}
+						>
 							Games
 						</div>
-						<div className={`${classes.WinRatio} ${classes.tableTitle}`} >
+						<div
+							className={`${classes.WinRatio} ${classes.tableTitle}`}
+						>
 							Win Ratio
 						</div>
-						<div className={`${classes.Tier} ${classes.tableTitle}`} >
+						<div
+							className={`${classes.Tier} ${classes.tableTitle}`}
+						>
 							Tier
 						</div>
 					</div>
@@ -181,7 +202,7 @@ const LeaderBoard: React.FC<{ owner: UserType }> = (props) => {
 					</motion.div>
 				</div>
 			</div>
-			<Stats />
+			<Stats {...props} />
 		</div>
 	);
 };
