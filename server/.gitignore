@@ -3,6 +3,9 @@
 /dist
 /node_modules
 
+# Config
+.env
+
 # Logs
 /logs
 /*.log
