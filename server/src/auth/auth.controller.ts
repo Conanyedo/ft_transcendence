@@ -1,24 +1,36 @@
-import { Controller, Get, Post, Request, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Req, Res, UseGuards, Header } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { IntraAuthGuard } from './intra-auth.guard';
-import { JwtAuthGuard } from './jwt-auth.guard';
-import { UserService } from '../user/user.service';
+import { GoogleOauthGuard } from './google-oauth.guard';
+import { JwtAuthGuard } from '../jwt-auth/jwt-auth.guard';
+import { Request, Response } from 'express';
 
-@Controller('auth')
+@Controller()
 export class AuthController {
 	constructor(
 		private readonly authService: AuthService,
-		private readonly userService: UserService
 	) { }
 
+	@Get('auth/login')
 	@UseGuards(IntraAuthGuard)
-	@Get('login')
-	login() { }
+	login(@Req() req: Request, @Res() res: Response) {
+		const accessToken = this.authService.setToken(req)
+		res.cookie('jwt', accessToken);
+		return res.redirect('http://localhost:3000/');
+	}
 
-	@UseGuards(IntraAuthGuard)
-	@Get('profile')
-	getProfile(@Request() req) {
-		console.log('mr7baaaa');
+	@UseGuards(GoogleOauthGuard)
+	@Get('auth/google/login')
+	googleLogin(@Req() req: Request, @Res() res: Response) {
+		const accessToken = this.authService.setToken(req)
+		res.cookie('jwt', accessToken);
+		return res.redirect('http://localhost:3000/');
+	}
+
+	@Get('auth/isAuthorized')
+	@UseGuards(JwtAuthGuard)
+	authorized(@Req() req: Request) {
+		console.log('tauthoriza');
 		return req.user;
 	}
 }
