@@ -3,19 +3,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { JwtAuthModule } from './jwt-auth/jwt-auth.module';
+import { ConfigModule } from '@nestjs/config';
+import { typeOrmConfig, typeOrmConfigAsync } from './config/typeorm.config';
 
 @Module({
-	imports: [UserModule, TypeOrmModule.forRoot({
-		type: 'postgres',
-		host: '127.0.0.1',
-		port: 5432,
-		username: 'Conanyedo',
-		password: 'nestjs',
-		database: 'nestjs',
-		// entities: [User],
-		autoLoadEntities: true,
-		synchronize: true,
-		// logging: true, // log sql queries
-	}), AuthModule, JwtAuthModule]
+	imports: [UserModule, AuthModule, JwtAuthModule,
+		ConfigModule.forRoot({ isGlobal: true }),
+		TypeOrmModule.forRootAsync(typeOrmConfigAsync)
+	]
 })
 export class AppModule { }
