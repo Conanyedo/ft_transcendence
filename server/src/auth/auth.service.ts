@@ -1,16 +1,25 @@
 import { Injectable } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
+import { Request, Response } from 'express';
+import { JwtAuthService } from 'src/jwt-auth/jwt-auth.service';
 import { createUserDto } from 'src/user/dto/createUser.dto';
+import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class AuthService {
 
 	constructor(
-		private readonly jwtService: JwtService
+		private readonly userService: UserService,
+		private readonly jwtAuthService: JwtAuthService,
 	) { }
 
-	generateToken(user: createUserDto) {		
-		const payload = { name: user.login, sub: user.id };
-		return { access_token: this.jwtService.sign(payload) }
+	async checkUserExist(user: createUserDto) {
+		let getUser = await this.userService.getUserById(user.id);
+		if (!getUser)
+			getUser = await this.userService.doUserRegistration(user);
+	}
+
+	setToken(req: Request) {
+		const accessToken = this.jwtAuthService.login(<createUserDto>req.user);
+		return accessToken;
 	}
 }
