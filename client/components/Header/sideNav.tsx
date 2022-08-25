@@ -73,7 +73,7 @@ const SideNav: React.FC<{
 	const ctn = useRouter();
 	const NamePage = "/" + ctn.pathname.split("/")[1];
 
-	const handlerLogOut = () => props.onNav("/");
+	const handlerLogOut = () => ctn.replace("/");
 	const [isOpen, setIsOpen] = useState(false);
 
 	const ToggleAll = (value: boolean) => {
@@ -133,8 +133,8 @@ const SideNav: React.FC<{
 							src={
 								NamePage === "/logout" ? LogoutSelected : Logout
 							}
-							width={34}
-							height={34}
+							width={79}
+							height={79}
 						/>
 					</div>
 				</div>

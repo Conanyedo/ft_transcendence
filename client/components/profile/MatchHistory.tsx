@@ -32,7 +32,7 @@ export const Match: React.FC<matchDataType> = (props) => {
 	);
 };
 
-const MatchHistory = () => {
+const MatchHistory: React.FC<{id: Number}> = (props) => {
 	const [fetched, setFetched] = useState(false);
 	const [data, setData] = useState<any[]>([])
 	let matchs: any[] = [];
@@ -59,36 +59,6 @@ const MatchHistory = () => {
 			<div className={classes.titleMatchHistory}>Match History</div>
 			<div className={classes.historyMatchCtn}>
 				{data && 
-					data.map((match) => match &&
-						<Match
-						Avatar={profile}
-						fullName="Anas Elmqas"
-						result={match.result}
-						datematch={match.date}
-						matchRes={match.wonBy === window.localStorage.getItem('owner')}
-					/>
-					)}
-					{data && 
-					data.map((match) => match &&
-						<Match
-						Avatar={profile}
-						fullName="Anas Elmqas"
-						result={match.result}
-						datematch={match.date}
-						matchRes={match.wonBy === window.localStorage.getItem('owner')}
-					/>
-					)}
-					{data && 
-					data.map((match) => match &&
-						<Match
-						Avatar={profile}
-						fullName="Anas Elmqas"
-						result={match.result}
-						datematch={match.date}
-						matchRes={match.wonBy === window.localStorage.getItem('owner')}
-					/>
-					)}
-					{data && 
 					data.map((match) => match &&
 						<Match
 						Avatar={profile}

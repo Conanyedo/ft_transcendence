@@ -23,7 +23,7 @@ const Achievement: React.FC<TypeAchievement> = (props) => {
 	);
 };
 
-const Achievements = () => {
+const Achievements: React.FC<{id: Number}> = (props) => {
 	return (
 		<div className={classes.achievements}>
 			<div className={classes.title}>Achievements</div>

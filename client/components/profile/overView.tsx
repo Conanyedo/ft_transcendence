@@ -12,46 +12,45 @@ import { useSelector } from "react-redux";
 import { selectUser } from "../store/userSlice";
 // import Message from ''
 
-
-const OverView:React.FC = () => {
+const OverView: React.FC<{id: number}> = (props) => {
 	const rout = useRouter();
 	const [overViewShow, setOverViewShow] = useState(true);
-	const [showFriend, setShowFriend] = useState( rout.query.id === undefined );
+	const [showFriend, setShowFriend] = useState(rout.query.id === undefined);
 	const user = useSelector(selectUser);
-	
+
 	const showOverView = () => {
 		setOverViewShow(true);
 	};
-	
+
 	const hideOverView = () => setOverViewShow(false);
 	let underLineOverView = overViewShow ? classes.overViewbtn : " ";
 	let underLinefriends = !overViewShow ? classes.FriendsBtn : " ";
 	let classesIndic = (!overViewShow && classes.IndicFriend) || classes.Indic;
 	return (
 		<div className={classes.overviewCtn}>
-				<div className={classes.navView}>
-					<div
-						className={`${classes.TitleOverView}  ${underLineOverView}`}
-						onClick={showOverView}
-					>
-						Overview
-					</div>
-					{showFriend && <div
-						className={`${classes.TitleOverView} ${underLinefriends} `}
-						onClick={hideOverView}
-					>
-						Friends
-					</div>}
+			<div className={classes.navView}>
+				<div
+					className={`${classes.TitleOverView}  ${underLineOverView}`}
+					onClick={showOverView}
+				>
+					Overview
 				</div>
-				<div className={classes.ctnIndic}>
-					<motion.div
-						// exit={{ opacity: 0 }}
-						animate="animate"
-						className={classesIndic}
-					></motion.div>
+				<div
+					className={`${classes.TitleOverView} ${underLinefriends} `}
+					onClick={hideOverView}
+				>
+					Friends
+				</div>
 			</div>
-			<div className={classes.overview} style={{paddingBottom: '0'}}>
-				{overViewShow && <LeaderBoard owner={user} />}
+			<div className={classes.ctnIndic}>
+				<motion.div
+					// exit={{ opacity: 0 }}
+					animate="animate"
+					className={classesIndic}
+				></motion.div>
+			</div>
+			<div className={classes.overview} style={{ paddingBottom: "0" }}>
+				{overViewShow && <LeaderBoard {...props}/>}
 				{!overViewShow && <FriendProfileList />}
 			</div>
 		</div>

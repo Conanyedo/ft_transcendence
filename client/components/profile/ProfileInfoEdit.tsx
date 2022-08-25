@@ -28,7 +28,11 @@ export function useOutsideAlerter(ref: any, setToggle: (t: boolean) => void) {
 	}, [ref]);
 }
 
-export function useInSideAlerter(ref: any, setToggle: (t: boolean) => void, move: () => void) {
+export function useInSideAlerter(
+	ref: any,
+	setToggle: (t: boolean) => void,
+	move: () => void
+) {
 	useEffect(() => {
 		function handleClickOutside(event: any) {
 			if (ref.current && ref.current.contains(event.target)) {
@@ -55,7 +59,6 @@ const ProfileInfoEdit: React.FC<profileData> = (props) => {
 		// console.log();
 	};
 
-
 	useEffect(() => {
 		const fetchData = async () => {
 			const data = await axios
@@ -71,7 +74,6 @@ const ProfileInfoEdit: React.FC<profileData> = (props) => {
 	}, []);
 
 	// upload AVATAR TODO
-	
 
 	const wrapperRef = useRef(null);
 	useOutsideAlerter(wrapperRef, props.setTagle);
@@ -79,20 +81,41 @@ const ProfileInfoEdit: React.FC<profileData> = (props) => {
 		props.setTagle(false);
 	};
 	return (
-		<motion.div className={classes.background}>
-			<div className={classes.popUpCtn} ref={wrapperRef}>
+		<motion.div
+			className={classes.background}
+			initial={{
+				opacity: 0,
+			}}
+			animate={{
+				opacity: 1,
+			}}
+		>
+			<motion.div
+				className={classes.popUpCtn}
+				ref={wrapperRef}
+				initial={{
+					opacity: 0,
+					scale: 0.1,
+				}}
+				animate={{
+					opacity: 1,
+					scale: 1,
+				}}
+			>
 				<div className={classes.titlePopUp}>
 					Edit Profile
-					<motion.div onClick={clickHandler} className={classes.cross} animate="animate">
-						<Image src={CrossIcon} width='120%' height='120%' />
+					<motion.div
+						onClick={clickHandler}
+						className={classes.cross}
+						animate="animate"
+					>
+						<Image src={CrossIcon} width="120%" height="120%" />
 					</motion.div>
 				</div>
 				<div className={classes.avatar}>
 					<img src={UserData.avatar} />
-					<div
-						className={`${classes.toggle}`}
-					>
-						<Image src={UploadIcon} width='120%' height='120%' />
+					<div className={`${classes.toggle}`}>
+						<Image src={UploadIcon} width="120%" height="120%" />
 					</div>
 				</div>
 				<div className={classes.UserName}>Username :</div>
@@ -105,7 +128,7 @@ const ProfileInfoEdit: React.FC<profileData> = (props) => {
 				<div className={classes.btnSave} onClick={toggleHandler}>
 					Update
 				</div>
-			</div>
+			</motion.div>
 		</motion.div>
 	);
 };

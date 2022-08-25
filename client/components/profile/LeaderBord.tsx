@@ -7,20 +7,11 @@ import Rank_2 from "../../public/LeaderBoard/Second.svg";
 import Rank_3 from "../../public/LeaderBoard/thirdPlace.svg";
 import Image from "next/image";
 import { isMobile } from "react-device-detect";
-import { useRouter } from "next/router";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { UserType } from "../../Types/dataTypes";
+import { matchDataType, UserType } from "../../Types/dataTypes";
 import Chart from "../chart/chartProgress";
-
-interface matchDataType {
-	badge: number;
-	fullName: string;
-	games: number;
-	Win: number;
-	lvlP: number;
-	avatar: string;
-}
+import { motion } from "framer-motion";
 
 const ElmRank: React.FC<matchDataType> = (props) => {
 	const avatar =
@@ -41,7 +32,6 @@ const ElmRank: React.FC<matchDataType> = (props) => {
 			</div>
 			<div className={`${classes.User} ${classes.UserTR}`}>
 				<div className={classes.profileUser}>
-					{/* <Image src={profile} /> */}
 					<img src={props.avatar} />
 				</div>
 				{props.fullName}
@@ -52,8 +42,7 @@ const ElmRank: React.FC<matchDataType> = (props) => {
 			<div className={classes.WinRatio}>
 				<div className={classes.WinRatioCalc}>{`${Math.floor(
 					(props.Win / props.games) * 100
-				)} % - ${props.Win}W / ${props.games - props.Win}L`}</div>{" "}
-				{/*  70 % - 864W / 336L  */}
+				)} % - ${props.Win}W / ${props.games - props.Win}L`}</div>
 				<div className={classes.pourcentagectn}>
 					<div
 						className={classes.pourcentage}
@@ -72,22 +61,21 @@ const ElmRank: React.FC<matchDataType> = (props) => {
 	);
 };
 
-const Stats = () => {
+const Stats: React.FC<{ id: number }> = (props) => {
 	const [user, setUser] = useState<UserType>(emtyUser);
-	const rout = useRouter();
+	const fetchData = async () => {
+		const data = await axios
+			.get(
+				`https://test-76ddc-default-rtdb.firebaseio.com/${props.id}.json`
+			)
+			.then((res) => {
+				setUser(res.data);
+			});
+	};
 	useEffect(() => {
-		const fetchData = async () => {
-			const data = await axios
-				.get(
-					`https://test-76ddc-default-rtdb.firebaseio.com/${
-						rout.query.id || "owner"
-					}.json`
-				)
-				.then((res) => {
-					setUser(res.data);
-				});
-		};
-		if (user.fullName === "") fetchData();
+		if (user?.fullName === "") fetchData();
+		else
+			return 
 	}, []);
 	return (
 		<div className={classes.stat}>
@@ -96,24 +84,36 @@ const Stats = () => {
 				<div className={classes.statDig}>
 					<div className={classes.WinRateTitle}>Win Rate</div>
 					<div className={classes.imageCTN}>
-						<Chart
-							amount={Math.floor((user.wins / user.games) * 100)}
-						/>
+						{user && (
+							<Chart
+								amount={Math.floor(
+									(user.wins / user.games) * 100
+								)}
+							/>
+						)}
 					</div>
 				</div>
 				<div className={classes.statbtns}>
-					<div className={classes.cntBTNstat}>{user.games} games</div>
-					<div className={classes.cntBTNstat}>{user.wins} Wins</div>
-					<div className={classes.cntBTNstat}>
-						{user.games - user.wins} Losses
-					</div>
+					{user && (
+						<>
+							<div className={classes.cntBTNstat}>
+								{user.games} games
+							</div>
+							<div className={classes.cntBTNstat}>
+								{user.wins} Wins
+							</div>
+							<div className={classes.cntBTNstat}>
+								{user.games - user.wins} Losses
+							</div>
+						</>
+					)}
 				</div>
 			</div>
 		</div>
 	);
 };
 
-const LeaderBoard: React.FC<{ owner: UserType }> = (props) => {
+const LeaderBoard: React.FC<{ id: number }> = (props) => {
 	const [listUsers, setListUsers] = useState<UserType[]>();
 	let users: UserType[] = [];
 	useEffect(() => {
@@ -123,7 +123,7 @@ const LeaderBoard: React.FC<{ owner: UserType }> = (props) => {
 				.then((res) => {
 					const entries = Object.entries(res.data);
 					entries.map((user) => {
-						users.push(user[1]);
+						users.push(user[1] as UserType);
 					});
 					setListUsers(users);
 				});
@@ -145,32 +145,38 @@ const LeaderBoard: React.FC<{ owner: UserType }> = (props) => {
 						}`}
 					>
 						<div
-							className={` ${classes.Rank} ${classes.tableTitle} `}
+							className={`${classes.Rank} ${classes.tableTitle}`}
 						>
 							Rank
 						</div>
 						<div
-							className={`${classes.User} ${classes.tableTitle}  `}
+							className={`${classes.User} ${classes.tableTitle}`}
 						>
 							Users
 						</div>
 						<div
-							className={`${classes.games} ${classes.tableTitle}  `}
+							className={`${classes.games} ${classes.tableTitle}`}
 						>
 							Games
 						</div>
 						<div
-							className={`${classes.WinRatio} ${classes.tableTitle}  `}
+							className={`${classes.WinRatio} ${classes.tableTitle}`}
 						>
 							Win Ratio
 						</div>
 						<div
-							className={`${classes.Tier} ${classes.tableTitle}  `}
+							className={`${classes.Tier} ${classes.tableTitle}`}
 						>
 							Tier
 						</div>
 					</div>
-					<div className={classes.leaderBoardTable}>
+					<motion.div
+						initial={{ y: 10, opacity: 0 }}
+						animate={{ y: 0, opacity: 1 }}
+						exit={{ y: -10, opacity: 0 }}
+						transition={{ duration: 0.5 }}
+						className={classes.leaderBoardTable}
+					>
 						{listUsers &&
 							listUsers.map((user) => (
 								<ElmRank
@@ -193,10 +199,10 @@ const LeaderBoard: React.FC<{ owner: UserType }> = (props) => {
 									avatar={user.avatar}
 								/>
 							))}
-					</div>
+					</motion.div>
 				</div>
 			</div>
-			<Stats />
+			<Stats {...props} />
 		</div>
 	);
 };

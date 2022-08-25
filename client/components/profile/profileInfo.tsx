@@ -30,6 +30,7 @@ const ProfileInfo: React.FC = () => {
 	return (
 		<div className={`${classes.profile} `}>
 			<div className={classes.editBtn}>
+				<span>User Profile</span>
 				<button onClick={toggleHandler}>
 					<Image src={pen} />
 					<span>Edit profile</span>

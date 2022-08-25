@@ -16,3 +16,12 @@ export interface UserType {
 	stat: string,
 	RankPos: number,
 };
+
+export interface matchDataType {
+	badge: number;
+	fullName: string;
+	games: number;
+	Win: number;
+	lvlP: number;
+	avatar: string;
+}
