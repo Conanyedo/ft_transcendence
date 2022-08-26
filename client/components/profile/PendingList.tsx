@@ -1,7 +1,5 @@
 import classes from "../../styles/PendingList.module.css";
-import Image from "next/image";
 
-import profile from "../../public/profileImage.png";
 import React, { useEffect, useState } from "react";
 import { UserType } from "../../Types/dataTypes";
 import axios from "axios";
