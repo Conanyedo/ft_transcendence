@@ -9,11 +9,8 @@ const Loading = () => {
 		const HandleStart = (url: string) =>
 			url !== router.asPath && setClick(true);
 		const HandleComplet = (url: string) => {
-            console.log(url);
-            
 			if (url === router.asPath) {
 				setClick(false);
-				console.log("mdkhalch hna");
 			}
 		};
 
