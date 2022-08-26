@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import classes from "../../../styles/Loading.module.css";
+import classes from "../../styles/Loading.module.css";
 
 const Loading = () => {
 	const router = useRouter();
