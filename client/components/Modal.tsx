@@ -1,16 +1,23 @@
 import Styles from "@styles/chat.module.css"
 import Cross from "@public/Cross.svg"
 import Image from "next/image"
-import { Dispatch, SetStateAction, useRef } from "react"
+import { Dispatch, SetStateAction, useRef, useContext } from "react"
 import _ from 'lodash';
 import { motion } from "framer-motion";
+import { ChatContext, ChatContextType } from '@contexts/chatContext';
 
 // use datalist to show possible results 
 
 function CustomToggleBtn(id: any, refs: Array<HTMLDivElement>) {
 
+    const { protectedChannel, setProtectedChannel } = useContext(ChatContext) as ChatContextType;
+
     const Ids = ["Private", "Public", "Protected"];
     const setChecked = (event: React.ChangeEvent<HTMLInputElement>) => {
+
+        if (event.target.id === "Protected") {
+            setProtectedChannel(!protectedChannel);
+        }
 
         let newIds = Ids.filter((id) => id !== event.target.id);
         newIds.forEach((id) => {
@@ -39,6 +46,7 @@ function Option(props: { type: string}) {
 
 export function ModalBox(props: { show: boolean, setShow: (Dispatch<SetStateAction<boolean>>) }): JSX.Element {
 
+    const { protectedChannel } = useContext(ChatContext) as ChatContextType;
 
     return (
         <>
@@ -58,6 +66,10 @@ export function ModalBox(props: { show: boolean, setShow: (Dispatch<SetStateActi
                         <Option type="Protected"/>
                     </div>
                     <p>All users can find and join this channel</p>
+                    {protectedChannel && <div className={Styles.pwd}>
+                        <span>Password</span>
+                        <input type="password" />
+                    </div>}
                     <div>
                         <span>Add Members</span>
                         <input type="text" />

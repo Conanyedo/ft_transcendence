@@ -10,7 +10,7 @@ import { setMsg, scrollToBottom } from "@utils/chat";
 import { chatUser, chatMsg } from "@Types/dataTypes";
 import { ModalBox } from "@components/Modal";
 import { GameIconAsset, ChannelAsset } from "./svg/index";
-import { isMobile } from "react-device-detect";
+import { ChatProvider } from "@contexts/chatContext"
 
 // Making a component for the invite msg
 
@@ -100,71 +100,73 @@ const Chat = () => {
 
 	return (
 		<>
-			<div className={Styles.chatContainer}>
-				<div className={`${Styles.chatLeft} ${showCnv ? Styles.hideUsers : ""}`}>
-					<div className={Styles.leftContent}>
-						<div className={Styles.topSection}>
-							<h1 className={Styles.msg}>Message</h1>
-							<div onClick={createChannel} className={Styles.channel}><ChannelAsset color="#758293" /></div>
-							<ModalBox show={show} setShow={setShow} />
-						</div>
-						<div className={Styles.chatSearch}>
-							<Image src={Search} width={20} height={20} />
-							<input type="Text" className={Styles.chatInput} placeholder="Search" />
-						</div>
-						<div className={Styles.bottomSection}>
-							{lastUsers.map((user, i) => <div ref={(element) => { chatUsersRefs.current[i] = element }} className={Styles.chatUser} onClick={() => setChatUser(user, chatUsersRefs, i)}>
-								<div className={Styles.avatarName}>
-									<Image src={user.imgSrc} width={49.06} height={49} className={Styles.avatar} />
-									<div className={Styles.username}>{user.firstName} {user.lastName}</div>
-								</div>
-								<p className={Styles.status}>{user.status}</p>
-							</div>)}
+			<ChatProvider>
+				<div className={Styles.chatContainer}>
+					<div className={`${Styles.chatLeft} ${showCnv ? Styles.hideUsers : ""}`}>
+						<div className={Styles.leftContent}>
+							<div className={Styles.topSection}>
+								<h1 className={Styles.msg}>Message</h1>
+								<div onClick={createChannel} className={Styles.channel}><ChannelAsset color="#758293" /></div>
+								<ModalBox show={show} setShow={setShow} />
+							</div>
+							<div className={Styles.chatSearch}>
+								<Image src={Search} width={20} height={20} />
+								<input type="Text" className={Styles.chatInput} placeholder="Search" />
+							</div>
+							<div className={Styles.bottomSection}>
+								{lastUsers.map((user, i) => <div ref={(element) => { chatUsersRefs.current[i] = element }} className={Styles.chatUser} onClick={() => setChatUser(user, chatUsersRefs, i)}>
+									<div className={Styles.avatarName}>
+										<Image src={user.imgSrc} width={49.06} height={49} className={Styles.avatar} />
+										<div className={Styles.username}>{user.firstName} {user.lastName}</div>
+									</div>
+									<p className={Styles.status}>{user.status}</p>
+								</div>)}
+							</div>
 						</div>
 					</div>
-				</div>
-				<div className={`${Styles.chatRight} ${showCnv ? Styles.displayChat : ""}`}>
-					<div className={Styles.rightContent}>
-						<div className={Styles.topDetails}>
-							<div className={Styles.flex}>
-								<div className={Styles.arrowAsset}>
-									<Image src={arrowBack} width={16} height={16} onClick={() => setShowCnv(false)} />
+					<div className={`${Styles.chatRight} ${showCnv ? Styles.displayChat : ""}`}>
+						<div className={Styles.rightContent}>
+							<div className={Styles.topDetails}>
+								<div className={Styles.flex}>
+									<div className={Styles.arrowAsset}>
+										<Image src={arrowBack} width={16} height={16} onClick={() => setShowCnv(false)} />
+									</div>
+									<div className={Styles.avatarProps}>
+										<Image src={currentUser.imgSrc} width={76} height={76} className={Styles.avatar} />
+									</div>
+									<div>
+										<h1 className={Styles.chatUsername}>{currentUser.firstName + " " + currentUser.lastName}</h1>
+										<p className={Styles.chatUserStatus}>{currentUser.status}</p>
+									</div>
 								</div>
-								<div className={Styles.avatarProps}>
-									<Image src={currentUser.imgSrc} width={76} height={76} className={Styles.avatar} />
-								</div>
-								<div>
-									<h1 className={Styles.chatUsername}>{currentUser.firstName + " " + currentUser.lastName}</h1>
-									<p className={Styles.chatUserStatus}>{currentUser.status}</p>
-								</div>
+								<div className={Styles.menu}><Image src={Menu} width={30} height={30} /></div>
 							</div>
-							<div className={Styles.menu}><Image src={Menu} width={30} height={30} /></div>
-						</div>
-						<div className={Styles.chatSection}>
-							<div className={Styles.msgsDisplay} ref={msgsDisplayDiv}>
-								{
-									chatMsgs.map((chatMsg) => <div className={Styles.chatMsg} style={{ left: chatMsg.type == "receiver" ? "0" : "auto", right: chatMsg.type == "sender" ? "0" : "auto" }}>
-										<div className={Styles.msgBox} style={{ justifyContent: chatMsg.type == "receiver" ? "flex-start" : "flex-end" }}>
-											<div ref={messagesEndRef} className={Styles.msgContent} style={{ backgroundColor: chatMsg.type == "receiver" ? "#3A3A3C" : "#409CFF", borderRadius: chatMsg.type == "receiver" ? "0 5px 5px 5px" : "5px 5px 0 5px" }}>
-												{chatMsg.msgContent}
+							<div className={Styles.chatSection}>
+								<div className={Styles.msgsDisplay} ref={msgsDisplayDiv}>
+									{
+										chatMsgs.map((chatMsg) => <div className={Styles.chatMsg} style={{ left: chatMsg.type == "receiver" ? "0" : "auto", right: chatMsg.type == "sender" ? "0" : "auto" }}>
+											<div className={Styles.msgBox} style={{ justifyContent: chatMsg.type == "receiver" ? "flex-start" : "flex-end" }}>
+												<div ref={messagesEndRef} className={Styles.msgContent} style={{ backgroundColor: chatMsg.type == "receiver" ? "#3A3A3C" : "#409CFF", borderRadius: chatMsg.type == "receiver" ? "0 5px 5px 5px" : "5px 5px 0 5px" }}>
+													{chatMsg.msgContent}
+												</div>
 											</div>
-										</div>
-										<div className={Styles.msgTime} style={{ justifyContent: chatMsg.type == "receiver" ? "flex-start" : "flex-end" }}>{chatMsg.time}</div>
-									</div>)
-								}
-							</div>
-							<div className={Styles.sendDiv} style={{ gap: enteredMsg != "" ? "1.5rem" : "0" }}>
-								<div className={Styles.msgInput}>
-									<input type="text" placeholder="message" value={enteredMsg} onChange={(e) => setEnteredMsg(e.target.value)} onKeyDown={(event) => setMsg(enteredMsg, event.keyCode, setChatMsgs, chatMsgs, setEnteredMsg)} />
-									<div onClick={sendInvite} className={Styles.console}><GameIconAsset color="#D9D9D9" /></div>
+											<div className={Styles.msgTime} style={{ justifyContent: chatMsg.type == "receiver" ? "flex-start" : "flex-end" }}>{chatMsg.time}</div>
+										</div>)
+									}
 								</div>
-								<div onClick={() => setMsg(enteredMsg, 13, setChatMsgs, chatMsgs, setEnteredMsg)} className={Styles.sendCtr}>{enteredMsg && <Image src={sendArrow} width={30} height={30} className={Styles.animatedBtn} />}</div>
-							</div>
+								<div className={Styles.sendDiv} style={{ gap: enteredMsg != "" ? "1.5rem" : "0" }}>
+									<div className={Styles.msgInput}>
+										<input type="text" placeholder="message" value={enteredMsg} onChange={(e) => setEnteredMsg(e.target.value)} onKeyDown={(event) => setMsg(enteredMsg, event.keyCode, setChatMsgs, chatMsgs, setEnteredMsg)} />
+										<div onClick={sendInvite} className={Styles.console}><GameIconAsset color="#D9D9D9" /></div>
+									</div>
+									<div onClick={() => setMsg(enteredMsg, 13, setChatMsgs, chatMsgs, setEnteredMsg)} className={Styles.sendCtr}>{enteredMsg && <Image src={sendArrow} width={30} height={30} className={Styles.animatedBtn} />}</div>
+								</div>
 
+							</div>
 						</div>
 					</div>
 				</div>
-			</div>
+			</ChatProvider>
 		</>
 	);
 };

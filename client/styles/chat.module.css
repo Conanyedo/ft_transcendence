@@ -293,13 +293,15 @@
     to {
         transform: translateX(0);
     }
+}
 
-    /* from {
-        transform: translateY(-15px);
-      }
-      to {
-        transform: translateY(0px);
-      } */
+@-webkit-keyframes fadeIn {
+    from { opacity: 0; }
+      to { opacity: 1; }
+}
+@keyframes fadeIn {
+    from { opacity: 0; }
+      to { opacity: 1; }
 }
 
 .animatedBtn {
@@ -424,7 +426,7 @@
     border-radius: 5px;
     padding: 10px;
     color: #fff;
-    font-size: 0.875rem;
+    font-size: 14px;
     margin-top: 0.667rem;
 }
 
@@ -529,6 +531,15 @@
     display: none !important;
 }
 
+.pwd {
+    margin-bottom: 1.125rem;
+    -webkit-animation-name: fadeIn;
+    animation-name: fadeIn;
+    -webkit-animation-duration: 0.3s;
+    animation-duration: 0.3s;
+    -webkit-animation-fill-mode: both;
+    animation-fill-mode: both;
+}
 
 @media only screen and (max-width: 1024px) {
 
