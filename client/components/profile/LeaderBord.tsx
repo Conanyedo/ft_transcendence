@@ -12,6 +12,7 @@ import { useEffect, useState } from "react";
 import { matchDataType, UserType } from "../../Types/dataTypes";
 import Chart from "../chart/chartProgress";
 import { motion } from "framer-motion";
+import { useRouter } from "next/router";
 
 const ElmRank: React.FC<matchDataType> = (props) => {
 	const avatar =
@@ -22,6 +23,8 @@ const ElmRank: React.FC<matchDataType> = (props) => {
 			: props.badge === 3
 			? Rank_3
 			: null;
+	const route = useRouter();
+	const Clickhandler = () => route.push('/profile/' + props.id);
 	return (
 		<div className={classes.tableElments}>
 			<div className={classes.Rank}>
@@ -30,7 +33,7 @@ const ElmRank: React.FC<matchDataType> = (props) => {
 						(avatar && <Image src={avatar} />)}
 				</div>
 			</div>
-			<div className={`${classes.User} ${classes.UserTR}`}>
+			<div className={`${classes.User} ${classes.UserTR}`} onClick={Clickhandler} >
 				<div className={classes.profileUser}>
 					<img src={props.avatar} />
 				</div>
@@ -186,6 +189,7 @@ const LeaderBoard: React.FC<{ id: number }> = (props) => {
 									lvlP={(user.lvl % 1000) / 10}
 									badge={user.RankPos}
 									avatar={user.avatar}
+									id={user.id}
 								/>
 							))}
 						{listUsers &&
@@ -197,6 +201,7 @@ const LeaderBoard: React.FC<{ id: number }> = (props) => {
 									lvlP={(user.lvl % 1000) / 10}
 									badge={user.RankPos}
 									avatar={user.avatar}
+									id={user.id}
 								/>
 							))}
 					</motion.div>
