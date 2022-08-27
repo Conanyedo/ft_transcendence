@@ -48,23 +48,23 @@ const BlockList = () => {
 	return (
 		<div className={classes.listFriends}>
 			{
-				listblock?.map((user) => <Pendingfriend fullName={user.fullName} Avatar={user.avatar} id={user.id} />)
+				listblock?.map((user) => <Pendingfriend key={user.id} fullName={user.fullName} Avatar={user.avatar} id={user.id} />)
 			}{
-				listblock?.map((user) => <Pendingfriend fullName={user.fullName} Avatar={user.avatar} id={user.id} />)
+				listblock?.map((user) => <Pendingfriend key={user.id} fullName={user.fullName} Avatar={user.avatar} id={user.id} />)
 			}{
-				listblock?.map((user) => <Pendingfriend fullName={user.fullName} Avatar={user.avatar} id={user.id} />)
+				listblock?.map((user) => <Pendingfriend key={user.id} fullName={user.fullName} Avatar={user.avatar} id={user.id} />)
 			}{
-				listblock?.map((user) => <Pendingfriend fullName={user.fullName} Avatar={user.avatar} id={user.id} />)
+				listblock?.map((user) => <Pendingfriend key={user.id} fullName={user.fullName} Avatar={user.avatar} id={user.id} />)
 			}{
-				listblock?.map((user) => <Pendingfriend fullName={user.fullName} Avatar={user.avatar} id={user.id} />)
+				listblock?.map((user) => <Pendingfriend key={user.id} fullName={user.fullName} Avatar={user.avatar} id={user.id} />)
 			}{
-				listblock?.map((user) => <Pendingfriend fullName={user.fullName} Avatar={user.avatar} id={user.id} />)
+				listblock?.map((user) => <Pendingfriend key={user.id} fullName={user.fullName} Avatar={user.avatar} id={user.id} />)
 			}{
-				listblock?.map((user) => <Pendingfriend fullName={user.fullName} Avatar={user.avatar} id={user.id} />)
+				listblock?.map((user) => <Pendingfriend key={user.id} fullName={user.fullName} Avatar={user.avatar} id={user.id} />)
 			}{
-				listblock?.map((user) => <Pendingfriend fullName={user.fullName} Avatar={user.avatar} id={user.id} />)
+				listblock?.map((user) => <Pendingfriend key={user.id} fullName={user.fullName} Avatar={user.avatar} id={user.id} />)
 			}{
-				listblock?.map((user) => <Pendingfriend fullName={user.fullName} Avatar={user.avatar} id={user.id} />)
+				listblock?.map((user) => <Pendingfriend key={user.id} fullName={user.fullName} Avatar={user.avatar} id={user.id} />)
 			}
 		</div>
 	);

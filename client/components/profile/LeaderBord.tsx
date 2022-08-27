@@ -24,7 +24,7 @@ const ElmRank: React.FC<matchDataType> = (props) => {
 			? Rank_3
 			: null;
 	const route = useRouter();
-	const Clickhandler = () => route.push('/profile/' + props.id);
+	const Clickhandler = () => route.push("/profile/" + props.id);
 	return (
 		<div className={classes.tableElments}>
 			<div className={classes.Rank}>
@@ -33,7 +33,10 @@ const ElmRank: React.FC<matchDataType> = (props) => {
 						(avatar && <Image src={avatar} />)}
 				</div>
 			</div>
-			<div className={`${classes.User} ${classes.UserTR}`} onClick={Clickhandler} >
+			<div
+				className={`${classes.User} ${classes.UserTR}`}
+				onClick={Clickhandler}
+			>
 				<div className={classes.profileUser}>
 					<img src={props.avatar} />
 				</div>
@@ -77,8 +80,7 @@ const Stats: React.FC<{ id: number }> = (props) => {
 	};
 	useEffect(() => {
 		if (user?.fullName === "") fetchData();
-		else
-			return 
+		else return;
 	}, []);
 	return (
 		<div className={classes.stat}>
@@ -183,6 +185,7 @@ const LeaderBoard: React.FC<{ id: number }> = (props) => {
 						{listUsers &&
 							listUsers.map((user) => (
 								<ElmRank
+									key={user.id}
 									fullName={user.fullName}
 									games={user.games}
 									Win={user.wins}
@@ -195,6 +198,7 @@ const LeaderBoard: React.FC<{ id: number }> = (props) => {
 						{listUsers &&
 							listUsers.map((user) => (
 								<ElmRank
+									key={user.id}
 									fullName={user.fullName}
 									games={user.games}
 									Win={user.wins}

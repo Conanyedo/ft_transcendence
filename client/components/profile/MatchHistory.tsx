@@ -61,6 +61,7 @@ const MatchHistory: React.FC<{id: Number}> = (props) => {
 				{data && 
 					data.map((match) => match &&
 						<Match
+						key={Math.random()}
 						Avatar={profile}
 						fullName="Anas Elmqas"
 						result={match.result}
