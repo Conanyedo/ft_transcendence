@@ -10,7 +10,8 @@ import { setMsg, scrollToBottom } from "@utils/chat";
 import { chatUser, chatMsg } from "@Types/dataTypes";
 import { ModalBox } from "@components/Modal";
 import { GameIconAsset, ChannelAsset } from "./svg/index";
-import { ChatProvider } from "@contexts/chatContext"
+import { ChatProvider, ChatContext, ChatContextType } from "@contexts/chatContext"
+
 
 // Making a component for the invite msg
 

@@ -3,9 +3,7 @@
 	flex-wrap: wrap;
 	gap: 1.5rem;
 	justify-content: flex-start;
-	margin-left: 3rem;
 	padding-bottom: 1rem;
-	/* height: 100%; */
 }
 
 .profile {
@@ -13,16 +11,17 @@
 	border-radius: 15px;
 	display: flex;
 	flex-direction: column;
-	width: 68.5%;
-	padding: 1.667rem 2.667rem 1.667rem 2.667rem;
-	justify-content: center;
-	/* max-height: 32.5rem; */
+	width: 70%;
+	padding: 1.667rem 2rem 1.667rem 2rem;
+	justify-content: flex-start;
 }
 
 .editBtn {
 	background-color: transparent;
 	text-align: right;
-	margin: 0 0 2.467rem 0;
+	margin: 0 0 1rem 0;
+	display: flex;
+	justify-content: space-between;
 }
 
 .editBtn>button {
@@ -35,11 +34,25 @@
 	font-size: 1.067rem;
 	font-weight: 600;
 	font-family: 'inter', sans-serif;
+	display: flex;
+	justify-self: flex-end;
+	/* justify-content: center; */
+	align-items: center;
+	cursor: pointer;
 }
 
-.editBtn span {
+.editBtn> button span {
 	background-color: transparent;
 	padding-left: 1.2rem;
+}
+.editBtn > span {
+	text-align: right;
+	font-family: 'Inter';
+	font-style: normal;
+	font-weight: 600;
+	font-size: 1.4rem;
+	line-height: 22px;
+	color: #C6E1FF;
 }
 
 /* // 1523 */

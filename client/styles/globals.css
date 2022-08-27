@@ -72,14 +72,6 @@ input {
 	}
 }
 
-div#__next {
-	height: 100%;
-}
-
-/* The app container styling */
-.root-div {
-	height: 100%;
-}
 @media only screen and (max-height: 1620px) and (width < height) {
 	:root {
 		border: 5px solid red;

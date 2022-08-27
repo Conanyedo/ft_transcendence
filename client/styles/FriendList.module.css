@@ -27,21 +27,26 @@
 	align-items: center;
 	padding: 0.4rem;
 	border-radius: 3px;
-	height: 2rem;
-	width: 12rem;
-	transition: width 1s;
+	/* height: 2rem; */
+	width: 20rem;
+	transition: all 1s;
 }
 
 .resizeCtnSearch {
+	padding: 0;
 	width: 2rem;
+	background: transparent;
+	transition: all 1s;
 }
 
 .search {
+	margin-left: .5rem;
 	display: inline;
 	background: #2B2B2D;
 	border-radius: 3px;
 	color: #758293;
 	width: 100%;
+	transition: all 1s;
 }
 
 .search:active,
@@ -51,8 +56,8 @@
 
 .btnSearch {
 	display: flex;
-	max-width: 2rem;
-	max-height: 2rem;
+	width: 1.7rem;
+	height: 1.7rem;
 	cursor: pointer;
 }
 
@@ -83,7 +88,7 @@
 	overflow-y: auto;
 	scrollbar-color: #2B2B2D #3A3A3C;
 	/* border: 1px solid red; */
-	padding-right: 0.6rem;
+	/* padding-right: 0.6rem; */
 	margin-top: 1.333rem;
 }
 
@@ -108,6 +113,7 @@
 .friend:first-of-type {
 	margin-top: 0.133rem;
 }
+
 .friend:last-of-type {
 	margin-bottom: 0px;
 }
@@ -195,6 +201,7 @@
 	.listFriends {
 		height: 70rem;
 	}
+
 	.friends {
 		height: 100%;
 	}
@@ -211,23 +218,67 @@
 		display: flex;
 		justify-content: space-between;
 	}
+
 	.statusFriend {
 		margin: 0;
 	}
+
 	.btnFriend:last-child {
 		margin-right: 0;
 	}
 }
 
 @media only screen and (max-width: 530px) {
-	.searchCtn {
-		/* display: none; */
+	.friendHeader {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: flex-start;
 	}
+
+	.btnCtn {
+		justify-content: space-between;
+		width: 100%;
+		margin-bottom: 1rem;
+	}
+
+	.btnSearch {
+		padding: .3rem;
+	}
+
+	.searchCtn {
+		height: auto;
+		padding: .5rem;
+		width: 100%;
+		margin: 0;
+	}
+
 	.statusFriend {
 		flex: 5%;
 		font-size: 1rem;
 	}
+
 	.friendName {
 		font-size: 1rem;
+	}
+
+	.resizeCtnSearch {
+		background: #2B2B2D;
+		border-radius: 3px;
+		width: 100%;
+		transition: all 1s;
+	}
+
+	.hideSearch {
+		margin-left: .5rem;
+		display: inline;
+		background: #2B2B2D;
+		border-radius: 3px;
+		color: #758293;
+		width: 100%;
+		transition: all 1s;
+	}
+	.listFriends {
+		margin-top: 0.8rem;
 	}
 }

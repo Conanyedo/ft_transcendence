@@ -4,10 +4,7 @@
 	flex-direction: column;
 	border-radius: 15px;
 	width: 68.5%;
-	/* flex: 60%; */
-	/* min-width: 375px;
-	max-width: 2000px;
-	max-height: 545px; */
+	width: 70%;
 }
 
 .navView {
@@ -364,6 +361,7 @@
 		width: 100%;
 		flex-direction: column;
 		padding: 2rem;
+		padding-top: 0;
 	}
 
 	.stat {

@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import AppContent from "./Appcontent";
 import Header from "./Header/Header";
 import SideNav from "./Header/sideNav";
 import classesNav from "../styles/sideNav.module.css";
@@ -7,6 +6,7 @@ import { useRouter } from "next/router";
 import ProfileInfoEdit from "./profile/ProfileInfoEdit";
 import { useAppDispatch, useAppSelector } from "./store/hooks";
 import { Toggle, ToggleValue } from "./store/UI-Slice";
+import Section from "./section";
 
 const Skeleton = (props: { elm: any }) => {
 	const ctn = useRouter();
@@ -32,12 +32,17 @@ const Skeleton = (props: { elm: any }) => {
 	const dispatch = useAppDispatch();
 	const toggleHandler = () => dispatch(Toggle());
 	return (
-		<div className="root-div">
+		<>
+			<style global jsx>{`
+				div#__next {
+					height: 100%;
+				}
+			`}</style>
 			{displayCard && <ProfileInfoEdit setTagle={toggleHandler} />}
 			<Header setPos={navBarHandler} />
 			<SideNav onNav={navBarHandler} currentPos={posIndicator} />
-			<AppContent elm={props.elm} />
-		</div>
+			<Section elm={props.elm} />
+		</>
 	);
 };
 
