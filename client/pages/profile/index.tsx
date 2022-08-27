@@ -6,32 +6,33 @@ import MatchHistory from "../../components/profile/MatchHistory";
 import classes from "../../styles/Profile.module.css";
 import { useRouter } from "next/router";
 import { getCookie } from "cookies-next";
+import { useEffect } from "react";
+import axios from "axios";
 
 const Profile = () => {
 	const route = useRouter();
-	const token = getCookie('jwt');
-	console.log(token);
-	
-	// const requestOptions = {
-    //     method: 'Get',
-    //     headers: { 'Content-Type': 'application/json' },
-    //     body: JSON.stringify({ title: 'React POST Request Example' })
-    // };
-	// const fetchData = async () => {
-	// 	await fetch(`http://10.13.10.6:3000/auth/isAuthorized`, {
-	// 		}
-	// 	)
-	// 		.then((res) => {
-	// 			console.log(res);
-	// 		})
-	// 		.catch((err) => {
-	// 			console.log(err);
-	// 		});
-	// };
-	// if (route.query.code) route.replace("/profile");
-	// const id = Number(window.localStorage.getItem("owner"));
+	const token = getCookie("jwt");
+
+	const requestOptions = {
+		Authorization: `Bearer ${token}`,
+	};
+	const fetchData = async () => {
+		await axios.get(`http://localhost:5000/auth/isAuthorized`, {
+			headers: requestOptions,
+			withCredentials: true,
+			method: 'GET'
+		})
+			.then((res) => {
+				console.log('hello ',res.data.login);
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	};
+	useEffect(() => {
+		fetchData();
+	}, []);
 	const id = 1001;
-	// if (!id) route.replace("/");
 	return (
 		<div className={classes.profileCtn}>
 			<ProfileInfo />
