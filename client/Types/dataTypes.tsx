@@ -18,6 +18,7 @@ export interface UserType {
 };
 
 export interface matchDataType {
+	id: number,
 	badge: number;
 	fullName: string;
 	games: number;
