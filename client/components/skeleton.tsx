@@ -13,9 +13,15 @@ import {
 } from "./store/UI-Slice";
 import Section from "./section";
 import classes from "../styles/Profile.module.css";
+import { getCookie } from "cookies-next";
 
 const Skeleton = (props: { elm: any }) => {
 	const ctn = useRouter();
+	const token = getCookie("jwt");
+	if (!token) {
+		ctn.replace("/");
+		return <></>;
+	}
 	const NamePage = "/" + ctn.pathname.split("/")[1];
 	const navBarHandler = (page: string) => {
 		setPosIndicator(() => {
