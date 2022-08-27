@@ -1,35 +1,45 @@
 import { useRouter } from "next/router";
 import classes from "../styles/homePage.module.css";
-import { useRef } from "react";
 import { motion } from "framer-motion";
-import { useFollowPointer } from "../components/use-follow-pointer";
+import Loading from "../components/loading/loading";
+import useFetchData from "../customHooks/useFetchData";
 
 const HomePage = () => {
 	const router = useRouter();
-	// const fetchData = async () => {
-	// 	await fetch(`http://10.13.8.14:3000/login`,)
-	// 		.then((res) => {
-	// 			console.log(res);
-	// 			router.push("/profile");
-	// 		})
-	// 		.catch((err) => {
-	// 			console.log(err);
-	// 		});
-	// };
-	const ref = useRef(null);
-	const { x, y } = useFollowPointer(ref);
+	const data = useFetchData("auth/isAuthorized");
 	return (
-		<div className={classes.screensize}>
-			<motion.a
-				whileHover={{ scale: 1.5 }}
-				whileTap={{ scale: 0.9 }}
-				className={classes.loginBtn}
-				// onClick={fetchData}
-				href='http://10.13.10.6:3000/auth/login'
-			>
-				Login
-			</motion.a>
-		</div>
+		<>
+			<div className={classes.screensize}>
+				{/* <div className={classes.boss}>
+					<ul className={classes.login}>
+						<li>
+							<span>Login </span>
+						</li>
+					</ul>
+				</div> */}
+				<motion.a
+					whileHover={{ scale: 1.5 }}
+					whileTap={{ scale: 0.9 }}
+					className={classes.loginBtn}
+					onClick={(e) =>
+						router.push("http://localhost:5000/auth/login")
+					}
+				>
+					42 Intra
+				</motion.a>
+				<motion.a
+					whileHover={{ scale: 1.5 }}
+					whileTap={{ scale: 0.9 }}
+					className={classes.loginBtn}
+					onClick={(e) =>
+						router.push("http://localhost:5000/auth/google/login")
+					}
+				>
+					Google
+				</motion.a>
+			</div>
+			<Loading />
+		</>
 	);
 };
 
