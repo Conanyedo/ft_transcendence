@@ -13,9 +13,12 @@ import axios from "axios";
 import { UserType } from "../../Types/dataTypes";
 import { initialState as emtyUser } from "../store/userSlice";
 import { motion } from "framer-motion";
+import { getCookie } from "cookies-next";
 //
 const UserSection = () => {
 	const menu = useRef(null);
+	const router = useRouter();
+	const token = getCookie("jwt");
 	const notifMenu = useRef(null);
 	const dispatch = useAppDispatch();
 	const [dropDown, setDropDown] = useState(false);
@@ -44,6 +47,22 @@ const UserSection = () => {
 	}, []);
 	useOutsideAlerter(notifMenu, setisOpen);
 	useOutsideAlerter(menu, setDropDown);
+	const LogOutHandler = () => {
+		const dataFetch = async () => {
+			await axios.get(`http://localhost:5000/auth/logout`, {
+				headers: {
+					Authorization: `Bearer ${token}`
+				},
+				withCredentials: true,
+			}).then((res) => {
+					router.push('/');
+				})
+				.catch((err) => {
+					console.log(err);
+				});
+		}
+		dataFetch();
+	}
 	return (
 		<>
 			<div
@@ -104,7 +123,7 @@ const UserSection = () => {
 						<div className={classes.EditP} onClick={toggleHandler}>
 							Edit profile
 						</div>
-						<div className={classes.LogOut}>Log out</div>
+						<div className={classes.LogOut} onClick={LogOutHandler}>Log out</div>
 					</motion.div>
 				)}
 			</div>

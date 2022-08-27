@@ -20,6 +20,8 @@ import classes from "../../styles/sideNav.module.css";
 import { useRouter } from "next/router";
 import { MutableRefObject, useEffect, useRef, useState } from "react";
 import { useInSideAlerter } from "../profile/ProfileInfoEdit";
+import axios from "axios";
+import { getCookie } from "cookies-next";
 
 interface N_ITEMS {
 	alt: string;
@@ -69,11 +71,27 @@ const SideNav: React.FC<{
 	onNav: (page: string) => void;
 	currentPos: string;
 }> = (props) => {
+	const token = getCookie("jwt");
 	const ref_nav = useRef(null);
 	const ctn = useRouter();
 	const NamePage = "/" + ctn.pathname.split("/")[1];
 
-	const handlerLogOut = () => ctn.replace("/");
+	const handlerLogOut = () => {
+		const dataFetch = async () => {
+			try {
+				await axios.get(`http://localhost:5000/auth/logout`, {
+					headers: {
+						Authorization: `Bearer ${token}`,
+					},
+					withCredentials: true,
+				});
+				ctn.push("/");
+			} catch (err) {
+				console.log(err);
+			}
+		};
+		dataFetch();
+	};
 	const [isOpen, setIsOpen] = useState(false);
 
 	const ToggleAll = (value: boolean) => {
@@ -116,6 +134,7 @@ const SideNav: React.FC<{
 				<div className={`${classes.sideItems}`}>
 					{NAVITEMS.map((item) => (
 						<ItemsNav
+							key={item.alt}
 							move={item.move}
 							alt={item.alt}
 							src={item.src}
