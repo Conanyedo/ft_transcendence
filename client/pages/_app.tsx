@@ -5,6 +5,8 @@ import Skeleton from "../components/skeleton";
 import { store } from "../components/store/store";
 import { Provider } from "react-redux";
 import { useRouter } from "next/router";
+import favico from "../favicon.ico";
+import Head from "next/head";
 // import { ProvideAuth } from "../customHooks/useAuth";
 
 function MyApp({ Component, pageProps }: AppProps) {
@@ -12,18 +14,36 @@ function MyApp({ Component, pageProps }: AppProps) {
 	if (router.pathname === "/")
 		return (
 			<AnimatePresence exitBeforeEnter>
-				{/* <ProvideAuth> */}
-					{typeof window === "undefined" ? null : (
+				{typeof window === "undefined" ? null : (
+					<>
+						<Head>
+							<link
+								rel="shortcut icon"
+								href={favico.src}
+								type="image/x-icon"
+							/>
+							<title>PingPong</title>
+						</Head>
 						<Component {...pageProps} />
-					)}
-				{/* </ProvideAuth> */}
+					</>
+				)}
 			</AnimatePresence>
 		);
 	return (
 		<AnimatePresence exitBeforeEnter>
 			<Provider store={store}>
 				{typeof window === "undefined" ? null : (
-					<Skeleton elm={<Component {...pageProps} />} />
+					<>
+						<Head>
+							<link
+								rel="shortcut icon"
+								href={favico.src}
+								type="image/x-icon"
+							/>
+							<title>PingPong</title>
+						</Head>
+						<Skeleton elm={<Component {...pageProps} />} />
+					</>
 				)}
 			</Provider>
 		</AnimatePresence>
