@@ -3,20 +3,16 @@ import classes from "../styles/homePage.module.css";
 import { motion } from "framer-motion";
 import Loading from "../components/loading/loading";
 import useFetchData from "../customHooks/useFetchData";
+import FactorAuth from "../components/profile/FactorAuth";
 
 const HomePage = () => {
 	const router = useRouter();
 	const data = useFetchData("auth/isAuthorized");
+	const open = (router.query._2fa !== undefined);
 	return (
 		<>
+			{open && <FactorAuth />}
 			<div className={classes.screensize}>
-				{/* <div className={classes.boss}>
-					<ul className={classes.login}>
-						<li>
-							<span>Login </span>
-						</li>
-					</ul>
-				</div> */}
 				<motion.a
 					whileHover={{ scale: 1.5 }}
 					whileTap={{ scale: 0.9 }}
