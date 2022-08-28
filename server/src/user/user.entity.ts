@@ -2,7 +2,7 @@ import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity({ name: 'users' })
 export class User {
-	@PrimaryColumn({ default: '' })
+	@PrimaryGeneratedColumn("uuid" )
 	id: string;
 
 	@Column()
@@ -16,5 +16,14 @@ export class User {
 
 	@Column()
 	avatar: string;
+
+	@Column({ default: false})
+	isAuthenticated: boolean;
+
+	@Column({ nullable: true})
+	_2faSecret: string;
+
+	@Column({ default: false })
+	is2faEnabled: boolean;
 
 }
