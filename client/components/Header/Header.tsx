@@ -7,7 +7,7 @@ import DownArrow from "../../public/Caret down.svg";
 import { useRouter } from "next/router";
 import { useAppDispatch } from "../store/hooks";
 
-import { Toggle } from "../store/UI-Slice";
+import { ShowSettings, Toggle } from "../store/UI-Slice";
 import { useOutsideAlerter } from "../profile/ProfileInfoEdit";
 import axios from "axios";
 import { UserType } from "../../Types/dataTypes";
@@ -33,6 +33,10 @@ const UserSection = () => {
 		dispatch(Toggle());
 		ClickHandler();
 	};
+	const toggleSettingHandler = () => {
+		dispatch(ShowSettings());
+		ClickHandler();
+	};
 	useEffect(() => {
 		const fetchData = async () => {
 			const data = await axios
@@ -49,20 +53,22 @@ const UserSection = () => {
 	useOutsideAlerter(menu, setDropDown);
 	const LogOutHandler = () => {
 		const dataFetch = async () => {
-			await axios.get(`http://localhost:5000/auth/logout`, {
-				headers: {
-					Authorization: `Bearer ${token}`
-				},
-				withCredentials: true,
-			}).then((res) => {
-					router.push('/');
+			await axios
+				.get(`http://localhost:5000/auth/logout`, {
+					headers: {
+						Authorization: `Bearer ${token}`,
+					},
+					withCredentials: true,
+				})
+				.then((res) => {
+					router.push("/");
 				})
 				.catch((err) => {
 					console.log(err);
 				});
-		}
+		};
 		dataFetch();
-	}
+	};
 	return (
 		<>
 			<div
@@ -123,7 +129,12 @@ const UserSection = () => {
 						<div className={classes.EditP} onClick={toggleHandler}>
 							Edit profile
 						</div>
-						<div className={classes.LogOut} onClick={LogOutHandler}>Log out</div>
+						<div className={classes.EditP} onClick={toggleSettingHandler}>
+							Settings
+						</div>
+						<div className={classes.LogOut} onClick={LogOutHandler}>
+							Log out
+						</div>
 					</motion.div>
 				)}
 			</div>

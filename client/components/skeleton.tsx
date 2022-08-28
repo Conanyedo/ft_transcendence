@@ -14,6 +14,7 @@ import {
 import Section from "./section";
 import classes from "../styles/Profile.module.css";
 import { getCookie } from "cookies-next";
+import Setting from "./profile/settings";
 
 const Skeleton = (props: { elm: any }) => {
 	const ctn = useRouter();
@@ -62,6 +63,7 @@ const Skeleton = (props: { elm: any }) => {
 					<span className={classes.msgError}>User Not found</span>
 				</div>
 			)}
+			<Setting />
 			{displayCard && <ProfileInfoEdit setTagle={toggleHandler} />}
 			<Header setPos={navBarHandler} />
 			<SideNav onNav={navBarHandler} currentPos={posIndicator} />
