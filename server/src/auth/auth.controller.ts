@@ -1,36 +1,63 @@
-import { Controller, Get, Post, Req, Res, UseGuards, Header } from '@nestjs/common';
+import { Controller, Get, Post, Req, Res, UseGuards, Header, UnauthorizedException } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { IntraAuthGuard } from './intra-auth.guard';
 import { GoogleOauthGuard } from './google-oauth.guard';
 import { JwtAuthGuard } from '../jwt-auth/jwt-auth.guard';
 import { Request, Response } from 'express';
 
-@Controller()
+
+@Controller('auth')
 export class AuthController {
 	constructor(
 		private readonly authService: AuthService,
 	) { }
 
-	@Get('auth/login')
+	// Login
+	@Get('/login')
 	@UseGuards(IntraAuthGuard)
-	login(@Req() req: Request, @Res() res: Response) {
-		const accessToken = this.authService.setToken(req)
-		res.cookie('jwt', accessToken);
-		return res.redirect('http://localhost:3000/');
+	async login(@Req() req, @Res() res: Response) {
+		this.authService.setJWTCookie(req.user, res);
+		await this.authService.checkUserAuthentication(req.user, res);
+		return res;
 	}
 
 	@UseGuards(GoogleOauthGuard)
-	@Get('auth/google/login')
-	googleLogin(@Req() req: Request, @Res() res: Response) {
-		const accessToken = this.authService.setToken(req)
-		res.cookie('jwt', accessToken);
-		return res.redirect('http://localhost:3000/');
+	@Get('/google/login')
+	async googleLogin(@Req() req, @Res() res: Response) {
+		this.authService.setJWTCookie(req.user, res);
+		await this.authService.checkUserAuthentication(req.user, res);
+		return res;
+	}
+	// +++++++++++++++++++++++++++++++++++
+
+	// Logout
+	@Get('/logout')
+	@UseGuards(JwtAuthGuard)
+	logout(@Req() req, @Res() res: Response) {
+		console.log('mchaa');
+		this.logout(req.user, res);
+		return res;
+	}
+	// +++++++++++++++++++++++++++++++++++
+
+	// TwoFactorAuthentication
+	@Get('/2fa')
+	@UseGuards(JwtAuthGuard)
+	async getTwoFactorAuthCode(@Req() req, @Res() res: Response) {
+		const otpAuthUrl = await this.authService.generate2faSecret(req.user);
+		const qrCode = await this.authService.generateQrCodeDataURL(otpAuthUrl);
+		console.log(qrCode);
+		return qrCode;
 	}
 
-	@Get('auth/isAuthorized')
+	@Post('/2fa')
 	@UseGuards(JwtAuthGuard)
-	authorized(@Req() req: Request) {
-		console.log('tauthoriza');
-		return req.user;
+	async checkTwoFactorAuthCode(@Req() req) {
+		const code = req.body.code;
+		const isValid = this.authService.is2faCodeValid(code, req.user);
+		if (!isValid)
+			throw new UnauthorizedException('Wrong authentication code');
+		return await this.authService.authenticateUser(req.user);
 	}
+	// +++++++++++++++++++++++++++++++++++
 }
