@@ -5,32 +5,50 @@ import { GoogleOauthGuard } from './google-oauth.guard';
 import { JwtAuthGuard } from '../jwt-auth/jwt-auth.guard';
 import { Request, Response } from 'express';
 
-@Controller()
+
+@Controller('auth')
 export class AuthController {
 	constructor(
 		private readonly authService: AuthService,
 	) { }
 
-	@Get('auth/login')
+	@Get('/login')
 	@UseGuards(IntraAuthGuard)
-	login(@Req() req: Request, @Res() res: Response) {
-		const accessToken = this.authService.setToken(req)
-		res.cookie('jwt', accessToken);
-		return res.redirect('http://localhost:3000/');
+	async login(@Req() req, @Res() res: Response) {
+		await this.authService.checkUserAuthenticated(req.user, res);
+		return res;
+	}
+
+	@Get('/2fa')
+	@UseGuards(JwtAuthGuard)
+	async twoFactorAuth(@Req() req, @Res() res: Response) {
+		const otpAuthUrl = await this.authService.generate2faSecret(req.user);
+		const qrCode = await this.authService.generateQrCodeDataURL(otpAuthUrl);
+		console.log(qrCode);
+		return qrCode;
 	}
 
 	@UseGuards(GoogleOauthGuard)
-	@Get('auth/google/login')
-	googleLogin(@Req() req: Request, @Res() res: Response) {
-		const accessToken = this.authService.setToken(req)
+	@Get('/google/login')
+	googleLogin(@Req() req, @Res() res: Response) {
+		const accessToken = this.authService.setToken(req.user)
 		res.cookie('jwt', accessToken);
 		return res.redirect('http://localhost:3000/');
 	}
 
-	@Get('auth/isAuthorized')
+	@Get('/is2faEnabled')
 	@UseGuards(JwtAuthGuard)
-	authorized(@Req() req: Request) {
-		console.log('tauthoriza');
-		return req.user;
+	authorized(@Req() req) {
+		console.log('dkhl ta hna');
+		console.log(req.user);
+		return this.authService.is2faEnabled(req.user);
+	}
+
+	@Get('/logout')
+	@UseGuards(JwtAuthGuard)
+	logout(@Req() req, @Res() res: Response) {
+		console.log('mchaa');
+		this.logout(req.user, res);
+		return res;
 	}
 }
