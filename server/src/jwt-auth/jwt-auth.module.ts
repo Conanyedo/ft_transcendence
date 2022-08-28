@@ -4,6 +4,7 @@ import { JwtAuthService } from './jwt-auth.service';
 import { JwtAuthStrategy } from './jwt-auth.strategy';
 import { ConfigService } from '@nestjs/config';
 import { JwtAuthGuard } from './jwt-auth.guard';
+import { UserModule } from 'src/user/user.module';
 
 @Module({
 	imports: [
@@ -13,8 +14,8 @@ import { JwtAuthGuard } from './jwt-auth.guard';
 				signOptions: { expiresIn: '1d' }
 			}),
 			inject: [ConfigService]
-		})
-	],
+		}),
+	UserModule],
 	providers: [JwtAuthService, JwtAuthStrategy],
 	exports: [JwtAuthService],
 })
