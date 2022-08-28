@@ -64,11 +64,9 @@ export const OptionMenu: React.FC<{
 	FirstBtn: string;
 	SecondBtn: string;
 	width: string;
-	ref_cmp: React.MutableRefObject<null>;
 }> = (props) => {
 	return (
 		<motion.div
-			ref={props.ref_cmp}
 			initial={{ scale: 0.5 }}
 			animate={{ scale: 1 }}
 			className={classes.optionMenu}
@@ -103,11 +101,10 @@ const User: React.FC<friendDataType> = (props) => {
 				{props.stat === "notFriend" && <ADDButton />}
 				{props.stat === "pending" && <PendingButton />}
 				{props.stat === "friend" && <FriendButton />}
-				<div className={classes.optionsbtnctn} onClick={TaggleHandler} >
+				<div className={classes.optionsbtnctn} onClick={TaggleHandler} ref={wrapperRef}>
 					<Image src={Option} />
 					{option && (
 						<OptionMenu
-							ref_cmp={wrapperRef}
 							FirstBtn="Direct message"
 							SecondBtn="Block user"
 							width="9rem"
