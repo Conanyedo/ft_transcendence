@@ -43,6 +43,8 @@ export class AuthController {
 	@Get('/isAuthenticated')
 	@UseGuards(JwtAuthGuard)
 	isAuthenticated(@Req() req) {
+		if (!req.user.isAuthenticated)
+			throw new UnauthorizedException('UnAuthenticated');
 		return req.user.isAuthenticated;
 	}
 	// +++++++++++++++++++++++++++++++++++
@@ -51,7 +53,7 @@ export class AuthController {
 	@Post('/2faEnabling')
 	@UseGuards(JwtAuthGuard)
 	async enabling2fa(@Req() req) {
-		if (req.body.is2faEnabled)
+		if (req.body.is2faEnabled === 'true')
 			return await this.authService.generate2fa(req.user);
 		this.authService.turn2fa(req.user, false);
 		return true;
