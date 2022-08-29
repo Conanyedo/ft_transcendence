@@ -1,7 +1,7 @@
 .background {
 	background-color: #0000009b;
-	position: absolute;
-	z-index: 999998;
+	position: fixed;
+	z-index: 100;
 	width: 100vw;
 	height: 100vh;
 	top: 0;
@@ -13,7 +13,7 @@
 
 .settingContainer {
 	background-color: #242426;
-	z-index: 999999;
+	z-index: 110;
 	width: 40rem;
 	border-radius: 10px;
 	display: flex;
