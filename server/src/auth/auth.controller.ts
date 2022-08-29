@@ -1,9 +1,11 @@
-import { Controller, Get, Post, Req, Res, UseGuards, Header, UnauthorizedException } from '@nestjs/common';
+import { Controller, Get, Post, Req, Res, UseGuards, Header, UnauthorizedException, Body } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { IntraAuthGuard } from './intra-auth.guard';
 import { GoogleOauthGuard } from './google-oauth.guard';
 import { JwtAuthGuard } from '../jwt-auth/jwt-auth.guard';
-import { Request, Response } from 'express';
+import { Response } from 'express';
+import { User } from 'src/user/user.decorator';
+import { userDto } from 'src/user/user.dto';
 
 
 @Controller('auth')
@@ -15,17 +17,17 @@ export class AuthController {
 	// Login
 	@Get('/login')
 	@UseGuards(IntraAuthGuard)
-	login(@Req() req, @Res() res: Response) {
-		this.authService.setJWTCookie(req.user, res);
-		this.authService.checkUserAuthentication(req.user, res);
+	login(@User() user: userDto, @Res() res: Response) {
+		this.authService.setJWTCookie(user, res);
+		this.authService.checkUserAuthentication(user, res);
 		return res;
 	}
 
 	@UseGuards(GoogleOauthGuard)
 	@Get('/google/login')
-	googleLogin(@Req() req, @Res() res: Response) {
-		this.authService.setJWTCookie(req.user, res);
-		this.authService.checkUserAuthentication(req.user, res);
+	googleLogin(@User() user: userDto, @Res() res: Response) {
+		this.authService.setJWTCookie(user, res);
+		this.authService.checkUserAuthentication(user, res);
 		return res;
 	}
 	// +++++++++++++++++++++++++++++++++++
@@ -33,8 +35,8 @@ export class AuthController {
 	// Logout
 	@Get('/logout')
 	@UseGuards(JwtAuthGuard)
-	logout(@Req() req, @Res({ passthrough: true }) res: Response) {
-		this.authService.logout(req.user, res);
+	logout(@User() user: userDto, @Res({ passthrough: true }) res: Response) {
+		this.authService.logout(user, res);
 		return true;
 	}
 	// +++++++++++++++++++++++++++++++++++
@@ -42,36 +44,36 @@ export class AuthController {
 	// isAuthenticated
 	@Get('/isAuthenticated')
 	@UseGuards(JwtAuthGuard)
-	isAuthenticated(@Req() req) {
-		if (!req.user.isAuthenticated)
+	isAuthenticated(@User() user: userDto) {
+		if (!user.isAuthenticated)
 			throw new UnauthorizedException('UnAuthenticated');
-		return req.user.isAuthenticated;
+		return user.isAuthenticated;
 	}
 	// +++++++++++++++++++++++++++++++++++
 
 	// TwoFactorAuthentication
 	@Post('/2faEnabling')
 	@UseGuards(JwtAuthGuard)
-	async enabling2fa(@Req() req) {
-		if (req.body.is2faEnabled === 'true')
-			return await this.authService.generate2fa(req.user);
-		this.authService.turn2fa(req.user, false);
+	async enabling2fa(@User() user: userDto, @Body("is2faEnabled") is2faEnabled: string) {
+		if (is2faEnabled === 'true')
+			return await this.authService.generate2fa(user);
+		this.authService.turn2fa(user, false);
 		return true;
 	}
 
 	@Post('/2faValidate')
 	@UseGuards(JwtAuthGuard)
-	validate2faCode(@Req() req) {
-		this.authService.is2faCodeValid(req.body.code, req.user._2faSecret);
-		this.authService.turn2fa(req.user, true);
+	validate2faCode(@User() user: userDto, @Body("code") code: string) {
+		this.authService.is2faCodeValid(code, user._2faSecret);
+		this.authService.turn2fa(user, true);
 		return true;
 	}
 
 	@Post('/2faLogin')
 	@UseGuards(JwtAuthGuard)
-	async login2faCode(@Req() req) {
-		this.authService.is2faCodeValid(req.body.code, req.user._2faSecret);
-		this.authService.authenticateUser(req.user);
+	async login2faCode(@User() user: userDto, @Body("code") code: string) {
+		this.authService.is2faCodeValid(code, user._2faSecret);
+		this.authService.authenticateUser(user);
 		return true;
 	}
 	// +++++++++++++++++++++++++++++++++++
@@ -79,8 +81,8 @@ export class AuthController {
 	// is2faEnabled
 	@Get('/is2faEnabled')
 	@UseGuards(JwtAuthGuard)
-	is2faEnabled(@Req() req) {
-		return req.user.is2faEnabled;
+	is2faEnabled(@User() user: userDto) {
+		return user.is2faEnabled;
 	}
 	// +++++++++++++++++++++++++++++++++++
 }
