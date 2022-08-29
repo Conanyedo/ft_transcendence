@@ -1,6 +1,5 @@
 import classes from "../../styles/setting.module.css";
 import Image from "next/image";
-import { useQRCode } from "next-qrcode";
 import CrossIcon from "../../public/FriendIcons/Cross.svg";
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
@@ -101,7 +100,6 @@ const Setting: React.FC = () => {
 	useEffect(() => {
 		data('is2faEnabled');
 	}, [])
-	const { Canvas } = useQRCode();
 	const displayCard = useSelector(Settings);
 	const variants = {
 		open: { scale: 1 },
@@ -127,8 +125,7 @@ const Setting: React.FC = () => {
 					},
 					withCredentials: true,
 				});
-				console.log(result.data);
-				// setQRcode(result.data);
+				setQRcode(result.data);
 			} catch (err) {
 				return err;
 			}
@@ -145,7 +142,6 @@ const Setting: React.FC = () => {
 			setIsValid(true);
 			setNextPage(true);
 		}
-		console.log(inputValue);
 	};
 	const [inputValue, setInputValue] = useState("");
 	return (
@@ -197,17 +193,7 @@ const Setting: React.FC = () => {
 							>
 								{!nextPage && (
 									<>
-										<Canvas
-											text={QRcode}
-											options={{
-												type: "image/png",
-												quality: 0,
-												level: "L",
-												margin: 1,
-												scale: 6,
-												width: 0,
-											}}
-										/>
+									<img src={QRcode}/>
 										<span>Plaise type the 6 Number</span>
 										<OTP_Input inputValue={inputValue} setInputValue={setInputValue} />
 									</>
