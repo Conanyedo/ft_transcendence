@@ -1,4 +1,4 @@
-import { IsBoolean, IsEmail, IsNotEmpty } from "class-validator";
+import { IsBoolean, IsEmail, IsNotEmpty, IsString } from "class-validator";
 
 export class userDto {
 
@@ -21,6 +21,7 @@ export class userDto {
 	@IsBoolean()
 	isAuthenticated?: boolean;
 
+	@IsString()
 	_2faSecret?: string;
 
 	@IsBoolean()
