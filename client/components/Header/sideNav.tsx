@@ -22,6 +22,7 @@ import { MutableRefObject, useEffect, useRef, useState } from "react";
 import { useInSideAlerter } from "../profile/ProfileInfoEdit";
 import axios from "axios";
 import { getCookie } from "cookies-next";
+import { LogOut } from "../../customHooks/useFetchData";
 
 interface N_ITEMS {
 	alt: string;
@@ -76,22 +77,7 @@ const SideNav: React.FC<{
 	const ctn = useRouter();
 	const NamePage = "/" + ctn.pathname.split("/")[1];
 
-	const handlerLogOut = () => {
-		const dataFetch = async () => {
-			try {
-				await axios.get(`http://localhost:5000/auth/logout`, {
-					headers: {
-						Authorization: `Bearer ${token}`,
-					},
-					withCredentials: true,
-				});
-				ctn.push("/");
-			} catch (err) {
-				console.log(err);
-			}
-		};
-		dataFetch();
-	};
+	const handlerLogOut = () =>  LogOut(ctn);
 	const [isOpen, setIsOpen] = useState(false);
 
 	const ToggleAll = (value: boolean) => {
