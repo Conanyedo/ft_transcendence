@@ -95,7 +95,7 @@ const Skeleton = (props: { elm: any }) => {
 					<SideNav onNav={navBarHandler} currentPos={posIndicator} />
 				)}
 				{isAuthenticated && <Section elm={props.elm} />}
-				{props.elm}
+				{!isAuthenticated && props.elm}
 			</Suspense>
 		</>
 	);
