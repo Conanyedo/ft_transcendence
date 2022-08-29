@@ -30,16 +30,17 @@ const checkCode = async (code: string) => {
 
 
 const FactorAuth = () => {
-			console.log('hna');
 	const router = useRouter();
+	const jwt = getCookie('jwt');
+	if (!jwt)
+		router.push('/');
 	const [inputValue, setInputValue] = useState("");
 	const [isError, setisError] = useState(false);
 	const CheckHandler = async () => {
-		if (await checkCode(inputValue)){
-			
-			router.push('/profile');}
+		if (await checkCode(inputValue))
+			router.push('/profile');
 		else
-			setisError(true)
+			setisError(true);
 	}
 	return (
 		<>
@@ -47,7 +48,7 @@ const FactorAuth = () => {
 				<div className={classes.FAuthContainer}>
 					<div className={classes.header}>
 						<span>2 Factor Authentication</span>
-						<div className={classes.cross}>
+						<div className={classes.cross} onClick={()=> router.replace('/profile')}>
 							<Image src={CrossIcon} width="72" height="72" />
 						</div>
 					</div>

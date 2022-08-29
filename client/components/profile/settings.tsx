@@ -5,52 +5,10 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useDispatch, useSelector } from "react-redux";
 import { HideSettings, Settings } from "../store/UI-Slice";
-import { getCookie } from "cookies-next";
-import axios from "axios";
 import MsgSlideUp from "../slideUpMsg";
-
 import OtpInput from "react-otp-input";
 import Grid from "@material-ui/core/Grid";
-
-const checkCode = async (code: string) => {
-	const token = getCookie("jwt");
-	const params = new URLSearchParams();
-	params.append("code", code);
-	try {
-		await axios({
-			method: "post",
-			url: `http://localhost:5000/auth/2faValidate`,
-			data: params,
-			headers: {
-				Authorization: `Bearer ${token}`,
-			},
-			withCredentials: true,
-		});
-		return true;
-	} catch (err) {
-		return false;
-	}
-};
-
-const getCode = async () => {
-	const token = getCookie("jwt");
-	const params = new URLSearchParams();
-	params.append("is2faEnabled", "true");
-	try {
-		const result = await axios({
-			method: "post",
-			url: `http://localhost:5000/auth/2faEnabling`,
-			data: params,
-			headers: {
-				Authorization: `Bearer ${token}`,
-			},
-			withCredentials: true,
-		});
-		return result.data;
-	} catch (err) {
-		return "#";
-	}
-};
+import { check2FACode, getQRcodeOrdisableCode, Is2FAEnaled } from "../../customHooks/useFetchData";
 
 const variants = {
 	open: { scale: 1 },
@@ -61,48 +19,6 @@ const spring = {
 	type: "spring",
 	stiffness: 700,
 	damping: 30,
-};
-
-const disablehandler = async (status: string) => {
-	const token = getCookie("jwt");
-	const params = new URLSearchParams();
-	params.append("is2faEnabled", status);
-	try {
-		const result = await axios({
-			method: "post",
-			url: `http://localhost:5000/auth/2faEnabling`,
-			data: params,
-			headers: {
-				Authorization: `Bearer ${token}`,
-			},
-			withCredentials: true,
-		});
-		return result.data;
-	} catch {
-	}
-};
-
-const isEnabledhandler = (set: any, setP: any) => {
-	let res = false;
-	const check = async () => {
-		const token = getCookie("jwt");
-		try {
-			const result = await axios.get(
-				`http://localhost:5000/auth/is2faEnabled`,
-				{
-					headers: {
-						Authorization: `Bearer ${token}`,
-					},
-					withCredentials: true,
-				}
-			);
-			set(result.data);
-			setP(result.data);
-		} catch {
-		}
-	};
-	check();
-	return res;
 };
 
 const FirstPage: React.FC<{ isOn: boolean; toggleSwitch: () => void }> = (
@@ -128,14 +44,18 @@ const FirstPage: React.FC<{ isOn: boolean; toggleSwitch: () => void }> = (
 	);
 };
 
-const SecondPage: React.FC<{ QRcode: string, inputValue:string, codeFailed:boolean, setIsOn: any, setInputValue: any }> = (
-	props
-) => {
+const SecondPage: React.FC<{
+	QRcode: string;
+	inputValue: string;
+	codeFailed: boolean;
+	setIsOn: any;
+	setInputValue: any;
+}> = (props) => {
 	return (
 		<>
 			<img src={props.QRcode} />
 			<span>Please entre the OTP</span>
-			<Grid >
+			<Grid>
 				<OtpInput
 					value={props.inputValue}
 					numInputs={6}
@@ -145,7 +65,9 @@ const SecondPage: React.FC<{ QRcode: string, inputValue:string, codeFailed:boole
 						margin: "0 .5rem",
 						fontSize: "1.5rem",
 						borderRadius: 4,
-						border: `1px solid ${props.codeFailed ? "red" : "black"}`,
+						border: `1px solid ${
+							props.codeFailed ? "red" : "black"
+						}`,
 					}}
 					onChange={(e: any) => {
 						props.setIsOn(e.length === 6);
@@ -169,7 +91,7 @@ const Setting: React.FC = () => {
 	const [isOn, setIsOn] = useState(false);
 	const [QRcode, setQRcode] = useState("#");
 	useEffect(() => {
-		isEnabledhandler(setprevstat, setIsOn);
+		Is2FAEnaled(setprevstat, setIsOn);
 	}, []);
 	const toggleSwitch = () => {
 		setIsOn(!isOn);
@@ -177,10 +99,10 @@ const Setting: React.FC = () => {
 	};
 	const toggleHandler = async () => {
 		if (QRcode === "#") {
-			const qrCode: string = await disablehandler('true');
+			const qrCode: string = await getQRcodeOrdisableCode("true");
 			setQRcode(qrCode);
 		} else if (QRcode !== "#" && inputValue.length === 6) {
-			const res: boolean = await checkCode(inputValue);
+			const res: boolean = await check2FACode(inputValue);
 			setIsValid(res);
 			setcodeFailed(!res);
 			if (res) {
@@ -194,7 +116,7 @@ const Setting: React.FC = () => {
 	};
 	const [inputValue, setInputValue] = useState("");
 	const handlerDisable = async () => {
-		await disablehandler('false');
+		await getQRcodeOrdisableCode("false");
 		setIsValid(true);
 		setTimeout(() => {
 			dispatch(HideSettings());
@@ -209,8 +131,22 @@ const Setting: React.FC = () => {
 				<MsgSlideUp msg="Done" colorCtn="#31BAAE" colorMsg="#ECF5FF" />
 			)}
 			{!isValid && displayCard && (
-				<div className={classes.background}>
-					<div className={classes.settingContainer}>
+				<motion.div
+				initial={{ opacity: 0 }}
+				animate={{ opacity: 1 }}
+					className={classes.background}
+					onClick={(e) => {
+						if (e.target != e.currentTarget)
+							return;
+						setIsValid(false);
+						setIsOn(false);
+						dispatch(HideSettings());
+					}}
+				>
+					<motion.div
+					initial={{ scale: 0 }}
+					animate={{ scale: 1 }}
+					className={classes.settingContainer}>
 						<div className={classes.header}>
 							<span>Settings</span>
 							<div
@@ -244,7 +180,13 @@ const Setting: React.FC = () => {
 								className={classes.qrCodeContainer}
 							>
 								{QRcode !== "#" && (
-									<SecondPage QRcode={QRcode} inputValue={inputValue} setIsOn={setIsOn} setInputValue={setInputValue} codeFailed={codeFailed} />
+									<SecondPage
+										QRcode={QRcode}
+										inputValue={inputValue}
+										setIsOn={setIsOn}
+										setInputValue={setInputValue}
+										codeFailed={codeFailed}
+									/>
 								)}
 							</motion.div>
 						</div>
@@ -263,8 +205,8 @@ const Setting: React.FC = () => {
 									: "Save"
 								: "Confirm"}
 						</div>
-					</div>
-				</div>
+					</motion.div>
+				</motion.div>
 			)}
 		</>
 	);
