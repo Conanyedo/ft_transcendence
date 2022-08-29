@@ -9,7 +9,7 @@ const HomePage = () => {
 	const router = useRouter();
 	const open = (router.query._2fa !== undefined);
 	if (!open)
-		useFetchData("auth/isAuthorized");
+		useFetchData("auth/isAuthenticated");
 	return (
 		<>
 			{open && <FactorAuth />}
