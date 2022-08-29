@@ -1,11 +1,13 @@
 import classes from "../../styles/setting.module.css";
 import Image from "next/image";
-import { useQRCode } from "next-qrcode";
 import CrossIcon from "../../public/FriendIcons/Cross.svg";
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { useDispatch, useSelector } from "react-redux";
 import { HideSettings, Settings } from "../store/UI-Slice";
+import { getCookie } from "cookies-next";
+import axios from "axios";
+import MsgSlideUp from "../slideUpMsg";
 
 export const OTP_Input: React.FC<{inputValue: string, setInputValue: any}> = (props) => {
 	const ref_1 = useRef(null);
@@ -30,6 +32,7 @@ export const OTP_Input: React.FC<{inputValue: string, setInputValue: any}> = (pr
 	return (
 		<div className={classes.inputContainer}>
 			<input
+				autoFocus
 				alt="1"
 				className={classes.input}
 				maxLength={1}
@@ -76,8 +79,27 @@ export const OTP_Input: React.FC<{inputValue: string, setInputValue: any}> = (pr
 };
 
 const Setting: React.FC = () => {
-	const { Canvas } = useQRCode();
+	const token = getCookie("jwt");
 	const dispatch = useDispatch();
+	const [isValid, setIsValid] = useState(false);
+	const [unValid, setUnValid] = useState(false);
+	const [isOn, setIsOn] = useState(false);
+	const data = async (api: string) => {
+		try {
+			const result = await axios.get(`http://localhost:5000/auth/${api}`, {
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+				withCredentials: true,
+			});
+			setIsOn(result.data);
+		} catch (err) {
+            return err;
+		}
+	};
+	useEffect(() => {
+		data('is2faEnabled');
+	}, [])
 	const displayCard = useSelector(Settings);
 	const variants = {
 		open: { scale: 1 },
@@ -89,23 +111,44 @@ const Setting: React.FC = () => {
 		stiffness: 700,
 		damping: 30,
 	};
-	const [isOn, setIsOn] = useState(false);
 	const [nextPage, setNextPage] = useState(true);
+	const [QRcode, setQRcode] = useState('#');
 	const toggleSwitch = () => {
 		setIsOn(!isOn);
 	};
 	const toggleHandler = () => {
-		if (nextPage) setNextPage(false);
-		if (!nextPage) {
-			dispatch(HideSettings());
+		const data = async (api: string) => {
+			try {
+				const result = await axios.get(`http://localhost:5000/auth/${api}`, {
+					headers: {
+						Authorization: `Bearer ${token}`,
+					},
+					withCredentials: true,
+				});
+				setQRcode(result.data);
+			} catch (err) {
+				return err;
+			}
+		};
+		if (nextPage) {
+			setNextPage(false)
+			data('2fa');
+		}
+		else if (!nextPage) {
+			setTimeout(()=> {
+				setIsValid(false);
+				dispatch(HideSettings());
+			}, 3000);
+			setIsValid(true);
 			setNextPage(true);
 		}
-		console.log(inputValue);
 	};
 	const [inputValue, setInputValue] = useState("");
 	return (
 		<>
-			{displayCard && (
+		{isValid && <MsgSlideUp msg='Done' colorCtn="#31BAAE" colorMsg="#ECF5FF" />}
+		{unValid && <MsgSlideUp msg='Try Again' colorCtn="#FF6482" colorMsg="#ECF5FF" />}
+			{!isValid && displayCard && (
 				<div className={classes.background}>
 					<div className={classes.settingContainer}>
 						<div className={classes.header}>
@@ -150,19 +193,8 @@ const Setting: React.FC = () => {
 							>
 								{!nextPage && (
 									<>
-										<Canvas
-											text={"#"}
-											options={{
-												type: "image/jpeg",
-												quality: 0.3,
-												level: "S",
-												margin: 3,
-												scale: 6,
-												width: 0,
-											}}
-										/>
+									<img src={QRcode}/>
 										<span>Plaise type the 6 Number</span>
-										
 										<OTP_Input inputValue={inputValue} setInputValue={setInputValue} />
 									</>
 								)}
