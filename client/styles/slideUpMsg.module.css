@@ -1,0 +1,42 @@
+.Errorctn {
+	z-index: 110;
+	position: fixed;
+	text-align: center;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 100%;
+	animation-name: example;
+	animation-duration: 3s;
+}
+
+.msgError {
+	padding: .8rem 1rem;
+	border-radius: 15px;
+	background-color: #FF6482;
+	font-family: 'Inter';
+	font-style: normal;
+	font-weight: 700;
+	font-size: 1.3rem;
+	line-height: 22px;
+	color: #ECF5FF;
+	text-align: center;
+	width: fit-content;
+	margin-top: .5rem;
+
+}
+
+@keyframes example {
+	0% {
+		opacity: 0;
+		top: -25px;
+	}
+	50% {
+		opacity: 1;
+		top: 0;
+	}
+	100% {
+		opacity: 0;
+		top: -25px;
+	}
+}

@@ -15,6 +15,7 @@ import Section from "./section";
 import classes from "../styles/Profile.module.css";
 import { getCookie } from "cookies-next";
 import Setting from "./profile/settings";
+import MsgSlideUp from "./slideUpMsg";
 
 const Skeleton = (props: { elm: any }) => {
 	const ctn = useRouter();
@@ -58,11 +59,7 @@ const Skeleton = (props: { elm: any }) => {
 					height: 100%;
 				}
 			`}</style>
-			{ShowError && (
-				<div className={classes.Errorctn}>
-					<span className={classes.msgError}>User Not found</span>
-				</div>
-			)}
+			{ShowError && <MsgSlideUp msg='User Not Found' colorCtn="#FF6482" colorMsg="#ECF5FF" /> }
 			<Setting />
 			{displayCard && <ProfileInfoEdit setTagle={toggleHandler} />}
 			<Header setPos={navBarHandler} />
