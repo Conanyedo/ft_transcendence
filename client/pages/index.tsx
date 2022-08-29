@@ -7,8 +7,9 @@ import FactorAuth from "../components/profile/FactorAuth";
 
 const HomePage = () => {
 	const router = useRouter();
-	const data = useFetchData("auth/isAuthorized");
 	const open = (router.query._2fa !== undefined);
+	if (!open)
+		useFetchData("auth/isAuthorized");
 	return (
 		<>
 			{open && <FactorAuth />}

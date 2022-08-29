@@ -34,10 +34,8 @@ export class AuthService {
 	}
 
 	async logout(user: userDto, res: Response) {
-		res.cookie('jwt', '', { maxAge: 1 });
-		res.redirect('http://localhost:3000/');
 		const getUser = await this.userService.setUserAuthenticated(user.id, false);
-		console.log('Logout', getUser);
+		res.cookie('jwt', '', { maxAge: 1 });
 	}
 
 

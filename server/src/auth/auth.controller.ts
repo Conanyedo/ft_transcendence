@@ -33,20 +33,26 @@ export class AuthController {
 	// Logout
 	@Get('/logout')
 	@UseGuards(JwtAuthGuard)
-	logout(@Req() req, @Res() res: Response) {
+	async logout(@Req() req, @Res({ passthrough:true }) res: Response) {
 		console.log('mchaa');
-		this.logout(req.user, res);
-		return res;
+		await this.authService.logout(req.user, res);
+		return true;
 	}
 	// +++++++++++++++++++++++++++++++++++
+
+	@Get('/isAuthorized')
+	@UseGuards(JwtAuthGuard)
+	isAuthorized(@Req() req) {
+		return req.user.isAuthenticated;
+	}
 
 	// TwoFactorAuthentication
 	@Get('/2fa')
 	@UseGuards(JwtAuthGuard)
-	async getTwoFactorAuthCode(@Req() req, @Res() res: Response) {
+	async getTwoFactorAuthCode(@Req() req) {
 		const otpAuthUrl = await this.authService.generate2faSecret(req.user);
 		const qrCode = await this.authService.generateQrCodeDataURL(otpAuthUrl);
-		console.log(qrCode);
+		console.log('QrCode', qrCode);
 		return qrCode;
 	}
 
@@ -57,7 +63,14 @@ export class AuthController {
 		const isValid = this.authService.is2faCodeValid(code, req.user);
 		if (!isValid)
 			throw new UnauthorizedException('Wrong authentication code');
-		return await this.authService.authenticateUser(req.user);
+		await this.authService.authenticateUser(req.user);
+		return true;
+	}
+
+	@Get('/is2faEnabled')
+	@UseGuards(JwtAuthGuard)
+	async is2faEnabled(@Req() req) {
+		return req.user.is2faEnabled;
 	}
 	// +++++++++++++++++++++++++++++++++++
 }
