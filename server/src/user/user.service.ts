@@ -41,9 +41,9 @@ export class UserService {
 		await this.userRepository.save(user);
 	}
 
-	// async turnOn2fa(id: string) {
-	// 	const user = await this.userRepository.findOne({ where: { id } });
-	// 	user.is2faEnabled = true;
-	// 	await this.userRepository.save(user);
-	// }
+	async turn2fa(id: string, status: boolean) {
+		const user = await this.userRepository.findOne({ where: { id } });
+		user.is2faEnabled = status;
+		await this.userRepository.save(user);
+	}
 }
