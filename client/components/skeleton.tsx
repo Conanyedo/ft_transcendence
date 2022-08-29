@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { Suspense, useEffect, useRef, useState } from "react";
 import Header from "./Header/Header";
 import SideNav from "./Header/sideNav";
 import classesNav from "../styles/sideNav.module.css";
@@ -18,6 +18,7 @@ import { getCookie } from "cookies-next";
 import Setting from "./profile/settings";
 import MsgSlideUp from "./slideUpMsg";
 import axios from "axios";
+import dynamic from "next/dynamic";
 
 const fetchData = async (set: any, router: NextRouter) => {
 	const token = getCookie("jwt");
@@ -34,9 +35,14 @@ const fetchData = async (set: any, router: NextRouter) => {
 			set(true);
 		})
 		.catch((err) => {
+			set(false);
 			router.replace("/");
 		});
 };
+
+const DynamicHeader = dynamic(() => import("./Header/Header"), {
+	loading: () => <></>,
+});
 
 const Skeleton = (props: { elm: any }) => {
 	const ctn = useRouter();
@@ -46,7 +52,7 @@ const Skeleton = (props: { elm: any }) => {
 	const ShowError = useAppSelector(ToggleErrorValue);
 	const [isAuthenticated, setisAuthenticated] = useState(false);
 	const [posIndicator, setPosIndicator] = useState(classesNav.hide);
-	
+
 	const NamePage = "/" + ctn.pathname.split("/")[1];
 	const navBarHandler = (page: string) => {
 		setPosIndicator(() => {
@@ -60,10 +66,7 @@ const Skeleton = (props: { elm: any }) => {
 	useEffect(() => {
 		fetchData(setisAuthenticated, ctn);
 		navBarHandler(NamePage);
-	}, []);
-	if (!isAuthenticated) {
-		return <></>;
-	}
+	}, [ctn.pathname]);
 	const toggleHandler = () => dispatch(Toggle());
 	if (ShowError) {
 		setTimeout(() => {
@@ -72,23 +75,28 @@ const Skeleton = (props: { elm: any }) => {
 	}
 	return (
 		<>
-			<style global jsx>{`
-				div#__next {
-					height: 100%;
-				}
-			`}</style>
-			{ShowError && (
-				<MsgSlideUp
-					msg="User Not Found"
-					colorCtn="#FF6482"
-					colorMsg="#ECF5FF"
-				/>
-			)}
-			{displaymsg && <Setting />}
-			{displayCard && <ProfileInfoEdit setTagle={toggleHandler} />}
-			<Header setPos={navBarHandler} />
-			<SideNav onNav={navBarHandler} currentPos={posIndicator} />
-			<Section elm={props.elm} />
+			<Suspense fallback={`Loading...`}>
+				<style global jsx>{`
+					div#__next {
+						height: 100%;
+					}
+				`}</style>
+				{ShowError && (
+					<MsgSlideUp
+						msg="User Not Found"
+						colorCtn="#FF6482"
+						colorMsg="#ECF5FF"
+					/>
+				)}
+				{displaymsg && <Setting />}
+				{displayCard && <ProfileInfoEdit setTagle={toggleHandler} />}
+				{isAuthenticated && <DynamicHeader setPos={navBarHandler} />}
+				{isAuthenticated && (
+					<SideNav onNav={navBarHandler} currentPos={posIndicator} />
+				)}
+				{isAuthenticated && <Section elm={props.elm} />}
+				{props.elm}
+			</Suspense>
 		</>
 	);
 };

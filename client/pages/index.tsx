@@ -7,35 +7,34 @@ import FactorAuth from "../components/profile/FactorAuth";
 
 const HomePage = () => {
 	const router = useRouter();
-	const open = (router.query._2fa !== undefined);
-	if (!open)
-		useFetchData("auth/isAuthenticated");
+	const open = router.query._2fa !== undefined;
+	if (!open) useFetchData("isAuthenticated");
 	return (
 		<>
 			{open && <FactorAuth />}
-			<div className={classes.screensize}>
-				<motion.a
-					whileHover={{ scale: 1.5 }}
-					whileTap={{ scale: 0.9 }}
+			<motion.div className={classes.screensize}>
+				<motion.div
+					whileHover={{ scale: 1.2 }}
+					whileTap={{ scale: 1.1 }}
 					className={classes.loginBtn}
 					onClick={(e) =>
 						router.push("http://localhost:5000/auth/login")
 					}
 				>
 					42 Intra
-				</motion.a>
-				<motion.a
-					whileHover={{ scale: 1.5 }}
-					whileTap={{ scale: 0.9 }}
+				</motion.div>
+				<motion.div
+					whileHover={{ scale: 1.2 }}
+					whileTap={{ scale: 1.1 }}
 					className={classes.loginBtn}
 					onClick={(e) =>
 						router.push("http://localhost:5000/auth/google/login")
 					}
 				>
 					Google
-				</motion.a>
-			</div>
-			<Loading />
+				</motion.div>
+			</motion.div>
+			{!open && <Loading />}
 		</>
 	);
 };
