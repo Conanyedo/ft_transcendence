@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { JwtAuthService } from 'src/jwt-auth/jwt-auth.service';
 import { userDto } from 'src/user/user.dto';
@@ -26,46 +26,41 @@ export class AuthService {
 		res.cookie('jwt', accessToken);
 	}
 
-	async checkUserAuthentication(user: userDto, res: Response) {
+	checkUserAuthentication(user: userDto, res: Response) {
 		if (user.is2faEnabled)
 			return res.redirect('http://localhost:3000/?_2fa=true');
 		res.redirect('http://localhost:3000/');
-		await this.userService.setUserAuthenticated(user.id, true);
+		this.userService.setUserAuthenticated(user.id, true);
 	}
 
-	async logout(user: userDto, res: Response) {
-		await this.userService.setUserAuthenticated(user.id, false);
+	async authenticateUser(user: userDto) {
+		this.userService.setUserAuthenticated(user.id, true);
+	}
+
+	logout(user: userDto, res: Response) {
+		this.userService.setUserAuthenticated(user.id, false);
 		res.cookie('jwt', '', { maxAge: 1 });
 	}
 
 
 	// 2FactorAuthentication
 
-	async generate2faSecret(user: userDto) {
+	async generate2fa(user: userDto) {
 		const secret = authenticator.generateSecret();
-		const otpAuthUrl = authenticator.keyuri(
-			user.email,
-			'Transcendence',
-			secret,
-		);
-		await this.userService.set2faSecret(user.id, secret);
-		return otpAuthUrl;
+		this.userService.set2faSecret(user.id, secret);
+		const otpAuthUrl = authenticator.keyuri(user.email, 'Transcendence', secret);
+		const qrCode = await toDataURL(otpAuthUrl);
+		return qrCode;
 	}
 
-	async generateQrCodeDataURL(otpAuthUrl: string) {
-		return await toDataURL(otpAuthUrl);
+	async turn2fa(user: userDto, status: boolean) {
+		this.userService.turn2fa(user.id, status);
 	}
 
-	is2faCodeValid(code: string, user: userDto) {
-    return authenticator.verify({
-      token: code,
-      secret: user._2faSecret,
-    });
-  }
-
-	async authenticateUser(user: userDto) {
-		let getUser = await this.userService.getUserById(user.id);
-		getUser = await this.userService.setUserAuthenticated(getUser.id, true);
-		return { ...getUser };
+	is2faCodeValid(code: string, secret: string) {
+		const isValid = authenticator.verify({ token: code, secret: secret });
+		if (!isValid)
+			throw new UnauthorizedException('Wrong authentication code');
+		return true;
 	}
 }
