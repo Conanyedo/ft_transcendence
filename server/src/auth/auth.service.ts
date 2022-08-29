@@ -34,7 +34,7 @@ export class AuthService {
 	}
 
 	async logout(user: userDto, res: Response) {
-		const getUser = await this.userService.setUserAuthenticated(user.id, false);
+		await this.userService.setUserAuthenticated(user.id, false);
 		res.cookie('jwt', '', { maxAge: 1 });
 	}
 
@@ -43,7 +43,6 @@ export class AuthService {
 
 	async generate2faSecret(user: userDto) {
 		const secret = authenticator.generateSecret();
-		console.log('2fa Secret:', secret);
 		const otpAuthUrl = authenticator.keyuri(
 			user.email,
 			'Transcendence',
