@@ -15,17 +15,17 @@ export class AuthController {
 	// Login
 	@Get('/login')
 	@UseGuards(IntraAuthGuard)
-	async login(@Req() req, @Res() res: Response) {
+	login(@Req() req, @Res() res: Response) {
 		this.authService.setJWTCookie(req.user, res);
-		await this.authService.checkUserAuthentication(req.user, res);
+		this.authService.checkUserAuthentication(req.user, res);
 		return res;
 	}
 
 	@UseGuards(GoogleOauthGuard)
 	@Get('/google/login')
-	async googleLogin(@Req() req, @Res() res: Response) {
+	googleLogin(@Req() req, @Res() res: Response) {
 		this.authService.setJWTCookie(req.user, res);
-		await this.authService.checkUserAuthentication(req.user, res);
+		this.authService.checkUserAuthentication(req.user, res);
 		return res;
 	}
 	// +++++++++++++++++++++++++++++++++++
@@ -34,13 +34,12 @@ export class AuthController {
 	@Get('/logout')
 	@UseGuards(JwtAuthGuard)
 	logout(@Req() req, @Res({ passthrough: true }) res: Response) {
-		console.log('mchaa');
 		this.authService.logout(req.user, res);
 		return true;
 	}
 	// +++++++++++++++++++++++++++++++++++
 
-	// isAuthorized
+	// isAuthenticated
 	@Get('/isAuthenticated')
 	@UseGuards(JwtAuthGuard)
 	isAuthenticated(@Req() req) {
@@ -49,27 +48,33 @@ export class AuthController {
 	// +++++++++++++++++++++++++++++++++++
 
 	// TwoFactorAuthentication
-	@Get('/2fa')
+	@Post('/2faEnabling')
 	@UseGuards(JwtAuthGuard)
-	async getTwoFactorAuthCode(@Req() req) {
-		const otpAuthUrl = await this.authService.generate2faSecret(req.user);
-		const qrCode = await this.authService.generateQrCodeDataURL(otpAuthUrl);
-		return qrCode;
+	async enabling2fa(@Req() req) {
+		if (req.body.is2faEnabled)
+			return await this.authService.generate2fa(req.user);
+		this.authService.turn2fa(req.user, false);
+		return true;
 	}
 
-	@Post('/2fa')
+	@Post('/2faValidate')
 	@UseGuards(JwtAuthGuard)
-	async checkTwoFactorAuthCode(@Req() req) {
-		const code = req.body.code;
-		const isValid = this.authService.is2faCodeValid(code, req.user);
-		if (!isValid)
-			throw new UnauthorizedException('Wrong authentication code');
-		await this.authService.authenticateUser(req.user);
+	validate2faCode(@Req() req) {
+		this.authService.is2faCodeValid(req.body.code, req.user._2faSecret);
+		this.authService.turn2fa(req.user, true);
+		return true;
+	}
+
+	@Post('/2faLogin')
+	@UseGuards(JwtAuthGuard)
+	async login2faCode(@Req() req) {
+		this.authService.is2faCodeValid(req.body.code, req.user._2faSecret);
+		this.authService.authenticateUser(req.user);
 		return true;
 	}
 	// +++++++++++++++++++++++++++++++++++
 
-	// isAuthorized
+	// is2faEnabled
 	@Get('/is2faEnabled')
 	@UseGuards(JwtAuthGuard)
 	is2faEnabled(@Req() req) {
