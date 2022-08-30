@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { PassportStrategy } from "@nestjs/passport";
 import { Profile, verify, Strategy } from "passport-42";
-import { userDto } from "src/user/user.dto";
+import { userDto, userParitalDto } from "src/user/user.dto";
 import { AuthService } from "./auth.service";
 import { ConfigService } from '@nestjs/config';
 
@@ -28,7 +28,7 @@ export class IntraStrategy extends PassportStrategy(Strategy, '42') {
 			email: emails[0].value,
 			avatar: photos[0].value,
 		};
-		const user: userDto = await this.authService.checkUserExist(newUser);
+		const user: userParitalDto = await this.authService.checkUserExist(newUser);
 		done(null, user);
 	}
 }
