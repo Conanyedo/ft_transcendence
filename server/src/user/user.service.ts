@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { userDto } from './user.dto';
+import { userDto, userParitalDto } from './user.dto';
 import { User } from './user.entity';
 
 @Injectable()
@@ -12,38 +12,78 @@ export class UserService {
 		private userRepository: Repository<User>
 	) { }
 
-	async registerUser(newUser: userDto) {
-		const user = new User();
+	async registerUser(newUser: userDto): Promise<userParitalDto> {
+		let user: User = new User();
 		user.login = newUser.login;
 		user.email = newUser.email;
 		user.fullname = newUser.fullname;
 		user.avatar = newUser.avatar;
-		return await this.userRepository.save(user);
+		user = await this.userRepository.save(user);
+		const getUser: userParitalDto = {
+			id: user.id,
+			login: user.login
+		};
+		return getUser;
 	}
 
-	async getUserByEmail(email: string) {
-		return await this.userRepository.findOne({ where: { email } });
+
+	// User Getters
+	async getPartialUser(email: string): Promise<userParitalDto> {
+		const user: User = await this.userRepository
+			.createQueryBuilder('users')
+			.select(['users.id', 'users.login'])
+			.where('users.email = :email', { email: email })
+			.getOne();
+		if (!user)
+			return user;
+		return {
+			id: user.id,
+			login: user.login
+		};
 	}
 
-	async getUserById(id: string) {
-		return await this.userRepository.findOne({ where: { id } });
+	async getSecret(id: string) {
+		const user: User = await this.userRepository
+			.createQueryBuilder('users')
+			.select(['users._2faSecret'])
+			.where('users.id = :id', { id: id })
+			.getOne();
+		return user._2faSecret;
 	}
 
+	async get2faEnabled(id: string) {
+		const user: User = await this.userRepository
+			.createQueryBuilder('users')
+			.select(['users.is2faEnabled'])
+			.where('users.id = :id', { id: id })
+			.getOne();
+		return user.is2faEnabled;
+	}
+	// ------------------------------
+
+
+	// User Setters
 	async setUserAuthenticated(id: string, status: boolean) {
-		const user = await this.userRepository.findOne({ where: { id } });
-		user.isAuthenticated = status;
-		return await this.userRepository.save(user);
+		return await this.userRepository
+			.createQueryBuilder('users')
+			.update({ isAuthenticated: status })
+			.where('id = :id', { id: id })
+			.execute();
 	}
 
 	async set2faSecret(id: string, secret: string) {
-		const user = await this.userRepository.findOne({ where: { id } });
-		user._2faSecret = secret;
-		await this.userRepository.save(user);
+		return await this.userRepository
+			.createQueryBuilder('users')
+			.update({ _2faSecret: secret })
+			.where('id = :id', { id: id })
+			.execute();
 	}
 
-	async turn2fa(id: string, status: boolean) {
-		const user = await this.userRepository.findOne({ where: { id } });
-		user.is2faEnabled = status;
-		await this.userRepository.save(user);
+	async set2faEnabled(id: string, status: boolean) {
+		return await this.userRepository
+			.createQueryBuilder('users')
+			.update({ is2faEnabled: status })
+			.where('id = :id', { id: id })
+			.execute();
 	}
 }
