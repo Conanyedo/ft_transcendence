@@ -1,5 +1,6 @@
 import Styles from "@styles/chat.module.css"
 import Cross from "@public/Cross.svg"
+import TagCross from "@public/white-cross.svg"
 import Image from "next/image"
 import React, { Dispatch, SetStateAction, useContext, useState } from "react"
 import _ from 'lodash'
@@ -45,8 +46,8 @@ function Option(props: { type: string }) {
     </>)
 }
 
-function SuggestedUsr(props: { key: number, user:chatUser, userStatus: boolean}): JSX.Element {
-    return(<div key={props.key} className={Styles.sUsr}>
+function SuggestedUsr(props: {user:chatUser, userStatus: boolean}): JSX.Element {
+    return(<div className={Styles.sUsr}>
             <div>
                 <Image src={Avatar} width={32} height={32}/>
                 <span>{props.user.firstName + " " + props.user.lastName}</span>
@@ -55,10 +56,11 @@ function SuggestedUsr(props: { key: number, user:chatUser, userStatus: boolean})
     </div>)
 }
 
-function UsrTag(fullname: string) {
+function UsrTag(fullname: string, removeTag: any, id: number) {
     return (
-        <div className={Styles.usrTag}>
+        <div className={Styles.usrTag} id={id.toString()}>
             {fullname}
+            <div onClick={(e) => removeTag(fullname, e)}><Image src={TagCross} width={6} height={6}/></div>
         </div>
     )
 }
@@ -79,13 +81,27 @@ export function ModalBox(props: { show: boolean, setShow: (Dispatch<SetStateActi
 
     const [usrTags, setUsrTags] = useState([])
 
-    function addUsrToChannel(e: React.ChangeEvent<HTMLInputElement>, keycode: string, fullname: string) {
+    function removeTag(fullname:string, e: React.ChangeEvent<HTMLInputElement>, id: string) {
 
-        console.log(keycode);
+        let i = e.target.parentElement?.parentElement?.parentElement?.id;
+        console.log(addedUsrs);
+
+        // console.log(i);
+
+        // const newUserTags = addedUsrs.filter((user, index) => index.toString() !== i);
+
+        // console.log(newUserTags);
+        // setAddedUsrs(newUserTags);
+
+    }
+
+    function addUsrToChannel(e: React.ChangeEvent<HTMLInputElement>, keycode: string, fullname: string) {
 
         if (keycode == "Enter") {
             setshowDrpdown(false);
-            setAddedUsrs([...addedUsrs, UsrTag(fullname)]);
+            setAddedUsrs([...addedUsrs, UsrTag(fullname, removeTag, addedUsrs.length)]);
+
+            console.log(addedUsrs);
             e.target.value="";
         }
     }
