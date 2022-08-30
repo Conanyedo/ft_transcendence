@@ -3,7 +3,7 @@ import Header from "./Header/Header";
 import SideNav from "./Header/sideNav";
 import classesNav from "../styles/sideNav.module.css";
 import { NextRouter, useRouter } from "next/router";
-import ProfileInfoEdit from "./profile/ProfileInfoEdit";
+import ProfileInfoEdit from "./Settings/ProfileInfoEdit";
 import { useAppDispatch, useAppSelector } from "./store/hooks";
 import {
   HideErrorMsg,
@@ -15,10 +15,11 @@ import {
 import Section from "./section";
 import classes from "../styles/Profile.module.css";
 import { getCookie } from "cookies-next";
-import Setting from "./profile/settings";
-import MsgSlideUp from "./slideUpMsg";
+import Setting from "./Settings/settings";
+import MsgSlideUp from "./Settings/slideUpMsg";
 import axios from "axios";
 import dynamic from "next/dynamic";
+import { baseUrl } from "../config/baseURL";
 
 const fetchData = async (set: any, router: NextRouter) => {
   const token = getCookie("jwt");
@@ -26,15 +27,15 @@ const fetchData = async (set: any, router: NextRouter) => {
     Authorization: `Bearer ${token}`,
   };
   try {
-    const res = await axios.get(`http://localhost:5000/auth/isAuthenticated`, {
+    const res = await axios.get(`${baseUrl}auth/isAuthorized`, {
       headers: requestOptions,
       withCredentials: true,
       method: "GET",
     });
     set(res.data);
   } catch (err) {
-		console.log(err);
     set(false);
+	router.replace('/');
   }
 };
 
@@ -48,7 +49,7 @@ const Skeleton = (props: { elm: any }) => {
   const displayCard = useAppSelector(ToggleValue);
   const displaymsg = useAppSelector(Settings);
   const ShowError = useAppSelector(ToggleErrorValue);
-  const [isAuthenticated, setisAuthenticated] = useState(false);
+  const [isAuthorized, setisAuthorized] = useState(false);
   const [posIndicator, setPosIndicator] = useState(classesNav.hide);
 
   const NamePage = "/" + ctn.pathname.split("/")[1];
@@ -62,7 +63,7 @@ const Skeleton = (props: { elm: any }) => {
     });
   };
   useEffect(() => {
-    fetchData(setisAuthenticated, ctn);
+    fetchData(setisAuthorized, ctn);
     navBarHandler(NamePage);
   }, [ctn.pathname]);
   const toggleHandler = () => dispatch(Toggle());
@@ -88,12 +89,11 @@ const Skeleton = (props: { elm: any }) => {
         )}
         {displaymsg && <Setting />}
         {displayCard && <ProfileInfoEdit setTagle={toggleHandler} />}
-        {isAuthenticated && <DynamicHeader setPos={navBarHandler} />}
-        {isAuthenticated && (
+        {isAuthorized && <DynamicHeader setPos={navBarHandler} />}
+        {isAuthorized && (
           <SideNav onNav={navBarHandler} currentPos={posIndicator} />
         )}
-        {isAuthenticated && <Section elm={props.elm} />}
-        {!isAuthenticated && props.elm}
+        {isAuthorized && <Section elm={props.elm} />}
       </Suspense>
     </>
   );
