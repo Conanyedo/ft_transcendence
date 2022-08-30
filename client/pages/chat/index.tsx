@@ -12,7 +12,6 @@ import { ModalBox } from "@components/Modal";
 import { GameIconAsset, ChannelAsset } from "./svg/index";
 import { ChatProvider, ChatContext, ChatContextType } from "@contexts/chatContext"
 
-
 // Making a component for the invite msg
 
 function InviteMsg(invitedUser: chatUser) {
@@ -52,7 +51,7 @@ const Chat = () => {
 		setShowCnv(true);
 	}
 
-	const lastUsers: Array<chatUser> = [
+	const [lastUsers, setLastUsers] = useState<Array<chatUser>>([
 		{ id: 0, imgSrc: Avatar, firstName: "Youness", lastName: "Santir", status: "Online" },
 		{ id: 1, imgSrc: Avatar, firstName: "Youness", lastName: "Crew", status: "In Game" },
 		{ id: 2, imgSrc: Avatar, firstName: "Ikram", lastName: "Kharbouch", status: "Offline" },
@@ -70,7 +69,7 @@ const Chat = () => {
 		{ id: 10, imgSrc: Avatar, firstName: "Ikram", lastName: "Kharbouch", status: "Offline" },
 		{ id: 10, imgSrc: Avatar, firstName: "Fahd", lastName: "Fahd", status: "Offline" },
 		{ id: 10, imgSrc: Avatar, firstName: "Farid", lastName: "Belhachmi", status: "Offline" },
-	]
+	]);
 
 	const [currentUser, setCurrentUser] = useState<chatUser>(lastUsers[0]);
 	const [enteredMsg, setEnteredMsg] = useState("");
@@ -90,14 +89,26 @@ const Chat = () => {
 		setChatMsgs([...chatMsgs, newMsg]);
 	}
 
-	function createChannel() {
+	function createChannel(channelName:string, password:string) {
 		setShow(!show);
+
+		console.log(channelName);
+		console.log(password);
+
+		const chatUser = { id: lastUsers.length, imgSrc: Avatar, channelName: channelName, status: "Offline" };
+
+		setLastUsers([chatUser , ...lastUsers]);
+
+		// select the current chat
+
+		setChatUser(lastUsers[0], chatUsersRefs, 0);
 	}
 
 	// UseEffect here
 	useEffect(() => {
 		scrollToBottom(messagesEndRef);
-	}, [chatMsgs])
+		setCurrentUser(lastUsers[0]);
+	}, [chatMsgs, lastUsers])
 
 	return (
 		<>
@@ -107,18 +118,18 @@ const Chat = () => {
 						<div className={Styles.leftContent}>
 							<div className={Styles.topSection}>
 								<h1 className={Styles.msg}>Message</h1>
-								<div onClick={createChannel} className={Styles.channel}><ChannelAsset color="#758293" /></div>
-								<ModalBox show={show} setShow={setShow} />
+								<div onClick={() => setShow(!show)} className={Styles.channel}><ChannelAsset color="#758293" /></div>
+								<ModalBox show={show} setShow={setShow} createChannel={createChannel} />
 							</div>
 							<div className={Styles.chatSearch}>
 								<Image src={Search} width={20} height={20} />
 								<input type="Text" className={Styles.chatInput} placeholder="Search" />
 							</div>
 							<div className={Styles.bottomSection}>
-								{lastUsers.map((user, i) => <div ref={(element) => { chatUsersRefs.current[i] = element }} className={Styles.chatUser} onClick={() => setChatUser(user, chatUsersRefs, i)}>
+								{lastUsers.map((user, i) => <div key={i} ref={(element) => { chatUsersRefs.current[i] = element }} className={Styles.chatUser} onClick={() => setChatUser(user, chatUsersRefs, i)}>
 									<div className={Styles.avatarName}>
 										<Image src={user.imgSrc} width={49.06} height={49} className={Styles.avatar} />
-										<div className={Styles.username}>{user.firstName} {user.lastName}</div>
+										<div className={Styles.username}>{user.firstName} {user.lastName} {user.channelName}</div>
 									</div>
 									<p className={Styles.status}>{user.status}</p>
 								</div>)}
@@ -136,7 +147,7 @@ const Chat = () => {
 										<Image src={currentUser.imgSrc} width={76} height={76} className={Styles.avatar} />
 									</div>
 									<div>
-										<h1 className={Styles.chatUsername}>{currentUser.firstName + " " + currentUser.lastName}</h1>
+										<h1 className={Styles.chatUsername}>{currentUser.channelName ? currentUser.channelName : currentUser.firstName + " " + currentUser.lastName}</h1>
 										<p className={Styles.chatUserStatus}>{currentUser.status}</p>
 									</div>
 								</div>
@@ -145,7 +156,7 @@ const Chat = () => {
 							<div className={Styles.chatSection}>
 								<div className={Styles.msgsDisplay} ref={msgsDisplayDiv}>
 									{
-										chatMsgs.map((chatMsg) => <div className={Styles.chatMsg} style={{ left: chatMsg.type == "receiver" ? "0" : "auto", right: chatMsg.type == "sender" ? "0" : "auto" }}>
+										chatMsgs.map((chatMsg,i) => <div key={i} className={Styles.chatMsg} style={{ left: chatMsg.type == "receiver" ? "0" : "auto", right: chatMsg.type == "sender" ? "0" : "auto" }}>
 											<div className={Styles.msgBox} style={{ justifyContent: chatMsg.type == "receiver" ? "flex-start" : "flex-end" }}>
 												<div ref={messagesEndRef} className={Styles.msgContent} style={{ backgroundColor: chatMsg.type == "receiver" ? "#3A3A3C" : "#409CFF", borderRadius: chatMsg.type == "receiver" ? "0 5px 5px 5px" : "5px 5px 0 5px" }}>
 													{chatMsg.msgContent}
