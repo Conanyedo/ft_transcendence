@@ -1,13 +1,26 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { userDto } from 'src/user/user.dto';
+import { userDto, userParitalDto } from 'src/user/user.dto';
 
 @Injectable()
 export class JwtAuthService {
-	constructor(private jwtService: JwtService) { }
+	constructor(
+		private jwtService: JwtService,
+		private readonly configService: ConfigService
+	) { }
 
-	login(user: userDto) {
-		const payload = { login: user.login, sub: user.id };
-		return this.jwtService.sign(payload);
+	async setJwt(user: userParitalDto) {
+		return await this.jwtService.signAsync(user, {
+			secret: this.configService.get('JWT_SECRET_KEY'),
+			expiresIn: '1d'
+		});
+	}
+
+	async set2faJwt(user: userParitalDto) {
+		return await this.jwtService.signAsync(user, {
+			secret: this.configService.get('2FA_JWT_SECRET_KEY'),
+			expiresIn: '1d'
+		});
 	}
 }
