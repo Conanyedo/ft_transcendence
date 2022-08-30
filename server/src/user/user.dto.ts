@@ -27,3 +27,12 @@ export class userDto {
 	@IsBoolean()
 	is2faEnabled?: boolean;
 }
+
+export class userParitalDto {
+
+	@IsNotEmpty()
+	id: string;
+
+	@IsNotEmpty()
+	login: string;
+}
