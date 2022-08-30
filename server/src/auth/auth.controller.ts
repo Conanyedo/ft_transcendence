@@ -19,7 +19,7 @@ export class AuthController {
 	@UseGuards(IntraAuthGuard)
 	login(@User() user: userDto, @Res() res: Response) {
 		this.authService.setJWTCookie(user, res);
-		this.authService.checkUserAuthentication(user, res);
+		this.authService.authenticateUser(user, res);
 		return res;
 	}
 
@@ -27,7 +27,7 @@ export class AuthController {
 	@Get('/google/login')
 	googleLogin(@User() user: userDto, @Res() res: Response) {
 		this.authService.setJWTCookie(user, res);
-		this.authService.checkUserAuthentication(user, res);
+		this.authService.authenticateUser(user, res);
 		return res;
 	}
 	// +++++++++++++++++++++++++++++++++++
@@ -44,9 +44,9 @@ export class AuthController {
 	// isAuthenticated
 	@Get('/isAuthenticated')
 	@UseGuards(JwtAuthGuard)
-	isAuthenticated(@User() user: userDto) {
-		if (!user.isAuthenticated)
-			throw new UnauthorizedException('UnAuthenticated');
+	isAuthenticated(@User() user: any) {
+		// if (!user.isAuthenticated)
+		// 	throw new UnauthorizedException('UnAuthenticated');
 		return user.isAuthenticated;
 	}
 	// +++++++++++++++++++++++++++++++++++
@@ -73,7 +73,7 @@ export class AuthController {
 	@UseGuards(JwtAuthGuard)
 	async login2faCode(@User() user: userDto, @Body("code") code: string) {
 		this.authService.is2faCodeValid(code, user._2faSecret);
-		this.authService.authenticateUser(user);
+		this.authService.setUserAuthenticated(user);
 		return true;
 	}
 	// +++++++++++++++++++++++++++++++++++

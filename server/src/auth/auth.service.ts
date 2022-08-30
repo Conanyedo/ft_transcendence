@@ -26,14 +26,14 @@ export class AuthService {
 		res.cookie('jwt', accessToken);
 	}
 
-	checkUserAuthentication(user: userDto, res: Response) {
+	authenticateUser(user: userDto, res: Response) {
 		if (user.is2faEnabled)
 			return res.redirect('http://localhost:3000/?_2fa=true');
 		res.redirect('http://localhost:3000/');
 		this.userService.setUserAuthenticated(user.id, true);
 	}
 
-	async authenticateUser(user: userDto) {
+	async setUserAuthenticated(user: userDto) {
 		this.userService.setUserAuthenticated(user.id, true);
 	}
 
