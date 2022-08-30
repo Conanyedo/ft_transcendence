@@ -1,16 +1,16 @@
-import classes from "../../styles/overView.module.css";
-import { initialState as emtyUser } from "../store/userSlice";
+import classes from "../../../styles/overView.module.css";
+import { initialState as emtyUser } from "../../store/userSlice";
 
-import TierGold from "../../public/LeaderBoard/Tier_Gold.svg";
-import Rank_1 from "../../public/LeaderBoard/FirstPlace.svg";
-import Rank_2 from "../../public/LeaderBoard/Second.svg";
-import Rank_3 from "../../public/LeaderBoard/thirdPlace.svg";
+import TierGold from "../../../public/LeaderBoard/Tier_Gold.svg";
+import Rank_1 from "../../../public/LeaderBoard/FirstPlace.svg";
+import Rank_2 from "../../../public/LeaderBoard/Second.svg";
+import Rank_3 from "../../../public/LeaderBoard/thirdPlace.svg";
 import Image from "next/image";
 import { isMobile } from "react-device-detect";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { matchDataType, UserType } from "../../Types/dataTypes";
-import Chart from "../chart/chartProgress";
+import { matchDataType, UserType } from "../../../Types/dataTypes";
+import Chart from "../../chart/chartProgress";
 import { motion } from "framer-motion";
 import { useRouter } from "next/router";
 

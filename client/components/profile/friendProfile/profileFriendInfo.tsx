@@ -12,7 +12,7 @@ import {
 	OptionMenu,
 	PendingButton,
 } from "../../../pages/search";
-import { useOutsideAlerter } from "../ProfileInfoEdit";
+import { useOutsideAlerter } from "../../Settings/ProfileInfoEdit";
 import { useAppDispatch } from "../../store/hooks";
 import { addFriend, initialState, RemoveFriend } from "../../store/userSlice";
 import axios from "axios";
