@@ -8,7 +8,7 @@ import { useRouter } from "next/router";
 import { useAppDispatch } from "../store/hooks";
 
 import { ShowSettings, Toggle } from "../store/UI-Slice";
-import { useOutsideAlerter } from "../profile/ProfileInfoEdit";
+import { useOutsideAlerter } from "../Settings/ProfileInfoEdit";
 import axios from "axios";
 import { UserType } from "../../Types/dataTypes";
 import { initialState as emtyUser } from "../store/userSlice";

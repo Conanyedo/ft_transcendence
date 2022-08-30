@@ -1,26 +1,26 @@
 import ProfileInfo from "../../components/profile/profileInfo";
 import Achievements from "../../components/profile/achievements";
-import OverView from "../../components/profile/overView";
+import OverView from "../../components/profile/OverView/overView";
 import MatchHistory from "../../components/profile/MatchHistory";
 
 import classes from "../../styles/Profile.module.css";
-import { useRouter } from "next/router";
-import { getCookie } from "cookies-next";
-import { useEffect, useState } from "react";
-import axios from "axios";
+import Skeleton from "../../components/skeleton";
+import ContentWrapper from "../../components/wrapper/appWrapper";
 
 const Profile = () => {
 	const id = 1001;
 	return (
-		<>
-			<div className={classes.profileCtn}>
-				<ProfileInfo />
-				<Achievements id={id} />
-				<OverView id={id} />
-				<MatchHistory id={id} />
-				<div className={classes.buttom}></div>
-			</div>
-		</>
+		<ContentWrapper
+			children={
+				<div className={classes.profileCtn}>
+					<ProfileInfo />
+					<Achievements id={id} />
+					<OverView id={id} />
+					<MatchHistory id={id} />
+					<div className={classes.buttom}></div>
+				</div>
+			}
+		/>
 	);
 };
 export default Profile;

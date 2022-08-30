@@ -9,7 +9,8 @@ import Pending from "../../public/FriendIcons/Pending.svg";
 import AddFriend from "../../public/FriendIcons/ADDFriend.svg";
 import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
-import { useOutsideAlerter } from "../../components/profile/ProfileInfoEdit";
+import { useOutsideAlerter } from "../../components/Settings/ProfileInfoEdit";
+import Skeleton from "../../components/skeleton";
 
 interface friendDataType {
 	Avatar: any;
@@ -72,7 +73,9 @@ export const OptionMenu: React.FC<{
 			className={classes.optionMenu}
 			style={{ width: `${props.width}` }}
 		>
-			<div className={classes.itemListoption} onClick={alert}>{props.FirstBtn}</div>
+			<div className={classes.itemListoption} onClick={alert}>
+				{props.FirstBtn}
+			</div>
 			<div className={classes.itemListoptionBlock}>{props.SecondBtn}</div>
 		</motion.div>
 	);
@@ -101,7 +104,11 @@ const User: React.FC<friendDataType> = (props) => {
 				{props.stat === "notFriend" && <ADDButton />}
 				{props.stat === "pending" && <PendingButton />}
 				{props.stat === "friend" && <FriendButton />}
-				<div className={classes.optionsbtnctn} onClick={TaggleHandler} ref={wrapperRef}>
+				<div
+					className={classes.optionsbtnctn}
+					onClick={TaggleHandler}
+					ref={wrapperRef}
+				>
 					<Image src={Option} />
 					{option && (
 						<OptionMenu
@@ -121,123 +128,155 @@ const Search = () => {
 	// console.log(router.query.search);
 	const Searchkey = router.query.search;
 	return (
-		<div className={classes.SearchCTN}>
-			<motion.div className={classes.SearchCTNIN}>
-				{/* <p className={classes.friendName}>Search About: {Searchkey}</p> */}
-				<User fullName="Ayoub boulbaz" Avatar={profile} stat="friend" />
-				<User
-					fullName="Ayoub boulbaz"
-					Avatar={profile}
-					stat="pending"
-				/>
-				<User
-					fullName="Ayoub boulbaz"
-					Avatar={profile}
-					stat="notFriend"
-				/>
-				<User fullName="Ayoub boulbaz" Avatar={profile} stat="friend" />
-				<User
-					fullName="Ayoub boulbaz"
-					Avatar={profile}
-					stat="pending"
-				/>
-				<User
-					fullName="Ayoub boulbaz"
-					Avatar={profile}
-					stat="notFriend"
-				/>
-				<User fullName="Ayoub boulbaz" Avatar={profile} stat="friend" />
-				<User
-					fullName="Ayoub boulbaz"
-					Avatar={profile}
-					stat="pending"
-				/>
-				<User
-					fullName="Ayoub boulbaz"
-					Avatar={profile}
-					stat="notFriend"
-				/>
-				<User fullName="Ayoub boulbaz" Avatar={profile} stat="friend" />
-				<User
-					fullName="Ayoub boulbaz"
-					Avatar={profile}
-					stat="pending"
-				/>
-				<User
-					fullName="Ayoub boulbaz"
-					Avatar={profile}
-					stat="notFriend"
-				/>
-				<User fullName="Ayoub boulbaz" Avatar={profile} stat="friend" />
-				<User
-					fullName="Ayoub boulbaz"
-					Avatar={profile}
-					stat="pending"
-				/>
-				<User
-					fullName="Ayoub boulbaz"
-					Avatar={profile}
-					stat="notFriend"
-				/>
-				<User fullName="Ayoub boulbaz" Avatar={profile} stat="friend" />
-				<User
-					fullName="Ayoub boulbaz"
-					Avatar={profile}
-					stat="pending"
-				/>
-				<User
-					fullName="Ayoub boulbaz"
-					Avatar={profile}
-					stat="notFriend"
-				/>
-				<User fullName="Ayoub boulbaz" Avatar={profile} stat="friend" />
-				<User
-					fullName="Ayoub boulbaz"
-					Avatar={profile}
-					stat="pending"
-				/>
-				<User
-					fullName="Ayoub boulbaz"
-					Avatar={profile}
-					stat="notFriend"
-				/>
-				<User
-					fullName="Ayoub boulbaz"
-					Avatar={profile}
-					stat="notFriend"
-				/>
-				<User
-					fullName="Ayoub boulbaz"
-					Avatar={profile}
-					stat="notFriend"
-				/>
-				<User
-					fullName="Ayoub boulbaz"
-					Avatar={profile}
-					stat="notFriend"
-				/>
-				<User
-					fullName="Ayoub boulbaz"
-					Avatar={profile}
-					stat="notFriend"
-				/>
-				<User
-					fullName="Ayoub boulbaz"
-					Avatar={profile}
-					stat="notFriend"
-				/>
-				<User
-					fullName="Ayoub boulbaz"
-					Avatar={profile}
-					stat="notFriend"
-				/>
-				<User
-					fullName="Ayoub boulbaz"
-					Avatar={profile}
-					stat="notFriend"
-				/>
-			</motion.div>
-		</div>
+		<Skeleton
+			elm={
+				<div className={classes.SearchCTN}>
+					<motion.div className={classes.SearchCTNIN}>
+						{/* <p className={classes.friendName}>Search About: {Searchkey}</p> */}
+						<User
+							fullName="Ayoub boulbaz"
+							Avatar={profile}
+							stat="friend"
+						/>
+						<User
+							fullName="Ayoub boulbaz"
+							Avatar={profile}
+							stat="pending"
+						/>
+						<User
+							fullName="Ayoub boulbaz"
+							Avatar={profile}
+							stat="notFriend"
+						/>
+						<User
+							fullName="Ayoub boulbaz"
+							Avatar={profile}
+							stat="friend"
+						/>
+						<User
+							fullName="Ayoub boulbaz"
+							Avatar={profile}
+							stat="pending"
+						/>
+						<User
+							fullName="Ayoub boulbaz"
+							Avatar={profile}
+							stat="notFriend"
+						/>
+						<User
+							fullName="Ayoub boulbaz"
+							Avatar={profile}
+							stat="friend"
+						/>
+						<User
+							fullName="Ayoub boulbaz"
+							Avatar={profile}
+							stat="pending"
+						/>
+						<User
+							fullName="Ayoub boulbaz"
+							Avatar={profile}
+							stat="notFriend"
+						/>
+						<User
+							fullName="Ayoub boulbaz"
+							Avatar={profile}
+							stat="friend"
+						/>
+						<User
+							fullName="Ayoub boulbaz"
+							Avatar={profile}
+							stat="pending"
+						/>
+						<User
+							fullName="Ayoub boulbaz"
+							Avatar={profile}
+							stat="notFriend"
+						/>
+						<User
+							fullName="Ayoub boulbaz"
+							Avatar={profile}
+							stat="friend"
+						/>
+						<User
+							fullName="Ayoub boulbaz"
+							Avatar={profile}
+							stat="pending"
+						/>
+						<User
+							fullName="Ayoub boulbaz"
+							Avatar={profile}
+							stat="notFriend"
+						/>
+						<User
+							fullName="Ayoub boulbaz"
+							Avatar={profile}
+							stat="friend"
+						/>
+						<User
+							fullName="Ayoub boulbaz"
+							Avatar={profile}
+							stat="pending"
+						/>
+						<User
+							fullName="Ayoub boulbaz"
+							Avatar={profile}
+							stat="notFriend"
+						/>
+						<User
+							fullName="Ayoub boulbaz"
+							Avatar={profile}
+							stat="friend"
+						/>
+						<User
+							fullName="Ayoub boulbaz"
+							Avatar={profile}
+							stat="pending"
+						/>
+						<User
+							fullName="Ayoub boulbaz"
+							Avatar={profile}
+							stat="notFriend"
+						/>
+						<User
+							fullName="Ayoub boulbaz"
+							Avatar={profile}
+							stat="notFriend"
+						/>
+						<User
+							fullName="Ayoub boulbaz"
+							Avatar={profile}
+							stat="notFriend"
+						/>
+						<User
+							fullName="Ayoub boulbaz"
+							Avatar={profile}
+							stat="notFriend"
+						/>
+						<User
+							fullName="Ayoub boulbaz"
+							Avatar={profile}
+							stat="notFriend"
+						/>
+						<User
+							fullName="Ayoub boulbaz"
+							Avatar={profile}
+							stat="notFriend"
+						/>
+						<User
+							fullName="Ayoub boulbaz"
+							Avatar={profile}
+							stat="notFriend"
+						/>
+						<User
+							fullName="Ayoub boulbaz"
+							Avatar={profile}
+							stat="notFriend"
+						/>
+					</motion.div>
+				</div>
+			}
+		/>
 	);
 };
 export default Search;

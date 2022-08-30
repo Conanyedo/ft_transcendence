@@ -1,6 +1,7 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import classes from "../../styles/Loading.module.css";
+import LoadingElm from "./Loading_elm";
 
 const Loading = () => {
 	const router = useRouter();
@@ -25,13 +26,7 @@ const Loading = () => {
 		};
 	}, []);
 
-	return (
-		(click && (
-			<div className={classes.dark}>
-				<div className={classes["pong-loader"]} />
-			</div>
-		)) || <></>
-	);
+	return ((click && (<LoadingElm />)) || <></>);
 };
 
 export default Loading;

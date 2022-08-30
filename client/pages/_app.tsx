@@ -16,7 +16,7 @@ function MyApp({ Component, pageProps }: AppProps) {
 						<Head>
 							<title>PingPong</title>
 						</Head>
-						<Skeleton elm={<Component {...pageProps} />} />
+						<Component {...pageProps} />
 					</>
 				)}
 			</Provider>

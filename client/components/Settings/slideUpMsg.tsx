@@ -1,4 +1,4 @@
-import classes from "../styles/slideUpMsg.module.css";
+import classes from "../../styles/slideUpMsg.module.css";
 
 const MsgSlideUp: React.FC<{
 	msg: string;

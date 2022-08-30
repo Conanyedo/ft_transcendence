@@ -1,6 +1,6 @@
-import classes from "../../styles/BlockList.module.css";
+import classes from "../../../styles/BlockList.module.css";
 import { useEffect, useState } from "react";
-import { UserType } from "../../Types/dataTypes";
+import { UserType } from "../../../Types/dataTypes";
 import axios from "axios";
 import { useRouter } from "next/router";
 

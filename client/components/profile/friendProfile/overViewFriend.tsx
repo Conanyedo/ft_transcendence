@@ -2,7 +2,7 @@ import classes from "../../../styles/overView.module.css";
 import { motion } from "framer-motion";
 import "react-sweet-progress/lib/style.css";
 import React, { useEffect, useState } from "react";
-import LeaderBoard from "../LeaderBord";
+import LeaderBoard from "../OverView/LeaderBord";
 import axios from "axios";
 
 const OverViewFriend: React.FC<{id: number}> = (props) => {
