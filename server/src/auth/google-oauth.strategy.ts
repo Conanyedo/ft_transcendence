@@ -30,6 +30,6 @@ export class GoogleOauthStrategy extends PassportStrategy(Strategy, 'google') {
 			avatar: photos[0].value
 		};
 		const user: userParitalDto = await this.authService.checkUserExist(newUser);
-		console.log(user);
+		done(null, user);
 	}
 }

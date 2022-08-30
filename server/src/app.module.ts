@@ -4,7 +4,7 @@ import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { JwtAuthModule } from './jwt-auth/jwt-auth.module';
 import { ConfigModule } from '@nestjs/config';
-import { typeOrmConfig, typeOrmConfigAsync } from './config/typeorm.config';
+import { typeOrmConfigAsync } from './config/typeorm.config';
 
 @Module({
 	imports: [UserModule, AuthModule, JwtAuthModule,
