@@ -5,7 +5,8 @@ import { GoogleOauthGuard } from './google-oauth.guard';
 import { JwtAuthGuard } from '../jwt-auth/jwt-auth.guard';
 import { Response } from 'express';
 import { User } from 'src/user/user.decorator';
-import { userDto } from 'src/user/user.dto';
+import { userDto, userParitalDto } from 'src/user/user.dto';
+import { Jwt2faAuthGuard } from 'src/jwt-auth/2fa-auth.guard';
 
 
 @Controller('auth')
@@ -17,63 +18,38 @@ export class AuthController {
 	// Login
 	@Get('/login')
 	@UseGuards(IntraAuthGuard)
-	login(@User() user: userDto, @Res() res: Response) {
-		this.authService.setJWTCookie(user, res);
-		this.authService.authenticateUser(user, res);
-		return res;
+	async login(@User() user: userParitalDto, @Res({ passthrough: true }) res: Response) {
+		return await this.authService.authenticateUser(user, res);
 	}
 
 	@UseGuards(GoogleOauthGuard)
 	@Get('/google/login')
-	googleLogin(@User() user: userDto, @Res() res: Response) {
-		this.authService.setJWTCookie(user, res);
-		this.authService.authenticateUser(user, res);
-		return res;
+	async googleLogin(@User() user: userParitalDto, @Res({ passthrough: true }) res: Response) {
+		return await this.authService.authenticateUser(user, res);
 	}
 	// +++++++++++++++++++++++++++++++++++
 
 	// Logout
 	@Get('/logout')
 	@UseGuards(JwtAuthGuard)
-	logout(@User() user: userDto, @Res({ passthrough: true }) res: Response) {
+	logout(@User() user: userParitalDto, @Res({ passthrough: true }) res: Response) {
 		this.authService.logout(user, res);
 		return true;
 	}
 	// +++++++++++++++++++++++++++++++++++
 
-	// isAuthenticated
-	@Get('/isAuthenticated')
+	// isAuthorized
+	@Get('/isAuthorized')
 	@UseGuards(JwtAuthGuard)
-	isAuthenticated(@User() user: any) {
-		// if (!user.isAuthenticated)
-		// 	throw new UnauthorizedException('UnAuthenticated');
-		return user.isAuthenticated;
+	isAuthorized() {
+		return true;
 	}
 	// +++++++++++++++++++++++++++++++++++
 
-	// TwoFactorAuthentication
-	@Post('/2faEnabling')
-	@UseGuards(JwtAuthGuard)
-	async enabling2fa(@User() user: userDto, @Body("is2faEnabled") is2faEnabled: string) {
-		if (is2faEnabled === 'true')
-			return await this.authService.generate2fa(user);
-		this.authService.turn2fa(user, false);
-		return true;
-	}
-
-	@Post('/2faValidate')
-	@UseGuards(JwtAuthGuard)
-	validate2faCode(@User() user: userDto, @Body("code") code: string) {
-		this.authService.is2faCodeValid(code, user._2faSecret);
-		this.authService.turn2fa(user, true);
-		return true;
-	}
-
-	@Post('/2faLogin')
-	@UseGuards(JwtAuthGuard)
-	async login2faCode(@User() user: userDto, @Body("code") code: string) {
-		this.authService.is2faCodeValid(code, user._2faSecret);
-		this.authService.setUserAuthenticated(user);
+	// is2faAuthorized
+	@Get('/is2faAuthorized')
+	@UseGuards(Jwt2faAuthGuard)
+	is2faAuthorized() {
 		return true;
 	}
 	// +++++++++++++++++++++++++++++++++++
@@ -81,8 +57,36 @@ export class AuthController {
 	// is2faEnabled
 	@Get('/is2faEnabled')
 	@UseGuards(JwtAuthGuard)
-	is2faEnabled(@User() user: userDto) {
-		return user.is2faEnabled;
+	async is2faEnabled(@User() user: userParitalDto) {
+		return await this.authService.is2faEnabled(user);
+	}
+	// +++++++++++++++++++++++++++++++++++
+
+	// TwoFactorAuthentication
+	@Post('/2faEnabling')
+	@UseGuards(JwtAuthGuard)
+	async enabling2fa(@User() user: userParitalDto, @Body("is2faEnabled") is2faEnabled: string) {
+		if (is2faEnabled === 'true')
+			return await this.authService.generate2fa(user);
+		this.authService.set2faEnabled(user, false);
+		return true;
+	}
+
+	@Post('/2faValidate')
+	@UseGuards(JwtAuthGuard)
+	async validate2faCode(@User() user: userParitalDto, @Body("code") code: string) {
+		await this.authService.is2faCodeValid(user, code);
+		this.authService.set2faEnabled(user, true);
+		return true;
+	}
+
+	@Post('/2faLogin')
+	@UseGuards(Jwt2faAuthGuard)
+	async login2faCode(@User() user: userParitalDto, @Body("code") code: string, @Res({ passthrough: true }) res: Response) {
+		await this.authService.is2faCodeValid(user, code);
+		await this.authService.setJWTCookie(user, res);
+		this.authService.setUserAuthenticated(user);
+		return true;
 	}
 	// +++++++++++++++++++++++++++++++++++
 }
