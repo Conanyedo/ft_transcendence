@@ -33,4 +33,4 @@
 
 # typescript
 /client/*.tsbuildinfo
-node_modules
+/client/node_modules
