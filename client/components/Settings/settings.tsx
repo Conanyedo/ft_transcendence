@@ -9,6 +9,7 @@ import MsgSlideUp from "./slideUpMsg";
 import OtpInput from "react-otp-input";
 import Grid from "@material-ui/core/Grid";
 import { check2FACode, getQRcodeOrdisableCode, Is2FAEnaled } from "../../customHooks/useFetchData";
+import { useRouter } from "next/router";
 
 const variants = {
 	open: { scale: 1 },
@@ -82,6 +83,7 @@ const SecondPage: React.FC<{
 };
 
 const Setting: React.FC = () => {
+	const route = useRouter();
 	const dispatch = useDispatch();
 	const displayCard = useSelector(Settings);
 	const [isValid, setIsValid] = useState(false);
@@ -91,7 +93,7 @@ const Setting: React.FC = () => {
 	const [isOn, setIsOn] = useState(false);
 	const [QRcode, setQRcode] = useState("#");
 	useEffect(() => {
-		Is2FAEnaled(setprevstat, setIsOn);
+		Is2FAEnaled(setprevstat, setIsOn, route);
 	}, []);
 	const toggleSwitch = () => {
 		setIsOn(!isOn);
@@ -99,10 +101,10 @@ const Setting: React.FC = () => {
 	};
 	const toggleHandler = async () => {
 		if (QRcode === "#") {
-			const qrCode: string = await getQRcodeOrdisableCode("true");
+			const qrCode = await getQRcodeOrdisableCode("true");
 			setQRcode(qrCode);
 		} else if (QRcode !== "#" && inputValue.length === 6) {
-			const res: boolean = await check2FACode(inputValue);
+			const res = await check2FACode(inputValue, route);
 			setIsValid(res);
 			setcodeFailed(!res);
 			if (res) {
