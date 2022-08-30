@@ -5,18 +5,13 @@ import { JwtAuthStrategy } from './jwt-auth.strategy';
 import { ConfigService } from '@nestjs/config';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { UserModule } from 'src/user/user.module';
+import { Jwt2faAuthStrategy } from './2fa-auth.strategy';
 
 @Module({
 	imports: [
-		JwtModule.registerAsync({
-			useFactory: async (configService: ConfigService) => ({
-				secret: configService.get('JWT_SECRET_KEY'),
-				signOptions: { expiresIn: '1d' }
-			}),
-			inject: [ConfigService]
-		}),
+		JwtModule.register({}),
 	UserModule],
-	providers: [JwtAuthService, JwtAuthStrategy],
+	providers: [JwtAuthService, JwtAuthStrategy, Jwt2faAuthStrategy],
 	exports: [JwtAuthService],
 })
 export class JwtAuthModule { }
