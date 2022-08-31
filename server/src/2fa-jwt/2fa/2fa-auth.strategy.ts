@@ -16,7 +16,7 @@ export class Jwt2faAuthStrategy extends PassportStrategy(Strategy, 'jwt-2fa') {
 	}
 
 	async validate(payload: userParitalDto) {
-		const user: userParitalDto = { ...payload };
+		const user: userParitalDto = { id: payload.id, login: payload.login };
 		return user;
 	}
 }
