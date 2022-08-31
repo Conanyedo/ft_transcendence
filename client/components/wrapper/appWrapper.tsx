@@ -2,14 +2,16 @@ import axios from "axios";
 import { CookieValueTypes, getCookie } from "cookies-next";
 import { NextRouter, useRouter } from "next/router";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { baseUrl } from "../../config/baseURL";
-import Skeleton from "../skeleton";
-import classes from "../../styles/Loading.module.css";
+import { baseUrl, eraseCookie } from "../../config/baseURL";
 import classesNav from "../../styles/sideNav.module.css";
 import LoadingElm from "../loading/Loading_elm";
 import Header from "../Header/Header";
 import SideNav from "../Header/sideNav";
 import Section from "../section";
+import Setting from "../Settings/settings";
+import ProfileInfoEdit from "../Settings/ProfileInfoEdit";
+import { useDispatch, useSelector } from "react-redux";
+import { Settings, Toggle, ToggleValue } from "../store/UI-Slice";
 
 type PropsType = {
 	children: JSX.Element;
@@ -31,11 +33,17 @@ const checkJWT = async (
 		.then(() => {
 			set(true);
 		})
-		.catch(() => router.replace("/"));
+		.catch(() => {
+			eraseCookie("jwt");
+			router.replace("/");
+		});
 };
 
 const ContentWrapper: React.FC<PropsType> = ({ children }) => {
-	const [isAuth, setIsAuth] = useState(true);
+	const [isAuth, setIsAuth] = useState(false);
+	const displayCard = useSelector(ToggleValue);
+	const displaymsg = useSelector(Settings);
+	const dispatch = useDispatch();
 	const router = useRouter();
 	const jwt = getCookie("jwt");
 	const [posIndicator, setPosIndicator] = useState(classesNav.hide);
@@ -49,15 +57,21 @@ const ContentWrapper: React.FC<PropsType> = ({ children }) => {
 		});
 	};
 	useEffect(() => {
-		checkJWT(jwt, router, setIsAuth);
+		if (jwt)
+			checkJWT(jwt, router, setIsAuth);
 		navBarHandler(router.asPath);
 	}, []);
-	if (!jwt) router.replace("/");
-	else
-	if (!isAuth) return <LoadingElm />;
+	if (!jwt) {
+		router.replace("/");
+		return <LoadingElm />;
+	}
+	else if (!isAuth) return <LoadingElm />;
+	const toggleHandler = () => dispatch(Toggle());
 
 	return (
 		<>
+			{displaymsg && <Setting />}
+			{displayCard && <ProfileInfoEdit setTagle={toggleHandler} />}
 			<Header setPos={navBarHandler} />
 			<SideNav onNav={navBarHandler} currentPos={posIndicator} />
 			<Section elm={children} />

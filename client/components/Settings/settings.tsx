@@ -101,7 +101,7 @@ const Setting: React.FC = () => {
 	};
 	const toggleHandler = async () => {
 		if (QRcode === "#") {
-			const qrCode = await getQRcodeOrdisableCode("true");
+			const qrCode = await getQRcodeOrdisableCode("true", route);
 			setQRcode(qrCode);
 		} else if (QRcode !== "#" && inputValue.length === 6) {
 			const res = await check2FACode(inputValue, route);
@@ -118,7 +118,7 @@ const Setting: React.FC = () => {
 	};
 	const [inputValue, setInputValue] = useState("");
 	const handlerDisable = async () => {
-		await getQRcodeOrdisableCode("false");
+		await getQRcodeOrdisableCode("false", route);
 		setIsValid(true);
 		setTimeout(() => {
 			dispatch(HideSettings());

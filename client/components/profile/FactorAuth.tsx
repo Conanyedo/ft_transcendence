@@ -7,69 +7,83 @@ import { Grid } from "@material-ui/core";
 import { CookieValueTypes, getCookie } from "cookies-next";
 import axios from "axios";
 import { NextRouter, useRouter } from "next/router";
-import { baseUrl } from "../../config/baseURL";
+import { baseUrl, eraseCookie } from "../../config/baseURL";
 import LoadingElm from "../loading/Loading_elm";
 
 const checkCode = async (code: string, router: NextRouter) => {
-	const token = getCookie("jwt");
+	const token = getCookie("jwt-2fa");
 	const params = new URLSearchParams();
 	params.append("code", code);
 	return await axios({
-			method: "post",
-			url: `${baseUrl}auth/2faLogin`,
-			data: params,
-			headers: {
-				Authorization: `Bearer ${token}`,
-			},
-			withCredentials: true,
-		}).then((res) => {
+		method: "post",
+		url: `${baseUrl}auth/2faLogin`,
+		data: params,
+		headers: {
+			Authorization: `Bearer ${token}`,
+		},
+		withCredentials: true,
+	})
+		.then((res) => {
 			return true;
-		}).catch((err) => {
-			if (err.response.data.message !== 'Wrong authentication code')
-				router.replace('/');
-			return false;
 		})
+		.catch((err) => {
+			if (err.response.data.message !== "Wrong authentication code") {
+				eraseCookie("jwt-2fa");
+				router.replace("/");
+			}
+			return false;
+		});
 };
 
-const check2FA_JWT = async (jwt: CookieValueTypes, set: any, router: NextRouter) => {
+const check2FA_JWT = async (
+	jwt: CookieValueTypes,
+	set: any,
+	router: NextRouter
+) => {
 	await axios({
 		method: "get",
-		url: `${baseUrl}auth/is2fa`,
+		url: `${baseUrl}auth/is2faAuthorized`,
 		headers: {
 			Authorization: `Bearer ${jwt}`,
 		},
 		withCredentials: true,
-	}).then(() => {
-		set(true);
-	}).catch(() => router.replace('/'));
-}
-
+	})
+		.then(() => {
+			set(true);
+		})
+		.catch(() => {
+			eraseCookie("jwt-2fa");
+			router.replace("/")});
+};
 
 const FactorAuth = () => {
 	const router = useRouter();
 	const [isValid, setisValid] = useState(false);
-	const jwt = getCookie('jwt-2fa');
-	if (!jwt)
-		router.push('/');
+	const jwt = getCookie("jwt-2fa");
+	if (!jwt) router.push("/");
 	const [inputValue, setInputValue] = useState("");
 	const [isError, setisError] = useState(false);
 	useEffect(() => {
 		check2FA_JWT(jwt, setisValid, router);
 	}, []);
-	if (isValid) return <LoadingElm />;
+	if (!isValid) return <LoadingElm />;
 	const CheckHandler = async () => {
-		if (await checkCode(inputValue, router))
-			router.push('/profile');
-		else
-			setisError(true);
-	}
+		if (await checkCode(inputValue, router)) router.push("/profile");
+		else setisError(true);
+	};
 	return (
 		<>
 			<div className={classes.background}>
 				<div className={classes.FAuthContainer}>
 					<div className={classes.header}>
 						<span>2 Factor Authentication</span>
-						<div className={classes.cross} onClick={()=> router.replace('/profile')}>
+						<div
+							className={classes.cross}
+							onClick={() => {
+								eraseCookie('jwt-2fa');
+								router.replace('/');
+							}}
+						>
 							<Image src={CrossIcon} width="72" height="72" />
 						</div>
 					</div>
@@ -99,7 +113,8 @@ const FactorAuth = () => {
 					<div
 						className={`${classes.btn} ${
 							inputValue.length === 6 ? classes.btnNext : ""
-						}`} onClick={CheckHandler}
+						}`}
+						onClick={CheckHandler}
 					>
 						Confirmer
 					</div>
