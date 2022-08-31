@@ -61,19 +61,19 @@ const PendingList = () => {
 	return (
 		<div className={classes.listFriends}>
 			{
-				listPanding?.map((user) => <Pendingfriend fullName={user.fullName} Avatar={user.avatar} id={user.id} />)	
+				listPanding?.map((user) => <Pendingfriend key={user.id} fullName={user.fullName} Avatar={user.avatar} id={user.id} />)	
 			}{
-				listPanding?.map((user) => <Pendingfriend fullName={user.fullName} Avatar={user.avatar} id={user.id}  />)	
+				listPanding?.map((user) => <Pendingfriend key={user.id} fullName={user.fullName} Avatar={user.avatar} id={user.id}  />)	
 			}{
-				listPanding?.map((user) => <Pendingfriend fullName={user.fullName} Avatar={user.avatar} id={user.id}  />)	
+				listPanding?.map((user) => <Pendingfriend key={user.id} fullName={user.fullName} Avatar={user.avatar} id={user.id}  />)	
 			}{
-				listPanding?.map((user) => <Pendingfriend fullName={user.fullName} Avatar={user.avatar} id={user.id}  />)	
+				listPanding?.map((user) => <Pendingfriend key={user.id} fullName={user.fullName} Avatar={user.avatar} id={user.id}  />)	
 			}{
-				listPanding?.map((user) => <Pendingfriend fullName={user.fullName} Avatar={user.avatar} id={user.id}  />)	
+				listPanding?.map((user) => <Pendingfriend key={user.id} fullName={user.fullName} Avatar={user.avatar} id={user.id}  />)	
 			}{
-				listPanding?.map((user) => <Pendingfriend fullName={user.fullName} Avatar={user.avatar} id={user.id}  />)	
+				listPanding?.map((user) => <Pendingfriend key={user.id} fullName={user.fullName} Avatar={user.avatar} id={user.id}  />)	
 			}{
-				listPanding?.map((user) => <Pendingfriend fullName={user.fullName} Avatar={user.avatar} id={user.id}  />)	
+				listPanding?.map((user) => <Pendingfriend key={user.id} fullName={user.fullName} Avatar={user.avatar} id={user.id}  />)	
 			}
 		</div>
 	);
