@@ -1,8 +1,8 @@
 import axios from "axios";
 import { CookieValueTypes, getCookie } from "cookies-next";
 import { NextRouter, useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import { baseUrl } from "../../config/baseURL";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { baseUrl, eraseCookie } from "../../config/baseURL";
 import LoadingElm from "../loading/Loading_elm";
 
 type PropsType = {
@@ -11,7 +11,8 @@ type PropsType = {
 
 const checkJWT = async (
 	jwt: CookieValueTypes,
-	router: NextRouter
+	router: NextRouter,
+	set: Dispatch<SetStateAction<boolean>>
 ) => {
 	await axios({
 		method: "get",
@@ -22,12 +23,14 @@ const checkJWT = async (
 		withCredentials: true,
 	})
 		.then(() => {
-			router.push('/profile');
+			router.push("/profile");
+			eraseCookie("jwt-2fa");
 		})
 		.catch((e) => {
-			router.push('/');
-			console.log(e)}
-		);
+			set(false);
+			eraseCookie("jwt");
+			router.push("/");
+		});
 };
 
 const LoginWrapper: React.FC<PropsType> = ({ children }) => {
@@ -35,17 +38,22 @@ const LoginWrapper: React.FC<PropsType> = ({ children }) => {
 	const jwt = getCookie("jwt");
 	const jwt_2fa = getCookie("jwt-2fa");
 	const [isMounted, setIsMounted] = useState(false);
+	const [IsAuth, setIsAuth] = useState(false);
 
 	useEffect(() => {
 		setIsMounted(true);
-		if (jwt)
-			checkJWT(jwt, router);
-	}, [router.asPath]);
-	if (jwt_2fa && router.asPath === '/')
-		router.push('/?_2fa=true');
-	if (!isMounted) return <LoadingElm />
+	}, []);
+	if (jwt) {
+		checkJWT(jwt, router, setIsAuth);
+		return <LoadingElm />;
+	}
+	else if (jwt_2fa && router.asPath === "/") {
+		router.push("/?_2fa=true");
+		return <LoadingElm />;
+	}
+	else if (IsAuth) return <LoadingElm />;
 
-	return <>{children}</>;
+	return <>{isMounted && children}</>;
 };
 
 export default LoginWrapper;
