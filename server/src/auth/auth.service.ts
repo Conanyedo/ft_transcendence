@@ -1,10 +1,11 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { JwtAuthService } from 'src/jwt-auth/jwt-auth.service';
+import { JwtAuthService } from 'src/2fa-jwt/jwt/jwt-auth.service';
 import { userDto, userParitalDto } from 'src/user/user.dto';
 import { UserService } from 'src/user/user.service';
 import { authenticator } from 'otplib';
 import { toDataURL } from 'qrcode';
+import { Jwt2faAuthService } from 'src/2fa-jwt/2fa/2fa-auth.service';
 
 @Injectable()
 export class AuthService {
@@ -12,6 +13,7 @@ export class AuthService {
 	constructor(
 		private readonly userService: UserService,
 		private readonly jwtAuthService: JwtAuthService,
+		private readonly jwt2faAuthService: Jwt2faAuthService,
 	) { }
 
 	// Check if User exist or add it to database
@@ -23,13 +25,13 @@ export class AuthService {
 	}
 
 	// Set Cookies
-	async setJWTCookie(user: userParitalDto, res: Response) {
-		const accessToken = await this.jwtAuthService.setJwt(user);
+	setJWTCookie(user: userParitalDto, res: Response) {
+		const accessToken = this.jwtAuthService.setJwt(user);
 		res.cookie('jwt', accessToken);
 		res.cookie('jwt-2fa', '', { maxAge: 1 });
 	}
-	async setJWT2faCookie(user: userParitalDto, res: Response) {
-		const accessToken = await this.jwtAuthService.set2faJwt(user);
+	setJWT2faCookie(user: userParitalDto, res: Response) {
+		const accessToken = this.jwt2faAuthService.set2faJwt(user);
 		res.cookie('jwt-2fa', accessToken);
 	}
 	// ----------------------
@@ -38,10 +40,10 @@ export class AuthService {
 	async authenticateUser(user: userParitalDto, res: Response) {
 		const is2faEnabled = await this.userService.get2faEnabled(user.id);
 		if (is2faEnabled) {
-			await this.setJWT2faCookie(user, res);
+			this.setJWT2faCookie(user, res);
 			return res.redirect('http://localhost:3000/?_2fa=true');
 		}
-		await this.setJWTCookie(user, res);
+		this.setJWTCookie(user, res);
 		res.redirect('http://localhost:3000/');
 		this.userService.setUserAuthenticated(user.id, true);
 	}

@@ -1,12 +1,12 @@
 import { Controller, Get, Post, Req, Res, UseGuards, Header, UnauthorizedException, Body } from '@nestjs/common';
 import { AuthService } from './auth.service';
+import { Response } from 'express';
 import { IntraAuthGuard } from './intra-auth.guard';
 import { GoogleOauthGuard } from './google-oauth.guard';
-import { JwtAuthGuard } from '../jwt-auth/jwt-auth.guard';
-import { Response } from 'express';
+import { JwtAuthGuard } from '../2fa-jwt/jwt/jwt-auth.guard';
+import { Jwt2faAuthGuard } from 'src/2fa-jwt/2fa/2fa-auth.guard';
 import { User } from 'src/user/user.decorator';
 import { userDto, userParitalDto } from 'src/user/user.dto';
-import { Jwt2faAuthGuard } from 'src/jwt-auth/2fa-auth.guard';
 
 
 @Controller('auth')
@@ -84,7 +84,7 @@ export class AuthController {
 	@UseGuards(Jwt2faAuthGuard)
 	async login2faCode(@User() user: userParitalDto, @Body("code") code: string, @Res({ passthrough: true }) res: Response) {
 		await this.authService.is2faCodeValid(user, code);
-		await this.authService.setJWTCookie(user, res);
+		this.authService.setJWTCookie(user, res);
 		this.authService.setUserAuthenticated(user);
 		return true;
 	}
