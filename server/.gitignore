@@ -6,6 +6,10 @@
 # Config
 .env
 
+# Uploads
+/uploads
+
+
 # Logs
 /logs
 /*.log
