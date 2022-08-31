@@ -3,8 +3,6 @@ import { CookieValueTypes, getCookie } from "cookies-next";
 import { NextRouter, useRouter } from "next/router";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { baseUrl, eraseCookie } from "../../config/baseURL";
-import Skeleton from "../skeleton";
-import classes from "../../styles/Loading.module.css";
 import classesNav from "../../styles/sideNav.module.css";
 import LoadingElm from "../loading/Loading_elm";
 import Header from "../Header/Header";
