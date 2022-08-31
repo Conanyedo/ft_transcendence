@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Stats } from "./stats.entity";
 
 @Entity({ name: 'users' })
 export class User {
@@ -26,4 +27,7 @@ export class User {
 	@Column({ default: false })
 	is2faEnabled: boolean;
 
+	@OneToOne(() => Stats)
+	@JoinColumn()
+	stats: Stats;
 }
