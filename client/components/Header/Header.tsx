@@ -10,19 +10,21 @@ import { useAppDispatch } from "../store/hooks";
 import { ShowSettings, Toggle } from "../store/UI-Slice";
 import { useOutsideAlerter } from "../Settings/ProfileInfoEdit";
 import axios from "axios";
-import { UserType } from "../../Types/dataTypes";
-import { initialState as emtyUser } from "../store/userSlice";
 import { motion } from "framer-motion";
 import { LogOut } from "../../customHooks/useFetchData";
-//
+import { baseUrl, eraseCookie } from "../../config/baseURL";
+import { getCookie } from "cookies-next";
+import { UserTypeNew } from "../../Types/dataTypes";
+
 const UserSection = () => {
 	const menu = useRef(null);
 	const router = useRouter();
 	const notifMenu = useRef(null);
 	const dispatch = useAppDispatch();
 	const [dropDown, setDropDown] = useState(false);
-	const [UserData, setUserData] = useState<UserType>(emtyUser);
+	const [UserData, setUserData] = useState<UserTypeNew>(new UserTypeNew());
 	const ClickHandler = () => setDropDown((value) => !value);
+	const token = getCookie("jwt");
 
 	const [isOpen, setisOpen] = useState(false);
 	const clicknotifHandler = () => {
@@ -38,20 +40,27 @@ const UserSection = () => {
 	};
 	useEffect(() => {
 		const fetchData = async () => {
-			const data = await axios
-				.get(
-					`https://test-76ddc-default-rtdb.firebaseio.com/owner.json`
-				)
+			await axios
+				.get(`${baseUrl}user/header`, {
+					headers: {
+						Authorization: `Bearer ${token}`,
+					},
+					withCredentials: true,
+				})
 				.then((res) => {
 					setUserData(res.data);
+				})
+				.catch((err) => {
+					eraseCookie("jwt");
+					router.replace("/");
 				});
 		};
-		if (UserData?.fullName === "") fetchData();
+		if (!UserData?.fullname) fetchData();
 	}, []);
 	useOutsideAlerter(notifMenu, setisOpen);
 	useOutsideAlerter(menu, setDropDown);
-	
-	const LogOutHandler = () => LogOut(router)
+
+	const LogOutHandler = () => LogOut(router);
 	return (
 		<>
 			<div
@@ -101,7 +110,7 @@ const UserSection = () => {
 				onClick={ClickHandler}
 			>
 				<img src={UserData?.avatar} className={classes.avatar} />
-				<p className={classes.userName}>{UserData?.fullName}</p>
+				<p className={classes.userName}>{UserData?.fullname}</p>
 				<Image src={DownArrow} width={24} height={24} />
 				{dropDown && (
 					<motion.div
@@ -112,7 +121,10 @@ const UserSection = () => {
 						<div className={classes.EditP} onClick={toggleHandler}>
 							Edit profile
 						</div>
-						<div className={classes.EditP} onClick={toggleSettingHandler}>
+						<div
+							className={classes.EditP}
+							onClick={toggleSettingHandler}
+						>
 							Settings
 						</div>
 						<div className={classes.LogOut} onClick={LogOutHandler}>
