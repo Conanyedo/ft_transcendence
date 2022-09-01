@@ -1,9 +1,15 @@
 import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Stats } from "./stats.entity";
 
+export enum userStatus {
+	ONLINE = "Online",
+	OFFLINE = "Offline",
+	INGAME = "In Game",
+}
+
 @Entity({ name: 'users' })
 export class User {
-	@PrimaryGeneratedColumn("uuid" )
+	@PrimaryGeneratedColumn("uuid")
 	id: string;
 
 	@Column()
@@ -18,10 +24,13 @@ export class User {
 	@Column()
 	avatar: string;
 
-	@Column({ default: false})
+	@Column({ type: 'enum', enum: userStatus, default: userStatus.ONLINE })
+	status: userStatus;
+
+	@Column({ default: false })
 	isAuthenticated: boolean;
 
-	@Column({ nullable: true})
+	@Column({ nullable: true })
 	_2faSecret: string;
 
 	@Column({ default: false })
