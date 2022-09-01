@@ -41,7 +41,7 @@ export class UserService {
 		if (fullname)
 			await this.setName(id, fullname);
 		if (avatar)
-			await this.setAvatar(id, `/server/uploads/${avatar}`);
+			await this.setAvatar(id, `./uploads/${avatar}`);
 	}
 
 	// User Getters
