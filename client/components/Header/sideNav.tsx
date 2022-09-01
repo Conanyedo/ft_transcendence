@@ -19,7 +19,10 @@ import Logout from "../../public/Logout.svg";
 import classes from "../../styles/sideNav.module.css";
 import { useRouter } from "next/router";
 import { MutableRefObject, useEffect, useRef, useState } from "react";
-import { useInSideAlerter } from "../profile/ProfileInfoEdit";
+import { useInSideAlerter } from "../Settings/ProfileInfoEdit";
+import axios from "axios";
+import { getCookie } from "cookies-next";
+import { LogOut } from "../../customHooks/useFetchData";
 
 interface N_ITEMS {
 	alt: string;
@@ -69,11 +72,12 @@ const SideNav: React.FC<{
 	onNav: (page: string) => void;
 	currentPos: string;
 }> = (props) => {
+	const token = getCookie("jwt");
 	const ref_nav = useRef(null);
 	const ctn = useRouter();
 	const NamePage = "/" + ctn.pathname.split("/")[1];
 
-	const handlerLogOut = () => props.onNav("/");
+	const handlerLogOut = () =>  LogOut(ctn);
 	const [isOpen, setIsOpen] = useState(false);
 
 	const ToggleAll = (value: boolean) => {
@@ -116,6 +120,7 @@ const SideNav: React.FC<{
 				<div className={`${classes.sideItems}`}>
 					{NAVITEMS.map((item) => (
 						<ItemsNav
+							key={item.alt}
 							move={item.move}
 							alt={item.alt}
 							src={item.src}
@@ -133,8 +138,8 @@ const SideNav: React.FC<{
 							src={
 								NamePage === "/logout" ? LogoutSelected : Logout
 							}
-							width={34}
-							height={34}
+							width={79}
+							height={79}
 						/>
 					</div>
 				</div>

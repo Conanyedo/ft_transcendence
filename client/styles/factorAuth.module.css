@@ -1,0 +1,84 @@
+.background {
+	background-color: #0000009b;
+	position: absolute;
+	z-index: 15;
+	width: 100vw;
+	height: 100vh;
+	top: 0;
+	left: 0;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.FAuthContainer {
+	background-color: #242426;
+	z-index: 999999;
+	width: 40rem;
+	border-radius: 10px;
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	align-items: flex-start;
+	padding: 1.6rem;
+	filter: none;
+	transition: all .2s ease-in-out;
+}
+
+.header {
+	display: flex;
+	justify-content: space-between;
+	width: 100%;
+	margin-bottom: 1.5rem;
+}
+
+.header>span {
+	font-family: 'Inter';
+	font-style: normal;
+	font-weight: 600;
+	font-size: 2.222rem;
+	line-height: 24px;
+	color: #C6E1FF;
+}
+
+.cross {
+	width: 2.667rem;
+	height: 2.667rem;
+	cursor: pointer;
+}
+
+.inputContainer {
+	align-self: center;
+	margin-bottom: 1.5rem;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	gap: 1rem;
+	width: 50%;
+}
+
+.btn {
+	border-radius: 5px;
+	width: 100%;
+	text-align: center;
+	font-family: 'Inter';
+	font-style: normal;
+	font-weight: 500;
+	font-size: 1.333rem;
+	line-height: 24px;
+	color: #FFFFFF;
+	padding: .9rem;
+	cursor: pointer;
+	background: transparent;
+	border: 2px solid #758293;
+	color: #758293;
+	pointer-events: none;
+}
+
+.btnNext {
+	pointer-events: all !important;
+	border: 2px solid #409CFF;
+	background: #409CFF !important;
+	color: #FFFFFF !important;
+}

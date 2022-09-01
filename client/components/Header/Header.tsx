@@ -7,15 +7,17 @@ import DownArrow from "../../public/Caret down.svg";
 import { useRouter } from "next/router";
 import { useAppDispatch } from "../store/hooks";
 
-import { Toggle } from "../store/UI-Slice";
-import { useOutsideAlerter } from "../profile/ProfileInfoEdit";
+import { ShowSettings, Toggle } from "../store/UI-Slice";
+import { useOutsideAlerter } from "../Settings/ProfileInfoEdit";
 import axios from "axios";
 import { UserType } from "../../Types/dataTypes";
 import { initialState as emtyUser } from "../store/userSlice";
 import { motion } from "framer-motion";
+import { LogOut } from "../../customHooks/useFetchData";
 //
 const UserSection = () => {
 	const menu = useRef(null);
+	const router = useRouter();
 	const notifMenu = useRef(null);
 	const dispatch = useAppDispatch();
 	const [dropDown, setDropDown] = useState(false);
@@ -28,6 +30,10 @@ const UserSection = () => {
 	};
 	const toggleHandler = () => {
 		dispatch(Toggle());
+		ClickHandler();
+	};
+	const toggleSettingHandler = () => {
+		dispatch(ShowSettings());
 		ClickHandler();
 	};
 	useEffect(() => {
@@ -44,6 +50,8 @@ const UserSection = () => {
 	}, []);
 	useOutsideAlerter(notifMenu, setisOpen);
 	useOutsideAlerter(menu, setDropDown);
+	
+	const LogOutHandler = () => LogOut(router)
 	return (
 		<>
 			<div
@@ -104,7 +112,12 @@ const UserSection = () => {
 						<div className={classes.EditP} onClick={toggleHandler}>
 							Edit profile
 						</div>
-						<div className={classes.LogOut}>Log out</div>
+						<div className={classes.EditP} onClick={toggleSettingHandler}>
+							Settings
+						</div>
+						<div className={classes.LogOut} onClick={LogOutHandler}>
+							Log out
+						</div>
 					</motion.div>
 				)}
 			</div>
@@ -115,7 +128,6 @@ const UserSection = () => {
 const Header: React.FC<{ setPos: (page: string) => void }> = (props) => {
 	const input = useRef(null);
 	const router = useRouter();
-	if (router.pathname === "/") return <></>;
 	const searchHanler: FormEventHandler = (e) => {
 		let current: any = input.current;
 		e.preventDefault();
