@@ -29,6 +29,8 @@
 	overflow-y: auto;
 	scrollbar-color: #2B2B2D #3A3A3C;
 	max-height: 22.2rem;
+	min-height: 2rem;
+	height: 100%;
 }
 
 .achievementctn {
@@ -76,9 +78,11 @@
 	font-family: 'Inter';
 	font-style: normal;
 	font-weight: 300;
-	font-size: 1.133rem;
+	font-size: 1.5rem;
 	line-height: 15px;
 }
+
+
 
 
 @media only screen and (max-width: 1300px) {

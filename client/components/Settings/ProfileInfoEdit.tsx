@@ -1,14 +1,18 @@
 import classes from "../../styles/EditProfile.module.css";
 import Image from "next/image";
-import React, { useEffect, useRef, useState } from "react";
+import React, { LegacyRef, MutableRefObject, RefObject, useEffect, useRef, useState } from "react";
 import UploadIcon from "../../public/FriendIcons/UploadIcon.svg";
 import CrossIcon from "../../public/FriendIcons/Cross.svg";
 import { useAppDispatch } from "../store/hooks";
 import { Toggle } from "../store/UI-Slice";
 import axios from "axios";
-import { UserType } from "../../Types/dataTypes";
+import { UserType, UserTypeNew } from "../../Types/dataTypes";
 import { initialState as emtyUser } from "../store/userSlice";
 import { motion } from "framer-motion";
+import { baseUrl, eraseCookie } from "../../config/baseURL";
+import { getCookie } from "cookies-next";
+import { useRouter } from "next/router";
+import { userInfo } from "os";
 
 interface profileData {
 	setTagle: (t: boolean) => void;
@@ -47,39 +51,75 @@ export function useInSideAlerter(
 	}, [ref]);
 }
 
+let oldname: string = '';
+let oldImage: string = '';
+
 const ProfileInfoEdit: React.FC<profileData> = (props) => {
 	// const [nameClass , setNameClass] = useState('');
-	const nameRef = useRef(null);
+	const nameRef = useRef<any>(null);
+	const ImageRef = useRef<any>(null);
+	const avatarRef = useRef<any>(null);
 	const dispatch = useAppDispatch();
-	const [UserData, setUserData] = useState<UserType>(emtyUser);
-	const toggleHandler = () => {
-		// const value: any = nameRef.current;
-		// dispatch(changeName(value.value));
+	const router = useRouter();
+	const token = getCookie("jwt");
+	const params = new FormData();
+	const [UserData, setUserData] = useState<UserTypeNew>(new UserTypeNew());
+	const toggleHandler = async () => {
+		const currentName = nameRef.current;
+		const currentImage = ImageRef.current;
+		const Name: string = currentName!.value;
+		const Image = currentImage!.files;
+		if (oldname !== Name)
+			params.append("fullname", nameRef.current!.value);
+		if (Image![0])
+			params.append("avatar", Image![0]);
+		if (oldImage.includes('https://cdn.intra.42.fr'))
+			params.append("isDefault", 'true');
+		await axios
+			.post(`${baseUrl}user/editProfile`, params, {
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+				withCredentials: true,
+			})
+			.catch((err) => console.log(err));
 		dispatch(Toggle());
-		// console.log();
+		router.reload();
 	};
 
 	useEffect(() => {
 		const fetchData = async () => {
-			const data = await axios
-				.get(
-					`https://test-76ddc-default-rtdb.firebaseio.com/owner.json`
-				)
+			await axios
+				.get(`${baseUrl}user/header`, {
+					headers: {
+						Authorization: `Bearer ${token}`,
+					},
+					withCredentials: true,
+				})
 				.then((res) => {
+					oldImage = res.data.avatar;
+					oldname = res.data.fullname;
 					setUserData(res.data);
-					// console.log(res.data);
+				})
+				.catch((err) => {
+					eraseCookie("jwt");
+					router.replace("/");
 				});
 		};
-		if (UserData?.fullName === "") fetchData();
+		const avatar = avatarRef.current;
+		const Image = avatarRef.current;
+		Image!.addEventListener('change', () => {
+			avatar!.src = URL.createObjectURL(Image!.files![0]);
+		})
+		if (!UserData?.fullname) fetchData();
 	}, []);
-
-	// upload AVATAR TODO
 
 	const wrapperRef = useRef(null);
 	useOutsideAlerter(wrapperRef, props.setTagle);
 	const clickHandler = () => {
 		props.setTagle(false);
 	};
+
 	return (
 		<motion.div
 			className={classes.background}
@@ -113,7 +153,13 @@ const ProfileInfoEdit: React.FC<profileData> = (props) => {
 					</motion.div>
 				</div>
 				<div className={classes.avatar}>
-					<img src={UserData.avatar} />
+					<img src={UserData.avatar} ref={avatarRef} />
+					<input
+						type="file"
+						className={`${classes.toggle} ${classes.inputHide}`}
+						ref={ImageRef}
+						accept='.png, .jpg, .jpeg'
+					/>
 					<div className={`${classes.toggle}`}>
 						<Image src={UploadIcon} width="120%" height="120%" />
 					</div>
@@ -122,7 +168,7 @@ const ProfileInfoEdit: React.FC<profileData> = (props) => {
 				<input
 					className={classes.UserNameInput}
 					type="text"
-					defaultValue={UserData.fullName}
+					defaultValue={UserData.fullname}
 					ref={nameRef}
 				/>
 				<div className={classes.btnSave} onClick={toggleHandler}>
