@@ -12,7 +12,7 @@ import { chatUser } from "@Types/dataTypes"
 // use datalist to show possible results 
 function CustomToggleBtn(id: any) {
 
-    const { setProtectedChannel, setChannelMode } = useContext(ChatContext) as ChatContextType;
+    const { setProtectedChannel, setChannelMode, channelMode } = useContext(ChatContext) as ChatContextType;
     const Ids = ["Private", "Public", "Protected"];
     const setChecked = (event: React.ChangeEvent<HTMLInputElement>) => {
 
@@ -43,7 +43,7 @@ function CustomToggleBtn(id: any) {
 
     return (
         <>
-            <input type="checkbox" name={id.id} id={id.id} className={Styles.checkbox} onChange={(event) => setChecked(event)} />
+            <input type="checkbox" name={id.id} id={id.id} className={Styles.checkbox} checked={(channelMode === id.id) ? true: false} onChange={(event) => setChecked(event)} />
             <label htmlFor={id.id} className={Styles.label}></label>
         </>)
 }
@@ -78,35 +78,50 @@ function UsrTag(props: {fullname: string, removeTag: any, id: number}) {
     )
 }
 
+const initialUsrState = [{ id: 0, imgSrc: Avatar, firstName: "Youness", lastName: "Santir", status: "Online" },
+{ id: 1, imgSrc: Avatar, firstName: "Youness", lastName: "Crew", status: "In Game" },
+{ id: 2, imgSrc: Avatar, firstName: "Ikram", lastName: "Kharbouch", status: "Offline" },];
+
 export function ModalBox(props: { show: boolean, setShow: (Dispatch<SetStateAction<boolean>>), createChannel: any }): JSX.Element {
 
     const { protectedChannel, channelMode } = useContext(ChatContext) as ChatContextType;
-
     const [channelName, setChannelName] = useState("");
     const [password, setPassword] = useState("");
     const [showDrpdown, setshowDrpdown] = useState(false);
-
-    const [usrTags, setUsrTags] = useState<Array<string>>([])
-
-    const [closeUsrs, setCloseUsrs] = useState([{ id: 0, imgSrc: Avatar, firstName: "Youness", lastName: "Santir", status: "Online" },
-    { id: 1, imgSrc: Avatar, firstName: "Youness", lastName: "Crew", status: "In Game" },
-    { id: 2, imgSrc: Avatar, firstName: "Ikram", lastName: "Kharbouch", status: "Offline" },])
+    const [usrTags, setUsrTags] = useState<Array<string>>([]);
+    const [closeUsrs, setCloseUsrs] = useState(initialUsrState);
 
     function removeTag(fullname:string, e: React.ChangeEvent<HTMLInputElement>, id: string) {
-
         let i = e.target.parentElement?.parentElement?.parentElement?.id;
         const newUsrTags = usrTags.filter((item) => item !== fullname);
         setUsrTags(newUsrTags);
-
     }
 
     function addUsrToChannel(e: React.ChangeEvent<HTMLInputElement>, keycode: string, fullname: string) {
-
         if (keycode == "Enter") {
             setshowDrpdown(false);
             setUsrTags([...usrTags, fullname]);
             e.target.value="";
         }
+    }
+
+    function filterUsers(e: React.ChangeEvent<HTMLInputElement>) {
+
+        let value = e.target.value.toUpperCase();
+
+        // Return to initial state 
+        if (value == "") {
+            setCloseUsrs(initialUsrState);
+            setshowDrpdown(false);
+            return;
+        }
+
+        // Filter out results
+        let newUsrs = closeUsrs.filter((usr) => usr.firstName.toUpperCase().startsWith(value) || usr.lastName.toUpperCase().startsWith(value))
+        
+        setCloseUsrs(newUsrs);
+        // Show the dropdown
+        value ? setshowDrpdown(true) : setshowDrpdown(false);
     }
 
     return (
@@ -137,13 +152,13 @@ export function ModalBox(props: { show: boolean, setShow: (Dispatch<SetStateActi
                         <span>Add Members</span>
                         <div className={Styles.usrsInpt}>
                             {usrTags.map((tag, i) => <UsrTag key={i} fullname={tag} removeTag={removeTag} id={i} />)}
-                            <input type="text" onChange={(e) => (e.target.value) ? setshowDrpdown(true) : setshowDrpdown(false)} onKeyDown={(e) => addUsrToChannel(e, e.key, e.target.value)} />
+                            {(usrTags.length < 10) && <input type="text" onChange={(e) => filterUsers(e)} onKeyDown={(e) => addUsrToChannel(e, e.key, e.target.value)} />}
                         </div>
                         {showDrpdown && <div className={Styles.dropMembers}>
                             {closeUsrs.map((usr, i) => <SuggestedUsr key={i} user={usr} userStatus={true}/>)}
                         </div>}
                     </div>
-                    <button onClick={(e) => props.createChannel(channelName, password)}>Create</button>
+                    <button onClick={(e) => props.createChannel(channelName, password, usrTags.length)}>Create</button>
                 </motion.div>
             </>}
         </>)

@@ -22,8 +22,7 @@ export interface UserType {
 export interface chatUser {
 	id: number;
 	imgSrc: StaticImageData;
-	firstName?: string;
-	lastName?: string;
+	fullName?: string;
 	channelName?: string;
 	status: string
   }

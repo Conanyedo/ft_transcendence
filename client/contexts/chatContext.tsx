@@ -12,7 +12,7 @@ const ChatContext = createContext<ChatContextType | null>(null);
 const ChatProvider = ({ children }: any) => {
   
   const [protectedChannel, setProtectedChannel] = useState(false);
-  const [channelMode, setChannelMode] = useState<string>("");
+  const [channelMode, setChannelMode] = useState<string>("Public");
   return (
     <ChatContext.Provider value={{ protectedChannel, setProtectedChannel, channelMode, setChannelMode }}>
       {children}
