@@ -1,15 +1,11 @@
-import Router from "next/router";
-import Skeleton from "../../components/skeleton";
+import Game from "../../components/game/Game";
+import GameWrapper from "../../components/wrapper/gameWrapper";
 
-const Game = () => {
-	return (<>
-		<p
-			style={{
-				color: "white",
-			}}
-		>
-			Game
-		</p>
-	</>);
+const GameHome = () => {
+	return (
+		<>
+			<GameWrapper children={<Game />} />
+		</>
+	);
 };
-export default Game;
+export default GameHome;
