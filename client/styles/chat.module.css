@@ -613,8 +613,7 @@
     background-color: inherit;
     color: #fff;
     width: fit-content;
-    /* margin-left: 5px; */
-    /* margin-top: 5px; */
+    width: 100%;
 }
 
 .usrsInpt>input:focus, .modalbox>div>input:focus {

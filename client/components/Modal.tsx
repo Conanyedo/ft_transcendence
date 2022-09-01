@@ -56,11 +56,11 @@ function SuggestedUsr(props: {user:chatUser, userStatus: boolean}): JSX.Element 
     </div>)
 }
 
-function UsrTag(fullname: string, removeTag: any, id: number) {
+function UsrTag(props: {fullname: string, removeTag: any, id: number}) {
     return (
-        <div className={Styles.usrTag} id={id.toString()}>
-            {fullname}
-            <div onClick={(e) => removeTag(fullname, e)}><Image src={TagCross} width={6} height={6}/></div>
+        <div className={Styles.usrTag} id={props.id.toString()}>
+            {props.fullname}
+            <div onClick={(e) => props.removeTag(props.fullname, e)}><Image src={TagCross} width={6} height={6}/></div>
         </div>
     )
 }
@@ -75,23 +75,17 @@ export function ModalBox(props: { show: boolean, setShow: (Dispatch<SetStateActi
 
     const [addedUsrs, setAddedUsrs] = useState<Array<JSX.Element>>([]);
 
+    const [usrTags, setUsrTags] = useState<Array<string>>([])
+
     const [closeUsrs, setCloseUsrs] = useState([{ id: 0, imgSrc: Avatar, firstName: "Youness", lastName: "Santir", status: "Online" },
     { id: 1, imgSrc: Avatar, firstName: "Youness", lastName: "Crew", status: "In Game" },
     { id: 2, imgSrc: Avatar, firstName: "Ikram", lastName: "Kharbouch", status: "Offline" },])
 
-    const [usrTags, setUsrTags] = useState([])
-
     function removeTag(fullname:string, e: React.ChangeEvent<HTMLInputElement>, id: string) {
 
         let i = e.target.parentElement?.parentElement?.parentElement?.id;
-        console.log(addedUsrs);
-
-        // console.log(i);
-
-        // const newUserTags = addedUsrs.filter((user, index) => index.toString() !== i);
-
-        // console.log(newUserTags);
-        // setAddedUsrs(newUserTags);
+        const newUsrTags = usrTags.filter((item) => item !== fullname);
+        setUsrTags(newUsrTags);
 
     }
 
@@ -99,9 +93,7 @@ export function ModalBox(props: { show: boolean, setShow: (Dispatch<SetStateActi
 
         if (keycode == "Enter") {
             setshowDrpdown(false);
-            setAddedUsrs([...addedUsrs, UsrTag(fullname, removeTag, addedUsrs.length)]);
-
-            console.log(addedUsrs);
+            setUsrTags([...usrTags, fullname]);
             e.target.value="";
         }
     }
@@ -131,7 +123,7 @@ export function ModalBox(props: { show: boolean, setShow: (Dispatch<SetStateActi
                     <div>
                         <span>Add Members</span>
                         <div className={Styles.usrsInpt}>
-                            {addedUsrs.map((Element, i) => <React.Fragment key={i}>{Element}</React.Fragment>)}
+                            {usrTags.map((tag, i) => <UsrTag key={i} fullname={tag} removeTag={removeTag} id={i} />)}
                             <input type="text" onChange={(e) => (e.target.value) ? setshowDrpdown(true) : setshowDrpdown(false)} onKeyDown={(e) => addUsrToChannel(e, e.key, e.target.value)} />
                         </div>
                         {showDrpdown && <div className={Styles.dropMembers}>

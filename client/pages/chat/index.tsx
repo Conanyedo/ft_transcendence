@@ -11,6 +11,7 @@ import { chatUser, chatMsg } from "@Types/dataTypes";
 import { ModalBox } from "@components/Modal";
 import { GameIconAsset, ChannelAsset } from "./svg/index";
 import { ChatProvider, ChatContext, ChatContextType } from "@contexts/chatContext"
+import ContentWrapper from "@components/wrapper/appWrapper";
 
 // Making a component for the invite msg
 
@@ -89,7 +90,7 @@ const Chat = () => {
 		setChatMsgs([...chatMsgs, newMsg]);
 	}
 
-	function createChannel(channelName:string, password:string) {
+	function createChannel(channelName: string, password: string) {
 		setShow(!show);
 
 		console.log(channelName);
@@ -97,7 +98,7 @@ const Chat = () => {
 
 		const chatUser = { id: lastUsers.length, imgSrc: Avatar, channelName: channelName, status: "Offline" };
 
-		setLastUsers([chatUser , ...lastUsers]);
+		setLastUsers([chatUser, ...lastUsers]);
 
 		// select the current chat
 
@@ -111,7 +112,7 @@ const Chat = () => {
 	}, [chatMsgs, lastUsers])
 
 	return (
-		<>
+		<ContentWrapper children={
 			<ChatProvider>
 				<div className={Styles.chatContainer}>
 					<div className={`${Styles.chatLeft} ${showCnv ? Styles.hideUsers : ""}`}>
@@ -156,7 +157,7 @@ const Chat = () => {
 							<div className={Styles.chatSection}>
 								<div className={Styles.msgsDisplay} ref={msgsDisplayDiv}>
 									{
-										chatMsgs.map((chatMsg,i) => <div key={i} className={Styles.chatMsg} style={{ left: chatMsg.type == "receiver" ? "0" : "auto", right: chatMsg.type == "sender" ? "0" : "auto" }}>
+										chatMsgs.map((chatMsg, i) => <div key={i} className={Styles.chatMsg} style={{ left: chatMsg.type == "receiver" ? "0" : "auto", right: chatMsg.type == "sender" ? "0" : "auto" }}>
 											<div className={Styles.msgBox} style={{ justifyContent: chatMsg.type == "receiver" ? "flex-start" : "flex-end" }}>
 												<div ref={messagesEndRef} className={Styles.msgContent} style={{ backgroundColor: chatMsg.type == "receiver" ? "#3A3A3C" : "#409CFF", borderRadius: chatMsg.type == "receiver" ? "0 5px 5px 5px" : "5px 5px 0 5px" }}>
 													{chatMsg.msgContent}
@@ -178,8 +179,8 @@ const Chat = () => {
 						</div>
 					</div>
 				</div>
-			</ChatProvider>
-		</>
+			</ChatProvider>}
+		/>
 	);
 };
 export default Chat;
