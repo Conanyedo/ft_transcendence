@@ -27,7 +27,7 @@ export class UserController {
 	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(FileInterceptor('avatar', uploadConfig))
 	async editProfile(@User() user: userParitalDto, @UploadedFile() avatar: Express.Multer.File, @Body('fullname') fullname: string, @Body('isDefault') isDefault: string) {
-		if (isDefault === 'false')
+		if (!isDefault)
 			avatar = undefined;
 		return await this.userService.editProfile(user.id, fullname, avatar?.filename);
 	}
