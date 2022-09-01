@@ -44,7 +44,7 @@ const Friend: React.FC<FriendDATA> = (props) => {
 			<div className={classes.statusFriend}>{props.stat}</div>
 			<div className={classes.optionFriend}>
 				<div className={`${classes.sendMsg} ${classes.hideMsgBtn}`}>
-					<Image src={Message} width='100' height='100' />
+					<Image src={Message} width="100" height="100" />
 				</div>
 				<div
 					className={`${classes.sendMsg} ${classes.optionsbtnctn}`}
@@ -108,6 +108,7 @@ const ListFriends = () => {
 			{listFriend &&
 				listFriend.map((tmp) => (
 					<Friend
+						key={tmp.id}
 						name={tmp.fullName}
 						avatar={tmp.avatar}
 						id={tmp.id}
@@ -117,6 +118,7 @@ const ListFriends = () => {
 			{listFriend &&
 				listFriend.map((tmp) => (
 					<Friend
+						key={tmp.id}
 						name={tmp.fullName}
 						avatar={tmp.avatar}
 						id={tmp.id}
@@ -126,6 +128,7 @@ const ListFriends = () => {
 			{listFriend &&
 				listFriend.map((tmp) => (
 					<Friend
+						key={tmp.id}
 						name={tmp.fullName}
 						avatar={tmp.avatar}
 						id={tmp.id}
@@ -135,6 +138,7 @@ const ListFriends = () => {
 			{listFriend &&
 				listFriend.map((tmp) => (
 					<Friend
+						key={tmp.id}
 						name={tmp.fullName}
 						avatar={tmp.avatar}
 						id={tmp.id}
@@ -144,6 +148,7 @@ const ListFriends = () => {
 			{listFriend &&
 				listFriend.map((tmp) => (
 					<Friend
+						key={tmp.id}
 						name={tmp.fullName}
 						avatar={tmp.avatar}
 						id={tmp.id}
@@ -153,6 +158,7 @@ const ListFriends = () => {
 			{listFriend &&
 				listFriend.map((tmp) => (
 					<Friend
+						key={tmp.id}
 						name={tmp.fullName}
 						avatar={tmp.avatar}
 						id={tmp.id}
