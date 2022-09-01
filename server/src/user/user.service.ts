@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Stats } from './stats.entity';
+import { Stats, userAchievements } from './stats.entity';
 import { userDto, userParitalDto } from './user.dto';
-import { User } from './user.entity';
+import { User, userStatus } from './user.entity';
 
 @Injectable()
 export class UserService {
@@ -20,7 +20,6 @@ export class UserService {
 		stats.rank = await this.userRepository
 			.createQueryBuilder('users')
 			.getCount();
-		console.log('user rank', stats.rank);
 		let user: User = new User();
 		user.login = newUser.login;
 		user.email = newUser.email;
@@ -97,14 +96,35 @@ export class UserService {
 			.getOne();
 		return { ...user };
 	}
+
+	async getUserStats(id: string) {
+		const user: User = await this.userRepository
+			.createQueryBuilder('users')
+			.leftJoinAndSelect("users.stats", "stats")
+			.select(['users.id', 'stats.numGames', 'stats.gamesWon'])
+			.where('users.id = :id', { id: id })
+			.getOne();
+		return { numGames: user.stats.numGames, gamesWon: user.stats.gamesWon };
+	}
+
+	async getAchievements(id: string) {
+		const user: User = await this.userRepository
+			.createQueryBuilder('users')
+			.leftJoinAndSelect("users.stats", "stats")
+			.select(['users.id', 'stats.achievement'])
+			.where('users.id = :id', { id: id })
+			.getOne();
+		return { achievements: user.stats.achievement };
+	}
 	// ------------------------------
 
 
 	// User Setters
-	async setUserAuthenticated(id: string, status: boolean) {
+	async setUserAuthenticated(id: string, state: boolean) {
+		const status: userStatus = (state) ? userStatus.ONLINE : userStatus.OFFLINE;
 		return await this.userRepository
 			.createQueryBuilder('users')
-			.update({ isAuthenticated: status })
+			.update({ isAuthenticated: state, status: status })
 			.where('id = :id', { id: id })
 			.execute();
 	}
@@ -137,6 +157,14 @@ export class UserService {
 		return await this.userRepository
 			.createQueryBuilder('users')
 			.update({ fullname: name })
+			.where('id = :id', { id: id })
+			.execute();
+	}
+
+	async setStatus(id: string, status: userStatus) {
+		return await this.userRepository
+			.createQueryBuilder('users')
+			.update({ status: status })
 			.where('id = :id', { id: id })
 			.execute();
 	}
