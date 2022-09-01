@@ -12,16 +12,29 @@ import { chatUser } from "@Types/dataTypes"
 // use datalist to show possible results 
 function CustomToggleBtn(id: any) {
 
-    const { protectedChannel, setProtectedChannel } = useContext(ChatContext) as ChatContextType;
-
+    const { setProtectedChannel, setChannelMode } = useContext(ChatContext) as ChatContextType;
     const Ids = ["Private", "Public", "Protected"];
     const setChecked = (event: React.ChangeEvent<HTMLInputElement>) => {
 
-        if (event.target.id === "Protected") {
-            setProtectedChannel(!protectedChannel);
+        let checked = event.target.checked;
+        let index = event.target.id;
+
+        // Unset the protected channel
+        if (index === "Protected" && checked == false) {
+            setProtectedChannel(false)
         }
 
-        let newIds = Ids.filter((id) => id !== event.target.id);
+        // Set the other channels
+        if (index === "Protected" && checked == true) {
+            setProtectedChannel(true);
+            setChannelMode("Protected");
+        } else if (index === "Public") {
+            setChannelMode("Public");
+        } else if (index === "Private") {
+            setChannelMode("Private");
+        }
+
+        let newIds = Ids.filter((id) => id !== index);
         newIds.forEach((id) => {
             let el: HTMLInputElement = document.getElementById(id) as HTMLInputElement;
             el.checked = false;
@@ -67,13 +80,11 @@ function UsrTag(props: {fullname: string, removeTag: any, id: number}) {
 
 export function ModalBox(props: { show: boolean, setShow: (Dispatch<SetStateAction<boolean>>), createChannel: any }): JSX.Element {
 
-    const { protectedChannel } = useContext(ChatContext) as ChatContextType;
+    const { protectedChannel, channelMode } = useContext(ChatContext) as ChatContextType;
 
     const [channelName, setChannelName] = useState("");
     const [password, setPassword] = useState("");
     const [showDrpdown, setshowDrpdown] = useState(false);
-
-    const [addedUsrs, setAddedUsrs] = useState<Array<JSX.Element>>([]);
 
     const [usrTags, setUsrTags] = useState<Array<string>>([])
 
@@ -115,8 +126,10 @@ export function ModalBox(props: { show: boolean, setShow: (Dispatch<SetStateActi
                         <Option type="Private" />
                         <Option type="Protected" />
                     </div>
-                    <p>All users can find and join this channel</p>
-                    {protectedChannel && <div className={Styles.pwd}>
+                    {(channelMode === "Public") && <p>All users can find and join this channel</p>}
+                    {(channelMode === "Private") && <p>Only users you invited can join the channel</p>}
+                    {(channelMode === "Protected") && <p>All users can find the channel but only those with the provided password can join</p>}
+                    {(protectedChannel && channelMode === "Protected") && <div className={Styles.pwd}>
                         <span>Password</span>
                         <input type="password" onChange={(e) => setPassword(e.target.value)} />
                     </div>}
