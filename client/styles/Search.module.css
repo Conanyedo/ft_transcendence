@@ -10,18 +10,20 @@
 	padding-right: 0.667rem;
 	overflow-y: auto;
 	scrollbar-color: #2B2B2D #3A3A3C;
-	height: 100%;
+	max-height: 93%;
+	gap: 0.667rem;
+	display: flex;
+	flex-direction: column;
 }
 
 .friend {
 	display: flex;
 	justify-content: flex-start;
-	max-height: 6.667rem;
+	/* max-height: 6.667rem; */
 	width: 100%;
-	margin-bottom: 0.667rem;
 	background: #2B2B2D;
 	border-radius: 5px;
-	padding: 0.667rem 1.333rem;
+	padding: 1.333rem;
 }
 
 
@@ -248,11 +250,11 @@
 	width: 2rem;
 	height: 2rem;
 }
+
 .btnFriendADD {
 	border: 2px solid #409CFF;
 	border-radius: 5px;
 	width: 9.333rem;
-	/* height: 40px; */
 	padding: 0.667rem 0;
 	display: flex;
 	justify-content: space-evenly;
@@ -274,6 +276,141 @@
 	color: #409CFF;
 }
 
+/* Nav between UserList and Channels */
+/* ///////////////////////////////// */
+
+.navView {
+	display: flex;
+	justify-content: flex-start;
+	/* margin: 2rem 2rem; */
+	padding: 1.333rem;
+	padding-bottom: 0;
+	/* margin-bottom: 0; */
+}
+
+.TitleOverView {
+	position: relative;
+	cursor: pointer;
+	font-family: 'Inter';
+	font-style: normal;
+	font-weight: 600;
+	font-size: 1.4rem;
+	line-height: 22px;
+	color: #C6E1FF;
+	padding-bottom: 0.333rem;
+	display: flex;
+
+}
+
+.TitleOverView:first-of-type {
+	margin-right: 2.667rem;
+}
+
+.ctnIndic {
+	margin-bottom: 1.867rem;
+	height: 0.333rem;
+	margin-left: 2rem;
+	border-radius: 2px;
+}
+
+.Indic {
+	background: #409CFF;
+	border-radius: 2px;
+	width: 4.5rem;
+	height: 0.333rem;
+	transition: all .3s ease-in-out;
+}
+
+.IndicChannel {
+	background: #409CFF;
+	border-radius: 2px;
+	height: 0.333rem;
+	margin-left: 9rem;
+	width: 6.8rem;
+	transition: all .3s ease-in-out;
+}
+
+/* Channel Styles */
+/* --------------- */
+
+.Channel {
+	width: 100%;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+	border-radius: 5px;
+	padding: 1.333rem;
+	background: #2B2B2D;
+	border-radius: 5px;
+}
+
+.Avatar_Channel {
+	display: flex;
+	justify-content: space-evenly;
+	align-items: center;
+}
+
+.avatar {
+	width: 5.333rem;
+	height: 5.333rem;
+	margin-right: 1.6rem;
+}
+
+.ChannelName {
+	font-family: 'Inter';
+	font-style: normal;
+	font-weight: 500;
+	font-size: 1.333rem;
+	line-height: 22px;
+	color: #D9D9D9;
+}
+
+.Channeltype {
+	font-family: 'Inter';
+	font-style: normal;
+	font-weight: 500;
+	font-size: 1.6rem;
+	line-height: 22px;
+	color: #D9D9D9;
+}
+
+
+.LeaveBtn{
+	cursor: pointer;
+	border: 2px solid #758293;
+	border-radius: 5px;
+	color: #758293;
+	padding: 0.667rem 0;
+	text-align: center;
+	width: 9.333rem;
+	align-items: center;
+	font-family: 'Inter';
+	font-style: normal;
+	font-weight: 600;
+	font-size: 1rem;
+	line-height: 19px;
+}
+
+.joinBtn {
+	cursor: pointer;
+	border: 2px solid #409CFF;
+	border-radius: 5px;
+	color: #409CFF;
+	padding: 0.667rem 0;
+	text-align: center;
+	width: 9.333rem;
+	align-items: center;
+	font-family: 'Inter';
+	font-style: normal;
+	font-weight: 600;
+	font-size: 1rem;
+	line-height: 19px;
+}
+
+
+
+
 @media screen and (max-width:450px) {
 
 	.Hover,
@@ -284,6 +421,11 @@
 		display: none !important;
 	}
 
+	/* .Channeltype {
+		font-size: 1rem;
+	} */
+
+	.ChannelName,
 	.friendName {
 		font-size: 1.3rem;
 	}
@@ -293,6 +435,8 @@
 		height: 4rem;
 	}
 
+	.LeaveBtn,
+	.joinBtn,
 	.btnfriend,
 	.btnFriendADD,
 	.btnPending {
