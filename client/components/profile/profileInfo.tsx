@@ -1,32 +1,46 @@
 import classes from "../../styles/Profile.module.css";
-import Image from "next/image";
+import Image, { StaticImageData } from "next/image";
 import pen from "../../public/editPen.svg";
 import TierGold from "../../public/LeaderBoard/Tier_Gold.svg";
 import React, { useEffect, useState } from "react";
 import { useAppDispatch } from "../store/hooks";
 import { Toggle } from "../store/UI-Slice";
-import { initialState as emtyUser } from "../store/userSlice";
 import axios from "axios";
-import { UserType } from "../../Types/dataTypes";
+import { UserTypeNew } from "../../Types/dataTypes";
+import { baseUrl, eraseCookie } from "../../config/baseURL";
+import { getCookie } from "cookies-next";
+import { useRouter } from "next/router";
+import profile from '../../uploads/cabouelw.jpg'
 
 const ProfileInfo: React.FC = () => {
-	const [user, setUser] = useState<UserType>(emtyUser);
+	const [user, setUser] = useState<UserTypeNew>(new UserTypeNew());
+	const router = useRouter();
+	const token = getCookie("jwt");
 	const dispatch = useAppDispatch();
 	useEffect(() => {
 		const fetchData = async () => {
-			const data = await axios
-				.get(
-					`https://test-76ddc-default-rtdb.firebaseio.com/owner.json`
-				)
+			await axios
+				.get(`${baseUrl}user/info`, {
+					headers: {
+						Authorization: `Bearer ${token}`,
+					},
+					withCredentials: true,
+				})
 				.then((res) => {
 					setUser(res.data);
+				})
+				.catch((err) => {
+					eraseCookie("jwt");
+					router.replace("/");
 				});
 		};
-		if (user.fullName === '') fetchData();
+		if (!user?.fullname) fetchData();
 	}, []);
-	const lvl = Math.floor(user.lvl / 1000);
-	const lvlP = (user.lvl % 1000) / 10;
+	const lvl = Math.floor((user?.stats.XP === 0) ? 0 : user?.stats.XP / 1000);
+	const lvlP = (user!.stats.XP % 1000) / 10;
 	const toggleHandler = () => dispatch(Toggle());
+	console.log(user.avatar);
+	
 	return (
 		<div className={`${classes.profile} `}>
 			<div className={classes.editBtn}>
@@ -39,19 +53,19 @@ const ProfileInfo: React.FC = () => {
 			<div className={classes.profileInfo}>
 				<div className={classes.avatar}>
 					<img
-						alt={user.fullName}
+						alt={user.fullname}
 						src={user.avatar}
 					/>
 				</div>
 				<div className={classes.profileSection}>
-					<div className={classes.name}>{user.fullName}</div>
-					<div className={classes.lvl}>Level: {user.lvl} XP</div>
+					<div className={classes.name}>{user.fullname}</div>
+					<div className={classes.lvl}>Level: {user.stats.XP} XP</div>
 					<div className={classes.gp}>
-						Game Poinrs: {user.GamePoint} GP
+						Game Poinrs: {user.stats.GP} GP
 					</div>
-					<div className={classes.rank}>Rank: {user.Rank}</div>
+					<div className={classes.rank}>Rank: {user.stats.rank}</div>
 					<div className={classes.tier}>
-						Tier: <span className={classes.gold}>{user.Tier}</span>
+						Tier: <span className={classes.gold}>Kasha thsab</span>
 					</div>
 				</div>
 				<div className={classes.tierIcon}>

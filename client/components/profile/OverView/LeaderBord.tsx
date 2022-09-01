@@ -9,10 +9,12 @@ import Image from "next/image";
 import { isMobile } from "react-device-detect";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { matchDataType, UserType } from "../../../Types/dataTypes";
+import { matchDataType, UserType, UserTypeNew } from "../../../Types/dataTypes";
 import Chart from "../../chart/chartProgress";
 import { motion } from "framer-motion";
 import { useRouter } from "next/router";
+import { baseUrl, eraseCookie } from "../../../config/baseURL";
+import { getCookie } from "cookies-next";
 
 const ElmRank: React.FC<matchDataType> = (props) => {
 	const avatar =
@@ -67,21 +69,31 @@ const ElmRank: React.FC<matchDataType> = (props) => {
 	);
 };
 
-const Stats: React.FC<{ id: number }> = (props) => {
-	const [user, setUser] = useState<UserType>(emtyUser);
+const Stats: React.FC = () => {
+	const [user, setUser] = useState<UserTypeNew>(new UserTypeNew());
+	const router = useRouter();
+	const token = getCookie("jwt");
 	const fetchData = async () => {
-		const data = await axios
-			.get(
-				`https://test-76ddc-default-rtdb.firebaseio.com/${props.id}.json`
-			)
-			.then((res) => {
-				setUser(res.data);
-			});
+		await axios
+				.get(`${baseUrl}user/stats`, {
+					headers: {
+						Authorization: `Bearer ${token}`,
+					},
+					withCredentials: true,
+				})
+				.then((res) => {
+					setUser(res.data);
+				})
+				.catch((err) => {
+					eraseCookie("jwt");
+					router.replace("/");
+				});
 	};
 	useEffect(() => {
-		if (user?.fullName === "") fetchData();
+		if (user?.fullname === "") fetchData();
 		else return;
 	}, []);
+	const amount = (user.gamesWon === 0) ? 0 : Math.floor(((user.gamesWon) / user.numGames) * 100)
 	return (
 		<div className={classes.stat}>
 			<div className={classes.LeaderBordTitle}>Stats</div>
@@ -91,9 +103,7 @@ const Stats: React.FC<{ id: number }> = (props) => {
 					<div className={classes.imageCTN}>
 						{user && (
 							<Chart
-								amount={Math.floor(
-									(user.wins / user.games) * 100
-								)}
+								amount={amount}
 							/>
 						)}
 					</div>
@@ -102,13 +112,13 @@ const Stats: React.FC<{ id: number }> = (props) => {
 					{user && (
 						<>
 							<div className={classes.cntBTNstat}>
-								{user.games} games
+								{user.numGames} games
 							</div>
 							<div className={classes.cntBTNstat}>
-								{user.wins} Wins
+								{user.gamesWon} Wins
 							</div>
 							<div className={classes.cntBTNstat}>
-								{user.games - user.wins} Losses
+								{user.numGames - user.gamesWon} Losses
 							</div>
 						</>
 					)}
@@ -118,7 +128,7 @@ const Stats: React.FC<{ id: number }> = (props) => {
 	);
 };
 
-const LeaderBoard: React.FC<{ id: number }> = (props) => {
+const LeaderBoard: React.FC = () => {
 	const [listUsers, setListUsers] = useState<UserType[]>();
 	let users: UserType[] = [];
 	useEffect(() => {
@@ -211,7 +221,7 @@ const LeaderBoard: React.FC<{ id: number }> = (props) => {
 					</motion.div>
 				</div>
 			</div>
-			<Stats {...props} />
+			<Stats /> 
 		</div>
 	);
 };
