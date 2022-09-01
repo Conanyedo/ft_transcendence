@@ -660,6 +660,10 @@
 
 @media only screen and (max-width: 1024px) {
 
+    .chatContainer {
+        height: 92%;
+    }
+
     .displayChat {
         display: flex !important;
     }
