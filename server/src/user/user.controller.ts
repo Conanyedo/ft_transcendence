@@ -22,7 +22,7 @@ export class UserController {
 	async getUserHeader(@User() user: userParitalDto) {
 		return await this.userService.getUserHeader(user.id);
 	}
-
+	
 	@Post('/editProfile')
 	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(FileInterceptor('avatar', uploadConfig))
@@ -31,4 +31,17 @@ export class UserController {
 			avatar = undefined;
 		return await this.userService.editProfile(user.id, fullname, avatar?.filename);
 	}
+
+	@Get('/stats')
+	@UseGuards(JwtAuthGuard)
+	async getUserStats(@User() user: userParitalDto) {
+		return await this.userService.getUserStats(user.id);
+	}
+
+	@Get('/achievements')
+	@UseGuards(JwtAuthGuard)
+	async getAchievements(@User() user: userParitalDto) {
+		return await this.userService.getAchievements(user.id);
+	}
+	
 }
