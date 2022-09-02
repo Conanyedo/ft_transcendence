@@ -55,7 +55,7 @@ const ProfileInfo: React.FC = () => {
 				<div className={classes.tierIcon}>
 					<Image
 						style={{ backgroundColor: "transparent" }}
-						src={TierGold}
+						src={tier[2]}
 					/>
 				</div>
 			</div>
