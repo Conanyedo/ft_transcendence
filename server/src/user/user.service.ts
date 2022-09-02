@@ -1,13 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, SelectQueryBuilder } from 'typeorm';
 import { Stats, userAchievements } from './stats.entity';
 import { userDto, userParitalDto } from './user.dto';
 import { User, userStatus } from './user.entity';
-
-
-// const isExistsQuery = (query: string) => `SELECT EXISTS(${query}) AS "exists"`;
-// export const existsQuery = <T>(builder: SelectQueryBuilder<T>) => `exists (${builder.getQuery()})`;
 
 
 @Injectable()
@@ -90,6 +86,8 @@ export class UserService {
 			.select(['users.fullname', 'users.avatar', 'stats.XP', 'stats.GP', 'stats.rank'])
 			.where('users.login = :login', { login: login })
 			.getOne();
+		if (!user)
+			throw new NotFoundException('User not found');
 		return { ...user };
 	}
 
@@ -100,6 +98,8 @@ export class UserService {
 			.select(['users.fullname', 'users.avatar'])
 			.where('users.login = :login', { login: login })
 			.getOne();
+		if (!user)
+			throw new NotFoundException('User not found');
 		return { ...user };
 	}
 
@@ -110,16 +110,20 @@ export class UserService {
 			.select(['users.id', 'stats.numGames', 'stats.gamesWon'])
 			.where('users.login = :login', { login: login })
 			.getOne();
+		if (!user)
+			throw new NotFoundException('User not found');
 		return { numGames: user.stats.numGames, gamesWon: user.stats.gamesWon };
 	}
 
 	async getAchievements(login: string) {
-		const user: User = await this.userRepository
+		const user: User | null = await this.userRepository
 			.createQueryBuilder('users')
 			.leftJoinAndSelect("users.stats", "stats")
 			.select(['users.id', 'stats.achievement'])
 			.where('users.login = :login', { login: login })
-			.getOne();
+			.getOne()
+		if (!user)
+			throw new NotFoundException('User not found');
 		return { achievements: user.stats.achievement };
 	}
 
@@ -128,6 +132,8 @@ export class UserService {
 			.createQueryBuilder('users')
 			.leftJoinAndSelect("users.stats", "stats")
 			.select(['users.login', 'users.avatar', 'stats.rank', 'stats.numGames', 'stats.gamesWon', 'stats.GP'])
+			.orderBy('stats.GP', 'DESC')
+			.take(10)
 			.getMany();
 
 		return [...users];
