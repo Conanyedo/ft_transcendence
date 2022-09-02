@@ -1,7 +1,6 @@
 import { motion } from "framer-motion";
 import classes from "../../styles/Search.module.css";
 import Image from "next/image";
-import profile from "../../public/profileImage.png";
 import Union from "../../public/FriendIcons/Union.svg";
 import Friend from "../../public/FriendIcons/FriendIcon.svg";
 import Option from "../../public/FriendIcons/OptionIcon.svg";
@@ -9,8 +8,7 @@ import Pending from "../../public/FriendIcons/Pending.svg";
 import AddFriend from "../../public/FriendIcons/ADDFriend.svg";
 import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
-import { useOutsideAlerter } from "../../components/Settings/ProfileInfoEdit";
-import Skeleton from "../../components/skeleton";
+import { useOutsideAlerter } from "../../customHooks/Functions";
 import ContentWrapper from "../../components/wrapper/appWrapper";
 import SearchComponent from "../../components/search/search";
 

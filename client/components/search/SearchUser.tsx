@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import classes from "../../styles/Search.module.css";
-import { useOutsideAlerter } from "../Settings/ProfileInfoEdit";
+import { useOutsideAlerter } from "../../customHooks/Functions";
 import {
 	ADDButton,
 	FriendButton,

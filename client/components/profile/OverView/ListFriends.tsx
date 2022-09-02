@@ -6,7 +6,7 @@ import Router from "next/router";
 import Message from "../../../public/ChatIcon.svg";
 import Options from "../../../public/LeaderBoard/Options.svg";
 import { OptionMenu } from "../../../pages/search";
-import { useOutsideAlerter } from "../../Settings/ProfileInfoEdit";
+import { useOutsideAlerter } from "../../../customHooks/Functions";
 import axios from "axios";
 
 interface FriendDATA {
