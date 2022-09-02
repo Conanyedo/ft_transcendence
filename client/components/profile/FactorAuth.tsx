@@ -4,63 +4,20 @@ import Image from "next/image";
 import OtpInput from "react-otp-input";
 import { useEffect, useState } from "react";
 import { Grid } from "@material-ui/core";
-import { CookieValueTypes, getCookie } from "cookies-next";
-import axios from "axios";
-import { NextRouter, useRouter } from "next/router";
-import { baseUrl, eraseCookie } from "../../config/baseURL";
 import LoadingElm from "../loading/Loading_elm";
-
-const checkCode = async (code: string, router: NextRouter) => {
-	const token = getCookie("jwt-2fa");
-	const params = new URLSearchParams();
-	params.append("code", code);
-	return await axios({
-		method: "post",
-		url: `${baseUrl}auth/2faLogin`,
-		data: params,
-		headers: {
-			Authorization: `Bearer ${token}`,
-		},
-		withCredentials: true,
-	})
-		.then((res) => {
-			return true;
-		})
-		.catch((err) => {
-			if (err.response.data.message !== "Wrong authentication code") {
-				eraseCookie("jwt-2fa");
-				router.replace("/");
-			}
-			return false;
-		});
-};
-
-const check2FA_JWT = async (
-	jwt: CookieValueTypes,
-	set: any,
-	router: NextRouter
-) => {
-	await axios({
-		method: "get",
-		url: `${baseUrl}auth/is2faAuthorized`,
-		headers: {
-			Authorization: `Bearer ${jwt}`,
-		},
-		withCredentials: true,
-	})
-		.then(() => {
-			set(true);
-		})
-		.catch(() => {
-			eraseCookie("jwt-2fa");
-			router.replace("/")});
-};
+import { check2FA_JWT, checkCode2FA } from "../../customHooks/useFetchData";
+import { eraseCookie } from "../../config/baseURL";
+import { useRouter } from "next/router";
+import { getCookie } from "cookies-next";
 
 const FactorAuth = () => {
 	const router = useRouter();
-	const [isValid, setisValid] = useState(false);
 	const jwt = getCookie("jwt-2fa");
-	if (!jwt) router.push("/");
+	if (!jwt) {
+		router.push("/");
+		return <LoadingElm />;
+	}
+	const [isValid, setisValid] = useState(false);
 	const [inputValue, setInputValue] = useState("");
 	const [isError, setisError] = useState(false);
 	useEffect(() => {
@@ -68,7 +25,7 @@ const FactorAuth = () => {
 	}, []);
 	if (!isValid) return <LoadingElm />;
 	const CheckHandler = async () => {
-		if (await checkCode(inputValue, router)) router.push("/profile");
+		if (await checkCode2FA(inputValue, router)) router.push("/profile");
 		else setisError(true);
 	};
 	return (

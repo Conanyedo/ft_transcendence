@@ -1,12 +1,10 @@
 import classes from "../../styles/achievements.module.css";
 import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { baseUrl, eraseCookie } from "../../config/baseURL";
 import { useRouter } from "next/router";
-import { getCookie } from "cookies-next";
 import { AllAchievement } from "../../config/Achievement";
 import { achievementType } from "../../Types/dataTypes";
 import Image from "next/image";
+import { fetchAchievements, fetchDATA } from "../../customHooks/useFetchData";
 
 const Achievement: React.FC<achievementType> = (props) => {
 	return (
@@ -29,25 +27,8 @@ const Achievements: React.FC<{ id: Number }> = (props) => {
 		achievementType[]
 	>([]);
 	const router = useRouter();
-	const token = getCookie("jwt");
-	const fetchData = async () => {
-		await axios
-			.get(`${baseUrl}user/achievements`, {
-				headers: {
-					Authorization: `Bearer ${token}`,
-				},
-				withCredentials: true,
-			})
-			.then((res) => {
-				setAchievementsids(res.data.achievements);
-			})
-			.catch((err) => {
-				eraseCookie("jwt");
-				router.replace("/");
-			});
-	};
 	useEffect(()  => {
-		fetchData();
+		fetchAchievements(setAchievementsids, router);
 	}, []);
 	if (!achievementsids.includes(0)) {
 		achievementsids.map((idx) => {
