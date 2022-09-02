@@ -19,7 +19,8 @@ export class UserService {
 		const stats: Stats = new Stats();
 		stats.rank = await this.userRepository
 			.createQueryBuilder('users')
-			.getCount();
+			.getCount() + 1;
+		// stats.achievement = [userAchievements.FIRSTPLACE, userAchievements.GOLDTIER, userAchievements.WON20];
 		let user: User = new User();
 		user.login = newUser.login;
 		user.email = newUser.email;
@@ -115,6 +116,16 @@ export class UserService {
 			.where('users.id = :id', { id: id })
 			.getOne();
 		return { achievements: user.stats.achievement };
+	}
+
+	async getLeaderBoard() {
+		const users: User[] = await this.userRepository
+			.createQueryBuilder('users')
+			.leftJoinAndSelect("users.stats", "stats")
+			.select(['users.login', 'users.avatar', 'stats.rank', 'stats.numGames', 'stats.gamesWon', 'stats.GP'])
+			.getMany();
+		
+		return [ ...users ];
 	}
 	// ------------------------------
 
