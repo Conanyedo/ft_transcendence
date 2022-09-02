@@ -11,18 +11,12 @@ export class UserController {
 
 	constructor(private readonly userService: UserService) { }
 
-	@Get('/info')
-	@UseGuards(JwtAuthGuard)
-	async getUserInfo(@User() user: userParitalDto) {
-		return await this.userService.getUserInfo(user.id);
-	}
-
 	@Get('/header')
 	@UseGuards(JwtAuthGuard)
 	async getUserHeader(@User() user: userParitalDto) {
 		return await this.userService.getUserHeader(user.id);
 	}
-	
+
 	@Post('/editProfile')
 	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(FileInterceptor('avatar', uploadConfig))
@@ -30,6 +24,12 @@ export class UserController {
 		if (!isDefault)
 			avatar = undefined;
 		return await this.userService.editProfile(user.id, fullname, avatar?.filename);
+	}
+
+	@Get('/info')
+	@UseGuards(JwtAuthGuard)
+	async getUserInfo(@User() user: userParitalDto) {
+		return await this.userService.getUserInfo(user.id);
 	}
 
 	@Get('/stats')
@@ -43,5 +43,5 @@ export class UserController {
 	async getAchievements(@User() user: userParitalDto) {
 		return await this.userService.getAchievements(user.id);
 	}
-	
+
 }
