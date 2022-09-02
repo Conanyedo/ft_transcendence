@@ -14,7 +14,9 @@ import { motion } from "framer-motion";
 import { LogOut } from "../../customHooks/useFetchData";
 import { baseUrl, eraseCookie } from "../../config/baseURL";
 import { getCookie } from "cookies-next";
-import { UserTypeNew } from "../../Types/dataTypes";
+import { EmtyUser, UserTypeNew } from "../../Types/dataTypes";
+
+
 
 const UserSection = () => {
 	const menu = useRef(null);
@@ -22,7 +24,7 @@ const UserSection = () => {
 	const notifMenu = useRef(null);
 	const dispatch = useAppDispatch();
 	const [dropDown, setDropDown] = useState(false);
-	const [UserData, setUserData] = useState<UserTypeNew>(new UserTypeNew());
+	const [UserData, setUserData] = useState<UserTypeNew>(EmtyUser);
 	const ClickHandler = () => setDropDown((value) => !value);
 	const token = getCookie("jwt");
 
