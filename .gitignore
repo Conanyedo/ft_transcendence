@@ -42,6 +42,8 @@
 /client/.pnp
 /client/.pnp.js
 
+/client/uploads
+
 # testing
 /client/coverage
 
