@@ -1,18 +1,16 @@
 import classes from "../../styles/EditProfile.module.css";
 import Image from "next/image";
-import React, { LegacyRef, MutableRefObject, RefObject, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import UploadIcon from "../../public/FriendIcons/UploadIcon.svg";
 import CrossIcon from "../../public/FriendIcons/Cross.svg";
 import { useAppDispatch } from "../store/hooks";
 import { Toggle } from "../store/UI-Slice";
 import axios from "axios";
-import { UserType, UserTypeNew } from "../../Types/dataTypes";
-import { initialState as emtyUser } from "../store/userSlice";
+import { EmtyUser, UserTypeNew } from "../../Types/dataTypes";
 import { motion } from "framer-motion";
 import { baseUrl, eraseCookie } from "../../config/baseURL";
 import { getCookie } from "cookies-next";
 import { useRouter } from "next/router";
-import { userInfo } from "os";
 
 interface profileData {
 	setTagle: (t: boolean) => void;
@@ -63,7 +61,7 @@ const ProfileInfoEdit: React.FC<profileData> = (props) => {
 	const router = useRouter();
 	const token = getCookie("jwt");
 	const params = new FormData();
-	const [UserData, setUserData] = useState<UserTypeNew>(new UserTypeNew());
+	const [UserData, setUserData] = useState<UserTypeNew>(EmtyUser);
 	const toggleHandler = async () => {
 		const currentName = nameRef.current;
 		const currentImage = ImageRef.current;
@@ -107,7 +105,7 @@ const ProfileInfoEdit: React.FC<profileData> = (props) => {
 				});
 		};
 		const avatar = avatarRef.current;
-		const Image = avatarRef.current;
+		const Image = ImageRef.current;
 		Image!.addEventListener('change', () => {
 			avatar!.src = URL.createObjectURL(Image!.files![0]);
 		})
@@ -153,7 +151,7 @@ const ProfileInfoEdit: React.FC<profileData> = (props) => {
 					</motion.div>
 				</div>
 				<div className={classes.avatar}>
-					<img src={UserData.avatar} ref={avatarRef} />
+					<img src={UserData?.avatar} ref={avatarRef} />
 					<input
 						type="file"
 						className={`${classes.toggle} ${classes.inputHide}`}
@@ -168,7 +166,7 @@ const ProfileInfoEdit: React.FC<profileData> = (props) => {
 				<input
 					className={classes.UserNameInput}
 					type="text"
-					defaultValue={UserData.fullname}
+					defaultValue={UserData?.fullname}
 					ref={nameRef}
 				/>
 				<div className={classes.btnSave} onClick={toggleHandler}>

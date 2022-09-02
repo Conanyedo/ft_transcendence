@@ -22,6 +22,20 @@ export class UserTypeNew {
 	status: string = '';
 };
 
+export const EmtyUser : UserTypeNew = {
+	id: 0,
+	login: '',
+	avatar: '',
+	fullname: '',
+	stats: new Stats(),
+	XP: 0,
+	GP: 0,
+	rank: 0,
+	numGames: 0,
+	gamesWon: 0,
+	achievement: [],
+	status: '',
+}
 
 export interface UserType {
 	id: number,

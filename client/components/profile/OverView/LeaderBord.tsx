@@ -1,6 +1,4 @@
 import classes from "../../../styles/overView.module.css";
-import { initialState as emtyUser } from "../../store/userSlice";
-
 import TierGold from "../../../public/LeaderBoard/Tier_Gold.svg";
 import Rank_1 from "../../../public/LeaderBoard/FirstPlace.svg";
 import Rank_2 from "../../../public/LeaderBoard/Second.svg";
@@ -9,7 +7,7 @@ import Image from "next/image";
 import { isMobile } from "react-device-detect";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { matchDataType, UserType, UserTypeNew } from "../../../Types/dataTypes";
+import { EmtyUser, matchDataType, UserType, UserTypeNew } from "../../../Types/dataTypes";
 import Chart from "../../chart/chartProgress";
 import { motion } from "framer-motion";
 import { useRouter } from "next/router";
@@ -70,7 +68,7 @@ const ElmRank: React.FC<matchDataType> = (props) => {
 };
 
 const Stats: React.FC = () => {
-	const [user, setUser] = useState<UserTypeNew>(new UserTypeNew());
+	const [user, setUser] = useState<UserTypeNew>(EmtyUser);
 	const router = useRouter();
 	const token = getCookie("jwt");
 	const fetchData = async () => {
@@ -90,10 +88,9 @@ const Stats: React.FC = () => {
 				});
 	};
 	useEffect(() => {
-		if (user?.fullname === "") fetchData();
-		else return;
+		fetchData();
 	}, []);
-	const amount = (user.gamesWon === 0) ? 0 : Math.floor(((user.gamesWon) / user.numGames) * 100)
+	const amount = (user?.gamesWon === 0) ? 0 : Math.floor(((user?.gamesWon) / user?.numGames) * 100)
 	return (
 		<div className={classes.stat}>
 			<div className={classes.LeaderBordTitle}>Stats</div>
@@ -112,13 +109,13 @@ const Stats: React.FC = () => {
 					{user && (
 						<>
 							<div className={classes.cntBTNstat}>
-								{user.numGames} games
+								{user?.numGames} games
 							</div>
 							<div className={classes.cntBTNstat}>
-								{user.gamesWon} Wins
+								{user?.gamesWon} Wins
 							</div>
 							<div className={classes.cntBTNstat}>
-								{user.numGames - user.gamesWon} Losses
+								{user?.numGames - user?.gamesWon} Losses
 							</div>
 						</>
 					)}
@@ -195,27 +192,27 @@ const LeaderBoard: React.FC = () => {
 						{listUsers &&
 							listUsers.map((user) => (
 								<ElmRank
-									key={user.id}
-									fullName={user.fullName}
-									games={user.games}
-									Win={user.wins}
-									lvlP={(user.lvl % 1000) / 10}
-									badge={user.RankPos}
-									avatar={user.avatar}
-									id={user.id}
+									key={user?.id}
+									fullName={user?.fullName}
+									games={user?.games}
+									Win={user?.wins}
+									lvlP={(user?.lvl % 1000) / 10}
+									badge={user?.RankPos}
+									avatar={user?.avatar}
+									id={user?.id}
 								/>
 							))}
 						{listUsers &&
 							listUsers.map((user) => (
 								<ElmRank
-									key={user.id}
-									fullName={user.fullName}
-									games={user.games}
-									Win={user.wins}
-									lvlP={(user.lvl % 1000) / 10}
-									badge={user.RankPos}
-									avatar={user.avatar}
-									id={user.id}
+									key={user?.id}
+									fullName={user?.fullName}
+									games={user?.games}
+									Win={user?.wins}
+									lvlP={(user?.lvl % 1000) / 10}
+									badge={user?.RankPos}
+									avatar={user?.avatar}
+									id={user?.id}
 								/>
 							))}
 					</motion.div>
