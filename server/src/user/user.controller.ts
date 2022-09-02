@@ -44,4 +44,10 @@ export class UserController {
 		return await this.userService.getAchievements(user.id);
 	}
 
+	@Get('/leaderborad')
+	@UseGuards(JwtAuthGuard)
+	async leaderBoard(@User() user: userParitalDto) {
+		return await this.userService.getLeaderBoard();
+	}
+
 }
