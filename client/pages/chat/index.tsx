@@ -2,7 +2,7 @@ import Styles from "@styles/chat.module.css"
 import Image from "next/image"
 import Search from "@public/Icon.svg";
 import Avatar from "@public/profile.jpg";
-import Menu from "@public/Options-gray.svg";
+import Menu from "@public/three-dots.svg";
 import sendArrow from "@public/send-arrow.svg";
 import arrowBack from "@public/arrow-back.svg";
 import { useState, useRef, useEffect } from "react";

@@ -515,8 +515,10 @@
 }
 
 .menu {
-    width: 30px;
+    /* width: 30px; */
     height: 30px;
+    display: flex;
+    justify-content: flex-end;
 }
 
 .arrowAsset {
