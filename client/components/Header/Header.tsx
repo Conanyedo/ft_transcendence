@@ -8,12 +8,9 @@ import { useRouter } from "next/router";
 import { useAppDispatch } from "../store/hooks";
 
 import { ShowSettings, Toggle } from "../store/UI-Slice";
-import { useOutsideAlerter } from "../Settings/ProfileInfoEdit";
-import axios from "axios";
+import { useOutsideAlerter } from "../../customHooks/Functions";
 import { motion } from "framer-motion";
-import { LogOut } from "../../customHooks/useFetchData";
-import { baseUrl, eraseCookie } from "../../config/baseURL";
-import { getCookie } from "cookies-next";
+import { fetchDATA, LogOut } from "../../customHooks/useFetchData";
 import { EmtyUser, UserTypeNew } from "../../Types/dataTypes";
 
 
@@ -26,7 +23,6 @@ const UserSection = () => {
 	const [dropDown, setDropDown] = useState(false);
 	const [UserData, setUserData] = useState<UserTypeNew>(EmtyUser);
 	const ClickHandler = () => setDropDown((value) => !value);
-	const token = getCookie("jwt");
 
 	const [isOpen, setisOpen] = useState(false);
 	const clicknotifHandler = () => {
@@ -41,23 +37,7 @@ const UserSection = () => {
 		ClickHandler();
 	};
 	useEffect(() => {
-		const fetchData = async () => {
-			await axios
-				.get(`${baseUrl}user/header`, {
-					headers: {
-						Authorization: `Bearer ${token}`,
-					},
-					withCredentials: true,
-				})
-				.then((res) => {
-					setUserData(res.data);
-				})
-				.catch((err) => {
-					eraseCookie("jwt");
-					router.replace("/");
-				});
-		};
-		if (!UserData?.fullname) fetchData();
+		fetchDATA(setUserData, router, 'user/header');
 	}, []);
 	useOutsideAlerter(notifMenu, setisOpen);
 	useOutsideAlerter(menu, setDropDown);
