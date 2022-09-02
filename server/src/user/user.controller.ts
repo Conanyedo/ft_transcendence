@@ -26,12 +26,6 @@ export class UserController {
 		return await this.userService.getUserHeader(user.login);
 	}
 
-	@Get('/header/:login')
-	@UseGuards(JwtAuthGuard)
-	async getUserHeader(@Param('login') login: string) {
-		return await this.userService.getUserHeader(login);
-	}
-
 	@Get('/info')
 	@UseGuards(JwtAuthGuard)
 	async getMyInfo(@User() user: userParitalDto) {
