@@ -42,7 +42,7 @@
 /client/.pnp
 /client/.pnp.js
 
-/client/uploads
+/client/public/uploads
 
 # testing
 /client/coverage
