@@ -5,81 +5,51 @@ import UploadIcon from "../../public/FriendIcons/UploadIcon.svg";
 import CrossIcon from "../../public/FriendIcons/Cross.svg";
 import { useAppDispatch } from "../store/hooks";
 import { Toggle } from "../store/UI-Slice";
-import axios from "axios";
-import { UserType } from "../../Types/dataTypes";
-import { initialState as emtyUser } from "../store/userSlice";
+import { EmtyUser, UserTypeNew } from "../../Types/dataTypes";
 import { motion } from "framer-motion";
+import { getCookie } from "cookies-next";
+import { useRouter } from "next/router";
+import { fetchUserInfo, updateUserInfo } from "../../customHooks/useFetchData";
+import { useOutsideAlerter } from "../../customHooks/Functions";
 
 interface profileData {
 	setTagle: (t: boolean) => void;
 }
 
-export function useOutsideAlerter(ref: any, setToggle: (t: boolean) => void) {
-	useEffect(() => {
-		function handleClickOutside(event: any) {
-			if (ref.current && !ref.current.contains(event.target)) {
-				setToggle(false);
-			}
-		}
-		document.addEventListener("mousedown", handleClickOutside);
-		return () => {
-			document.removeEventListener("mousedown", handleClickOutside);
-		};
-	}, [ref]);
-}
-
-export function useInSideAlerter(
-	ref: any,
-	setToggle: (t: boolean) => void,
-	move: () => void
-) {
-	useEffect(() => {
-		function handleClickOutside(event: any) {
-			if (ref.current && ref.current.contains(event.target)) {
-				move();
-				setToggle(false);
-			}
-		}
-		document.addEventListener("mousedown", handleClickOutside);
-		return () => {
-			document.removeEventListener("mousedown", handleClickOutside);
-		};
-	}, [ref]);
+const OldData = {
+	name: '',
+	image: ''
 }
 
 const ProfileInfoEdit: React.FC<profileData> = (props) => {
-	// const [nameClass , setNameClass] = useState('');
-	const nameRef = useRef(null);
+	const nameRef = useRef<any>(null);
+	const ImageRef = useRef<any>(null);
+	const avatarRef = useRef<any>(null);
+	const wrapperRef = useRef(null);
 	const dispatch = useAppDispatch();
-	const [UserData, setUserData] = useState<UserType>(emtyUser);
-	const toggleHandler = () => {
-		// const value: any = nameRef.current;
-		// dispatch(changeName(value.value));
+	const router = useRouter();
+	const token = getCookie("jwt");
+	const [UserData, setUserData] = useState<UserTypeNew>(EmtyUser);
+	const toggleHandler = async () => {
+		await updateUserInfo(nameRef, ImageRef, OldData, token);
 		dispatch(Toggle());
-		// console.log();
+		router.push('/');
 	};
 
 	useEffect(() => {
-		const fetchData = async () => {
-			const data = await axios
-				.get(
-					`https://test-76ddc-default-rtdb.firebaseio.com/owner.json`
-				)
-				.then((res) => {
-					setUserData(res.data);
-					// console.log(res.data);
-				});
-		};
-		if (UserData?.fullName === "") fetchData();
+		fetchUserInfo(OldData, token, router, setUserData);
+		const avatar = avatarRef.current;
+		const Image = ImageRef.current;
+		Image!.addEventListener('change', () => {
+			avatar!.src = URL.createObjectURL(Image!.files![0]);
+		})
 	}, []);
 
-	// upload AVATAR TODO
-
-	const wrapperRef = useRef(null);
 	useOutsideAlerter(wrapperRef, props.setTagle);
 	const clickHandler = () => {
 		props.setTagle(false);
 	};
+
 	return (
 		<motion.div
 			className={classes.background}
@@ -113,7 +83,13 @@ const ProfileInfoEdit: React.FC<profileData> = (props) => {
 					</motion.div>
 				</div>
 				<div className={classes.avatar}>
-					<img src={UserData.avatar} />
+					<img src={UserData?.avatar} ref={avatarRef} />
+					<input
+						type="file"
+						className={`${classes.toggle} ${classes.inputHide}`}
+						ref={ImageRef}
+						accept='.png, .jpg, .jpeg'
+					/>
 					<div className={`${classes.toggle}`}>
 						<Image src={UploadIcon} width="120%" height="120%" />
 					</div>
@@ -122,7 +98,7 @@ const ProfileInfoEdit: React.FC<profileData> = (props) => {
 				<input
 					className={classes.UserNameInput}
 					type="text"
-					defaultValue={UserData.fullName}
+					defaultValue={UserData?.fullname}
 					ref={nameRef}
 				/>
 				<div className={classes.btnSave} onClick={toggleHandler}>

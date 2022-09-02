@@ -10,8 +10,8 @@
 }
 
 .badge {
-	width: 3.333rem !important;
-	height: 3.333rem !important;
+	width: 5.556rem !important;
+	height: 5.556rem !important;
 }
 
 .title {
@@ -28,7 +28,9 @@
 .ctnScroll {
 	overflow-y: auto;
 	scrollbar-color: #2B2B2D #3A3A3C;
-	max-height: 22.2rem;
+	max-height: 26.4rem;
+	min-height: 2rem;
+	height: 100%;
 }
 
 .achievementctn {
@@ -41,7 +43,7 @@
 	padding: 0.333rem 0.933rem;
 	margin-bottom: 0.533rem;
 	margin-right: 0.333rem;
-	height: 4rem;
+	/* height: 4rem; */
 }
 
 .achievement {
@@ -76,9 +78,11 @@
 	font-family: 'Inter';
 	font-style: normal;
 	font-weight: 300;
-	font-size: 1.133rem;
+	font-size: 1.5rem;
 	line-height: 15px;
 }
+
+
 
 
 @media only screen and (max-width: 1300px) {

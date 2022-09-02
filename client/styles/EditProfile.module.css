@@ -104,9 +104,18 @@
 	cursor: pointer;
 }
 
+
+.inputHide {
+	cursor: pointer;
+	z-index: 3;
+	opacity: 0 !important;
+}
+
 .toggle {
 	position: absolute;
 	top: 0;
+	height: 100%;
+	width: 100%;
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -118,4 +127,3 @@
 	opacity: 1;
 	transition: all .2s ease-in-out;
 }
-

@@ -12,7 +12,7 @@ import { useSelector } from "react-redux";
 import { selectUser } from "../../store/userSlice";
 // import Message from ''
 
-const OverView: React.FC<{id: number}> = (props) => {
+const OverView: React.FC = () => {
 	const rout = useRouter();
 	const [overViewShow, setOverViewShow] = useState(true);
 	const [showFriend, setShowFriend] = useState(rout.query.id === undefined);
@@ -50,7 +50,7 @@ const OverView: React.FC<{id: number}> = (props) => {
 				></motion.div>
 			</div>
 			<div className={classes.overview} style={{ paddingBottom: "0" }}>
-				{overViewShow && <LeaderBoard {...props}/>}
+				{overViewShow && <LeaderBoard />}
 				{!overViewShow && <FriendProfileList />}
 			</div>
 		</div>

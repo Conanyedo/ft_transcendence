@@ -4,7 +4,7 @@ import { userParitalDto } from 'src/user/user.dto';
 
 export const uploadConfig: MulterOptions = {
 	storage: diskStorage({
-		destination: './uploads',
+		destination: '../client/public/uploads',
 		filename: (req, file, callback) => {
 			const user: userParitalDto = <userParitalDto>req.user;
 			const fileName = `${user.login}.jpg`

@@ -1,8 +1,6 @@
-import axios from "axios";
-import { CookieValueTypes, getCookie } from "cookies-next";
-import { NextRouter, useRouter } from "next/router";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { baseUrl, eraseCookie } from "../../config/baseURL";
+import {  getCookie } from "cookies-next";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 import classesNav from "../../styles/sideNav.module.css";
 import LoadingElm from "../loading/Loading_elm";
 import Header from "../Header/Header";
@@ -12,31 +10,10 @@ import Setting from "../Settings/settings";
 import ProfileInfoEdit from "../Settings/ProfileInfoEdit";
 import { useDispatch, useSelector } from "react-redux";
 import { Settings, Toggle, ToggleValue } from "../store/UI-Slice";
+import { fetchDATA } from "../../customHooks/useFetchData";
 
 type PropsType = {
 	children: JSX.Element;
-};
-
-const checkJWT = async (
-	jwt: CookieValueTypes,
-	router: NextRouter,
-	set: Dispatch<SetStateAction<boolean>>
-) => {
-	await axios({
-		method: "get",
-		url: `${baseUrl}auth/isAuthorized`,
-		headers: {
-			Authorization: `Bearer ${jwt}`,
-		},
-		withCredentials: true,
-	})
-		.then(() => {
-			set(true);
-		})
-		.catch(() => {
-			eraseCookie("jwt");
-			router.replace("/");
-		});
 };
 
 const ContentWrapper: React.FC<PropsType> = ({ children }) => {
@@ -58,7 +35,7 @@ const ContentWrapper: React.FC<PropsType> = ({ children }) => {
 	};
 	useEffect(() => {
 		if (jwt)
-			checkJWT(jwt, router, setIsAuth);
+			fetchDATA(setIsAuth, router, 'auth/isAuthorized');
 		navBarHandler(router.asPath);
 	}, []);
 	if (!jwt) {

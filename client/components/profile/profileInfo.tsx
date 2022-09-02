@@ -5,28 +5,24 @@ import TierGold from "../../public/LeaderBoard/Tier_Gold.svg";
 import React, { useEffect, useState } from "react";
 import { useAppDispatch } from "../store/hooks";
 import { Toggle } from "../store/UI-Slice";
-import { initialState as emtyUser } from "../store/userSlice";
-import axios from "axios";
-import { UserType } from "../../Types/dataTypes";
+import { EmtyUser, UserTypeNew } from "../../Types/dataTypes";
+import { useRouter } from "next/router";
+import { fetchDATA } from "../../customHooks/useFetchData";
+import { getRankUser } from "../../customHooks/Functions";
 
 const ProfileInfo: React.FC = () => {
-	const [user, setUser] = useState<UserType>(emtyUser);
+	const [user, setUser] = useState<UserTypeNew>(EmtyUser);
+	const router = useRouter();
 	const dispatch = useAppDispatch();
 	useEffect(() => {
-		const fetchData = async () => {
-			const data = await axios
-				.get(
-					`https://test-76ddc-default-rtdb.firebaseio.com/owner.json`
-				)
-				.then((res) => {
-					setUser(res.data);
-				});
-		};
-		if (user.fullName === '') fetchData();
+		fetchDATA(setUser, router, 'user/info');
 	}, []);
-	const lvl = Math.floor(user.lvl / 1000);
-	const lvlP = (user.lvl % 1000) / 10;
+	const lvl = Math.floor((user?.stats.XP === 0) ? 0 : user?.stats.XP / 1000);
+	const lvlP = (user?.stats.XP % 1000) / 10;
 	const toggleHandler = () => dispatch(Toggle());
+	const tier = getRankUser(user?.stats.GP);
+	console.log(tier);
+	
 	return (
 		<div className={`${classes.profile} `}>
 			<div className={classes.editBtn}>
@@ -39,25 +35,27 @@ const ProfileInfo: React.FC = () => {
 			<div className={classes.profileInfo}>
 				<div className={classes.avatar}>
 					<img
-						alt={user.fullName}
-						src={user.avatar}
+						alt={user?.fullname}
+						src={user?.avatar}
 					/>
 				</div>
 				<div className={classes.profileSection}>
-					<div className={classes.name}>{user.fullName}</div>
-					<div className={classes.lvl}>Level: {user.lvl} XP</div>
+					<div className={classes.name}>{user?.fullname}</div>
+					<div className={classes.lvl}>Level: {user?.stats.XP} XP</div>
 					<div className={classes.gp}>
-						Game Poinrs: {user.GamePoint} GP
+						Game Poinrs: {user?.stats.GP} GP
 					</div>
-					<div className={classes.rank}>Rank: {user.Rank}</div>
+					<div className={classes.rank}>Rank: {user?.stats.rank}</div>
 					<div className={classes.tier}>
-						Tier: <span className={classes.gold}>{user.Tier}</span>
+						Tier: <span className={classes.gold} style={{
+							color:`${tier[1]}`
+						}}>{tier[0]}</span>
 					</div>
 				</div>
 				<div className={classes.tierIcon}>
 					<Image
 						style={{ backgroundColor: "transparent" }}
-						src={TierGold}
+						src={tier[2]}
 					/>
 				</div>
 			</div>

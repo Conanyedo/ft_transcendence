@@ -19,8 +19,7 @@ import Logout from "../../public/Logout.svg";
 import classes from "../../styles/sideNav.module.css";
 import { useRouter } from "next/router";
 import { MutableRefObject, useEffect, useRef, useState } from "react";
-import { useInSideAlerter } from "../Settings/ProfileInfoEdit";
-import axios from "axios";
+import { useInSideAlerter } from "../../customHooks/Functions";
 import { getCookie } from "cookies-next";
 import { LogOut } from "../../customHooks/useFetchData";
 

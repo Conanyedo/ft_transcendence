@@ -1,6 +1,4 @@
 import classes from "../../../styles/overView.module.css";
-import { initialState as emtyUser } from "../../store/userSlice";
-
 import TierGold from "../../../public/LeaderBoard/Tier_Gold.svg";
 import Rank_1 from "../../../public/LeaderBoard/FirstPlace.svg";
 import Rank_2 from "../../../public/LeaderBoard/Second.svg";
@@ -9,10 +7,12 @@ import Image from "next/image";
 import { isMobile } from "react-device-detect";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { matchDataType, UserType } from "../../../Types/dataTypes";
+import { EmtyUser, matchDataType, UserType, UserTypeNew } from "../../../Types/dataTypes";
 import Chart from "../../chart/chartProgress";
 import { motion } from "framer-motion";
 import { useRouter } from "next/router";
+import { baseUrl, eraseCookie } from "../../../config/baseURL";
+import { getCookie } from "cookies-next";
 
 const ElmRank: React.FC<matchDataType> = (props) => {
 	const avatar =
@@ -67,21 +67,30 @@ const ElmRank: React.FC<matchDataType> = (props) => {
 	);
 };
 
-const Stats: React.FC<{ id: number }> = (props) => {
-	const [user, setUser] = useState<UserType>(emtyUser);
+const Stats: React.FC = () => {
+	const [user, setUser] = useState<UserTypeNew>(EmtyUser);
+	const router = useRouter();
+	const token = getCookie("jwt");
 	const fetchData = async () => {
-		const data = await axios
-			.get(
-				`https://test-76ddc-default-rtdb.firebaseio.com/${props.id}.json`
-			)
-			.then((res) => {
-				setUser(res.data);
-			});
+		await axios
+				.get(`${baseUrl}user/stats`, {
+					headers: {
+						Authorization: `Bearer ${token}`,
+					},
+					withCredentials: true,
+				})
+				.then((res) => {
+					setUser(res.data);
+				})
+				.catch((err) => {
+					eraseCookie("jwt");
+					router.replace("/");
+				});
 	};
 	useEffect(() => {
-		if (user?.fullName === "") fetchData();
-		else return;
+		fetchData();
 	}, []);
+	const amount = (user?.gamesWon === 0) ? 0 : Math.floor(((user?.gamesWon) / user?.numGames) * 100)
 	return (
 		<div className={classes.stat}>
 			<div className={classes.LeaderBordTitle}>Stats</div>
@@ -91,9 +100,7 @@ const Stats: React.FC<{ id: number }> = (props) => {
 					<div className={classes.imageCTN}>
 						{user && (
 							<Chart
-								amount={Math.floor(
-									(user.wins / user.games) * 100
-								)}
+								amount={amount}
 							/>
 						)}
 					</div>
@@ -102,13 +109,13 @@ const Stats: React.FC<{ id: number }> = (props) => {
 					{user && (
 						<>
 							<div className={classes.cntBTNstat}>
-								{user.games} games
+								{user?.numGames} games
 							</div>
 							<div className={classes.cntBTNstat}>
-								{user.wins} Wins
+								{user?.gamesWon} Wins
 							</div>
 							<div className={classes.cntBTNstat}>
-								{user.games - user.wins} Losses
+								{user?.numGames - user?.gamesWon} Losses
 							</div>
 						</>
 					)}
@@ -118,7 +125,7 @@ const Stats: React.FC<{ id: number }> = (props) => {
 	);
 };
 
-const LeaderBoard: React.FC<{ id: number }> = (props) => {
+const LeaderBoard: React.FC = () => {
 	const [listUsers, setListUsers] = useState<UserType[]>();
 	let users: UserType[] = [];
 	useEffect(() => {
@@ -185,33 +192,33 @@ const LeaderBoard: React.FC<{ id: number }> = (props) => {
 						{listUsers &&
 							listUsers.map((user) => (
 								<ElmRank
-									key={user.id}
-									fullName={user.fullName}
-									games={user.games}
-									Win={user.wins}
-									lvlP={(user.lvl % 1000) / 10}
-									badge={user.RankPos}
-									avatar={user.avatar}
-									id={user.id}
+									key={user?.id}
+									fullName={user?.fullName}
+									games={user?.games}
+									Win={user?.wins}
+									lvlP={(user?.lvl % 1000) / 10}
+									badge={user?.RankPos}
+									avatar={user?.avatar}
+									id={user?.id}
 								/>
 							))}
 						{listUsers &&
 							listUsers.map((user) => (
 								<ElmRank
-									key={user.id}
-									fullName={user.fullName}
-									games={user.games}
-									Win={user.wins}
-									lvlP={(user.lvl % 1000) / 10}
-									badge={user.RankPos}
-									avatar={user.avatar}
-									id={user.id}
+									key={user?.id}
+									fullName={user?.fullName}
+									games={user?.games}
+									Win={user?.wins}
+									lvlP={(user?.lvl % 1000) / 10}
+									badge={user?.RankPos}
+									avatar={user?.avatar}
+									id={user?.id}
 								/>
 							))}
 					</motion.div>
 				</div>
 			</div>
-			<Stats {...props} />
+			<Stats /> 
 		</div>
 	);
 };

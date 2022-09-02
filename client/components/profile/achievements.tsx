@@ -1,15 +1,12 @@
 import classes from "../../styles/achievements.module.css";
-import Gold from "../../public/GoldKing.svg";
+import React, { useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import { AllAchievement } from "../../config/Achievement";
+import { achievementType } from "../../Types/dataTypes";
 import Image from "next/image";
-import React from "react";
+import { fetchAchievements, fetchDATA } from "../../customHooks/useFetchData";
 
-interface TypeAchievement {
-	logo: any;
-	title: string;
-	disc: string;
-}
-
-const Achievement: React.FC<TypeAchievement> = (props) => {
+const Achievement: React.FC<achievementType> = (props) => {
 	return (
 		<div className={classes.achievementctn}>
 			<div className={classes.badge}>
@@ -23,46 +20,31 @@ const Achievement: React.FC<TypeAchievement> = (props) => {
 	);
 };
 
-const Achievements: React.FC<{id: Number}> = (props) => {
+const Achievements: React.FC<{ id: Number }> = (props) => {
+	let userAchievments: achievementType[] = [];
+	const [achievementsids, setAchievementsids] = useState<number[]>([0]);
+	const [achievementsItems, setAchievementsItems] = useState<
+		achievementType[]
+	>([]);
+	const router = useRouter();
+	useEffect(()  => {
+		fetchAchievements(setAchievementsids, router);
+	}, []);
+	if (!achievementsids.includes(0)) {
+		achievementsids.map((idx) => {
+			userAchievments.push(AllAchievement[idx - 1]);
+		});
+		if (!achievementsItems.length)
+			setAchievementsItems(userAchievments);
+	}
 	return (
 		<div className={classes.achievements}>
 			<div className={classes.title}>Achievements</div>
 			<div className={classes.ctnScroll}>
-				<Achievement
-					logo={Gold}
-					title="Gold king"
-					disc="Reaching the gold tier"
-				/>
-				<Achievement
-					logo={Gold}
-					title="Gold king"
-					disc="Reaching the gold tier"
-				/>
-				<Achievement
-					logo={Gold}
-					title="Gold king"
-					disc="Reaching the gold tier"
-				/>
-				<Achievement
-					logo={Gold}
-					title="Gold king"
-					disc="Reaching the gold tier"
-				/>
-				<Achievement
-					logo={Gold}
-					title="Gold king"
-					disc="Reaching the gold tier"
-				/>
-				<Achievement
-					logo={Gold}
-					title="Gold king"
-					disc="Reaching the gold tier"
-				/>
-				<Achievement
-					logo={Gold}
-					title="Gold king"
-					disc="Reaching the gold tier"
-				/>
+				{achievementsItems && !achievementsids.includes(0) &&
+					achievementsItems.map((item) => <Achievement {...item} key={item.id} /> ) || 
+					<div className={classes.noAchievements} >No Achievement Yet</div>
+					}
 			</div>
 		</div>
 	);

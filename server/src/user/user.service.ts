@@ -1,9 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Stats } from './stats.entity';
+import { Repository, SelectQueryBuilder } from 'typeorm';
+import { Stats, userAchievements } from './stats.entity';
 import { userDto, userParitalDto } from './user.dto';
-import { User } from './user.entity';
+import { User, userStatus } from './user.entity';
+
+
+// const isExistsQuery = (query: string) => `SELECT EXISTS(${query}) AS "exists"`;
+// export const existsQuery = <T>(builder: SelectQueryBuilder<T>) => `exists (${builder.getQuery()})`;
+
 
 @Injectable()
 export class UserService {
@@ -19,8 +24,8 @@ export class UserService {
 		const stats: Stats = new Stats();
 		stats.rank = await this.userRepository
 			.createQueryBuilder('users')
-			.getCount();
-		console.log('user rank', stats.rank);
+			.getCount() + 1;
+		// stats.achievement = [userAchievements.FIRSTPLACE, userAchievements.GOLDTIER, userAchievements.WON20];
 		let user: User = new User();
 		user.login = newUser.login;
 		user.email = newUser.email;
@@ -42,7 +47,7 @@ export class UserService {
 		if (fullname)
 			await this.setName(id, fullname);
 		if (avatar)
-			await this.setAvatar(id, `/server/uploads/${avatar}`);
+			await this.setAvatar(id, `./uploads/${avatar}`);
 	}
 
 	// User Getters
@@ -78,33 +83,64 @@ export class UserService {
 		return user.is2faEnabled;
 	}
 
-	async getUserInfo(id: string) {
+	async getUserInfo(login: string) {
 		const user: User = await this.userRepository
 			.createQueryBuilder('users')
 			.leftJoinAndSelect("users.stats", "stats")
 			.select(['users.fullname', 'users.avatar', 'stats.XP', 'stats.GP', 'stats.rank'])
-			.where('users.id = :id', { id: id })
+			.where('users.login = :login', { login: login })
 			.getOne();
 		return { ...user };
 	}
 
-	async getUserHeader(id: string) {
+	async getUserHeader(login: string) {
 		const user: User = await this.userRepository
 			.createQueryBuilder('users')
 			.leftJoinAndSelect("users.stats", "stats")
 			.select(['users.fullname', 'users.avatar'])
-			.where('users.id = :id', { id: id })
+			.where('users.login = :login', { login: login })
 			.getOne();
 		return { ...user };
+	}
+
+	async getUserStats(login: string) {
+		const user: User = await this.userRepository
+			.createQueryBuilder('users')
+			.leftJoinAndSelect("users.stats", "stats")
+			.select(['users.id', 'stats.numGames', 'stats.gamesWon'])
+			.where('users.login = :login', { login: login })
+			.getOne();
+		return { numGames: user.stats.numGames, gamesWon: user.stats.gamesWon };
+	}
+
+	async getAchievements(login: string) {
+		const user: User = await this.userRepository
+			.createQueryBuilder('users')
+			.leftJoinAndSelect("users.stats", "stats")
+			.select(['users.id', 'stats.achievement'])
+			.where('users.login = :login', { login: login })
+			.getOne();
+		return { achievements: user.stats.achievement };
+	}
+
+	async getLeaderBoard() {
+		const users: User[] = await this.userRepository
+			.createQueryBuilder('users')
+			.leftJoinAndSelect("users.stats", "stats")
+			.select(['users.login', 'users.avatar', 'stats.rank', 'stats.numGames', 'stats.gamesWon', 'stats.GP'])
+			.getMany();
+
+		return [...users];
 	}
 	// ------------------------------
 
 
 	// User Setters
-	async setUserAuthenticated(id: string, status: boolean) {
+	async setUserAuthenticated(id: string, state: boolean) {
+		const status: userStatus = (state) ? userStatus.ONLINE : userStatus.OFFLINE;
 		return await this.userRepository
 			.createQueryBuilder('users')
-			.update({ isAuthenticated: status })
+			.update({ isAuthenticated: state, status: status })
 			.where('id = :id', { id: id })
 			.execute();
 	}
@@ -137,6 +173,14 @@ export class UserService {
 		return await this.userRepository
 			.createQueryBuilder('users')
 			.update({ fullname: name })
+			.where('id = :id', { id: id })
+			.execute();
+	}
+
+	async setStatus(id: string, status: userStatus) {
+		return await this.userRepository
+			.createQueryBuilder('users')
+			.update({ status: status })
 			.where('id = :id', { id: id })
 			.execute();
 	}

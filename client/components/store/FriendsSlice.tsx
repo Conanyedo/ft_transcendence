@@ -1,13 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import axios from "axios";
+import { UserTypeNew } from "../../Types/dataTypes";
 import type { RootState } from "./store";
-import { UserType, initialState as user } from "./userSlice";
-
-// export interface UsersType {
-// 	UsrsList: UserType[],
-// }
-
-export const initialState: UserType[] = [
+export const initialState: UserTypeNew[] = [
 ];
 
 export const friendListSlice = createSlice({
@@ -15,7 +9,7 @@ export const friendListSlice = createSlice({
 	initialState,
 	reducers: {
 		setFriend: (state, action: PayloadAction<any>) => {
-			let tmp:UserType = action.payload;
+			let tmp:UserTypeNew = action.payload;
 			state.push(tmp);
 		}
 	},
