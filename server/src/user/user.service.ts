@@ -79,48 +79,53 @@ export class UserService {
 		return user.is2faEnabled;
 	}
 
-	async getUserInfo(login: string) {
+	async getIsAuthenticated(id: string) {
 		const user: User = await this.userRepository
 			.createQueryBuilder('users')
-			.leftJoinAndSelect("users.stats", "stats")
-			.select(['users.fullname', 'users.avatar', 'stats.XP', 'stats.GP', 'stats.rank'])
-			.where('users.login = :login', { login: login })
+			.select(['users.isAuthenticated'])
+			.where('users.id = :id', { id: id })
 			.getOne();
-		if (!user)
-			throw new NotFoundException('User not found');
-		return { ...user };
+		return user.isAuthenticated;
 	}
 
-	async getUserHeader(login: string) {
+	async getUserHeader(id: string) {
 		const user: User = await this.userRepository
 			.createQueryBuilder('users')
 			.leftJoinAndSelect("users.stats", "stats")
 			.select(['users.fullname', 'users.avatar'])
-			.where('users.login = :login', { login: login })
+			.where('users.id = :id', { id: id })
 			.getOne();
 		if (!user)
 			throw new NotFoundException('User not found');
 		return { ...user };
 	}
 
-	async getUserStats(login: string) {
+	async getUserInfo(id: string, by: string) {
 		const user: User = await this.userRepository
 			.createQueryBuilder('users')
 			.leftJoinAndSelect("users.stats", "stats")
-			.select(['users.id', 'stats.numGames', 'stats.gamesWon'])
-			.where('users.login = :login', { login: login })
+			.select(['users.fullname', 'users.avatar', 'stats.XP', 'stats.GP', 'stats.rank'])
+			.where(`users.${by} = :id`, { id: id })
 			.getOne();
 		if (!user)
 			throw new NotFoundException('User not found');
-		return { numGames: user.stats.numGames, gamesWon: user.stats.gamesWon };
+		return { ...user };
 	}
 
-	async getAchievements(login: string) {
-		const user: User | null = await this.userRepository
+	async getUserStats(id: string, by: string) {
+		const stats: Stats[] = await this.userRepository.query(`SELECT stats."numGames", stats."gamesWon" FROM users
+		JOIN stats ON users."statsId" = stats.id where users.${by} = '${id}';`);
+		if (!stats.length)
+			throw new NotFoundException('User not found');
+		return { numGames: stats[0].numGames, gamesWon: stats[0].gamesWon };
+	}
+
+	async getAchievements(id: string, by: string) {
+		const user: User = await this.userRepository
 			.createQueryBuilder('users')
 			.leftJoinAndSelect("users.stats", "stats")
 			.select(['users.id', 'stats.achievement'])
-			.where('users.login = :login', { login: login })
+			.where(`users.${by} = :id`, { id: id })
 			.getOne()
 		if (!user)
 			throw new NotFoundException('User not found');
