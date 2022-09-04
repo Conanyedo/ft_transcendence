@@ -20,3 +20,34 @@ export class gameDto {
 	@IsDate()
 	date?: Date;
 }
+
+export class opponentDto {
+
+	@IsNotEmpty()
+	fullname: string;
+
+	@IsNotEmpty()
+	avatar: string;
+
+}
+
+export class historyDto {
+
+	@IsNotEmpty()
+	login: string;
+
+	@IsNotEmpty()
+	fullname: string;
+
+	@IsNotEmpty()
+	avatar: string;
+
+	@IsNotEmpty()
+	opponentScore: number;
+
+	@IsNotEmpty()
+	yourScore: number;
+
+	@IsNotEmpty()
+	date: string;
+}
