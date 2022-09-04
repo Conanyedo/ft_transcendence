@@ -73,7 +73,6 @@ const ProfileFriendInfo: React.FC<{ id: string | undefined }> = (props) => {
 	);
 	const lvlP = (userInfo?.stats.XP % 1000) / 10;
 	const tier = getRankUser(userInfo?.stats.GP);
-	console.log(userInfo);
 	return (
 		<>
 		{isMounted &&
