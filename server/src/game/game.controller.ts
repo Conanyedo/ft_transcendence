@@ -10,7 +10,13 @@ export class GameController {
 	
 	@Get('/')
 	@UseGuards(JwtAuthGuard)
-	async getMatches(@User() user: userParitalDto) {
-		return ;
+	async getMyMatches(@User() user: userParitalDto) {
+		return await this.gameService.getMatches(user.login);
+	}
+	
+	@Get('/:login')
+	@UseGuards(JwtAuthGuard)
+	async getUserMatches(@Param('login') login: string) {
+		return await this.gameService.getMatches(login);
 	}
 }
