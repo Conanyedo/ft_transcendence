@@ -137,8 +137,8 @@ export class UserService {
 			.createQueryBuilder('users')
 			.leftJoinAndSelect("users.stats", "stats")
 			.select(['users.login', 'users.avatar', 'stats.rank', 'stats.numGames', 'stats.gamesWon', 'stats.GP'])
-			.orderBy('stats.GP', 'DESC')
-			.take(10)
+			// .orderBy('stats.GP', 'DESC')
+			// .take(10)
 			.getMany();
 
 		return [...users];
