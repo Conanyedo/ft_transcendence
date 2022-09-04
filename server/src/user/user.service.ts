@@ -104,7 +104,7 @@ export class UserService {
 		const user: User = await this.userRepository
 			.createQueryBuilder('users')
 			.leftJoinAndSelect("users.stats", "stats")
-			.select(['users.fullname', 'users.avatar', 'stats.XP', 'stats.GP', 'stats.rank'])
+			.select(['users.login', 'users.fullname', 'users.avatar', 'stats.XP', 'stats.GP', 'stats.rank'])
 			.where(`users.${by} = :id`, { id: id })
 			.getOne();
 		if (!user)
@@ -136,7 +136,7 @@ export class UserService {
 		const users: User[] = await this.userRepository
 			.createQueryBuilder('users')
 			.leftJoinAndSelect("users.stats", "stats")
-			.select(['users.login', 'users.avatar', 'stats.rank', 'stats.numGames', 'stats.gamesWon', 'stats.GP'])
+			.select(['users.login', 'users.fullname', 'users.avatar', 'stats.rank', 'stats.numGames', 'stats.gamesWon', 'stats.GP'])
 			// .orderBy('stats.GP', 'DESC')
 			// .take(10)
 			.getMany();
