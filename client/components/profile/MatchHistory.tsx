@@ -32,7 +32,7 @@ export const Match: React.FC<matchDataType> = (props) => {
 	);
 };
 
-const MatchHistory: React.FC<{id: Number}> = (props) => {
+const MatchHistory: React.FC<{id: string}> = (props) => {
 	const [fetched, setFetched] = useState(false);
 	const [data, setData] = useState<any[]>([])
 	let matchs: any[] = [];

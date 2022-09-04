@@ -21,8 +21,6 @@ const ProfileInfo: React.FC = () => {
 	const lvlP = (user?.stats.XP % 1000) / 10;
 	const toggleHandler = () => dispatch(Toggle());
 	const tier = getRankUser(user?.stats.GP);
-	console.log(tier);
-	
 	return (
 		<div className={`${classes.profile} `}>
 			<div className={classes.editBtn}>
