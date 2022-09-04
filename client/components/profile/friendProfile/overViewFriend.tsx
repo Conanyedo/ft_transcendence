@@ -4,7 +4,7 @@ import "react-sweet-progress/lib/style.css";
 import React from "react";
 import LeaderBoard from "../OverView/LeaderBord";
 
-const OverViewFriend: React.FC<{id: number}> = (props) => {
+const OverViewFriend: React.FC<{id: string}> = () => {
 	return (
 		<div className={classes.overviewCtn}>
 			<div>

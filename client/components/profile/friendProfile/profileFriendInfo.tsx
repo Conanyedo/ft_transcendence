@@ -1,7 +1,5 @@
 import classes from "../../../styles/Profile.module.css";
-import profile from "../../../public/profileImage.png";
 import Image from "next/image";
-import TierGold from "../../../public/LeaderBoard/Tier_Gold.svg";
 import { useRouter } from "next/router";
 import React, { useEffect, useRef, useState } from "react";
 
@@ -12,13 +10,12 @@ import {
 	OptionMenu,
 	PendingButton,
 } from "../../../pages/search";
-import { useOutsideAlerter } from "../../../customHooks/Functions";
+import { getRankUser, useOutsideAlerter } from "../../../customHooks/Functions";
 import { useAppDispatch } from "../../store/hooks";
-import { addFriend, initialState, RemoveFriend } from "../../store/userSlice";
-import axios from "axios";
-import { UserType } from "../../../Types/dataTypes";
-import { useSelector } from "react-redux";
-import { ShowErrorMsg, ToggleErrorValue } from "../../store/UI-Slice";
+import { addFriend, RemoveFriend } from "../../store/userSlice";
+import { EmtyUser, UserTypeNew } from "../../../Types/dataTypes";
+import { fetchDATA } from "../../../customHooks/useFetchData";
+import LoadingElm from "../../loading/Loading_elm";
 
 const OptionOfFriend: React.FC<{ isFriend: boolean }> = (props) => {
 	const ctn = useRouter();
@@ -37,92 +34,96 @@ const OptionOfFriend: React.FC<{ isFriend: boolean }> = (props) => {
 	const optionTaggleHandler = () => setoptionTaggle(!optionTaggle);
 
 	return (
-			<div className={classes.optionBtnFriend}>
+		<div className={classes.optionBtnFriend}>
+			<span>User Profile</span>
+			<div className={classes.options}>
 				{(ctn.query.id === "1337" && <PendingButton />) ||
 					(props.isFriend && (
 						<FriendButton remove={RemoveFriendHandler} />
 					)) || <ADDButton add={AddFriendHandler} />}
-				<div className={classes.DotOption}ref={wrapperRef}>
-					<Image
-						src={option_friend}
-						onClick={optionTaggleHandler}
-					/>
-				{optionTaggle && (
-					<OptionMenu
-						FirstBtn={props.isFriend ? "Message" : "Unfriend"}
-						SecondBtn="Block User"
-						width="78px"
-					/>
-				)}
+				<div className={classes.DotOption} ref={wrapperRef}>
+					<Image src={option_friend} onClick={optionTaggleHandler} />
+					{optionTaggle && (
+						<OptionMenu
+							FirstBtn={props.isFriend ? "Message" : "Unfriend"}
+							SecondBtn="Block User"
+							width="78px"
+						/>
+					)}
 				</div>
 			</div>
+		</div>
 	);
 };
 
-const ProfileFriendInfo: React.FC<{ id: number | undefined }> = (props) => {
-	const [userInfo, setUserInfo] = useState<UserType | null>(initialState);
-	let ownerId = 0;
+const ProfileFriendInfo: React.FC<{ id: string | undefined }> = (props) => {
+	const [userInfo, setUserInfo] = useState<UserTypeNew>(EmtyUser);
+	const [isMounted, setIsMounted] = useState(false);
+	let ownerLogin = "cabouelw";
 	const route = useRouter();
 	const dispatch = useAppDispatch();
-	const fetchData = async (id: number) => {
-		await axios
-			.get(`https://test-76ddc-default-rtdb.firebaseio.com/${id}.json`)
-			.then((res) => {
-				setUserInfo(res.data);
-			});
-	};
 	useEffect(() => {
-		if (props.id) fetchData(Number(props.id));
+		fetchDATA(setUserInfo, route, `user/info/${props.id}`);
+		setIsMounted(true);
+		return () => {
+			setUserInfo(EmtyUser);
+		}
 	}, [props.id]);
-	ownerId = Number(window.localStorage.getItem("owner"));
-	let XP = userInfo?.lvl || 0;
-	let lvl = Math.floor(XP / 1000);
-	let lvlP = (XP % 1000) / 10;
-	let isFriend = userInfo?.friendsID.includes(ownerId) || false;
-	if (!userInfo) {
-		dispatch(ShowErrorMsg());
-		route.replace("/profile");
-	}
-	if (!userInfo || userInfo?.id === ownerId) route.replace("/profile");
+	if (userInfo?.fullname === "") return <LoadingElm />;
+	else if (props.id === ownerLogin) route.replace("/profile");
+	const lvl = Math.floor(
+		userInfo?.stats.XP === 0 ? 0 : userInfo?.stats.XP / 1000
+	);
+	const lvlP = (userInfo?.stats.XP % 1000) / 10;
+	const tier = getRankUser(userInfo?.stats.GP);
 	return (
-		<div className={`${classes.profile} `}>
-			<OptionOfFriend isFriend={isFriend} />
-			<div className={classes.profileInfo}>
-				<div className={classes.avatar}>
-					{userInfo && <img src={userInfo?.avatar} />}
-				</div>
-				<div className={classes.profileSection}>
-					<div className={classes.nameFriend}>{userInfo?.fullName}</div>
-					{/* {isFriend && (
-						<div className={classes.status}>{userInfo?.stat}</div>
-					)} */}
-					<div className={classes.lvl}>Level: {userInfo?.lvl} XP</div>
-					<div className={classes.gp}>
-						Game Poinrs: {userInfo?.GamePoint} GP
+		<>
+		{isMounted &&
+			<div className={`${classes.profile} `}>
+				<OptionOfFriend isFriend={true} />
+				<div className={classes.profileInfo}>
+					<div className={classes.avatar}>
+						{userInfo && <img src={userInfo?.avatar} />}
 					</div>
-					<div className={classes.rank}>Rank: {userInfo?.Rank}</div>
-					<div className={classes.tier}>
-						Status:
-						<span className={classes.gold}> {userInfo?.stat}</span>
+					<div className={classes.profileSection}>
+						<div className={classes.nameFriend}>
+							{userInfo?.fullname}
+						</div>
+						<div className={classes.lvl}>
+							Level: {userInfo?.stats.XP} XP
+						</div>
+						<div className={classes.gp}>
+							Game Poinrs: {userInfo?.stats.GP} GP
+						</div>
+						<div className={classes.rank}>
+							Rank: {userInfo?.stats.rank}
+						</div>
+						<div className={classes.tier}>
+							Status:
+							<span className={classes.gold}>
+								{" "}
+								{userInfo?.status}
+							</span>
+						</div>
+					</div>
+					<div className={classes.tierIcon}>
+						<Image
+							style={{ backgroundColor: "transparent" }}
+							src={tier[2]}
+						/>
 					</div>
 				</div>
-				<div className={classes.tierIcon}>
-					<Image
-						style={{ backgroundColor: "transparent" }}
-						src={TierGold}
-					/>
+				<div className={classes.lvlContainer}>
+					<div
+						className={classes.lvldata}
+					>{`Level ${lvl} - ${lvlP} %`}</div>
+					<div
+						className={classes.lvlpercent}
+						style={{ width: `${lvlP}%` }}
+					></div>
 				</div>
-			</div>
-			<div className={classes.lvlContainer}>
-				<div
-					className={classes.lvldata}
-				>{`Level ${lvl} - ${lvlP} %`}</div>
-				<div
-					className={classes.lvlpercent}
-					style={{ width: `${lvlP}%` }}
-				></div>
-			</div>
-		</div>
+			</div>}
+		</>
 	);
 };
 

@@ -13,14 +13,13 @@ import { motion } from "framer-motion";
 import { fetchDATA, LogOut } from "../../customHooks/useFetchData";
 import { EmtyUser, UserTypeNew } from "../../Types/dataTypes";
 
-
-
 const UserSection = () => {
 	const menu = useRef(null);
 	const router = useRouter();
 	const notifMenu = useRef(null);
 	const dispatch = useAppDispatch();
 	const [dropDown, setDropDown] = useState(false);
+	const [isMounted, setIsMounted] = useState(false);
 	const [UserData, setUserData] = useState<UserTypeNew>(EmtyUser);
 	const ClickHandler = () => setDropDown((value) => !value);
 
@@ -37,7 +36,8 @@ const UserSection = () => {
 		ClickHandler();
 	};
 	useEffect(() => {
-		fetchDATA(setUserData, router, 'user/header');
+		fetchDATA(setUserData, router, "user/header");
+		setIsMounted(true);
 	}, []);
 	useOutsideAlerter(notifMenu, setisOpen);
 	useOutsideAlerter(menu, setDropDown);
@@ -45,76 +45,89 @@ const UserSection = () => {
 	const LogOutHandler = () => LogOut(router);
 	return (
 		<>
-			<div
-				className={classes.NotifIcon}
-				ref={notifMenu}
-				onClick={clicknotifHandler}
-			>
-				<div className={classes.dot} />
-				<Image src={Notification} />
-				{isOpen && (
-					<motion.div
-						id="notifmenu"
-						initial={{ scale: 0.5 }}
-						animate={{ scale: 1 }}
-						className={classes.ctnNotif}
+			{isMounted && (
+				<>
+					<div
+						className={classes.NotifIcon}
+						ref={notifMenu}
+						onClick={clicknotifHandler}
 					>
-						<span className={classes.notif}>
-							<span className={classes.notifTitle}>
-								Friend Request
-							</span>
-							abdellah want to be your friend
-						</span>
-						<span className={classes.notif}>
-							<span className={classes.notifTitle}>
-								Challenge Request
-							</span>
-							abdellah Invite you to play pong game
-						</span>
-						<span className={classes.notif}>
-							<span className={classes.notifTitle}>
-								Friend Request
-							</span>
-							ayoub want to be your friend
-						</span>
-						<span className={classes.notif}>
-							<span className={classes.notifTitle}>
-								Challenge Request
-							</span>
-							younes Invite you to play pong game
-						</span>
-					</motion.div>
-				)}
-			</div>
-			<div
-				ref={menu}
-				className={classes.avatarContainer}
-				onClick={ClickHandler}
-			>
-				<img src={UserData?.avatar} className={classes.avatar} />
-				<p className={classes.userName}>{UserData?.fullname}</p>
-				<Image src={DownArrow} width={24} height={24} />
-				{dropDown && (
-					<motion.div
-						initial={{ scale: 0.5 }}
-						animate={{ scale: 1 }}
-						className={classes.DropDown}
+						<div className={classes.dot} />
+						<Image src={Notification} />
+						{isOpen && (
+							<motion.div
+								id="notifmenu"
+								initial={{ scale: 0.5 }}
+								animate={{ scale: 1 }}
+								className={classes.ctnNotif}
+							>
+								<span className={classes.notif}>
+									<span className={classes.notifTitle}>
+										Friend Request
+									</span>
+									abdellah want to be your friend
+								</span>
+								<span className={classes.notif}>
+									<span className={classes.notifTitle}>
+										Challenge Request
+									</span>
+									abdellah Invite you to play pong game
+								</span>
+								<span className={classes.notif}>
+									<span className={classes.notifTitle}>
+										Friend Request
+									</span>
+									ayoub want to be your friend
+								</span>
+								<span className={classes.notif}>
+									<span className={classes.notifTitle}>
+										Challenge Request
+									</span>
+									younes Invite you to play pong game
+								</span>
+							</motion.div>
+						)}
+					</div>
+					<div
+						ref={menu}
+						className={classes.avatarContainer}
+						onClick={ClickHandler}
 					>
-						<div className={classes.EditP} onClick={toggleHandler}>
-							Edit profile
-						</div>
-						<div
-							className={classes.EditP}
-							onClick={toggleSettingHandler}
-						>
-							Settings
-						</div>
-						<div className={classes.LogOut} onClick={LogOutHandler}>
-							Log out
-						</div>
-					</motion.div>
-				)}
-			</div>
+						<img
+							src={UserData?.avatar}
+							className={classes.avatar}
+						/>
+						<p className={classes.userName}>{UserData?.fullname}</p>
+						<Image src={DownArrow} width={24} height={24} />
+						{dropDown && (
+							<motion.div
+								initial={{ scale: 0.5 }}
+								animate={{ scale: 1 }}
+								className={classes.DropDown}
+							>
+								<div
+									className={classes.EditP}
+									onClick={toggleHandler}
+								>
+									Edit profile
+								</div>
+								<div
+									className={classes.EditP}
+									onClick={toggleSettingHandler}
+								>
+									Settings
+								</div>
+								<div
+									className={classes.LogOut}
+									onClick={LogOutHandler}
+								>
+									Log out
+								</div>
+							</motion.div>
+						)}
+					</div>
+				</>
+			)}
 		</>
 	);
 };
@@ -158,4 +171,4 @@ const Header: React.FC<{ setPos: (page: string) => void }> = (props) => {
 	);
 };
 
-export default Header;
+export default React.memo(Header);

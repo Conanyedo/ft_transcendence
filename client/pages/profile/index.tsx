@@ -14,9 +14,9 @@ const Profile = () => {
 			children={
 				<div className={classes.profileCtn}>
 					<ProfileInfo />
-					<Achievements id={id} />
+					<Achievements id="" />
 					<OverView />
-					<MatchHistory id={id} />
+					<MatchHistory id='' />
 					<div className={classes.buttom}></div>
 				</div>
 			}

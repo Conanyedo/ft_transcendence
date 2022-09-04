@@ -62,7 +62,7 @@ function Option(props: { type: string }) {
 function SuggestedUsr(props: {user:chatUser, userStatus: boolean}): JSX.Element {
     return(<div className={Styles.sUsr}>
             <div>
-                <Image src={Avatar} width={32} height={32}/>
+                <div><Image src={Avatar} width={32} height={32} /></div>
                 <span>{props.user.firstName + " " + props.user.lastName}</span>
             </div>
             <button className={props.userStatus ? Styles.btnAdd : Styles.btnRmv}>{props.userStatus ? "Add" : "Remove"}</button>
@@ -97,12 +97,10 @@ export function ModalBox(props: { show: boolean, setShow: (Dispatch<SetStateActi
         setUsrTags(newUsrTags);
     }
 
-    function addUsrToChannel(e: React.ChangeEvent<HTMLInputElement>, keycode: string, fullname: string) {
-        if (keycode == "Enter") {
+    function addUsrToChannel(e: React.ChangeEvent<HTMLInputElement>, fullname: string) {
             setshowDrpdown(false);
             setUsrTags([...usrTags, fullname]);
             e.target.value="";
-        }
     }
 
     function filterUsers(e: React.ChangeEvent<HTMLInputElement>) {
@@ -116,8 +114,10 @@ export function ModalBox(props: { show: boolean, setShow: (Dispatch<SetStateActi
             return;
         }
 
+        console.log(closeUsrs)
+
         // Filter out results
-        let newUsrs = closeUsrs.filter((usr) => usr.firstName.toUpperCase().startsWith(value) || usr.lastName.toUpperCase().startsWith(value))
+        let newUsrs = initialUsrState.filter((usr) => usr.firstName.toUpperCase().startsWith(value) || usr.lastName.toUpperCase().startsWith(value))
         
         setCloseUsrs(newUsrs);
         // Show the dropdown
@@ -152,7 +152,7 @@ export function ModalBox(props: { show: boolean, setShow: (Dispatch<SetStateActi
                         <span>Add Members</span>
                         <div className={Styles.usrsInpt}>
                             {usrTags.map((tag, i) => <UsrTag key={i} fullname={tag} removeTag={removeTag} id={i} />)}
-                            {(usrTags.length < 10) && <input type="text" onChange={(e) => filterUsers(e)} onKeyDown={(e) => addUsrToChannel(e, e.key, e.target.value)} />}
+                            {(usrTags.length < 10) && <input type="text" onChange={(e) => filterUsers(e)} />}
                         </div>
                         {showDrpdown && <div className={Styles.dropMembers}>
                             {closeUsrs.map((usr, i) => <SuggestedUsr key={i} user={usr} userStatus={true}/>)}

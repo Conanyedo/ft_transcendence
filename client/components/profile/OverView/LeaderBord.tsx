@@ -1,18 +1,16 @@
 import classes from "../../../styles/overView.module.css";
-import TierGold from "../../../public/LeaderBoard/Tier_Gold.svg";
 import Rank_1 from "../../../public/LeaderBoard/FirstPlace.svg";
 import Rank_2 from "../../../public/LeaderBoard/Second.svg";
 import Rank_3 from "../../../public/LeaderBoard/thirdPlace.svg";
 import Image from "next/image";
 import { isMobile } from "react-device-detect";
-import axios from "axios";
 import { useEffect, useState } from "react";
-import { EmtyUser, matchDataType, UserType, UserTypeNew } from "../../../Types/dataTypes";
+import { EmtyUser, matchDataType, UserTypeNew } from "../../../Types/dataTypes";
 import Chart from "../../chart/chartProgress";
 import { motion } from "framer-motion";
 import { useRouter } from "next/router";
-import { baseUrl, eraseCookie } from "../../../config/baseURL";
-import { getCookie } from "cookies-next";
+import { fetchDATA } from "../../../customHooks/useFetchData";
+import { getRankUser } from "../../../customHooks/Functions";
 
 const ElmRank: React.FC<matchDataType> = (props) => {
 	const avatar =
@@ -24,7 +22,9 @@ const ElmRank: React.FC<matchDataType> = (props) => {
 			? Rank_3
 			: null;
 	const route = useRouter();
-	const Clickhandler = () => route.push("/profile/" + props.id);
+	const Clickhandler = () => route.push("/profile/" + props.login);
+	const tier = getRankUser(props.GP);
+	
 	return (
 		<div className={classes.tableElments}>
 			<div className={classes.Rank}>
@@ -53,14 +53,14 @@ const ElmRank: React.FC<matchDataType> = (props) => {
 					<div
 						className={classes.pourcentage}
 						style={{
-							width: `${props.lvlP}%`,
+							width: `${Math.floor((props.Win / props.games) * 100 )}%`,
 						}}
 					></div>
 				</div>
 			</div>
 			<div className={classes.Tier}>
 				<div className={classes.SvgSize}>
-					<Image src={TierGold} />
+					<Image src={tier[2]} />
 				</div>
 			</div>
 		</div>
@@ -70,25 +70,8 @@ const ElmRank: React.FC<matchDataType> = (props) => {
 const Stats: React.FC = () => {
 	const [user, setUser] = useState<UserTypeNew>(EmtyUser);
 	const router = useRouter();
-	const token = getCookie("jwt");
-	const fetchData = async () => {
-		await axios
-				.get(`${baseUrl}user/stats`, {
-					headers: {
-						Authorization: `Bearer ${token}`,
-					},
-					withCredentials: true,
-				})
-				.then((res) => {
-					setUser(res.data);
-				})
-				.catch((err) => {
-					eraseCookie("jwt");
-					router.replace("/");
-				});
-	};
 	useEffect(() => {
-		fetchData();
+		fetchDATA(setUser, router, 'user/stats');
 	}, []);
 	const amount = (user?.gamesWon === 0) ? 0 : Math.floor(((user?.gamesWon) / user?.numGames) * 100)
 	return (
@@ -126,26 +109,19 @@ const Stats: React.FC = () => {
 };
 
 const LeaderBoard: React.FC = () => {
-	const [listUsers, setListUsers] = useState<UserType[]>();
-	let users: UserType[] = [];
+	const [listUsers, setListUsers] = useState<UserTypeNew[]>([]);
+	const [isUp, SetIsUp] = useState(false);
+	const router = useRouter();
 	useEffect(() => {
-		const fetchData = async () => {
-			const data = await axios
-				.get("https://test-76ddc-default-rtdb.firebaseio.com/all.json")
-				.then((res) => {
-					const entries = Object.entries(res.data);
-					entries.map((user) => {
-						users.push(user[1] as UserType);
-					});
-					setListUsers(users);
-				});
-		};
-		if (!listUsers) fetchData();
+		fetchDATA(setListUsers, router, 'user/leaderborad');
+		console.log(listUsers);
+		
+		SetIsUp(true);
 	}, []);
-
-	const lvlP = 72;
+	
 	return (
-		<div className={classes.leaderBoard}>
+		<>
+		{isUp && <div className={classes.leaderBoard}>
 			<div className={classes.table}>
 				<div className={classes.LeaderBordTitle}>LeaderBoard</div>
 				<div className={classes.leaderBoardctn}>
@@ -190,36 +166,23 @@ const LeaderBoard: React.FC = () => {
 						className={classes.leaderBoardTable}
 					>
 						{listUsers &&
-							listUsers.map((user) => (
+							listUsers.map((user, idx) => (
 								<ElmRank
-									key={user?.id}
-									fullName={user?.fullName}
-									games={user?.games}
-									Win={user?.wins}
-									lvlP={(user?.lvl % 1000) / 10}
-									badge={user?.RankPos}
+									key={user?.login}
+									fullName={user?.login}
+									games={user?.stats.numGames}
+									Win={user?.stats.gamesWon}
+									badge={idx + 1}
 									avatar={user?.avatar}
-									id={user?.id}
-								/>
-							))}
-						{listUsers &&
-							listUsers.map((user) => (
-								<ElmRank
-									key={user?.id}
-									fullName={user?.fullName}
-									games={user?.games}
-									Win={user?.wins}
-									lvlP={(user?.lvl % 1000) / 10}
-									badge={user?.RankPos}
-									avatar={user?.avatar}
-									id={user?.id}
+									login={user?.login}
+									GP={user?.stats.GP}
 								/>
 							))}
 					</motion.div>
 				</div>
 			</div>
 			<Stats /> 
-		</div>
+		</div>}</>
 	);
 };
 

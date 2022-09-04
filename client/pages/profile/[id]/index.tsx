@@ -6,30 +6,34 @@ import MatchHistory from "../../../components/profile/MatchHistory";
 import classes from "../../../styles/Profile.module.css";
 import { useEffect, useState } from "react";
 import Skeleton from "../../../components/skeleton";
+import ContentWrapper from "../../../components/wrapper/appWrapper";
 
 const ProfileFriend = () => {
-	const [userId, setuserId] = useState<number>();
+	const [userId, setuserId] = useState<string>("");
 	const route = useRouter();
 	const { id } = route.query;
+	const login = id as string;
 	useEffect(() => {
-		setuserId(Number(id));
-	}, [id]);
+		setuserId(login);
+	}, [login]);
 
 	return (
-		<Skeleton
-			elm={
-				<div className={classes.profileCtn}>
-					{userId && (
-						<>
-							<ProfileFriendInfo id={userId} />
-							<Achievements id={userId} />
-							<OverViewFriend id={userId} />
-							<MatchHistory id={userId} />
-						</>
-					)}
-				</div>
-			}
-		/>
+		<>
+			{userId && <ContentWrapper
+				children={
+					<div className={classes.profileCtn}>
+						{userId && (
+							<>
+								<ProfileFriendInfo id={userId} />
+								<Achievements id={userId} />
+								<OverViewFriend id={userId} />
+								<MatchHistory id={userId} />
+							</>
+						)}
+					</div>
+				}
+			/>}
+		</>
 	);
 };
 

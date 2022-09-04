@@ -43,7 +43,7 @@ export class UserService {
 		if (fullname)
 			await this.setName(id, fullname);
 		if (avatar)
-			await this.setAvatar(id, `./uploads/${avatar}`);
+			await this.setAvatar(id, `/uploads/${avatar}`);
 	}
 
 	// User Getters
@@ -137,8 +137,8 @@ export class UserService {
 			.createQueryBuilder('users')
 			.leftJoinAndSelect("users.stats", "stats")
 			.select(['users.login', 'users.avatar', 'stats.rank', 'stats.numGames', 'stats.gamesWon', 'stats.GP'])
-			.orderBy('stats.GP', 'DESC')
-			.take(10)
+			// .orderBy('stats.GP', 'DESC')
+			// .take(10)
 			.getMany();
 
 		return [...users];

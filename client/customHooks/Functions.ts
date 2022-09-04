@@ -41,15 +41,15 @@ export function useInSideAlerter(
 }
 
 
-export function getRankUser(GamePoint: number) { // TODO get tiers also
-	if (GamePoint < 250)
-		return [allRanks[4], '#BEB5B6', unranked];
-	else if (GamePoint < 500)
+export function getRankUser(GamePoint: number) {
+	if (GamePoint <= 500)
 		return [allRanks[3], '#82B3BF', Jallou9];
-	else if (GamePoint < 800)
+	else if (GamePoint <= 800)
 		return [allRanks[2], '#BD8A65', Bronze];
-	else if (GamePoint < 1600)
+	else if (GamePoint <= 1600)
 		return [allRanks[1], '#C2C4CD', Silver];
-	else
+	else if (GamePoint > 1600)
 		return [allRanks[0], '#CFA365', Gold];
+	else
+		return [allRanks[4], '#BEB5B6', unranked];
 }

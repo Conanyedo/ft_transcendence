@@ -1,11 +1,11 @@
-import internal from "stream";
 
 class Stats {
 	XP: number = 0;
 	GP: number = 0;
 	rank: number = 0;
+	numGames: number = 0;
+	gamesWon: number = 0;
 }
-
 
 export class UserTypeNew {
 	id: number = 0;
@@ -13,8 +13,6 @@ export class UserTypeNew {
 	avatar: string = '';
 	fullname: string = '';
 	stats: Stats = new Stats();
-	XP: number = 0;
-	GP: number = 0;
 	rank: number = 0;
 	numGames: number = 0;
 	gamesWon: number = 0;
@@ -28,9 +26,6 @@ export const EmtyUser : UserTypeNew = {
 	avatar: '',
 	fullname: '',
 	stats: new Stats(),
-	XP: 0,
-	GP: 0,
-	
 	rank: 0,
 	numGames: 0,
 	gamesWon: 0,
@@ -58,13 +53,13 @@ export interface UserType {
 };
 
 export interface matchDataType {
-	id: number,
+	login: string,
+	avatar: string;
 	badge: number;
 	fullName: string;
 	games: number;
 	Win: number;
-	lvlP: number;
-	avatar: string;
+	GP: number;
 }
 
 export interface achievementType {

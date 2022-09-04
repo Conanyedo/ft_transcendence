@@ -561,6 +561,10 @@
     gap: 10px;
 }
 
+.sUsr>div>span {
+    border-radius: 5px;
+}
+
 .btnAdd {
     border: 2px solid #409CFF;
     border-radius: 5px;

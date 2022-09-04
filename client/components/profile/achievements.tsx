@@ -20,33 +20,36 @@ const Achievement: React.FC<achievementType> = (props) => {
 	);
 };
 
-const Achievements: React.FC<{ id: Number }> = (props) => {
-	let userAchievments: achievementType[] = [];
+const Achievements: React.FC<{ id: string }> = (props) => {
 	const [achievementsids, setAchievementsids] = useState<number[]>([0]);
-	const [achievementsItems, setAchievementsItems] = useState<
-		achievementType[]
-	>([]);
 	const router = useRouter();
-	useEffect(()  => {
-		fetchAchievements(setAchievementsids, router);
-	}, []);
-	if (!achievementsids.includes(0)) {
-		achievementsids.map((idx) => {
-			userAchievments.push(AllAchievement[idx - 1]);
-		});
-		if (!achievementsItems.length)
-			setAchievementsItems(userAchievments);
-	}
+	useEffect(() => {
+		fetchAchievements(setAchievementsids, router, props.id);
+		return () => {
+			setAchievementsids([0]);
+		}
+	}, [props.id]);
 	return (
-		<div className={classes.achievements}>
-			<div className={classes.title}>Achievements</div>
-			<div className={classes.ctnScroll}>
-				{achievementsItems && !achievementsids.includes(0) &&
-					achievementsItems.map((item) => <Achievement {...item} key={item.id} /> ) || 
-					<div className={classes.noAchievements} >No Achievement Yet</div>
-					}
+		<>
+			<div className={classes.achievements}>
+				<div className={classes.title}>Achievements</div>
+				<div className={classes.ctnScroll}>
+					{achievementsids.map(
+						(idx) =>
+							!achievementsids.includes(0) && (
+								<Achievement
+									{...AllAchievement[idx - 1]}
+									key={AllAchievement[idx - 1].id}
+								/>
+							)
+					) || (
+						<div className={classes.noAchievements}>
+							No Achievement Yet
+						</div>
+					)}
+				</div>
 			</div>
-		</div>
+		</>
 	);
 };
 

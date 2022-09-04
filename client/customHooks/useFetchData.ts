@@ -5,7 +5,10 @@ import { Dispatch, SetStateAction } from "react";
 import { baseUrl, eraseCookie } from "../config/baseURL";
 import { UserTypeNew } from "../Types/dataTypes";
 
-export const getQRcodeOrdisableCode = async (status: string, route: NextRouter): Promise<string> => {
+export const getQRcodeOrdisableCode = async (
+	status: string,
+	route: NextRouter
+): Promise<string> => {
 	const token = getCookie("jwt");
 	const params = new URLSearchParams();
 	params.append("is2faEnabled", status);
@@ -22,8 +25,8 @@ export const getQRcodeOrdisableCode = async (status: string, route: NextRouter):
 			return res.data;
 		})
 		.catch((err) => {
-			eraseCookie('jwt');
-			route.replace('/');
+			eraseCookie("jwt");
+			route.replace("/");
 		});
 };
 
@@ -41,12 +44,15 @@ export const Is2FAEnaled = (set: any, setP: any, route: NextRouter) => {
 			setP(result.data);
 		})
 		.catch((err) => {
-			eraseCookie('jwt');
-			route.replace('/');
+			eraseCookie("jwt");
+			route.replace("/");
 		});
 };
 
-export const check2FACode = async (code: string, route: NextRouter): Promise<boolean>  => {
+export const check2FACode = async (
+	code: string,
+	route: NextRouter
+): Promise<boolean> => {
 	const token = getCookie("jwt");
 	const params = new URLSearchParams();
 	params.append("code", code);
@@ -63,9 +69,9 @@ export const check2FACode = async (code: string, route: NextRouter): Promise<boo
 			return true;
 		})
 		.catch((err) => {
-			if (err.response.data.message !== 'Wrong authentication code') {
-				eraseCookie('jwt');
-				route.replace('/');
+			if (err.response.data.message !== "Wrong authentication code") {
+				eraseCookie("jwt");
+				route.replace("/");
 			}
 			return false;
 		});
@@ -82,13 +88,17 @@ export const LogOut = (route: NextRouter) => {
 		})
 		.then(() => route.replace("/"))
 		.catch((err) => {
-			eraseCookie('jwt');
-			route.replace('/');
+			eraseCookie("jwt");
+			route.replace("/");
 		});
 };
 
-
-export const updateUserInfo = async (nameRef: React.MutableRefObject<any>, ImageRef: React.MutableRefObject<any>,OldData: { name: string, image: string } , token: CookieValueTypes) => {
+export const updateUserInfo = async (
+	nameRef: React.MutableRefObject<any>,
+	ImageRef: React.MutableRefObject<any>,
+	OldData: { name: string; image: string },
+	token: CookieValueTypes
+) => {
 	const params = new FormData();
 	const currentName = nameRef.current;
 	const currentImage = ImageRef.current;
@@ -96,23 +106,29 @@ export const updateUserInfo = async (nameRef: React.MutableRefObject<any>, Image
 	const Image = currentImage!.files;
 	if (OldData.name !== Name)
 		params.append("fullname", nameRef.current!.value);
-	if (Image.length === 1){
+	if (Image.length === 1)
 		params.append("avatar", Image![0]);
-	console.log(Image![0]);}
-	if (OldData.image.includes('https://cdn.intra.42.fr') || OldData.image.includes('googleusercontent.com/'))
-		params.append("isDefault", 'true');
+	if (
+		OldData.image.includes("https://cdn.intra.42.fr") ||
+		OldData.image.includes("googleusercontent.com/")
+	)
+		params.append("isDefault", "true");
 	await axios
-			.post(`${baseUrl}user/editProfile`, params, {
-				headers: {
-					Authorization: `Bearer ${token}`,
-				},
-				withCredentials: true,
-			})
-			.catch((err) => console.log(err));
-}
+		.post(`${baseUrl}user/editProfile`, params, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+			withCredentials: true,
+		})
+		.catch((err) => console.log(err));
+};
 
-
-export const fetchUserInfo = async (OldData: { name: string, image: string } , token: CookieValueTypes, router: NextRouter, setUserData: React.Dispatch<React.SetStateAction<UserTypeNew>>) => {
+export const fetchUserInfo = async (
+	OldData: { name: string; image: string },
+	token: CookieValueTypes,
+	router: NextRouter,
+	setUserData: React.Dispatch<React.SetStateAction<UserTypeNew>>
+) => {
 	await axios
 		.get(`${baseUrl}user/header`, {
 			headers: {
@@ -131,11 +147,16 @@ export const fetchUserInfo = async (OldData: { name: string, image: string } , t
 		});
 };
 
-
-export const fetchAchievements = async (setAchievementsids: React.Dispatch<React.SetStateAction<number[]>>, router: NextRouter) => {
+export const fetchAchievements = async (
+	setAchievementsids: React.Dispatch<React.SetStateAction<number[]>>,
+	router: NextRouter,
+	login: string
+) => {
 	const token = getCookie("jwt");
+	let Id: string = "";
+	if (login) Id = "/" + login;
 	await axios
-		.get(`${baseUrl}user/achievements`, {
+		.get(`${baseUrl}user/achievements${Id}`, {
 			headers: {
 				Authorization: `Bearer ${token}`,
 			},
@@ -193,7 +214,6 @@ export const checkCode2FA = async (code: string, router: NextRouter) => {
 		});
 };
 
-
 export const check2FA_JWT = async (
 	jwt: CookieValueTypes,
 	set: any,
@@ -212,7 +232,8 @@ export const check2FA_JWT = async (
 		})
 		.catch(() => {
 			eraseCookie("jwt-2fa");
-			router.replace("/")});
+			router.replace("/");
+		});
 };
 
 export const checkJWT = async (
