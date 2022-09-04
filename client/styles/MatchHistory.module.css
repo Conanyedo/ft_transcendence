@@ -46,6 +46,7 @@
 	align-items: center;
 	justify-content: space-between;
 	flex: 50%;
+	cursor: pointer;
 	gap: 1rem;
 }
 

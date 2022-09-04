@@ -1,35 +1,29 @@
-import Image from "next/image";
 import classes from "../../styles/MatchHistory.module.css";
-import profile from "../../public/profileImage.png";
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { HistoryMatchType } from "../../Types/dataTypes";
 import { useRouter } from "next/router";
 import { fetchDATA } from "../../customHooks/useFetchData";
 
-interface matchDataType {
-	Avatar: any;
-	fullName: string;
-	result: string;
-	datematch: string;
-	matchRes: boolean;
-}
 
-export const Match: React.FC<matchDataType> = (props) => {
+export const Match: React.FC<HistoryMatchType> = (props) => {
+	const router = useRouter();
+	const profileHandler = () => {
+		router.push(`/profile/${props.login}`);
+	}
 	return (
 		<div className={classes.match}>
-			<div className={classes.Avatar_name}>
+			<div className={classes.Avatar_name} onClick={profileHandler}>
 				<div className={classes.avatar}>
-					<Image src={props.Avatar} />
+					<img src={props.avatar} />
 				</div>
-				<div className={classes.dataMatch}>{props.fullName}</div>
+				<div className={classes.dataMatch}>{props.fullname}</div>
 			</div>
 			<div className={`${classes.dataMatch} ${classes.res}`}>
-				{props.result}
+				{props.yourScore + '/' + props.opponentScore}
 			</div>
-			<div className={`${classes.dataMatch} ${classes.datedispaly}`}>{props.datematch}</div>
-			<div className={`${props.matchRes ? classes.won : classes.loss}`}>
-				{props.matchRes ? "Won" : "Loss"}
+			<div className={`${classes.dataMatch} ${classes.datedispaly}`}>{props.date}</div>
+			<div className={`${(props.yourScore > props.opponentScore) ? classes.won : classes.loss}`}>
+				{props.yourScore > props.opponentScore ? "Won" : "Loss"}
 			</div>
 		</div>
 	);
@@ -45,20 +39,14 @@ const MatchHistory: React.FC = () => {
 			setData(null);
 		}
 	}, []);
-
 	return (
 		<div className={classes.history}>
 			<div className={classes.titleMatchHistory}>Match History</div>
 			<div className={classes.historyMatchCtn}>
 				{(data?.length &&
 					data?.map((match) =>(<Match
-									// Avatar={match.avatar}
 									key={Math.random()}
-									Avatar={profile}
-									fullName={match.opponent}
-									result={`${match.yourScore}/${match.opponentScore}`}
-									datematch={match.data}
-									matchRes={match.yourScore > match.opponentScore}
+									{...match}
 								/>
 							)
 					)) || (

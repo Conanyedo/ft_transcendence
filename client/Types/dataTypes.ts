@@ -74,5 +74,8 @@ export interface HistoryMatchType {
     opponent: string,
     yourScore: number,
     opponentScore: number,
-    data: string
+    date: string,
+	login: string,
+	avatar: string,
+	fullname: string
 }

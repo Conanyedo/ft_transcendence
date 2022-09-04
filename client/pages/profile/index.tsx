@@ -16,7 +16,7 @@ const Profile = () => {
 					<ProfileInfo />
 					<Achievements id="" />
 					<OverView />
-					<MatchHistory id='' />
+					<MatchHistory />
 					<div className={classes.buttom}></div>
 				</div>
 			}
