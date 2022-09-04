@@ -28,7 +28,10 @@
 .ctnScroll {
 	overflow-y: auto;
 	scrollbar-color: #2B2B2D #3A3A3C;
-	height: 20rem;
+	max-height: 21.5rem;
+	display: flex;
+	flex-direction: column;
+	gap: .8rem;
 }
 
 .achievementctn {
@@ -39,7 +42,6 @@
 	background: #3A3A3C;
 	border-radius: 8px;
 	padding: 0.333rem 0.933rem;
-	margin-bottom: 0.533rem;
 	margin-right: 0.333rem;
 }
 
