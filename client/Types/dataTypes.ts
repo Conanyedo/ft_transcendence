@@ -1,3 +1,4 @@
+import { StaticImageData } from "next/image"
 
 class Stats {
 	XP: number = 0;
@@ -67,4 +68,24 @@ export interface achievementType {
 	logo: any,
 	title: string,
 	disc: string,
+}
+
+export interface chatUser {
+	id: number;
+	imgSrc: StaticImageData;
+	firstName?: string;
+	lastName?: string;
+	channelName?: string;
+	status: string
+  }
+
+export interface chatMsg {
+	msgContent: string | JSX.Element, 
+	time: string,
+	type: string,
+	name: string
+}
+
+export interface color {
+	color: string
 }
