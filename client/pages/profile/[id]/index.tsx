@@ -2,11 +2,11 @@ import { useRouter } from "next/router";
 import Achievements from "../../../components/profile/achievements";
 import ProfileFriendInfo from "../../../components/profile/friendProfile/profileFriendInfo";
 import OverViewFriend from "../../../components/profile/friendProfile/overViewFriend";
-import MatchHistory from "../../../components/profile/MatchHistory";
 import classes from "../../../styles/Profile.module.css";
 import { useEffect, useState } from "react";
 import ContentWrapper from "../../../components/wrapper/appWrapper";
 import LoadingElm from "../../../components/loading/Loading_elm";
+import MatchHistoryFriend from "../../../components/profile/friendProfile/matchHistoryFriend";
 
 const ProfileFriend = () => {
 	const [userId, setuserId] = useState<string>("");
@@ -32,7 +32,7 @@ const ProfileFriend = () => {
 								<ProfileFriendInfo id={userId} />
 								<Achievements id={userId} />
 								<OverViewFriend id={userId} />
-								<MatchHistory id={userId} />
+								<MatchHistoryFriend login={userId} />
 							</>
 						)}
 					</div>

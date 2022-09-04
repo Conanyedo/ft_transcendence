@@ -69,3 +69,10 @@ export interface achievementType {
 	title: string,
 	disc: string,
 }
+
+export interface HistoryMatchType {
+    opponent: string,
+    yourScore: number,
+    opponentScore: number,
+    data: string
+}
