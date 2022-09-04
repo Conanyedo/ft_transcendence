@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-import { StaticImageData } from "next/image"
-=======
 import internal from "stream";
 
 class Stats {
@@ -33,13 +30,13 @@ export const EmtyUser : UserTypeNew = {
 	stats: new Stats(),
 	XP: 0,
 	GP: 0,
+	
 	rank: 0,
 	numGames: 0,
 	gamesWon: 0,
 	achievement: [],
 	status: '',
 }
->>>>>>> ec57b4511ce3c20a6eafdadf6f46b9dd096537c0
 
 export interface UserType {
 	id: number,
@@ -60,25 +57,6 @@ export interface UserType {
 	RankPos: number,
 };
 
-<<<<<<< HEAD
-export interface chatUser {
-	id: number;
-	imgSrc: StaticImageData;
-	fullName?: string;
-	channelName?: string;
-	status: string
-  }
-
-export interface chatMsg {
-	msgContent: string | JSX.Element, 
-	time: string, 
-	type: string, 
-	name: string
-}
-
-export interface color {
-	color: string
-=======
 export interface matchDataType {
 	id: number,
 	badge: number;
@@ -94,5 +72,4 @@ export interface achievementType {
 	logo: any,
 	title: string,
 	disc: string,
->>>>>>> ec57b4511ce3c20a6eafdadf6f46b9dd096537c0
 }
