@@ -1,7 +1,7 @@
 import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm";
 
-@Entity({ name: 'games' })
-export class Frienship {
+@Entity({ name: 'friendships' })
+export class Friendship {
 	@PrimaryGeneratedColumn("uuid")
 	id: string;
 

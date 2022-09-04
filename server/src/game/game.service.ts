@@ -1,7 +1,8 @@
 import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { userParitalDto } from 'src/user/user.dto';
+import { UserService } from 'src/user/user.service';
 import { Repository } from 'typeorm';
+import { historyDto, opponentDto } from './game.dto';
 import { Game } from './game.entity';
 
 @Injectable()
@@ -9,18 +10,11 @@ export class GameService {
 	constructor(
 		@InjectRepository(Game)
 		private gameRepository: Repository<Game>,
+		private readonly userService: UserService,
 	) { }
 
 	async insertMatches(login: string) {
-		const history: Game[] = await this.gameRepository
-			.createQueryBuilder('games')
-			.select(['games.playerOne', 'games.playerTwo', 'games.playerOneScore', 'games.playerTwoScore', 'games.date'])
-			.where(`games.playerOne = :login OR games.palyerTwo = :login`, { login: login })
-			.getMany();
-		console.log(history);
-		// if (!history)
-		// 	throw new NotFoundException('User not found');
-		// return { ...user };
+
 	}
 
 	async getMatches(login: string) {
@@ -31,15 +25,19 @@ export class GameService {
 			.getMany();
 		if (!history.length)
 			return history;
-		const matches = history.map((match) => {
-			const result = {
-				opponent: (match.playerOne === login) ? match.playerTwo : match.playerOne,
-				yourScore: (match.playerOne === login) ? match.playerOneScore : match.playerTwoScore,
+		const matches = await Promise.all(history.map(async (match) => {
+			const opponentLogin: string = (match.playerOne === login) ? match.playerTwo : match.playerOne;
+			const opponent: opponentDto = await this.userService.getOpponent(opponentLogin);
+			const result: historyDto = {
+				login: opponentLogin,
+				fullname: opponent.fullname,
+				avatar: opponent.avatar,
 				opponentScore: (match.playerOne === login) ? match.playerTwoScore : match.playerOneScore,
-				data: match.date.toLocaleDateString("en-GB")
+				yourScore: (match.playerOne === login) ? match.playerOneScore : match.playerTwoScore,
+				date: match.date.toLocaleDateString("en-GB")
 			}
 			return result;
-		})
+		}))
 		return matches;
 	}
 }
