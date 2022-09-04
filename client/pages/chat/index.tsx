@@ -8,7 +8,7 @@ import arrowBack from "@public/arrow-back.svg";
 import { useState, useRef, useEffect } from "react";
 import { setMsg, scrollToBottom } from "@utils/chat";
 import { chatUser, chatMsg } from "@Types/dataTypes";
-import { ModalBox } from "@components/modal/Modal";
+import { ModalBox } from "@components/Modal";
 import { GameIconAsset, ChannelAsset, BlueChannelAsset } from "./svg/index"
 import { ChatProvider } from "@contexts/chatContext"
 import ContentWrapper from "@components/wrapper/appWrapper";

@@ -75,6 +75,7 @@ export interface chatUser {
 	imgSrc: StaticImageData;
 	firstName?: string;
 	lastName?: string;
+	fullName?: string;
 	channelName?: string;
 	status: string
   }
