@@ -1,7 +1,6 @@
 import classes from "../../styles/Profile.module.css";
 import Image from "next/image";
 import pen from "../../public/editPen.svg";
-import TierGold from "../../public/LeaderBoard/Tier_Gold.svg";
 import React, { useEffect, useState } from "react";
 import { useAppDispatch } from "../store/hooks";
 import { Toggle } from "../store/UI-Slice";
@@ -21,6 +20,8 @@ const ProfileInfo: React.FC = () => {
 	const lvlP = (user?.stats.XP % 1000) / 10;
 	const toggleHandler = () => dispatch(Toggle());
 	const tier = getRankUser(user?.stats.GP);
+	if (user.login !== '')
+		localStorage.setItem("owner", user.login);
 	return (
 		<div className={`${classes.profile} `}>
 			<div className={classes.editBtn}>
