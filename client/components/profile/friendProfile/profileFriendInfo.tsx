@@ -32,7 +32,6 @@ const OptionOfFriend: React.FC<{ isFriend: boolean }> = (props) => {
 	const wrapperRef = useRef(null);
 	useOutsideAlerter(wrapperRef, setoptionTaggle);
 	const optionTaggleHandler = () => setoptionTaggle(!optionTaggle);
-
 	return (
 		<div className={classes.optionBtnFriend}>
 			<span>User Profile</span>
@@ -59,7 +58,6 @@ const OptionOfFriend: React.FC<{ isFriend: boolean }> = (props) => {
 const ProfileFriendInfo: React.FC<{ id: string | undefined }> = (props) => {
 	const [userInfo, setUserInfo] = useState<UserTypeNew>(EmtyUser);
 	const [isMounted, setIsMounted] = useState(false);
-	let ownerLogin = "cabouelw";
 	const route = useRouter();
 	const dispatch = useAppDispatch();
 	useEffect(() => {
@@ -70,7 +68,6 @@ const ProfileFriendInfo: React.FC<{ id: string | undefined }> = (props) => {
 		}
 	}, [props.id]);
 	if (userInfo?.fullname === "") return <LoadingElm />;
-	else if (props.id === ownerLogin) route.replace("/profile");
 	const lvl = Math.floor(
 		userInfo?.stats.XP === 0 ? 0 : userInfo?.stats.XP / 1000
 	);

@@ -90,3 +90,13 @@ export interface chatMsg {
 export interface color {
 	color: string
 }
+
+export interface HistoryMatchType {
+    opponent: string,
+    yourScore: number,
+    opponentScore: number,
+    date: string,
+	login: string,
+	avatar: string,
+	fullname: string
+}

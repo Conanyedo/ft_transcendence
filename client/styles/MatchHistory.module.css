@@ -46,6 +46,7 @@
 	align-items: center;
 	justify-content: space-between;
 	flex: 50%;
+	cursor: pointer;
 	gap: 1rem;
 }
 
@@ -92,6 +93,16 @@
 
 .loss {
 	color: #FF6482;
+}
+
+.NoHistory {
+	text-align: center;
+	color: #758293;
+	font-family: 'Inter';
+	font-style: normal;
+	font-weight: 300;
+	font-size: 1.5rem;
+	line-height: 15px;
 }
 
 @media only screen and (max-width: 2200px) {

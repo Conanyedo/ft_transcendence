@@ -34,7 +34,7 @@ const Achievements: React.FC<{ id: string }> = (props) => {
 			<div className={classes.achievements}>
 				<div className={classes.title}>Achievements</div>
 				<div className={classes.ctnScroll}>
-					{achievementsids.map(
+					{!achievementsids.includes(0) && achievementsids.map(
 						(idx) =>
 							!achievementsids.includes(0) && (
 								<Achievement

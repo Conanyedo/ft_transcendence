@@ -401,7 +401,12 @@
     border-radius: 10px;
 }
 
-.modalbox>div:nth-child(2) {
+.form {
+    border: 1px solid red;
+    min-height: fit-content;
+}
+
+.modalbox>div:nth-child(1) {
     margin-top: 1.667rem;
 }
 
@@ -411,13 +416,13 @@
     color: #C6E1FF;
 }
 
-.modalbox>div>span {
+.modalbox>div>form>span {
     font-weight: 500;
     font-size: 1.5rem;
     color: #D9D9D9;
 }
 
-.modalbox > button {
+.modalbox>form>button {
     background-color: #409CFF;
     color: #fff;
     font-weight: 500;
@@ -430,27 +435,27 @@
     cursor: pointer;
 }
 
-.modalbox>p {
+.modalbox>form>p {
     color: #D9D9D9;
     font-size: 1rem;
     margin-bottom: 1.5rem;
     margin-top: 8px;
 }
 
-.modalbox>div:nth-child(3) {
+.modalbox>form>div:nth-child(2) {
     display: flex;
     margin-top: 18px;
     justify-content: space-between;
 }
 
-.modalbox>div:nth-child(3)>div>h3 {
+.modalbox>form>div:nth-child(2)>div>h3 {
     font-size: 1.5rem;
     font-weight: 500;
     color: #D9D9D9;
     margin: 0;
 }
 
-.modalbox>div:nth-child(3)>div {
+.modalbox>form>div:nth-child(2)>div {
     display: flex;
     align-items: center;
     gap: 0.3rem;

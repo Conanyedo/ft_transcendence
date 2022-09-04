@@ -114,8 +114,6 @@ const LeaderBoard: React.FC = () => {
 	const router = useRouter();
 	useEffect(() => {
 		fetchDATA(setListUsers, router, 'user/leaderborad');
-		console.log(listUsers);
-		
 		SetIsUp(true);
 	}, []);
 	

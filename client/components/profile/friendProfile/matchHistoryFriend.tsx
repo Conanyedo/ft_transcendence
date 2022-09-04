@@ -1,47 +1,31 @@
 import classes from "../../../styles/MatchHistory.module.css";
-import profile from "../../../public/profileImage.png";
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { Match } from "../MatchHistory";
 import { useRouter } from "next/router";
+import { fetchDATA } from "../../../customHooks/useFetchData";
+import { HistoryMatchType } from "../../../Types/dataTypes";
 
-const MatchHistoryFriend = () => {
-	const [fetched, setFetched] = useState(false);
-	const [data, setData] = useState<any[]>([]);
-    const rout = useRouter();
-	let matchs: any[] = [];
+const MatchHistoryFriend: React.FC<{ login: string }> = (props) => {
+	const [data, setData] = useState<HistoryMatchType[] | null>([]);
+	const rout = useRouter();
 
 	useEffect(() => {
-		const fetchData = async () => {
-			const data = await axios
-				.get(
-					`https://test-76ddc-default-rtdb.firebaseio.com/matchs.json`
-				)
-				.then((res) => {
-					res.data.map((dataMatch:any) => {
-						matchs.push(dataMatch);
-					});
-					setFetched(true);
-					setData(matchs)
-				});
+		fetchDATA(setData, rout, `game/${props.login}`);
+		return () => {
+			setData(null);
 		};
-		if (!fetched) fetchData();
-	}, []);
+	}, [props.login]);
 
 	return (
 		<div className={classes.history}>
 			<div className={classes.titleMatchHistory}>Match History</div>
 			<div className={classes.historyMatchCtn}>
-				{data && 
-					data.map((match) => match &&
-						<Match
-						Avatar={profile}
-						fullName="Anas Elmqas"
-						result={match.result}
-						datematch={match.date}
-						matchRes={match.wonBy === rout.query.id}
-					/>
-					)}
+				{(data?.length &&
+					data?.map((match) => (
+						<Match key={Math.random()} {...match} />
+					))) || (
+					<div className={classes.NoHistory}>No Match played Yet</div>
+				)}
 			</div>
 		</div>
 	);

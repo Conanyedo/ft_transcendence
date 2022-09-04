@@ -48,13 +48,13 @@ export function ModalBox(props: { show: boolean, setShow: (Dispatch<SetStateActi
                 await onSubmit(values);
                 resetForm();
             }}>
-                <Form>
-                    {props.show && <><div style={{ display: props.show ? "block" : "none" }} className={Styles.grayBg}>&nbsp;</div>
-                        <motion.div className={Styles.modalbox} animate={{ scale: 1 }} initial={{ scale: 0.5 }}>
-                            <div>
-                                <h1>Create channel</h1>
-                                <div><Image src={Cross} width={10} height={10} onClick={() => props.setShow(!props.show)} /></div>
-                            </div>
+                {props.show && <><div style={{ display: props.show ? "block" : "none" }} className={Styles.grayBg}>&nbsp;</div>
+                    <motion.div className={Styles.modalbox} animate={{ scale: 1 }} initial={{ scale: 0.5 }}>
+                        <div>
+                            <h1>Create channel</h1>
+                            <div><Image src={Cross} width={10} height={10} onClick={() => props.setShow(!props.show)} /></div>
+                        </div>
+                        <Form className={Styles.form}>
                             <div>
                                 <span>Channel name</span>
                                 <Field name="cName" type="text" />
@@ -84,8 +84,9 @@ export function ModalBox(props: { show: boolean, setShow: (Dispatch<SetStateActi
                                 </div>}
                             </div>
                             <button onClick={(e) => props.createChannel(channelName, password, usrTags.length)}>Create</button>
-                        </motion.div>
-                    </>}</Form></Formik>
+                        </Form>
+                    </motion.div>
+                </>}</Formik>
         </>)
 }
 
