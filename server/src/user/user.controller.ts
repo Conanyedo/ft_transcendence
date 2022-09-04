@@ -23,49 +23,43 @@ export class UserController {
 	@Get('/header')
 	@UseGuards(JwtAuthGuard)
 	async getMyHeader(@User() user: userParitalDto) {
-		return await this.userService.getUserHeader(user.login);
-	}
-
-	@Get('/header/:login')
-	@UseGuards(JwtAuthGuard)
-	async getUserHeader(@Param('login') login: string) {
-		return await this.userService.getUserHeader(login);
+		return await this.userService.getUserHeader(user.id);
 	}
 
 	@Get('/info')
 	@UseGuards(JwtAuthGuard)
 	async getMyInfo(@User() user: userParitalDto) {
-		return await this.userService.getUserInfo(user.login);
+		return await this.userService.getUserInfo(user.id, 'id');
 	}
 
 	@Get('/info/:login')
 	@UseGuards(JwtAuthGuard)
 	async getUserInfo(@Param('login') login: string) {
-		return await this.userService.getUserInfo(login);
+		return await this.userService.getUserInfo(login, 'login');
 	}
 
 	@Get('/stats')
 	@UseGuards(JwtAuthGuard)
 	async getMyStats(@User() user: userParitalDto) {
-		return await this.userService.getUserStats(user.login);
+		return await this.userService.getUserStats(user.id, 'id');
 	}
 
 	@Get('/stats/:login')
 	@UseGuards(JwtAuthGuard)
 	async getUserStats(@Param('login') login: string) {
-		return await this.userService.getUserStats(login);
+		return await this.userService.getUserStats(login, 'login');
 	}
 
 	@Get('/achievements')
 	@UseGuards(JwtAuthGuard)
 	async getMyAchievements(@User() user: userParitalDto) {
-		return await this.userService.getAchievements(user.login);
+		return await this.userService.getAchievements(user.id, 'id');
 	}
 
 	@Get('/achievements/:login')
 	@UseGuards(JwtAuthGuard)
 	async getAchievements(@Param('login') login: string) {
-		return await this.userService.getAchievements(login);
+		return await this.userService.getAchievements(login, 'login');
 	}
 
 	@Get('/leaderborad')
