@@ -59,6 +59,15 @@ export class AuthService {
 	}
 	// ---------------------
 
+	// Log User out
+	async isAuthorized(user: userParitalDto) {
+		const isAuthorized = await this.userService.getIsAuthenticated(user.id);
+		if (!isAuthorized)
+			throw new UnauthorizedException('Unauthorized');
+		return isAuthorized;
+	}
+	// ---------------------
+
 	// 2FactorAuthentication
 	async generate2fa(user: userParitalDto) {
 		const secret = authenticator.generateSecret();
