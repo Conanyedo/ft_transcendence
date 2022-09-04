@@ -3,6 +3,9 @@ import classes from "../../styles/MatchHistory.module.css";
 import profile from "../../public/profileImage.png";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { HistoryMatchType } from "../../Types/dataTypes";
+import { useRouter } from "next/router";
+import { fetchDATA } from "../../customHooks/useFetchData";
 
 interface matchDataType {
 	Avatar: any;
@@ -32,43 +35,37 @@ export const Match: React.FC<matchDataType> = (props) => {
 	);
 };
 
-const MatchHistory: React.FC<{id: string}> = (props) => {
-	const [fetched, setFetched] = useState(false);
-	const [data, setData] = useState<any[]>([])
-	let matchs: any[] = [];
+const MatchHistory: React.FC = () => {
+	const [data, setData] = useState<HistoryMatchType[] | null>([]);
+	const rout = useRouter();
 
 	useEffect(() => {
-		const fetchData = async () => {
-			const data = await axios
-				.get(
-					`https://test-76ddc-default-rtdb.firebaseio.com/matchs.json`
-				)
-				.then((res) => {
-					res.data.map((dataMatch:any) => {
-						matchs.push(dataMatch);
-					});
-					setFetched(true);
-					setData(matchs)
-				});
-		};
-		if (!fetched) fetchData();
+		fetchDATA(setData, rout, `game`);
+		return () => {
+			setData(null);
+		}
 	}, []);
 
 	return (
 		<div className={classes.history}>
 			<div className={classes.titleMatchHistory}>Match History</div>
 			<div className={classes.historyMatchCtn}>
-				{data && 
-					data.map((match) => match &&
-						<Match
-						key={Math.random()}
-						Avatar={profile}
-						fullName="Anas Elmqas"
-						result={match.result}
-						datematch={match.date}
-						matchRes={match.wonBy === window.localStorage.getItem('owner')}
-					/>
-					)}
+				{(data?.length &&
+					data?.map((match) =>(<Match
+									// Avatar={match.avatar}
+									key={Math.random()}
+									Avatar={profile}
+									fullName={match.opponent}
+									result={`${match.yourScore}/${match.opponentScore}`}
+									datematch={match.data}
+									matchRes={match.yourScore > match.opponentScore}
+								/>
+							)
+					)) || (
+					<div className={classes.NoHistory}>
+						No Match played Yet
+					</div>
+				)}
 			</div>
 		</div>
 	);
