@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { opponentDto } from 'src/game/game.dto';
 import { Repository, SelectQueryBuilder } from 'typeorm';
 import { Stats, userAchievements } from './stats.entity';
 import { userDto, userParitalDto } from './user.dto';
@@ -142,6 +143,19 @@ export class UserService {
 			.getMany();
 
 		return [...users];
+	}
+
+	async getOpponent(login: string) {
+		const user: User = await this.userRepository
+			.createQueryBuilder('users')
+			.leftJoinAndSelect("users.stats", "stats")
+			.select(['users.fullname', 'users.avatar'])
+			.where('users.login = :login', { login: login })
+			.getOne();
+		if (!user)
+			throw new NotFoundException('User not found');
+		const opponent: opponentDto = { fullname: user.fullname, avatar: user.avatar };
+		return { ...opponent };
 	}
 	// ------------------------------
 
