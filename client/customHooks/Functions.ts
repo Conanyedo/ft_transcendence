@@ -42,7 +42,7 @@ export function useInSideAlerter(
 
 
 export function getRankUser(GamePoint: number) {
-	if (GamePoint <= 250)
+	if (!GamePoint && GamePoint <= 250)
 		return [allRanks[4], '#BEB5B6', unranked];
 	else if (GamePoint <= 500)
 		return [allRanks[3], '#82B3BF', Jallou9];
