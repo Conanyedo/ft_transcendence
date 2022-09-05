@@ -58,4 +58,20 @@ export class FriendshipService {
 		}))
 		return [...blockedList];
 	}
+
+	async addFriend(user: string, friend: string) {
+		const friendship: Friendship = new Friendship();
+		friendship.user = user;
+		friendship.friend = friend;
+		friendship.relation = userRelation.FRIEND;
+		this.friendshipRepository.save(friendship);
+	}
+
+	async removeFriend(user: string, friend: string) {
+		this.friendshipRepository
+			.createQueryBuilder()
+			.delete()
+			.where('(friendships.user = :user OR friendships.user = :friend) AND (friendships.friend = :friend OR friendships.friend = :user) AND friendships.relation = :relation', { user: user, friend: friend, relation: userRelation.FRIEND})
+			.execute();
+	}
 }
