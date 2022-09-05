@@ -259,3 +259,29 @@ export const checkJWT = async (
 			router.push("/");
 		});
 };
+
+
+export const requests = async (login: string, path: string, router: NextRouter) => {
+	const token = getCookie("jwt");
+	const params = new URLSearchParams();
+	params.append("login", login);
+	return await axios({
+		method: "post",
+		url: `${baseUrl}${path}`,
+		data: params,
+		headers: {
+			Authorization: `Bearer ${token}`,
+		},
+		withCredentials: true,
+	})
+		.then((res) => {
+			return true;
+		})
+		.catch((err) => {
+			if (err.response.data.message !== "Wrong authentication code") {
+				eraseCookie("jwt");
+				router.replace("/");
+			}
+			return false;
+		});
+}
