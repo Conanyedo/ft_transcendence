@@ -34,6 +34,7 @@ const SearchFriend: React.FC<{ ref_input: any; searchHandler: () => void }> = (
 				type="text"
 				className={`${!isOpen ? classes.hideSearch : classes.search}`}
 				ref={props.ref_input}
+				onChange={props.searchHandler}
 			/>
 		</form>
 	);
@@ -41,6 +42,7 @@ const SearchFriend: React.FC<{ ref_input: any; searchHandler: () => void }> = (
 
 const FriendProfileList = () => {
 	const [indexCtn, setIndexCtn] = useState(0);
+	const [inputValue, setInputValue] = useState('');
 	const ref_input = useRef(null);
 
 	const FirendListHandler = () => {
@@ -62,7 +64,7 @@ const FriendProfileList = () => {
 		friendClass = classes.btnFriend;
 	};
 	const searchHandler = () => {
-		console.log(ref_input.current!["value"]);
+		setInputValue(ref_input.current!["value"])
 	};
 	return (
 		<div className={classes.FriendCtn}>
@@ -101,9 +103,9 @@ const FriendProfileList = () => {
 					transition={{ duration: .5 }}
 				>
 					{
-						(indexCtn === 0 && <ListFriends />) || //TODO filter with ref_input.current.value
-							(indexCtn === 1 && <PendingList />) || //TODO filter with ref_input.current.value
-							(indexCtn === 2 && <BlockList />) //TODO filter with ref_input.current.value
+						(indexCtn === 0 && <ListFriends search={inputValue} />) || //TODO filter with ref_input.current.value
+							(indexCtn === 1 && <PendingList search={inputValue} />) || //TODO filter with ref_input.current.value
+							(indexCtn === 2 && <BlockList search={inputValue} />) //TODO filter with ref_input.current.value
 					}
 				</motion.div>
 			</div>
