@@ -7,7 +7,7 @@ import Message from "../../../public/ChatIcon.svg";
 import Options from "../../../public/LeaderBoard/Options.svg";
 import Search, { OptionMenu } from "../../../pages/search";
 import { useOutsideAlerter } from "../../../customHooks/Functions";
-import { fetchDATA } from "../../../customHooks/useFetchData";
+import { fetchDATA, requests } from "../../../customHooks/useFetchData";
 import { UserTypeNew } from "../../../Types/dataTypes";
 import LoadingElm from "../../loading/Loading_elm";
 
@@ -23,10 +23,9 @@ const Friend: React.FC<UserTypeNew> = (props) => {
 
 	const optionTaggleHandler = () => setoptionTaggle(!optionTaggle);
 	const unfriendHandler = () => {
-		
+		requests(props.login, 'friendship/removeFriend', Router);
 	}
 	const BlockHandler = () => {
-
 	}
 	return (
 		<div className={classes.friend}>

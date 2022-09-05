@@ -75,10 +75,10 @@ export const OptionMenu: React.FC<{
 			className={classes.optionMenu}
 			style={{ width: `${props.width}` }}
 		>
-			<div className={classes.itemListoption} onClick={alert}>
+			<div className={classes.itemListoption} onClick={props.firstClick}>
 				{props.FirstBtn}
 			</div>
-			<div className={classes.itemListoptionBlock}>{props.SecondBtn}</div>
+			<div className={classes.itemListoptionBlock} onClick={props.SecondClick}>{props.SecondBtn}</div>
 		</motion.div>
 	);
 };
