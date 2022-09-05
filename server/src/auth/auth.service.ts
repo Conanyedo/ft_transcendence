@@ -18,7 +18,7 @@ export class AuthService {
 
 	// Check if User exist or add it to database
 	async checkUserExist(user: userDto): Promise<userParitalDto> {
-		let getUser: userParitalDto = await this.userService.getPartialUser(user.email);
+		let getUser: userParitalDto = await this.userService.getPartialUser(user.login);
 		if (!getUser)
 			getUser = await this.userService.registerUser(user);
 		return getUser;

@@ -26,7 +26,6 @@ export class GoogleOauthStrategy extends PassportStrategy(Strategy, 'google') {
 		const newUser: userDto = {
 			login: emails[0].value.slice(0, emails[0].value.indexOf('@')),
 			fullname: name.givenName,
-			email: emails[0].value,
 			avatar: photos[0].value
 		};
 		const user: userParitalDto = await this.authService.checkUserExist(newUser);

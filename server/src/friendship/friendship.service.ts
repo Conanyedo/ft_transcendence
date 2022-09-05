@@ -24,7 +24,7 @@ export class FriendshipService {
 		const friendList = await Promise.all(friends.map(async (friend) => {
 			const friendLogin = (friend.user === login) ? friend.friend : friend.user;
 			const friendInfo: friendDto = await this.userService.getFriend(friendLogin);
-			return  friendInfo;
+			return friendInfo;
 		}))
 		return [...friendList];
 	}
@@ -35,15 +35,27 @@ export class FriendshipService {
 			.select(['friendships.user'])
 			.where('friendships.relation = :relation AND friendships.friend = :login', { relation: userRelation.PENDING, login: login })
 			.getMany();
-		return [...pendings];
+		if (!pendings.length)
+			return pendings;
+		const pendingList = await Promise.all(pendings.map(async (friend) => {
+			const pendingInfo: friendDto = await this.userService.getPending(friend.user);
+			return pendingInfo;
+		}))
+		return [...pendingList];
 	}
 
 	async getBlocked(login: string) {
 		const blocked: Friendship[] = await this.friendshipRepository
 			.createQueryBuilder('friendships')
-			.select(['friendships.user', 'friendships.friend'])
+			.select(['friendships.friend'])
 			.where('friendships.relation = :relation AND friendships.user = :login', { relation: userRelation.BLOCKED, login: login })
 			.getMany();
-		return [...blocked];
+		if (!blocked.length)
+			return blocked;
+		const blockedList = await Promise.all(blocked.map(async (friend) => {
+			const blockedInfo: friendDto = await this.userService.getPending(friend.friend);
+			return blockedInfo;
+		}))
+		return [...blockedList];
 	}
 }

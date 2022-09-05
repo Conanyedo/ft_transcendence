@@ -25,6 +25,6 @@ export class friendDto {
 	avatar: string;
 
 	@IsNotEmpty()
-	status: string;
+	status?: string;
 
 }

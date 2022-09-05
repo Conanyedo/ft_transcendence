@@ -25,7 +25,6 @@ export class IntraStrategy extends PassportStrategy(Strategy, '42') {
 		const newUser: userDto = {
 			login: username,
 			fullname: displayName,
-			email: emails[0].value,
 			avatar: photos[0].value,
 		};
 		const user: userParitalDto = await this.authService.checkUserExist(newUser);

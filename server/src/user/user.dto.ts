@@ -12,10 +12,6 @@ export class userDto {
 	fullname: string;
 
 	@IsNotEmpty()
-	@IsEmail()
-	email: string;
-
-	@IsNotEmpty()
 	avatar: string;
 
 	@IsBoolean()

@@ -26,7 +26,6 @@ export class UserService {
 		// stats.achievement = [userAchievements.FIRSTPLACE, userAchievements.GOLDTIER, userAchievements.WON20];
 		let user: User = new User();
 		user.login = newUser.login;
-		user.email = newUser.email;
 		user.fullname = newUser.fullname;
 		user.avatar = newUser.avatar;
 		user.stats = stats;
@@ -49,11 +48,11 @@ export class UserService {
 	}
 
 	// User Getters
-	async getPartialUser(email: string): Promise<userParitalDto> {
+	async getPartialUser(login: string): Promise<userParitalDto> {
 		const user: User = await this.userRepository
 			.createQueryBuilder('users')
 			.select(['users.id', 'users.login'])
-			.where('users.email = :email', { email: email })
+			.where('users.login = :login', { login: login })
 			.getOne();
 		if (!user)
 			return user;
@@ -167,6 +166,18 @@ export class UserService {
 		if (!user)
 			throw new NotFoundException('User not found');
 		const friend: friendDto = { login: user.login, fullname: user.fullname, avatar: user.avatar, status: user.status };
+		return { ...friend };
+	}
+
+	async getPending(login: string) {
+		const user: User = await this.userRepository
+			.createQueryBuilder('users')
+			.select(['users.login', 'users.fullname', 'users.avatar'])
+			.where('users.login = :login', { login: login })
+			.getOne();
+		if (!user)
+			throw new NotFoundException('User not found');
+		const friend: friendDto = { login: user.login, fullname: user.fullname, avatar: user.avatar };
 		return { ...friend };
 	}
 	// ------------------------------
