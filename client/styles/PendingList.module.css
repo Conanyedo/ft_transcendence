@@ -23,6 +23,7 @@
 	padding: 0.667rem 0.8rem;
 	margin: 0.667rem 0 0 0;
 	width: 100%;
+	cursor: pointer;
 }
 
 .friend:first-of-type {
