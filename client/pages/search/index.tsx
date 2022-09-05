@@ -65,6 +65,8 @@ export const OptionMenu: React.FC<{
 	FirstBtn: string;
 	SecondBtn: string;
 	width: string;
+	firstClick: () => void
+	SecondClick: () => void
 }> = (props) => {
 	return (
 		<motion.div
