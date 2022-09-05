@@ -6,11 +6,9 @@ import { fetchDATA } from "../../../customHooks/useFetchData";
 import LoadingElm from "../../loading/Loading_elm";
 
 const BlockedUser: React.FC<UserTypeNew> = (props) => {
-	const route = useRouter();
-	const Clickhandler = () => route.push("/profile/" + props.id);
 	return (
 		<div className={classes.friend}>
-			<div className={classes.Avatar_name} onClick={Clickhandler}>
+			<div className={classes.Avatar_name}>
 				<div className={classes.avatar}>
 					<img src={props.avatar} />
 				</div>
