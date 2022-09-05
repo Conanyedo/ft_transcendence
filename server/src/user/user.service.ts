@@ -1,6 +1,8 @@
-import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { friendDto } from 'src/friendship/friendship.dto';
+import { userRelation } from 'src/friendship/friendship.entity';
+import { FriendshipService } from 'src/friendship/friendship.service';
 import { opponentDto } from 'src/game/game.dto';
 import { Repository, SelectQueryBuilder } from 'typeorm';
 import { Stats, userAchievements } from './stats.entity';
@@ -16,6 +18,7 @@ export class UserService {
 		private userRepository: Repository<User>,
 		@InjectRepository(Stats)
 		private statsRepository: Repository<Stats>,
+		private readonly friendshipService: FriendshipService
 	) { }
 
 	async registerUser(newUser: userDto): Promise<userParitalDto> {
@@ -101,16 +104,19 @@ export class UserService {
 		return { ...user };
 	}
 
-	async getUserInfo(id: string, by: string) {
+	async getUserInfo(login: string, id: string) {
+		let relation: userRelation = userRelation.NONE;
 		const user: User = await this.userRepository
 			.createQueryBuilder('users')
 			.leftJoinAndSelect("users.stats", "stats")
 			.select(['users.login', 'users.fullname', 'users.avatar', 'users.status', 'stats.XP', 'stats.GP', 'stats.rank'])
-			.where(`users.${by} = :id`, { id: id })
+			.where(`users.login = :id`, { id: id })
 			.getOne();
 		if (!user)
 			throw new NotFoundException('User not found');
-		return { ...user };
+		if (login !== id)
+			relation = await this.friendshipService.getRelation(login, id);
+		return { ...user, relation };
 	}
 
 	async getUserStats(id: string, by: string) {
@@ -133,16 +139,18 @@ export class UserService {
 		return { achievements: user.stats.achievement };
 	}
 
-	async getLeaderBoard() {
+	async getLeaderBoard(login: string) {
 		const users: User[] = await this.userRepository
 			.createQueryBuilder('users')
 			.leftJoinAndSelect("users.stats", "stats")
 			.select(['users.login', 'users.fullname', 'users.avatar', 'stats.rank', 'stats.numGames', 'stats.gamesWon', 'stats.GP'])
-			// .orderBy('stats.GP', 'DESC')
-			// .take(10)
+			.orderBy('stats.GP', 'DESC')
 			.getMany();
-
-		return [...users];
+		const leaderBoard = await Promise.all(users.map(async (user) => {
+			const relation = await this.friendshipService.getRelation(login, user.login);
+			return { ...user, relation }
+		}))
+		return [...leaderBoard];
 	}
 
 	async getOpponent(login: string) {
