@@ -6,7 +6,7 @@ import { FriendshipService } from './friendship.service';
 
 @Controller('friendship')
 export class FriendshipController {
-	constructor(private readonly friendshipService: FriendshipService) {}
+	constructor(private readonly friendshipService: FriendshipService) { }
 
 	@Get('/friends')
 	@UseGuards(JwtAuthGuard)
@@ -24,5 +24,19 @@ export class FriendshipController {
 	@UseGuards(JwtAuthGuard)
 	async getBlocked(@User() user: userParitalDto) {
 		return await this.friendshipService.getBlocked(user.login);
+	}
+
+	@Post('/addFriend')
+	@UseGuards(JwtAuthGuard)
+	addFriend(@User() user: userParitalDto, @Body('login') friend: string) {
+		this.friendshipService.addFriend(user.login, friend);
+		return true;
+	}
+
+	@Post('/removeFriend')
+	@UseGuards(JwtAuthGuard)
+	removeFriend(@User() user: userParitalDto, @Body('login') friend: string) {
+		this.friendshipService.removeFriend(user.login, friend);
+		return true;
 	}
 }
