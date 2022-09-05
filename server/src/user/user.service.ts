@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { friendDto } from 'src/friendship/friendship.dto';
 import { opponentDto } from 'src/game/game.dto';
 import { Repository, SelectQueryBuilder } from 'typeorm';
 import { Stats, userAchievements } from './stats.entity';
@@ -148,7 +149,6 @@ export class UserService {
 	async getOpponent(login: string) {
 		const user: User = await this.userRepository
 			.createQueryBuilder('users')
-			.leftJoinAndSelect("users.stats", "stats")
 			.select(['users.fullname', 'users.avatar'])
 			.where('users.login = :login', { login: login })
 			.getOne();
@@ -156,6 +156,18 @@ export class UserService {
 			throw new NotFoundException('User not found');
 		const opponent: opponentDto = { fullname: user.fullname, avatar: user.avatar };
 		return { ...opponent };
+	}
+
+	async getFriend(login: string) {
+		const user: User = await this.userRepository
+			.createQueryBuilder('users')
+			.select(['users.login', 'users.fullname', 'users.avatar', 'users.status'])
+			.where('users.login = :login', { login: login })
+			.getOne();
+		if (!user)
+			throw new NotFoundException('User not found');
+		const friend: friendDto = { login: user.login, fullname: user.fullname, avatar: user.avatar, status: user.status };
+		return { ...friend };
 	}
 	// ------------------------------
 
