@@ -2,6 +2,7 @@ import { Body, Controller, Get, Param, Post, Request, UseGuards, UsePipes, Valid
 import { JwtAuthGuard } from 'src/2fa-jwt/jwt/jwt-auth.guard';
 import { User } from 'src/user/user.decorator';
 import { userParitalDto } from 'src/user/user.dto';
+import { userRelation } from './friendship.entity';
 import { FriendshipService } from './friendship.service';
 
 @Controller('friendship')
@@ -35,8 +36,8 @@ export class FriendshipController {
 
 	@Post('/removeFriend')
 	@UseGuards(JwtAuthGuard)
-	removeFriend(@User() user: userParitalDto, @Body('login') friend: string) {
-		this.friendshipService.removeFriend(user.login, friend);
+	removeFriend(@User() user: userParitalDto, @Body('login') friend: string, @Body('relation') relation: userRelation) {
+		this.friendshipService.removeFriend(user.login, friend, relation);
 		return true;
 	}
 }
