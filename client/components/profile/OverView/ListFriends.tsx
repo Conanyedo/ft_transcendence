@@ -22,7 +22,12 @@ const Friend: React.FC<UserTypeNew> = (props) => {
 	useOutsideAlerter(wrapperRef, setoptionTaggle);
 
 	const optionTaggleHandler = () => setoptionTaggle(!optionTaggle);
+	const unfriendHandler = () => {
+		
+	}
+	const BlockHandler = () => {
 
+	}
 	return (
 		<div className={classes.friend}>
 			<div className={classes.Avatar_name}>
@@ -52,6 +57,8 @@ const Friend: React.FC<UserTypeNew> = (props) => {
 							FirstBtn="Unfriend"
 							SecondBtn="Block user"
 							width="7rem"
+							firstClick={unfriendHandler}
+							SecondClick={BlockHandler}
 						/>
 					)}
 				</div>

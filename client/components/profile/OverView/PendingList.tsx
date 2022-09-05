@@ -7,7 +7,7 @@ import LoadingElm from "../../loading/Loading_elm";
 
 const Pendingfriend: React.FC<UserTypeNew> = (props) => {
 	const route = useRouter();
-	const Clickhandler = () => route.push("/profile/" + props.id);
+	const Clickhandler = () => route.push("/profile/" + props.login);
 	return (
 		<div className={classes.friend}>
 			<div className={classes.Avatar_name} onClick={Clickhandler}>
