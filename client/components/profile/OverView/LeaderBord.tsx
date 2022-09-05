@@ -167,7 +167,7 @@ const LeaderBoard: React.FC = () => {
 							listUsers.map((user, idx) => (
 								<ElmRank
 									key={user?.login}
-									fullName={user?.login}
+									fullName={user?.fullname}
 									games={user?.stats.numGames}
 									Win={user?.stats.gamesWon}
 									badge={idx + 1}

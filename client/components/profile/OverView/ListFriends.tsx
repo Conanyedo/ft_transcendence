@@ -1,24 +1,19 @@
 import classes from "../../../styles/FriendList.module.css";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import Router from "next/router";
+import Router, { useRouter } from "next/router";
 
 import Message from "../../../public/ChatIcon.svg";
 import Options from "../../../public/LeaderBoard/Options.svg";
-import { OptionMenu } from "../../../pages/search";
+import Search, { OptionMenu } from "../../../pages/search";
 import { useOutsideAlerter } from "../../../customHooks/Functions";
-import axios from "axios";
+import { fetchDATA } from "../../../customHooks/useFetchData";
+import { UserTypeNew } from "../../../Types/dataTypes";
+import LoadingElm from "../../loading/Loading_elm";
 
-interface FriendDATA {
-	id: number;
-	avatar: any;
-	name: string;
-	stat: string;
-}
-
-const Friend: React.FC<FriendDATA> = (props) => {
+const Friend: React.FC<UserTypeNew> = (props) => {
 	const profileFriendHandler = () => {
-		Router.push("/profile/" + props.id);
+		Router.push("/profile/" + props.login);
 	};
 
 	const [optionTaggle, setoptionTaggle] = useState(false);
@@ -38,10 +33,10 @@ const Friend: React.FC<FriendDATA> = (props) => {
 					className={classes.friendName}
 					onClick={profileFriendHandler}
 				>
-					{props.name}
+					{props.fullname}
 				</div>
 			</div>
-			<div className={classes.statusFriend}>{props.stat}</div>
+			<div className={classes.statusFriend}>{props.status}</div>
 			<div className={classes.optionFriend}>
 				<div className={`${classes.sendMsg} ${classes.hideMsgBtn}`}>
 					<Image src={Message} width="100" height="100" />
@@ -65,107 +60,38 @@ const Friend: React.FC<FriendDATA> = (props) => {
 	);
 };
 
-export interface UserType {
-	id: number;
-	avatar: any;
-	fullName: string;
-	lvl: number;
-	GamePoint: number;
-	Rank: number;
-	Tier: string;
-	games: number;
-	wins: number;
-	me: boolean;
-	friendsID: number[];
-	friendsPending: number[];
-	BlockList: number[];
-	friendsRequast: number[];
-	stat: string;
-}
-
-const ListFriends = () => {
-	const [listFriend, setListFriend] = useState<UserType[]>();
-	let users: UserType[] = [];
-	useEffect(() => {
-		const fetchData = async () => {
-			const data = await axios
-				.get(
-					"https://test-76ddc-default-rtdb.firebaseio.com/friend.json"
-				)
-				.then((res) => {
-					const entries = Object.entries(res.data);
-					entries.map((user) => {
-						users.push(user[1]);
-					});
-					setListFriend(users);
-				});
-		};
-		if (!listFriend) fetchData();
-	}, []);
+const ListFriends: React.FC<{ search: string }> = (props) => {
+	const [listFriend, setListFriend] = useState<UserTypeNew[] | null>(null);
 	const wrapperRef = useRef(null);
+	const [isUp, SetIsUp] = useState(false);
+	const router = useRouter();
+	useEffect(() => {
+		fetchDATA(setListFriend, router, "friendship/friends");
+		SetIsUp(true);
+		return () => {
+			setListFriend(null);
+		};
+	}, []);
+	if (!isUp) {
+		return (
+			<div className={classes.listFriends}>
+				<LoadingElm />
+			</div>
+		);
+	}
 	return (
-		<div className={classes.listFriends} ref={wrapperRef}>
-			{listFriend &&
-				listFriend.map((tmp) => (
-					<Friend
-						key={tmp.id}
-						name={tmp.fullName}
-						avatar={tmp.avatar}
-						id={tmp.id}
-						stat={tmp.stat}
-					/>
-				))}
-			{listFriend &&
-				listFriend.map((tmp) => (
-					<Friend
-						key={tmp.id}
-						name={tmp.fullName}
-						avatar={tmp.avatar}
-						id={tmp.id}
-						stat={tmp.stat}
-					/>
-				))}
-			{listFriend &&
-				listFriend.map((tmp) => (
-					<Friend
-						key={tmp.id}
-						name={tmp.fullName}
-						avatar={tmp.avatar}
-						id={tmp.id}
-						stat={tmp.stat}
-					/>
-				))}
-			{listFriend &&
-				listFriend.map((tmp) => (
-					<Friend
-						key={tmp.id}
-						name={tmp.fullName}
-						avatar={tmp.avatar}
-						id={tmp.id}
-						stat={tmp.stat}
-					/>
-				))}
-			{listFriend &&
-				listFriend.map((tmp) => (
-					<Friend
-						key={tmp.id}
-						name={tmp.fullName}
-						avatar={tmp.avatar}
-						id={tmp.id}
-						stat={tmp.stat}
-					/>
-				))}
-			{listFriend &&
-				listFriend.map((tmp) => (
-					<Friend
-						key={tmp.id}
-						name={tmp.fullName}
-						avatar={tmp.avatar}
-						id={tmp.id}
-						stat={tmp.stat}
-					/>
-				))}
-		</div>
+		<>
+			{isUp && (
+				<div className={classes.listFriends} ref={wrapperRef}>
+					{listFriend?.length && listFriend.map((friend) => {
+						if (props.search === '')
+							return <Friend {...friend} key={Math.random()} />
+						else if (friend.fullname.includes(props.search))
+							return <Friend {...friend} key={Math.random()} />
+					})}
+				</div>
+			)}
+		</>
 	);
 };
 

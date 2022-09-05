@@ -1,22 +1,20 @@
 import classes from "../../../styles/PendingList.module.css";
-
 import React, { useEffect, useState } from "react";
-import { UserType } from "../../../Types/dataTypes";
-import axios from "axios";
+import { UserTypeNew } from "../../../Types/dataTypes";
 import { useRouter } from "next/router";
+import { fetchDATA } from "../../../customHooks/useFetchData";
+import LoadingElm from "../../loading/Loading_elm";
 
-let hideList = `${classes.listOptions} ${classes.hideListOption}`;
-
-const Pendingfriend: React.FC<friendDataType> = (props) => {
+const Pendingfriend: React.FC<UserTypeNew> = (props) => {
 	const route = useRouter();
-	const Clickhandler = () => route.push('/profile/' + props.id);
+	const Clickhandler = () => route.push("/profile/" + props.id);
 	return (
 		<div className={classes.friend}>
 			<div className={classes.Avatar_name} onClick={Clickhandler}>
 				<div className={classes.avatar}>
-					<img src={props.Avatar} />
+					<img src={props.avatar} />
 				</div>
-				<div className={classes.friendName}>{props.fullName}</div>
+				<div className={classes.friendName}>{props.fullname}</div>
 			</div>
 			<div className={classes.optionFriend}>
 				<div className={classes.sendMsg}>Accept</div>
@@ -26,56 +24,36 @@ const Pendingfriend: React.FC<friendDataType> = (props) => {
 	);
 };
 
-interface friendDataType {
-	Avatar: any,
-	fullName: string,
-	id: number
-}
-
-const PendingList = () => {
-	const [optionTaggle, setoptiontaggle] = useState(false);
-	const OptionHandler = () => {
-		setoptiontaggle(!optionTaggle);
-		hideList = optionTaggle
-			? `${classes.listOptions}  ${classes.showListOption}`
-			: `${classes.listOptions}  ${classes.hideListOption}`;
-	};
-
-	const [listPanding, setListPanding] = useState<UserType[]>();
-	let users:UserType[] = [];
+const PendingList: React.FC<{search: string}> = (props) => {
+	const [listPanding, setListPanding] = useState<UserTypeNew[] | null>(null);
+	const router = useRouter();
+	const [isUp, SetIsUp] = useState(false);
 	useEffect(() => {
-		const fetchData = async () => {
-			const data = await axios
-				.get("https://test-76ddc-default-rtdb.firebaseio.com/friend.json")
-				.then((res) => {
-					const entries = Object.entries(res.data);
-					entries.map((user) => {
-						users.push(user[1]);
-					});
-					setListPanding(users);
-				});
+		fetchDATA(setListPanding, router, "friendship/pendings");
+		SetIsUp(true);
+		return () => {
+			setListPanding(null);
 		};
-		if (!listPanding) fetchData();
 	}, []);
 
-	return (
-		<div className={classes.listFriends}>
-			{
-				listPanding?.map((user) => <Pendingfriend key={user.id} fullName={user.fullName} Avatar={user.avatar} id={user.id} />)	
-			}{
-				listPanding?.map((user) => <Pendingfriend key={user.id} fullName={user.fullName} Avatar={user.avatar} id={user.id}  />)	
-			}{
-				listPanding?.map((user) => <Pendingfriend key={user.id} fullName={user.fullName} Avatar={user.avatar} id={user.id}  />)	
-			}{
-				listPanding?.map((user) => <Pendingfriend key={user.id} fullName={user.fullName} Avatar={user.avatar} id={user.id}  />)	
-			}{
-				listPanding?.map((user) => <Pendingfriend key={user.id} fullName={user.fullName} Avatar={user.avatar} id={user.id}  />)	
-			}{
-				listPanding?.map((user) => <Pendingfriend key={user.id} fullName={user.fullName} Avatar={user.avatar} id={user.id}  />)	
-			}{
-				listPanding?.map((user) => <Pendingfriend key={user.id} fullName={user.fullName} Avatar={user.avatar} id={user.id}  />)	
-			}
+	if (!isUp) {
+		return <div className={classes.listFriends}>
+			<LoadingElm />
 		</div>
+	}
+	return (
+		<>
+			{isUp && (
+				<div className={classes.listFriends}>
+					{(listPanding?.length &&
+						listPanding?.map((user) => (
+							<Pendingfriend {...user} key={Math.random()} />
+						))) || (
+						<div className={classes.noRequest}>No request Yet</div>
+					)}
+				</div>
+			)}
+		</>
 	);
 };
 
