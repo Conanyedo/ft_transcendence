@@ -29,13 +29,13 @@ export class UserController {
 	@Get('/info')
 	@UseGuards(JwtAuthGuard)
 	async getMyInfo(@User() user: userParitalDto) {
-		return await this.userService.getUserInfo(user.id, 'id');
+		return await this.userService.getUserInfo(user.login, user.login);
 	}
 
 	@Get('/info/:login')
 	@UseGuards(JwtAuthGuard)
-	async getUserInfo(@Param('login') login: string) {
-		return await this.userService.getUserInfo(login, 'login');
+	async getUserInfo(@User() user: userParitalDto, @Param('login') login: string) {
+		return await this.userService.getUserInfo(user.login, login);
 	}
 
 	@Get('/stats')
@@ -65,7 +65,7 @@ export class UserController {
 	@Get('/leaderborad')
 	@UseGuards(JwtAuthGuard)
 	async leaderBoard(@User() user: userParitalDto) {
-		return await this.userService.getLeaderBoard();
+		return await this.userService.getLeaderBoard(user.login);
 	}
 
 }
