@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserService } from 'src/user/user.service';
 import { Repository } from 'typeorm';
@@ -10,8 +10,18 @@ export class FriendshipService {
 	constructor(
 		@InjectRepository(Friendship)
 		private friendshipRepository: Repository<Friendship>,
+		@Inject(forwardRef(() => UserService))
 		private readonly userService: UserService,
 	) { }
+
+	async getRelation(user: string, friend: string) {
+		const friendship: Friendship = await this.friendshipRepository
+			.createQueryBuilder('friendships')
+			.select(['friendships.relation'])
+			.where('(friendships.user = :user AND friendships.friend = :friend) OR (friendships.user = :friend AND friendships.friend = :user)', { user: user, friend: friend })
+			.getOne();
+		return friendship ? friendship.relation : userRelation.NONE;
+	}
 
 	async getFriends(login: string) {
 		const friends: Friendship[] = await this.friendshipRepository
@@ -63,15 +73,15 @@ export class FriendshipService {
 		const friendship: Friendship = new Friendship();
 		friendship.user = user;
 		friendship.friend = friend;
-		friendship.relation = userRelation.FRIEND;
+		friendship.relation = userRelation.PENDING;
 		this.friendshipRepository.save(friendship);
 	}
 
-	async removeFriend(user: string, friend: string) {
+	async removeFriend(user: string, friend: string, relation: userRelation) {
 		this.friendshipRepository
 			.createQueryBuilder()
 			.delete()
-			.where('(friendships.user = :user OR friendships.user = :friend) AND (friendships.friend = :friend OR friendships.friend = :user) AND friendships.relation = :relation', { user: user, friend: friend, relation: userRelation.FRIEND})
+			.where('(friendships.user = :user OR friendships.user = :friend) AND (friendships.friend = :friend OR friendships.friend = :user) AND friendships.relation = :relation', { user: user, friend: friend, relation: relation })
 			.execute();
 	}
 }
