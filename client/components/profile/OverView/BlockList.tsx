@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import { fetchDATA } from "../../../customHooks/useFetchData";
 import LoadingElm from "../../loading/Loading_elm";
 
-const Pendingfriend: React.FC<UserTypeNew> = (props) => {
+const BlockedUser: React.FC<UserTypeNew> = (props) => {
 	const route = useRouter();
 	const Clickhandler = () => route.push("/profile/" + props.id);
 	return (
@@ -44,9 +44,12 @@ const BlockList: React.FC<{search: string}> = (props) => {
 			{isUp && (
 				<div className={classes.listFriends}>
 					{(listblock?.length &&
-						listblock?.map((user) => (
-							<Pendingfriend {...user} key={Math.random()} />
-						))) || (
+						listblock?.map((user) => {
+							if (props.search === '')
+								return <BlockedUser {...user} key={Math.random()} />
+							else if (user.fullname.toLocaleLowerCase().includes(props.search.toLocaleLowerCase()))
+								return <BlockedUser {...user} key={Math.random()} />
+						})) || (
 						<div className={classes.noBlockers}>Not Yet</div>
 					)}
 				</div>

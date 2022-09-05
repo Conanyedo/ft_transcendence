@@ -46,9 +46,12 @@ const PendingList: React.FC<{search: string}> = (props) => {
 			{isUp && (
 				<div className={classes.listFriends}>
 					{(listPanding?.length &&
-						listPanding?.map((user) => (
-							<Pendingfriend {...user} key={Math.random()} />
-						))) || (
+						listPanding?.map((friend) => {
+							if (props.search === '')
+								return <Pendingfriend {...friend} key={Math.random()} />
+							else if (friend.fullname.toLocaleLowerCase().includes(props.search.toLocaleLowerCase()))
+								return <Pendingfriend {...friend} key={Math.random()} />
+						})) || (
 						<div className={classes.noRequest}>No request Yet</div>
 					)}
 				</div>

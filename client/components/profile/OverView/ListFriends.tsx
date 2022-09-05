@@ -86,9 +86,9 @@ const ListFriends: React.FC<{ search: string }> = (props) => {
 					{listFriend?.length && listFriend.map((friend) => {
 						if (props.search === '')
 							return <Friend {...friend} key={Math.random()} />
-						else if (friend.fullname.includes(props.search))
+						else if (friend.fullname.toLocaleLowerCase().includes(props.search.toLocaleLowerCase()))
 							return <Friend {...friend} key={Math.random()} />
-					})}
+					}) || <div className={classes.noBlockers}>No Friend Yet</div>}
 				</div>
 			)}
 		</>
