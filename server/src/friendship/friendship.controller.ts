@@ -15,10 +15,10 @@ export class FriendshipController {
 		return await this.friendshipService.getFriends(user.login);
 	}
 
-	@Get('/pendings')
+	@Get('/requests')
 	@UseGuards(JwtAuthGuard)
-	async getPendings(@User() user: userParitalDto) {
-		return await this.friendshipService.getPendings(user.login);
+	async getRequests(@User() user: userParitalDto) {
+		return await this.friendshipService.getRequests(user.login);
 	}
 
 	@Get('/blocked')
@@ -34,10 +34,45 @@ export class FriendshipController {
 		return true;
 	}
 
-	@Post('/removeFriend')
+	@Post('/unfriend')
 	@UseGuards(JwtAuthGuard)
-	removeFriend(@User() user: userParitalDto, @Body('login') friend: string, @Body('relation') relation: userRelation) {
-		this.friendshipService.removeFriend(user.login, friend, relation);
+	unfriend(@User() user: userParitalDto, @Body('login') friend: string) {
+		this.friendshipService.unfriend(user.login, friend);
+		return true;
+	}
+
+	@Post('/acceptRequest')
+	@UseGuards(JwtAuthGuard)
+	acceptRequest(@User() user: userParitalDto, @Body('login') friend: string) {
+		this.friendshipService.acceptRequest(user.login, friend);
+		return true;
+	}
+
+	@Post('/refuseRequest')
+	@UseGuards(JwtAuthGuard)
+	refuseRequest(@User() user: userParitalDto, @Body('login') friend: string) {
+		this.friendshipService.refuseRequest(user.login, friend);
+		return true;
+	}
+
+	@Post('/cancelRequest')
+	@UseGuards(JwtAuthGuard)
+	cancelRequest(@User() user: userParitalDto, @Body('login') friend: string) {
+		this.friendshipService.cancelRequest(user.login, friend);
+		return true;
+	}
+
+	@Post('/blockUser')
+	@UseGuards(JwtAuthGuard)
+	blockUser(@User() user: userParitalDto, @Body('login') friend: string) {
+		this.friendshipService.blockUser(user.login, friend);
+		return true;
+	}
+
+	@Post('/unblock')
+	@UseGuards(JwtAuthGuard)
+	unblock(@User() user: userParitalDto, @Body('login') friend: string) {
+		this.friendshipService.unblock(user.login, friend);
 		return true;
 	}
 }
