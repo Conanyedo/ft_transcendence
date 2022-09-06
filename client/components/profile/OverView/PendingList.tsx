@@ -40,7 +40,7 @@ const PendingList: React.FC<{search: string}> = (props) => {
 	const [listPanding, setListPanding] = useState<UserTypeNew[] | null>(null);
 	const router = useRouter();
 	const [isUp, SetIsUp] = useState(false);
-	const refresh = () => fetchDATA(setListPanding, router, "friendship/blocked");
+	const refresh = () => fetchDATA(setListPanding, router, "friendship/requests");
 	useEffect(() => {
 		fetchDATA(setListPanding, router, "friendship/requests");
 		SetIsUp(true);
