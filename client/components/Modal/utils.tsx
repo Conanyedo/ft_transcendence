@@ -4,6 +4,7 @@ import { chatUser } from "@Types/dataTypes";
 import Styles from "@styles/chat.module.css"
 import Avatar from "@public/profile.jpg";
 import Image from "next/image";
+import TagCross from "@public/white-cross.svg"
 
 // use datalist to show possible results 
 export function CustomToggleBtn(id: any) {
@@ -55,28 +56,29 @@ export function Option(props: { type: string }) {
     </>)
 }
 
-export function SuggestedUsr(props: { user: chatUser, userStatus: boolean, addUsrToChannel: any, removeUsrFromChannel: any }): JSX.Element {
+export function SuggestedUsr(props: { user: chatUser, userStatus: boolean, addUsrToChannel: any, removeUsrFromChannel: any, setUsrTags: any, setshowDropdown: any, usrTags: any, setValue: any }): JSX.Element {
     return (<div className={Styles.sUsr}>
         <div>
             <div><Image src={Avatar} width={32} height={32} /></div>
             <span>{props.user.firstName + " " + props.user.lastName}</span>
         </div>
-        <button onClick={props.userStatus ? () => props.addUsrToChannel(props.user) : () => props.removeUsrFromChannel()} className={props.userStatus ? Styles.btnAdd : Styles.btnRmv}>{props.userStatus ? "Add" : "Remove"}</button>
+        <button onClick={props.userStatus ? () => props.addUsrToChannel(props.user, props.setUsrTags, props.setshowDropdown, props.usrTags, props.setValue) : () => props.removeUsrFromChannel()} className={props.userStatus ? Styles.btnAdd : Styles.btnRmv}>{props.userStatus ? "Add" : "Remove"}</button>
     </div>)
 }
 
-export function UsrTag(props: { fullname: string, removeTag: any, id: number }) {
+export function UsrTag(props: { fullname: string, removeTag: any, id: number, usrTags: Array<string>, setUsrTags: any }) {
     return (
         <div className={Styles.usrTag} id={props.id.toString()}>
             {props.fullname}
-            <div onClick={(e) => props.removeTag(props.fullname, e)}><Image src={TagCross} width={6} height={6} /></div>
+            <div onClick={(e) => props.removeTag(props.fullname, e, props.id, props.usrTags, props.setUsrTags )}><Image src={TagCross} width={6} height={6} /></div>
         </div>
     )
 }
 
-export function addUsrToChannel( user: chatUser, setUsrTags: any, setshowDrpdown: any, usrTags: any) {
+export function addUsrToChannel( user: chatUser, setUsrTags: any, setshowDrpdown: any, usrTags: any, setValue: any) {
     let fullname = user.firstName + " " + user.lastName;
     setUsrTags([...usrTags, fullname]);
+    setValue("member", "", false);
     setshowDrpdown(false);
 }
 

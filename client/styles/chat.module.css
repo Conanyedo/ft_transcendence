@@ -682,7 +682,10 @@
 }
 
 .errorMsg {
-    color: #ff0000;
+    color: #EF4664;
+    font-weight: 500;
+    margin-top: 2px;
+    font-size: 1rem;
 }   
 
 @media only screen and (max-width: 1024px) {
