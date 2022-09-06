@@ -4,6 +4,7 @@ import Union from "../public/FriendIcons/Union.svg";
 import Friend from "../public/FriendIcons/FriendIcon.svg";
 import Pending from "../public/FriendIcons/Pending.svg";
 import AddFriend from "../public/FriendIcons/ADDFriend.svg";
+import Respond from "../public/FriendIcons/Respond.svg";
 import { motion } from "framer-motion";
 import { requests } from "../customHooks/useFetchData";
 import { NextRouter } from "next/router";
@@ -32,7 +33,6 @@ export const FriendButton: React.FC<{
 		</div>
 	);
 };
-
 export const ADDButton: React.FC<{
 	login: string;
 	router: NextRouter;
@@ -96,7 +96,7 @@ export const RequestButton: React.FC<{
 	return (
 		<div className={classes.btnRequest} onClick={handler} ref={btnRef}>
 			<div className={classes.Request}>
-				<Image src={Pending} />
+				<Image src={Respond} />
 			</div>
 			<span className={classes.RequestBTN}>Request</span>
 			{drop && (
@@ -136,5 +136,47 @@ export const OptionMenu: React.FC<{
 				{props.SecondBtn}
 			</div>
 		</motion.div>
+	);
+};
+
+export const LeaveChannel: React.FC<{
+	login: string;
+	router: NextRouter;
+	refresh: () => void;
+}> = (props) => {
+	const handler = async () => {
+		// await requests(props.login, "", props.router);
+		props.refresh();
+	};
+	return (
+		<div className={classes.btnfriend} onClick={handler}>
+			<div className={classes.Hover}>
+				<Image src={Union} />
+			</div>
+			<span className={classes.AddBTNHover}>Leave</span>
+			<div className={classes.notHover}>
+				<Image src={Friend}/>
+			</div>
+			<span className={classes.AddBTN}>Member</span>
+		</div>
+	);
+};
+
+export const JoinChannel: React.FC<{
+	login: string;
+	router: NextRouter;
+	refresh: () => void;
+}> = (props) => {
+	const handler = async () => {
+		// await requests(props.login, "", props.router);
+		props.refresh();
+	};
+	return (
+		<div className={classes.btnFriendADD} onClick={handler}>
+			<div className={classes.icon}>
+				<Image src={AddFriend}/>
+			</div>
+			<span className={classes.FriendADD}>Join</span>
+		</div>
 	);
 };

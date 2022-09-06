@@ -27,24 +27,25 @@ const Achievements: React.FC<{ id: string }> = (props) => {
 		fetchAchievements(setAchievementsids, router, props.id);
 		return () => {
 			setAchievementsids([0]);
-		}
+		};
 	}, [props.id]);
 	return (
 		<>
 			<div className={classes.achievements}>
 				<div className={classes.title}>Achievements</div>
 				<div className={classes.ctnScroll}>
-					{!achievementsids.includes(0) && achievementsids.map(
-						(idx) =>
-							!achievementsids.includes(0) && (
-								<Achievement
-									{...AllAchievement[idx - 1]}
-									key={AllAchievement[idx - 1].id}
-								/>
-							)
-					) || (
+					{(!achievementsids.includes(0) &&
+						achievementsids.map(
+							(idx) =>
+								!achievementsids.includes(0) && (
+									<Achievement
+										{...AllAchievement[idx - 1]}
+										key={AllAchievement[idx - 1].id}
+									/>
+								)
+						)) || (
 						<div className={classes.noAchievements}>
-							No Achievement Yet
+							<span>No Achievements</span>
 						</div>
 					)}
 				</div>

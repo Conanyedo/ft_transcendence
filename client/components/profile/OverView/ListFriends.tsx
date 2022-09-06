@@ -107,7 +107,7 @@ const ListFriends: React.FC<{ search: string }> = (props) => {
 						)
 							return <Friend {...friend} key={Math.random()} refresh={refresh}/>;
 					})) || (
-					<div className={classes.noBlockers}>No Friend Yet</div>
+					<div className={classes.noFriends}>No Friend Yet</div>
 				)}
 			</div>
 		</>
