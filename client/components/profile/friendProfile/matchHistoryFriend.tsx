@@ -24,7 +24,7 @@ const MatchHistoryFriend: React.FC<{ login: string }> = (props) => {
 					data?.map((match) => (
 						<Match key={Math.random()} {...match} />
 					))) || (
-					<div className={classes.NoHistory}>No Match played Yet</div>
+					<div className={classes.NoHistory}><span>No Match played Yet</span></div>
 				)}
 			</div>
 		</div>
