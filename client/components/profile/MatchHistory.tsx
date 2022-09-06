@@ -51,7 +51,7 @@ const MatchHistory: React.FC = () => {
 							)
 					)) || (
 					<div className={classes.NoHistory}>
-						No Match played Yet
+						No Match History
 					</div>
 				)}
 			</div>
