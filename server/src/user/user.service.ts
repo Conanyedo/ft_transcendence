@@ -176,18 +176,6 @@ export class UserService {
 		const friend: friendDto = { login: user.login, fullname: user.fullname, avatar: user.avatar, status: user.status };
 		return { ...friend };
 	}
-
-	async getPending(login: string) {
-		const user: User = await this.userRepository
-			.createQueryBuilder('users')
-			.select(['users.login', 'users.fullname', 'users.avatar'])
-			.where('users.login = :login', { login: login })
-			.getOne();
-		if (!user)
-			throw new NotFoundException('User not found');
-		const friend: friendDto = { login: user.login, fullname: user.fullname, avatar: user.avatar };
-		return { ...friend };
-	}
 	// ------------------------------
 
 
