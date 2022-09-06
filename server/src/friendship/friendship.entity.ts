@@ -4,8 +4,9 @@ import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from "typeor
 export enum userRelation {
 	NONE = 'none',
 	FRIEND = 'friend',
+	REQUESTED = 'requested',
+	BLOCKED = 'blocked',
 	PENDING = 'pending',
-	BLOCKED = 'blocked'
 }
 
 @Entity({ name: 'friendships' })
