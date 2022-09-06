@@ -6,6 +6,7 @@ import { UserService } from 'src/user/user.service';
 import { authenticator } from 'otplib';
 import { toDataURL } from 'qrcode';
 import { Jwt2faAuthService } from 'src/2fa-jwt/2fa/2fa-auth.service';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
@@ -14,6 +15,7 @@ export class AuthService {
 		private readonly userService: UserService,
 		private readonly jwtAuthService: JwtAuthService,
 		private readonly jwt2faAuthService: Jwt2faAuthService,
+		private readonly configService: ConfigService
 	) { }
 
 	// Check if User exist or add it to database
@@ -41,10 +43,10 @@ export class AuthService {
 		const is2faEnabled = await this.userService.get2faEnabled(user.id);
 		if (is2faEnabled) {
 			this.setJWT2faCookie(user, res);
-			return res.redirect('http://localhost:3000/?_2fa=true');
+			return res.redirect(`http://${this.configService.get('CLIENT_IP')}/?_2fa=true`);
 		}
 		this.setJWTCookie(user, res);
-		res.redirect('http://localhost:3000/');
+		res.redirect(`http://${this.configService.get('CLIENT_IP')}/`);
 		this.userService.setUserAuthenticated(user.id, true);
 	}
 	async setUserAuthenticated(user: userParitalDto) {
