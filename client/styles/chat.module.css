@@ -393,8 +393,6 @@
     inset: 0;
     z-index: 1000;
     background-color: #242426;
-    ;
-    min-height: 29.75rem;
     height: fit-content;
     width: 35rem;
     padding: 1.25rem;
@@ -462,10 +460,14 @@
     margin-top: 8px;
 }
 
-.modalbox>form>div:nth-child(2) {
+.options {
     display: flex;
     margin-top: 18px;
     justify-content: space-between;
+}
+
+.modalbox>form>div:nth-child(2) {
+    margin-top: 18px;
 }
 
 .modalbox>form>div:nth-child(2)>div {
@@ -534,8 +536,42 @@
 
 .menu {
     height: 30px;
+    cursor: pointer;
+    position: relative;
     display: flex;
-    justify-content: flex-end;
+    flex-direction: column;
+}
+
+.menuDropdown {
+    position: absolute; 
+    width: 145px;
+    height: fit-content;
+    background-color: #3A3A3C;
+    border-radius: 5px;
+    top: 35px;
+    right: 0;
+    z-index: 999;
+    box-shadow: 0px 0px 25px rgba(0, 0, 0, 0.5);
+}
+
+.menuDropdown>div {
+    max-width: 100%;
+    height: 25px;
+    font-size: 14px;
+    color: #fff;
+    margin: 4px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.menuDropdown>div:hover {
+    background-color: #2B2B2D;
+}
+
+.menuDropdown>div:nth-child(2) {
+    color: #FF6482;
 }
 
 .arrowAsset {
@@ -611,6 +647,7 @@
     height: fit-content;
     overflow-y: auto;
     max-height: 67px;
+    width: 100%;
 }
 
 .usrsInpt::-webkit-scrollbar {
@@ -774,4 +811,62 @@
         font-size: 1rem;
     }
     
+}
+
+/* Settings styles */
+
+.settingsHeader {
+    display: flex;
+    justify-content: space-between;
+    max-width: 100%;
+    margin: 28px 24px;
+    align-items: center;
+}
+
+.settingsHeader>h1 {
+    font-size: 1.5rem !important;
+    color: #C6E1FF;
+    font-weight: 500;
+}
+
+.settingsHeader>button {
+    background-color: inherit;
+    border: 2px solid #409CFF;
+    border-radius: 5px;
+    padding: 7px 13px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 3px;
+    color: #409CFF;
+    font-weight: 600;
+}
+
+.members {
+    max-width: 100%;
+    background-color: #2C2C2E;
+    height: fit-content;
+    border-radius: 5px;
+    margin: 20px 24px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    align-items: flex-start;
+    color: #C6E1FF;
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.members>div {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    color: #D9D9D9;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.members>div>span {
+    border-radius: 8px;
 }

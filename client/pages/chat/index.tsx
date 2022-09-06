@@ -12,6 +12,8 @@ import { ModalBox } from "@components/Modal";
 import { GameIconAsset, ChannelAsset, BlueChannelAsset } from "./svg/index"
 import { ChatProvider } from "@contexts/chatContext"
 import ContentWrapper from "@components/wrapper/appWrapper";
+import { Profile } from "./components"
+import { SettingsModal } from "@components/SettingsModal";
 
 // Making a component for the invite msg
 
@@ -57,6 +59,8 @@ const Chat = () => {
 	const messagesEndRef: HTMLDivElement | any = useRef<HTMLDivElement>(null);
 	const chatUsersRefs: Array<HTMLDivElement> | any = useRef([]);
 	const [showCnv, setShowCnv] = useState<boolean>(false);
+	const [profile, setShowprofile] = useState(false);
+	const [showSetModal, setShowSetModal] = useState(false);
 
 
 	const setChatUser = (user: chatUser, chatUsersRefs: Array<HTMLDivElement>, i: number) => {
@@ -79,6 +83,7 @@ const Chat = () => {
 	const [enteredMsg, setEnteredMsg] = useState("");
 	const [prevUser, setPrevUser] = useState<number>(0);
 	const [show, setShow] = useState<boolean>(false);
+	const [showMenuDropdown, setShowMenuDropdown] = useState(false)
 	const [displayBlueIcon, setDisplayBlueIcon] = useState(false);
 
 	const [chatMsgs, setChatMsgs] = useState<Array<chatMsg>>([
@@ -97,6 +102,8 @@ const Chat = () => {
 	}
 
 	function createChannel(channelName: string, password: string, usrLen: number) {
+
+		console.log(channelName);
 		setShow(!show);
 
 		const chatUser = { id: lastUsers.length, imgSrc: Avatar, channelName: channelName, status: usrLen === 10 ? "+" + usrLen + " Members" : usrLen + " Members" };
@@ -104,7 +111,6 @@ const Chat = () => {
 		setLastUsers([chatUser, ...lastUsers]);
 
 		// select the current chat
-
 		setChatUser(lastUsers[0], chatUsersRefs, 0);
 	}
 
@@ -123,15 +129,29 @@ const Chat = () => {
 		setLastUsers(newUsers);
 	}
 
+	function showProfile() {
+		console.log("show settings");
+		console.log(profile);
+		if (!profile) {
+			console.log("entered here")
+			setShowprofile(true);
+		}
+	}
+
+	function showUsrMenu() {
+		setShowMenuDropdown(!showMenuDropdown);
+	}
+
 	// UseEffect here
 	useEffect(() => {
 		scrollToBottom(messagesEndRef);
-		// setCurrentUser(lastUsers[0]);
-	}, [chatMsgs])
+		setCurrentUser(lastUsers[0]);
+	}, [lastUsers])
 
 	return (
 		<ContentWrapper children={
 			<ChatProvider>
+				<SettingsModal showSetModal={showSetModal} setShowSetModal={setShowSetModal} />
 				<div className={Styles.chatContainer}>
 					<div className={`${Styles.chatLeft} ${showCnv ? Styles.hideUsers : ""}`}>
 						<div className={Styles.leftContent}>
@@ -164,17 +184,35 @@ const Chat = () => {
 										<div className={Styles.arrowAsset}>
 											<Image src={arrowBack} width={16} height={16} onClick={() => setShowCnv(false)} />
 										</div>
-										<div className={Styles.avatarProps}>
-											<Image src={currentUser?.imgSrc} width={76} height={76} className={Styles.avatar} />
+										{profile && <div className={Styles.arrowAsset}>
+												<Image src={arrowBack} width={16} height={16} />
+										</div>}
+										<div onClick={currentUser?.channelName ? showProfile : () => null} className={Styles.flex}>
+											<div className={Styles.avatarProps}>
+												<Image src={currentUser?.imgSrc} width={76} height={76} className={Styles.avatar} />
+											</div>
+											<div>
+												<h1 className={Styles.chatUsername}>{currentUser?.channelName ? currentUser.channelName : currentUser?.fullName}</h1>
+												<p className={Styles.chatUserStatus}>{currentUser?.status}</p>
+											</div>
 										</div>
-										<div>
-											<h1 className={Styles.chatUsername}>{currentUser?.channelName ? currentUser.channelName : currentUser?.fullName}</h1>
-											<p className={Styles.chatUserStatus}>{currentUser?.status}</p>
-										</div>
+
 									</div>
-									<div className={Styles.menu}><Image src={Menu} width={30} height={30} /></div>
+									<div className={Styles.menu} onClick={showUsrMenu}><svg width="6" height="30" viewBox="0 0 4 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+										<path d="M2 0.250031C2.9665 0.250031 3.75 1.03353 3.75 2.00003C3.75 2.96653 2.9665 3.75003 2 3.75003C1.0335 3.75003 0.250001 2.96653 0.250001 2.00003C0.250001 1.03353 1.0335 0.25003 2 0.250031Z" fill="#D9D9D9" />
+										<path d="M2 7.25003C2.9665 7.25003 3.75 8.03353 3.75 9.00003C3.75 9.96653 2.9665 10.75 2 10.75C1.0335 10.75 0.25 9.96653 0.25 9.00003C0.25 8.03353 1.0335 7.25003 2 7.25003Z" fill="#D9D9D9" />
+										<path d="M2 14.25C2.9665 14.25 3.75 15.0335 3.75 16C3.75 16.9665 2.9665 17.75 2 17.75C1.0335 17.75 0.25 16.9665 0.25 16C0.25 15.0335 1.0335 14.25 2 14.25Z" fill="#D9D9D9" />
+									</svg>
+
+										{showMenuDropdown && <div className={Styles.menuDropdown}>
+											<div onClick={() => setShowSetModal(true)}>Settings</div>
+											<div>Leave Channel</div>
+										</div>}
+									</div>
+
 								</div>
-								<div className={Styles.chatSection}>
+								{profile && (<Profile />)}
+								{currentUser && !profile && <div className={Styles.chatSection}>
 									<div className={Styles.msgsDisplay} ref={msgsDisplayDiv}>
 										{
 											chatMsgs.map((chatMsg, i) => <div key={i} className={Styles.chatMsg} style={{ left: chatMsg.type == "receiver" ? "0" : "auto", right: chatMsg.type == "sender" ? "0" : "auto" }}>
@@ -195,7 +233,7 @@ const Chat = () => {
 										<div onClick={() => setMsg(enteredMsg, 13, setChatMsgs, chatMsgs, setEnteredMsg)} className={Styles.sendCtr}>{enteredMsg && <Image src={sendArrow} width={30} height={30} className={Styles.animatedBtn} />}</div>
 									</div>
 
-								</div>
+								</div>}
 							</>)}
 
 							{!currentUser && (<div className={Styles.newCnv}>

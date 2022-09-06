@@ -68,10 +68,10 @@ export function ModalBox(props: { show: boolean, setShow: (Dispatch<SetStateActi
                             <h1 className={Styles.createChnl}>Create channel</h1>
                             <div><Image src={Cross} width={10} height={10} onClick={() => props.setShow(!props.show)} /></div>
                         </div>
-                        <form className={Styles.form}>
+                        <form className={Styles.form} onSubmit={formik.handleSubmit}>
                             <div className={Styles.inputContainer}>
                                 <span>Channel name</span>
-                                <input name="cName" type="text" className={Styles.usrsInpt} />
+                                <input name="cName" type="text" className={Styles.usrsInpt} onChange={formik.handleChange} value={formik.values.cName} />
                                 {/* <ErrorMessage name="cName" render={() => renderError("Channel names should contain between 3 & 15 characters.")} /> */}
                             </div>
                             <div className={Styles.options}>
@@ -84,7 +84,7 @@ export function ModalBox(props: { show: boolean, setShow: (Dispatch<SetStateActi
                             {(channelMode === "Protected") && <p>All users can find the channel but only those with the provided password can join</p>}
                             {(protectedChannel && channelMode === "Protected") && <div className={Styles.inputContainer}>
                                 <span>Password</span>
-                                <input name="password" type="password" className={Styles.usrsInpt} />
+                                <input name="password" type="password" className={Styles.usrsInpt} onChange={formik.handleChange} value={formik.values.password} />
                                 {/* <ErrorMessage name="password" render={() => renderError("Passwords should contain between 8 & 15 characters.")} /> */}
                             </div>}
                             <div className={Styles.inputContainer + " " + Styles.mTop}>
@@ -97,7 +97,7 @@ export function ModalBox(props: { show: boolean, setShow: (Dispatch<SetStateActi
                                     {closeUsrs.map((usr, i) => <SuggestedUsr key={i} user={usr} userStatus={true} addUsrToChannel={addUsrToChannel} removeUsrFromChannel={removeUsrFromChannel} setUsrTags={setUsrTags} setshowDropdown={setshowDrpdown} usrTags={usrTags} setValue={formik.setFieldValue} />)}
                                 </div>}
                             </div>
-                            <button onClick={(e) => props.createChannel(channelName, password, usrTags.length)}>Create</button>
+                            <button type="button" onClick={(e) => props.createChannel(formik.values.cName, formik.values.password, usrTags.length)}>Create</button>
                         </form>
                     </motion.div>
                 </>}
