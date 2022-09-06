@@ -2,10 +2,19 @@ import classes from "../../../styles/BlockList.module.css";
 import { useEffect, useState } from "react";
 import { UserTypeNew } from "../../../Types/dataTypes";
 import { useRouter } from "next/router";
-import { fetchDATA } from "../../../customHooks/useFetchData";
+import { fetchDATA, requests } from "../../../customHooks/useFetchData";
 import LoadingElm from "../../loading/Loading_elm";
 
-const BlockedUser: React.FC<UserTypeNew> = (props) => {
+class types extends UserTypeNew {
+	refresh: any
+}
+
+const BlockedUser: React.FC<types> = (props) => {
+	const router = useRouter();
+	const UnblockHandler = async () => {
+		await requests(props.login, "friendship/unblock", router);
+		props.refresh();
+	};
 	return (
 		<div className={classes.friend}>
 			<div className={classes.Avatar_name}>
@@ -14,15 +23,18 @@ const BlockedUser: React.FC<UserTypeNew> = (props) => {
 				</div>
 				<div className={classes.friendName}>{props.fullname}</div>
 			</div>
-			<div className={`${classes.sendMsg}`}>Unblock</div>
+			<div className={`${classes.sendMsg}`} onClick={UnblockHandler}>
+				Unblock
+			</div>
 		</div>
 	);
 };
 
-const BlockList: React.FC<{search: string}> = (props) => {
+const BlockList: React.FC<{ search: string }> = (props) => {
 	const [listblock, setListblock] = useState<UserTypeNew[] | null>(null);
 	const [isUp, SetIsUp] = useState(false);
 	const router = useRouter();
+	const refresh = () => fetchDATA(setListblock, router, "friendship/blocked");
 	useEffect(() => {
 		fetchDATA(setListblock, router, "friendship/blocked");
 		SetIsUp(true);
@@ -32,9 +44,11 @@ const BlockList: React.FC<{search: string}> = (props) => {
 	}, []);
 
 	if (!isUp) {
-		return <div className={classes.listFriends}>
-			<LoadingElm />
-		</div>
+		return (
+			<div className={classes.listFriends}>
+				<LoadingElm />
+			</div>
+		);
 	}
 
 	return (
@@ -43,10 +57,26 @@ const BlockList: React.FC<{search: string}> = (props) => {
 				<div className={classes.listFriends}>
 					{(listblock?.length &&
 						listblock?.map((user) => {
-							if (props.search === '')
-								return <BlockedUser {...user} key={Math.random()} />
-							else if (user.fullname.toLocaleLowerCase().includes(props.search.toLocaleLowerCase()))
-								return <BlockedUser {...user} key={Math.random()} />
+							if (props.search === "")
+								return (
+									<BlockedUser
+										{...user}
+										key={Math.random()}
+										refresh={refresh}
+									/>
+								);
+							else if (
+								user.fullname
+									.toLocaleLowerCase()
+									.includes(props.search.toLocaleLowerCase())
+							)
+								return (
+									<BlockedUser
+										{...user}
+										key={Math.random()}
+										refresh={refresh}
+									/>
+								);
 						})) || (
 						<div className={classes.noBlockers}>Not Yet</div>
 					)}

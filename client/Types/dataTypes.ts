@@ -1,3 +1,5 @@
+import { allRanks } from "../config/baseURL";
+import unranked from '../public/Tiers/Unranked.svg';
 
 class Stats {
 	XP: number = 0;
@@ -5,6 +7,12 @@ class Stats {
 	rank: number = 0;
 	numGames: number = 0;
 	gamesWon: number = 0;
+}
+
+export class rankObj {
+	rank: string = allRanks[4];
+	color: string = '#BEB5B6';
+	tier: any = unranked;
 }
 
 
@@ -19,6 +27,7 @@ export class UserTypeNew {
 	gamesWon: number = 0;
 	achievement: number[] = [];
 	status: string = '';
+	relation: string = '';
 };
 
 export const EmtyUser : UserTypeNew = {
@@ -32,6 +41,7 @@ export const EmtyUser : UserTypeNew = {
 	gamesWon: 0,
 	achievement: [],
 	status: '',
+	relation: ''
 }
 
 export interface UserType {
@@ -61,6 +71,7 @@ export interface matchDataType {
 	games: number;
 	Win: number;
 	GP: number;
+	relation: string;
 }
 
 export interface achievementType {

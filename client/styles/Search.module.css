@@ -19,7 +19,6 @@
 .friend {
 	display: flex;
 	justify-content: flex-start;
-	/* max-height: 6.667rem; */
 	width: 100%;
 	background: #2B2B2D;
 	border-radius: 5px;
@@ -54,7 +53,6 @@
 }
 
 .optionFriend {
-	/* flex: 2%; */
 	display: flex;
 	align-items: center;
 	justify-content: space-around;
@@ -78,18 +76,16 @@
 	background: #3A3A3C;
 	box-shadow: 0px 0px 25px #00000080;
 	border-radius: 5px;
-	top: 2.2rem;
-	right: .4rem;
+	top: 3.5rem;
+	right: 0rem;
 	display: flex;
 	padding: 0.3rem;
 	flex-direction: column;
 	justify-content: center;
-	align-items: left;
-	width: 120%;
 }
 
 .itemListoption {
-	text-align: left;
+	text-align: center;
 	font-family: 'Inter';
 	font-style: normal;
 	font-weight: 400;
@@ -100,6 +96,8 @@
 	padding: 0.3rem;
 	border-radius: 5px;
 	cursor: pointer;
+	width: 100%;
+	
 }
 
 .itemListoption:hover {
@@ -107,7 +105,7 @@
 }
 
 .itemListoptionBlock {
-	text-align: left;
+	text-align: center;
 	font-family: 'Inter';
 	font-style: normal;
 	font-weight: 400;
@@ -276,16 +274,50 @@
 	color: #409CFF;
 }
 
+/* Request button  ++++++++++++++++++++++++++++++*/
+
+
+.btnRequest {
+	border: 2px solid #C6E1FF;
+	border-radius: 5px;
+	width: 9.333rem;
+	padding: 0.667rem 0;
+	display: flex;
+	justify-content: space-evenly;
+	align-items: center;
+	font-family: 'Inter';
+	font-style: normal;
+	font-weight: 600;
+	font-size: 1.067rem;
+	line-height: 19px;
+	cursor: pointer;
+	position: relative;
+}
+
+.Request {
+	display: flex;
+	align-items: center;
+	width: 1.6rem;
+	height: 1.6rem;
+}
+
+.RequestBTN {
+	font-family: 'Inter';
+	font-style: normal;
+	font-weight: 600;
+	font-size: 1.067rem;
+	line-height: 19px;
+	color: #C6E1FF;
+}
+
 /* Nav between UserList and Channels */
 /* ///////////////////////////////// */
 
 .navView {
 	display: flex;
 	justify-content: flex-start;
-	/* margin: 2rem 2rem; */
 	padding: 1.333rem;
 	padding-bottom: 0;
-	/* margin-bottom: 0; */
 }
 
 .TitleOverView {
@@ -376,7 +408,7 @@
 }
 
 
-.LeaveBtn{
+.LeaveBtn {
 	cursor: pointer;
 	border: 2px solid #758293;
 	border-radius: 5px;
@@ -408,9 +440,6 @@
 	line-height: 19px;
 }
 
-
-
-
 @media screen and (max-width:450px) {
 
 	.Hover,
@@ -420,10 +449,6 @@
 	.PendingnotHover {
 		display: none !important;
 	}
-
-	/* .Channeltype {
-		font-size: 1rem;
-	} */
 
 	.ChannelName,
 	.friendName {

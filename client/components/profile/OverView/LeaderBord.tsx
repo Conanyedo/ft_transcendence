@@ -5,7 +5,7 @@ import Rank_3 from "../../../public/LeaderBoard/thirdPlace.svg";
 import Image from "next/image";
 import { isMobile } from "react-device-detect";
 import { useEffect, useState } from "react";
-import { EmtyUser, matchDataType, UserTypeNew } from "../../../Types/dataTypes";
+import { EmtyUser, matchDataType, rankObj, UserTypeNew } from "../../../Types/dataTypes";
 import Chart from "../../chart/chartProgress";
 import { motion } from "framer-motion";
 import { useRouter } from "next/router";
@@ -22,9 +22,11 @@ const ElmRank: React.FC<matchDataType> = (props) => {
 			? Rank_3
 			: null;
 	const route = useRouter();
-	const Clickhandler = () => route.push("/profile/" + props.login);
-	const tier = getRankUser(props.GP);
-	
+	const Clickhandler = () => {
+		if (props.relation !== "blocked") route.push("/profile/" + props.login);
+	};
+	const tier: rankObj = getRankUser(props.GP);
+
 	return (
 		<div className={classes.tableElments}>
 			<div className={classes.Rank}>
@@ -53,14 +55,16 @@ const ElmRank: React.FC<matchDataType> = (props) => {
 					<div
 						className={classes.pourcentage}
 						style={{
-							width: `${Math.floor((props.Win / props.games) * 100 )}%`,
+							width: `${Math.floor(
+								(props.Win / props.games) * 100
+							)}%`,
 						}}
 					></div>
 				</div>
 			</div>
 			<div className={classes.Tier}>
 				<div className={classes.SvgSize}>
-					<Image src={tier[2]} />
+					<Image src={tier.tier} />
 				</div>
 			</div>
 		</div>
@@ -70,10 +74,14 @@ const ElmRank: React.FC<matchDataType> = (props) => {
 const Stats: React.FC = () => {
 	const [user, setUser] = useState<UserTypeNew>(EmtyUser);
 	const router = useRouter();
+	const login = router.query?.id;
 	useEffect(() => {
-		fetchDATA(setUser, router, 'user/stats');
-	}, []);
-	const amount = (user?.gamesWon === 0) ? 0 : Math.floor(((user?.gamesWon) / user?.numGames) * 100)
+		fetchDATA(setUser, router, `user/stats${login ? "/" + login : ""}`);
+	}, [login]);
+	const amount =
+		user?.gamesWon === 0
+			? 0
+			: Math.floor((user?.gamesWon / user?.numGames) * 100);
 	return (
 		<div className={classes.stat}>
 			<div className={classes.LeaderBordTitle}>Stats</div>
@@ -81,11 +89,7 @@ const Stats: React.FC = () => {
 				<div className={classes.statDig}>
 					<div className={classes.WinRateTitle}>Win Rate</div>
 					<div className={classes.imageCTN}>
-						{user && (
-							<Chart
-								amount={amount}
-							/>
-						)}
+						{user && <Chart amount={amount} />}
 					</div>
 				</div>
 				<div className={classes.statbtns}>
@@ -113,74 +117,80 @@ const LeaderBoard: React.FC = () => {
 	const [isUp, SetIsUp] = useState(false);
 	const router = useRouter();
 	useEffect(() => {
-		fetchDATA(setListUsers, router, 'user/leaderborad');
+		fetchDATA(setListUsers, router, "user/leaderborad");
 		SetIsUp(true);
 	}, []);
-	
+
 	return (
 		<>
-		{isUp && <div className={classes.leaderBoard}>
-			<div className={classes.table}>
-				<div className={classes.LeaderBordTitle}>LeaderBoard</div>
-				<div className={classes.leaderBoardctn}>
-					<div
-						className={`${
-							isMobile
-								? classes.tableTitlesInMobile
-								: classes.tableTitles
-						}`}
-					>
-						<div
-							className={`${classes.Rank} ${classes.tableTitle}`}
-						>
-							Rank
+			{isUp && (
+				<div className={classes.leaderBoard}>
+					<div className={classes.table}>
+						<div className={classes.LeaderBordTitle}>
+							LeaderBoard
 						</div>
-						<div
-							className={`${classes.User} ${classes.tableTitle}`}
-						>
-							Users
-						</div>
-						<div
-							className={`${classes.games} ${classes.tableTitle}`}
-						>
-							Games
-						</div>
-						<div
-							className={`${classes.WinRatio} ${classes.tableTitle}`}
-						>
-							Win Ratio
-						</div>
-						<div
-							className={`${classes.Tier} ${classes.tableTitle}`}
-						>
-							Tier
+						<div className={classes.leaderBoardctn}>
+							<div
+								className={`${
+									isMobile
+										? classes.tableTitlesInMobile
+										: classes.tableTitles
+								}`}
+							>
+								<div
+									className={`${classes.Rank} ${classes.tableTitle}`}
+								>
+									Rank
+								</div>
+								<div
+									className={`${classes.User} ${classes.tableTitle}`}
+								>
+									Users
+								</div>
+								<div
+									className={`${classes.games} ${classes.tableTitle}`}
+								>
+									Games
+								</div>
+								<div
+									className={`${classes.WinRatio} ${classes.tableTitle}`}
+								>
+									Win Ratio
+								</div>
+								<div
+									className={`${classes.Tier} ${classes.tableTitle}`}
+								>
+									Tier
+								</div>
+							</div>
+							<motion.div
+								initial={{ y: 10, opacity: 0 }}
+								animate={{ y: 0, opacity: 1 }}
+								exit={{ y: -10, opacity: 0 }}
+								transition={{ duration: 0.5 }}
+								className={classes.leaderBoardTable}
+							>
+								{listUsers &&
+									listUsers.map((user, idx) => (
+										<ElmRank
+											key={user?.login}
+											fullName={user?.fullname}
+											games={user?.stats.numGames}
+											Win={user?.stats.gamesWon}
+											badge={idx + 1}
+											avatar={user?.avatar}
+											login={user?.login}
+											GP={user?.stats.GP}
+											relation={user?.relation}
+										/>
+									))}
+							</motion.div>
 						</div>
 					</div>
-					<motion.div
-						initial={{ y: 10, opacity: 0 }}
-						animate={{ y: 0, opacity: 1 }}
-						exit={{ y: -10, opacity: 0 }}
-						transition={{ duration: 0.5 }}
-						className={classes.leaderBoardTable}
-					>
-						{listUsers &&
-							listUsers.map((user, idx) => (
-								<ElmRank
-									key={user?.login}
-									fullName={user?.fullname}
-									games={user?.stats.numGames}
-									Win={user?.stats.gamesWon}
-									badge={idx + 1}
-									avatar={user?.avatar}
-									login={user?.login}
-									GP={user?.stats.GP}
-								/>
-							))}
-					</motion.div>
+					<Stats />
 				</div>
-			</div>
-			<Stats /> 
-		</div>}</>
+			)}
+		</>
 	);
 };
 

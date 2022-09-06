@@ -1,87 +1,18 @@
-import { motion } from "framer-motion";
 import classes from "../../styles/Search.module.css";
 import Image from "next/image";
-import Union from "../../public/FriendIcons/Union.svg";
-import Friend from "../../public/FriendIcons/FriendIcon.svg";
 import Option from "../../public/FriendIcons/OptionIcon.svg";
-import Pending from "../../public/FriendIcons/Pending.svg";
-import AddFriend from "../../public/FriendIcons/ADDFriend.svg";
 import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import { useOutsideAlerter } from "../../customHooks/Functions";
 import ContentWrapper from "../../components/wrapper/appWrapper";
 import SearchComponent from "../../components/search/search";
+import { ADDButton, FriendButton, OptionMenu, PendingButton } from "../../components/buttons";
 
 interface friendDataType {
 	Avatar: any;
 	fullName: string;
 	stat: string;
 }
-
-export const FriendButton = (props: { remove: (act: string) => void }) => {
-	const handler = () => props.remove("remove");
-	return (
-		<div className={classes.btnfriend} onClick={handler}>
-			<div className={classes.Hover}>
-				<Image src={Union} />
-			</div>
-			<span className={classes.AddBTNHover}>Unfriend</span>
-			<div className={classes.notHover}>
-				<Image src={Friend} />
-			</div>
-			<span className={classes.AddBTN}>Friend</span>
-		</div>
-	);
-};
-
-export const ADDButton = (props: { add: (act: string) => void }) => {
-	const handler = () => props.add("add");
-	return (
-		<div className={classes.btnFriendADD} onClick={handler}>
-			<div className={classes.icon}>
-				<Image src={AddFriend} />
-			</div>
-			<span className={classes.FriendADD}>Add Friend</span>
-		</div>
-	);
-};
-
-export const PendingButton = () => {
-	return (
-		<div className={classes.btnPending}>
-			<div className={classes.PendingHover}>
-				<Image src={Union} />
-			</div>
-			<span className={classes.PendingBTNHover}>Cancel</span>
-			<div className={classes.PendingnotHover}>
-				<Image src={Pending} />
-			</div>
-			<span className={classes.PendingBTN}>Pending</span>
-		</div>
-	);
-};
-
-export const OptionMenu: React.FC<{
-	FirstBtn: string;
-	SecondBtn: string;
-	width: string;
-	firstClick: () => void
-	SecondClick: () => void
-}> = (props) => {
-	return (
-		<motion.div
-			initial={{ scale: 0.5 }}
-			animate={{ scale: 1 }}
-			className={classes.optionMenu}
-			style={{ width: `${props.width}` }}
-		>
-			<div className={classes.itemListoption} onClick={props.firstClick}>
-				{props.FirstBtn}
-			</div>
-			<div className={classes.itemListoptionBlock} onClick={props.SecondClick}>{props.SecondBtn}</div>
-		</motion.div>
-	);
-};
 
 const User: React.FC<friendDataType> = (props) => {
 	const [option, setOption] = useState(false);
