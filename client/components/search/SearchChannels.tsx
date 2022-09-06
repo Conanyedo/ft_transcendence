@@ -2,55 +2,60 @@ import { motion } from "framer-motion";
 import classes from "../../styles/Search.module.css";
 import Image from "next/image";
 import profile from "../../public/AvatarChannel.png";
+import { JoinChannel, LeaveChannel } from "../buttons";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 
 interface ChannelDataType {
 	Avatar: any;
-	fullName: string;
+	title: string;
 	type: string;
-    isNew: boolean;
+	member: boolean;
 }
 
 const Channel: React.FC<ChannelDataType> = (props) => {
+	const refresh = () => {};
+	const router = useRouter();
 	return (
 		<div className={classes.Channel}>
 			<div className={classes.Avatar_Channel}>
 				<div className={classes.avatar}>
-					<Image src={props.Avatar} />
+					<img src={props.Avatar} />
 				</div>
-				<div className={classes.ChannelName}>{props.fullName}</div>
+				<div className={classes.ChannelName}>{props.title}</div>
 			</div>
 			<div className={classes.Channeltype}>{props.type}</div>
-			{props.isNew && <div className={classes.joinBtn}>
-				{/* <Image src='#' /> */}
-				Join
-			</div> || <div className={classes.LeaveBtn}>
-				{/* <Image src='#' /> */}
-				Exit
-			</div>}
+			{(props.member && (
+				<LeaveChannel
+					login={props.title}
+					router={router}
+					refresh={refresh}
+				/>
+			)) || (
+				<JoinChannel
+					login={props.title}
+					router={router}
+					refresh={refresh}
+				/>
+			)}
 		</div>
 	);
 };
 
 const SearchChannelsList: React.FC = () => {
+	const router = useRouter();
+	const [searchData, setSearchData] = useState<ChannelDataType[]>([]);
+	const refresh = () => {}
+	useEffect(() => {
+		// fetchDATA(setSearchData, router, '');
+		return () => {
+			setSearchData([]);
+		}
+	}, [])
 	return (
 		<>
 			<motion.div className={classes.SearchCTNIN}>
-				<Channel fullName="One Piece" Avatar={profile} type="Public" isNew={false} />
-				<Channel
-					fullName="One Piece"
-					Avatar={profile}
-					type="Protected"
-                    isNew={true}
-				/>
-				<Channel fullName="One Piece" Avatar={profile} type="Public" isNew={true}/>
-				<Channel
-					fullName="One Piece"
-					Avatar={profile}
-					type="Protected"
-                    isNew={true}
-				/>
-				<Channel fullName="One Piece" Avatar={profile} type="Public" isNew={false}/>
-				<Channel fullName="One Piece" Avatar={profile} type="Public" isNew={true}/>
+				
 			</motion.div>
 		</>
 	);
