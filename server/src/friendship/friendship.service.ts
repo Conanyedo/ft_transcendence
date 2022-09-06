@@ -17,10 +17,14 @@ export class FriendshipService {
 	async getRelation(user: string, friend: string) {
 		const friendship: Friendship = await this.friendshipRepository
 			.createQueryBuilder('friendships')
-			.select(['friendships.relation'])
+			.select(['friendships.user', 'friendships.friend', 'friendships.relation'])
 			.where('(friendships.user = :user AND friendships.friend = :friend) OR (friendships.user = :friend AND friendships.friend = :user)', { user: user, friend: friend })
 			.getOne();
-		return friendship ? friendship.relation : userRelation.NONE;
+		if (!friendship)
+			return userRelation.NONE
+		if (friendship.relation === userRelation.REQUESTED && user === friendship.user)
+			return userRelation.PENDING;
+		return friendship.relation;
 	}
 
 	async getFriends(login: string) {
@@ -39,19 +43,19 @@ export class FriendshipService {
 		return [...friendList];
 	}
 
-	async getPendings(login: string) {
-		const pendings: Friendship[] = await this.friendshipRepository
+	async getRequests(login: string) {
+		const requests: Friendship[] = await this.friendshipRepository
 			.createQueryBuilder('friendships')
 			.select(['friendships.user'])
-			.where('friendships.relation = :relation AND friendships.friend = :login', { relation: userRelation.PENDING, login: login })
+			.where('friendships.relation = :relation AND friendships.friend = :login', { relation: userRelation.REQUESTED, login: login })
 			.getMany();
-		if (!pendings.length)
-			return pendings;
-		const pendingList = await Promise.all(pendings.map(async (friend) => {
-			const pendingInfo: friendDto = await this.userService.getPending(friend.user);
-			return pendingInfo;
+		if (!requests.length)
+			return requests;
+		const requestsList = await Promise.all(requests.map(async (friend) => {
+			const requestInfo: friendDto = await this.userService.getFriend(friend.user);
+			return requestInfo;
 		}))
-		return [...pendingList];
+		return [...requestsList];
 	}
 
 	async getBlocked(login: string) {
@@ -63,7 +67,7 @@ export class FriendshipService {
 		if (!blocked.length)
 			return blocked;
 		const blockedList = await Promise.all(blocked.map(async (friend) => {
-			const blockedInfo: friendDto = await this.userService.getPending(friend.friend);
+			const blockedInfo: friendDto = await this.userService.getFriend(friend.friend);
 			return blockedInfo;
 		}))
 		return [...blockedList];
@@ -73,15 +77,62 @@ export class FriendshipService {
 		const friendship: Friendship = new Friendship();
 		friendship.user = user;
 		friendship.friend = friend;
-		friendship.relation = userRelation.PENDING;
+		friendship.relation = userRelation.REQUESTED;
 		this.friendshipRepository.save(friendship);
 	}
 
-	async removeFriend(user: string, friend: string, relation: userRelation) {
+	async unfriend(user: string, friend: string) {
 		this.friendshipRepository
 			.createQueryBuilder()
 			.delete()
-			.where('(friendships.user = :user OR friendships.user = :friend) AND (friendships.friend = :friend OR friendships.friend = :user) AND friendships.relation = :relation', { user: user, friend: friend, relation: relation })
+			.where('(friendships.user = :user OR friendships.user = :friend) AND (friendships.friend = :friend OR friendships.friend = :user) AND friendships.relation = friend', { user: user, friend: friend })
+			.execute();
+	}
+
+	async acceptRequest(user: string, friend: string) {
+		this.friendshipRepository
+			.createQueryBuilder()
+			.update({ relation: userRelation.FRIEND })
+			.where('friendships.user = :friend AND friendships.friend = :user AND friendships.relation = requested', { user: user, friend: friend })
+			.execute();
+	}
+
+	async refuseRequest(user: string, friend: string) {
+		this.friendshipRepository
+			.createQueryBuilder()
+			.delete()
+			.where('friendships.user = :friend AND friendships.friend = :user AND friendships.relation = requested', { user: user, friend: friend })
+			.execute();
+	}
+
+	async cancelRequest(user: string, friend: string) {
+		this.friendshipRepository
+			.createQueryBuilder()
+			.delete()
+			.where('friendships.user = :user AND friendships.friend = :friend AND friendships.relation = requested', { user: user, friend: friend })
+			.execute();
+	}
+
+	async blockUser(user: string, friend: string) {
+		this.friendshipRepository
+			.createQueryBuilder('friendships')
+			.delete()
+			.where('(friendships.user = :user OR friendships.user = :friend) AND (friendships.friend = :friend OR friendships.friend = :user)', { user: user, friend: friend })
+			.execute();
+
+		const friendship: Friendship = new Friendship();
+		friendship.user = user;
+		friendship.friend = friend;
+		friendship.relation = userRelation.BLOCKED;
+		this.friendshipRepository.save(friendship);
+
+	}
+
+	async unblock(user: string, friend: string) {
+		this.friendshipRepository
+			.createQueryBuilder()
+			.delete()
+			.where('friendships.user = :user AND friendships.friend = :friend AND friendships.relation = blocked', { user: user, friend: friend })
 			.execute();
 	}
 }
