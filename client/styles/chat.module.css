@@ -402,18 +402,38 @@
 }
 
 .form {
-    border: 1px solid red;
     min-height: fit-content;
 }
 
 .modalbox>div:nth-child(1) {
-    margin-top: 1.667rem;
+    margin-top: 1.25rem;
+    margin-bottom: 1.25rem;
 }
 
-.modalbox>div>h1 {
-    font-weight: 600;
-    font-size: 1.667rem;
+.inputContainer>span {
+    font-weight: 500;
+    font-size: 18px;
+    color: #D9D9D9;
+}
+
+.inputContainer>input {
+    width: 100%;
+}
+
+.createChnl {
+    font-size: 20px;
     color: #C6E1FF;
+    font-weight: 600;
+}
+
+.mTop {
+    margin-top: 18px;
+}
+
+.options>div>h3 {
+    font-size: 18px;
+    color: #D9D9D9;
+    font-weight: 500;
 }
 
 .modalbox>div>form>span {
@@ -446,13 +466,6 @@
     display: flex;
     margin-top: 18px;
     justify-content: space-between;
-}
-
-.modalbox>form>div:nth-child(2)>div>h3 {
-    font-size: 1.5rem;
-    font-weight: 500;
-    color: #D9D9D9;
-    margin: 0;
 }
 
 .modalbox>form>div:nth-child(2)>div {
@@ -520,7 +533,6 @@
 }
 
 .menu {
-    /* width: 30px; */
     height: 30px;
     display: flex;
     justify-content: flex-end;

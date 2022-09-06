@@ -51,16 +51,16 @@ export function ModalBox(props: { show: boolean, setShow: (Dispatch<SetStateActi
                 {props.show && <><div style={{ display: props.show ? "block" : "none" }} className={Styles.grayBg}>&nbsp;</div>
                     <motion.div className={Styles.modalbox} animate={{ scale: 1 }} initial={{ scale: 0.5 }}>
                         <div>
-                            <h1>Create channel</h1>
+                            <h1 className={Styles.createChnl}>Create channel</h1>
                             <div><Image src={Cross} width={10} height={10} onClick={() => props.setShow(!props.show)} /></div>
                         </div>
                         <Form className={Styles.form}>
-                            <div>
+                            <div className={Styles.inputContainer}>
                                 <span>Channel name</span>
-                                <Field name="cName" type="text" />
+                                <Field name="cName" type="text" className={Styles.usrsInpt}/>
                                 <ErrorMessage name="name" render={renderError} />
                             </div>
-                            <div>
+                            <div className={Styles.options}>
                                 <Option type="Public" />
                                 <Option type="Private" />
                                 <Option type="Protected" />
@@ -68,12 +68,12 @@ export function ModalBox(props: { show: boolean, setShow: (Dispatch<SetStateActi
                             {(channelMode === "Public") && <p>All users can find and join this channel</p>}
                             {(channelMode === "Private") && <p>Only users you invited can join the channel</p>}
                             {(channelMode === "Protected") && <p>All users can find the channel but only those with the provided password can join</p>}
-                            {(protectedChannel && channelMode === "Protected") && <div className={Styles.pwd}>
+                            {(protectedChannel && channelMode === "Protected") && <div className={Styles.inputContainer}>
                                 <span>Password</span>
-                                <Field name="password" type="password" />
+                                <Field name="password" type="password" className={Styles.usrsInpt} />
                                 <ErrorMessage name="name" render={renderError} />
                             </div>}
-                            <div>
+                            <div className={Styles.inputContainer + " " + Styles.mTop}>
                                 <span>Add Members</span>
                                 <div className={Styles.usrsInpt}>
                                     {usrTags.map((tag, i) => <UsrTag key={i} fullname={tag} removeTag={removeTag} id={i} />)}
@@ -89,23 +89,3 @@ export function ModalBox(props: { show: boolean, setShow: (Dispatch<SetStateActi
                 </>}</Formik>
         </>)
 }
-
-// Form stuff
-// const inputInitialValues = {input1: "", input2: "", input3: ""};
-// const [input_values, set_input_values] = useState(inputInitialValues);
-
-
-// function clearInputValues() {
-    //     set_input_values(inputInitialValues);
-// }
-
-// function inputs_handler(e: React.ChangeEvent<HTMLInputElement>) {
-    //     let name = e.target.name;
-//     let value = e.target.value;
-
-//     if (name == "input3") {
-    //         filterUsers(value);
-//     }
-
-//     set_input_values({ ...input_values, [name]: value });
-// }
