@@ -21,6 +21,12 @@ export class FriendshipController {
 		return await this.friendshipService.getRequests(user.login);
 	}
 
+	@Get('/pending')
+	@UseGuards(JwtAuthGuard)
+	async getPending(@User() user: userParitalDto) {
+		return await this.friendshipService.getPending(user.login);
+	}
+
 	@Get('/blocked')
 	@UseGuards(JwtAuthGuard)
 	async getBlocked(@User() user: userParitalDto) {
