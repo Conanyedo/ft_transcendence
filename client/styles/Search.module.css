@@ -47,7 +47,7 @@
 	font-family: 'Inter';
 	font-style: normal;
 	font-weight: 500;
-	font-size: 1.6rem;
+	font-size: 1.4rem;
 	line-height: 29px;
 	color: #FFFFFF;
 }
@@ -245,8 +245,8 @@
 /* Add Friend Stander  ++++++++++++++++++++++++++++++*/
 
 .icon {
-	width: 2rem;
-	height: 2rem;
+	width: 1.6rem;
+	height: 1.6rem;
 }
 
 .btnFriendADD {
@@ -326,7 +326,7 @@
 	font-family: 'Inter';
 	font-style: normal;
 	font-weight: 600;
-	font-size: 1.4rem;
+	font-size: 1.8rem;
 	line-height: 22px;
 	color: #C6E1FF;
 	padding-bottom: 0.333rem;
@@ -341,14 +341,14 @@
 .ctnIndic {
 	margin-bottom: 1.867rem;
 	height: 0.333rem;
-	margin-left: 2rem;
+	margin-left: 1.7rem;
 	border-radius: 2px;
 }
 
 .Indic {
 	background: #409CFF;
 	border-radius: 2px;
-	width: 4.5rem;
+	width: 4.2rem;
 	height: 0.333rem;
 	transition: all .3s ease-in-out;
 }
@@ -357,8 +357,8 @@
 	background: #409CFF;
 	border-radius: 2px;
 	height: 0.333rem;
-	margin-left: 9rem;
-	width: 6.8rem;
+	margin-left: 7.95rem;
+	width: 7rem;
 	transition: all .3s ease-in-out;
 }
 
@@ -379,8 +379,9 @@
 
 .Avatar_Channel {
 	display: flex;
-	justify-content: space-evenly;
+	justify-content: flex-start;
 	align-items: center;
+	width: 50%;
 }
 
 .avatar {
@@ -395,7 +396,8 @@
 	font-weight: 500;
 	font-size: 1.333rem;
 	line-height: 22px;
-	color: #D9D9D9;
+	color: #fff;
+	width: 50%;
 }
 
 .Channeltype {
@@ -404,7 +406,9 @@
 	font-weight: 500;
 	font-size: 1.6rem;
 	line-height: 22px;
-	color: #D9D9D9;
+	color: #fff;
+	justify-self: flex-start;
+	width: 30%;
 }
 
 
@@ -440,24 +444,30 @@
 	line-height: 19px;
 }
 
-@media screen and (max-width:450px) {
+@media screen and (max-width:800px) {
+	.Channeltype {
+		display: none;
+	}
+	.ChannelName,
+	.friendName {
+		font-size: 1rem;
+	}
+	.avatar {
+		width: 4rem;
+		height: 4rem;
+	}
+	.Avatar_Channel {
+		width: 70%;
+	}
+}
 
+@media screen and (max-width:450px) {
 	.Hover,
 	.notHover,
 	.icon,
 	.PendingHover,
 	.PendingnotHover {
 		display: none !important;
-	}
-
-	.ChannelName,
-	.friendName {
-		font-size: 1.3rem;
-	}
-
-	.avatar {
-		width: 4rem;
-		height: 4rem;
 	}
 
 	.LeaveBtn,
