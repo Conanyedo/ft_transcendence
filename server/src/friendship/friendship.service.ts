@@ -58,6 +58,21 @@ export class FriendshipService {
 		return [...requestsList];
 	}
 
+	async getPending(login: string) {
+		const pending: Friendship[] = await this.friendshipRepository
+			.createQueryBuilder('friendships')
+			.select(['friendships.friend'])
+			.where('friendships.relation = :relation AND friendships.user = :login', { relation: userRelation.REQUESTED, login: login })
+			.getMany();
+		if (!pending.length)
+			return pending;
+		const pendingList = await Promise.all(pending.map(async (friend) => {
+			const pendingInfo: friendDto = await this.userService.getFriend(friend.friend);
+			return pendingInfo;
+		}))
+		return [...pendingList];
+	}
+
 	async getBlocked(login: string) {
 		const blocked: Friendship[] = await this.friendshipRepository
 			.createQueryBuilder('friendships')
@@ -85,7 +100,7 @@ export class FriendshipService {
 		this.friendshipRepository
 			.createQueryBuilder()
 			.delete()
-			.where('(friendships.user = :user OR friendships.user = :friend) AND (friendships.friend = :friend OR friendships.friend = :user) AND friendships.relation = friend', { user: user, friend: friend })
+			.where('((friendships.user = :user AND friendships.friend = :friend) OR (friendships.user = :friend AND friendships.friend = :user)) AND friendships.relation = :relation', { user: user, friend: friend, relation: userRelation.FRIEND })
 			.execute();
 	}
 
@@ -93,7 +108,7 @@ export class FriendshipService {
 		this.friendshipRepository
 			.createQueryBuilder()
 			.update({ relation: userRelation.FRIEND })
-			.where('friendships.user = :friend AND friendships.friend = :user AND friendships.relation = requested', { user: user, friend: friend })
+			.where('friendships.user = :friend AND friendships.friend = :user AND friendships.relation = :relation', { user: user, friend: friend, relation: userRelation.REQUESTED })
 			.execute();
 	}
 
@@ -101,7 +116,7 @@ export class FriendshipService {
 		this.friendshipRepository
 			.createQueryBuilder()
 			.delete()
-			.where('friendships.user = :friend AND friendships.friend = :user AND friendships.relation = requested', { user: user, friend: friend })
+			.where('friendships.user = :friend AND friendships.friend = :user AND friendships.relation = :relation', { user: user, friend: friend, relation: userRelation.REQUESTED })
 			.execute();
 	}
 
@@ -109,7 +124,7 @@ export class FriendshipService {
 		this.friendshipRepository
 			.createQueryBuilder()
 			.delete()
-			.where('friendships.user = :user AND friendships.friend = :friend AND friendships.relation = requested', { user: user, friend: friend })
+			.where('friendships.user = :user AND friendships.friend = :friend AND friendships.relation = :relation', { user: user, friend: friend, relation: userRelation.REQUESTED })
 			.execute();
 	}
 
@@ -132,7 +147,7 @@ export class FriendshipService {
 		this.friendshipRepository
 			.createQueryBuilder()
 			.delete()
-			.where('friendships.user = :user AND friendships.friend = :friend AND friendships.relation = blocked', { user: user, friend: friend })
+			.where('friendships.user = :user AND friendships.friend = :friend AND friendships.relation = :relation', { user: user, friend: friend, relation: userRelation.BLOCKED })
 			.execute();
 	}
 }
