@@ -1,23 +1,27 @@
 import React, { useEffect, useRef } from "react";
+import { gameMap } from "../../customHooks/game";
 import classes from "../../styles/Game.module.css";
 
-function Game() {
-	const ref_canvas = useRef(null);
+let x = 0;
+let y = 0;
 
+function Game() {
 	useEffect(() => {
-		// const canvas_elm = ref_canvas.current;
-		// var c = document.getElementById("canvasElm");
-		// var ctx = c.getContext("2d");
-		// ctx.shadowColor = "black";
-		// ctx.fillStyle = "red";
-		// ctx.fillRect(20, 20, 500, 500);
-		// console.log(draw);
+		gameMap();
 	}, []);
 
 	return (
-		<div className={classes.GameContainer}>
-			<canvas className={classes.canvas} ref={ref_canvas} id='canvasElm' />
-		</div>
+		<>
+			<div className={classes.GameContainer}>
+				<canvas
+					id="pong"
+					className={classes.Game}
+					width={window.innerWidth}
+					height={window.innerHeight / 2}
+				></canvas>
+			</div>
+			<div id="pause">Pause</div>
+		</>
 	);
 }
 
