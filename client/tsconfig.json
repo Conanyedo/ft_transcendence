@@ -8,7 +8,8 @@
       "@styles/*": ["styles/*"],
       "@utils/*": ["utils/*"],
       "@public/*": ["public/*"],
-      "@contexts/*": ["contexts/*"]
+      "@contexts/*": ["contexts/*"],
+      "@svg/*": ["svg/*"]
     },
     "target": "es5",
     "lib": ["dom", "dom.iterable", "esnext"],

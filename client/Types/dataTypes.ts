@@ -100,3 +100,9 @@ export interface HistoryMatchType {
 	avatar: string,
 	fullname: string
 }
+
+export interface chatFormValues {
+    cName: string,
+    password: string,
+    members: Array<string>
+}

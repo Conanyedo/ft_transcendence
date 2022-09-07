@@ -816,7 +816,7 @@
 
 /* Settings styles */
 
-.settingsHeader {
+.profileHeader {
     display: flex;
     justify-content: space-between;
     max-width: 100%;
@@ -824,13 +824,13 @@
     align-items: center;
 }
 
-.settingsHeader>h1 {
+.profileHeader>h1 {
     font-size: 1.5rem !important;
     color: #C6E1FF;
     font-weight: 500;
 }
 
-.settingsHeader>button {
+.profileHeader>button {
     background-color: inherit;
     border: 2px solid #409CFF;
     border-radius: 5px;
@@ -841,6 +841,7 @@
     gap: 3px;
     color: #409CFF;
     font-weight: 600;
+    cursor: pointer;
 }
 
 .members {
@@ -875,6 +876,6 @@
     align-items: center;
 }
 
-.members>div>span {
+.membersAvtr>span {
     border-radius: 8px;
 }
