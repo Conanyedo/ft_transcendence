@@ -14,23 +14,80 @@ import { fetchDATA, LogOut } from "../../customHooks/useFetchData";
 import { EmtyUser, NotificationType, UserTypeNew } from "../../Types/dataTypes";
 import { baseUrl } from "../../config/baseURL";
 
+const Notif: React.FC = () => {
+	const [notification, setnotification] = useState<NotificationType[] | null>(null);
+	const [isOpen, setisOpen] = useState(false);
+	const notifMenu = useRef(null);
+	const clicknotifHandler = () => {
+		setisOpen((value) => !value);
+	};
+	useOutsideAlerter(notifMenu, setisOpen);
+	useEffect(() => {
+		const owner = localStorage.getItem("owner");
+		const eventSource = new EventSource(
+			`${baseUrl}notification/notif/${owner}`
+		);
+		eventSource.onmessage = ({ data }) => {
+			if (!data.login) return;
+			if (notification?.length)
+				setnotification((prev) => [data, ...prev!]);
+			else setnotification([data]);
+		};
+	}, []);
+	return (
+		<div
+			className={classes.NotifIcon}
+			ref={notifMenu}
+			onClick={clicknotifHandler}
+		>
+			{notification && <div className={classes.dot} />}
+			<Image src={Notification} />
+			{isOpen && (
+				<motion.div
+					id="notifmenu"
+					initial={{ scale: 0.5 }}
+					animate={{ scale: 1 }}
+					className={classes.ctnNotif}
+				>
+					{(notification &&
+						notification?.map((notif) => (
+							<span className={classes.notif} key={Math.random()}>
+								<span className={classes.notifTitle}>
+									{notif?.msg === "Request"
+										? "Friend Request"
+										: "Game Challenge"}
+								</span>
+								{notif?.login}
+								{notif?.msg === "Request"
+									? " want to be your friend"
+									: " invited you to play pong game"}
+							</span>
+						))) || (
+						<span
+							className={classes.notifTitle}
+							style={{
+								fontSize: "1.4rem",
+								padding: ".5rem",
+							}}
+						>
+							No Notification
+						</span>
+					)}
+				</motion.div>
+			)}
+		</div>
+	);
+};
+
 const UserSection = () => {
 	const menu = useRef(null);
 	const router = useRouter();
-	const notifMenu = useRef(null);
 	const dispatch = useAppDispatch();
 	const [dropDown, setDropDown] = useState(false);
-	const [notification, setnotification] = useState<
-		NotificationType[]
-	>();
 	const [isMounted, setIsMounted] = useState(false);
 	const [UserData, setUserData] = useState<UserTypeNew>(EmtyUser);
 	const ClickHandler = () => setDropDown((value) => !value);
 
-	const [isOpen, setisOpen] = useState(false);
-	const clicknotifHandler = () => {
-		setisOpen((value) => !value);
-	};
 	const toggleHandler = () => {
 		dispatch(Toggle());
 		ClickHandler();
@@ -42,60 +99,14 @@ const UserSection = () => {
 	useEffect(() => {
 		fetchDATA(setUserData, router, "user/header");
 		setIsMounted(true);
-		const owner = localStorage.getItem("owner");
-		const eventSource = new EventSource(
-			`${baseUrl}notification/notif/${owner}`
-		);
-		eventSource.onmessage = ({ data }) => {
-			console.log(data);
-			if (notification?.length)
-				setnotification((prev) => [data, ...prev!]);
-			else
-				setnotification([data]);
-		};
 	}, []);
-	useOutsideAlerter(notifMenu, setisOpen);
 	useOutsideAlerter(menu, setDropDown);
 	const LogOutHandler = () => LogOut(router);
+	console.log("check");
 	return (
 		<>
 			{isMounted && (
 				<>
-					<div
-						className={classes.NotifIcon}
-						ref={notifMenu}
-						onClick={clicknotifHandler}
-					>
-						{notification?.length && <div className={classes.dot} />}
-						<Image src={Notification} />
-						{isOpen && (
-							<motion.div
-								id="notifmenu"
-								initial={{ scale: 0.5 }}
-								animate={{ scale: 1 }}
-								className={classes.ctnNotif}
-							>
-								{notification?.length &&
-									notification?.map((notif) => (
-										<span className={classes.notif}>
-											<span
-												className={classes.notifTitle}
-											>
-												{notif?.msg === 'Request' ? "Friend Request" : 'Game Challenge'}
-											</span>
-											{notif?.login}
-											{notif?.msg === "Request"
-												? " want to be your friend"
-												: " invited you to play pong game"}
-										</span>
-									)) || <span
-									className={classes.notifTitle} style={{ fontSize: '1.4rem', padding: '.5rem' }}
-								>
-									No Notification
-								</span>}
-							</motion.div>
-						)}
-					</div>
 					<div
 						ref={menu}
 						className={classes.avatarContainer}
@@ -173,6 +184,7 @@ const Header: React.FC<{ setPos: (page: string) => void }> = (props) => {
 						/>
 					</form>
 				</div>
+				<Notif />
 				<UserSection />
 			</div>
 		</div>
