@@ -54,7 +54,7 @@ export const gameMap = () => {
 	}
 	// drawRect(0, 0, canvas.width, canvas.height, "BLACK");
 
-	function drawCircle(x: any, y: any, r: any, color: any) {
+	function drawCircle(x: any, y: any, r: any, color: any) { 
 		ctx.fillStyle = color;
 		ctx.beginPath();
 		ctx.arc(x, y, r, 0, Math.PI * 2, false);

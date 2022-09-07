@@ -4,7 +4,7 @@ import Image from "next/image";
 import Search from "../../public/SearchIcon.svg";
 import Notification from "../../public/Notification.svg";
 import DownArrow from "../../public/Caret down.svg";
-import { useRouter } from "next/router";
+import Router, { useRouter } from "next/router";
 import { useAppDispatch } from "../store/hooks";
 
 import { ShowSettings, Toggle } from "../store/UI-Slice";
@@ -14,6 +14,7 @@ import { fetchDATA, LogOut } from "../../customHooks/useFetchData";
 import { EmtyUser, NotificationType, UserTypeNew } from "../../Types/dataTypes";
 import { baseUrl } from "../../config/baseURL";
 
+let len = 0;
 const Notif: React.FC = () => {
 	const [notification, setnotification] = useState<NotificationType[] | null>(null);
 	const [isOpen, setisOpen] = useState(false);
@@ -28,12 +29,15 @@ const Notif: React.FC = () => {
 			`${baseUrl}notification/notif/${owner}`
 		);
 		eventSource.onmessage = ({ data }) => {
-			if (!data.login) return;
-			if (notification?.length)
-				setnotification((prev) => [data, ...prev!]);
-			else setnotification([data]);
+			let jsonData = JSON.parse(data);
+			if (!jsonData.length || len === jsonData.length) return;
+			console.log('loop');
+			len = jsonData.length;
+			jsonData = jsonData.reverse()
+			setnotification(jsonData);
 		};
 	}, []);
+	console.log(notification);
 	return (
 		<div
 			className={classes.NotifIcon}
@@ -50,8 +54,9 @@ const Notif: React.FC = () => {
 					className={classes.ctnNotif}
 				>
 					{(notification &&
-						notification?.map((notif) => (
-							<span className={classes.notif} key={Math.random()}>
+						notification?.map((notif) => {
+							console.log('hna ', notif);
+							return  <span className={classes.notif} key={Math.random()} onClick={() => Router.push('/profile/' + notif?.login)}>
 								<span className={classes.notifTitle}>
 									{notif?.msg === "Request"
 										? "Friend Request"
@@ -62,7 +67,7 @@ const Notif: React.FC = () => {
 									? " want to be your friend"
 									: " invited you to play pong game"}
 							</span>
-						))) || (
+						}))|| (
 						<span
 							className={classes.notifTitle}
 							style={{
@@ -102,7 +107,6 @@ const UserSection = () => {
 	}, []);
 	useOutsideAlerter(menu, setDropDown);
 	const LogOutHandler = () => LogOut(router);
-	console.log("check");
 	return (
 		<>
 			{isMounted && (
@@ -191,4 +195,4 @@ const Header: React.FC<{ setPos: (page: string) => void }> = (props) => {
 	);
 };
 
-export default React.memo(Header);
+export default Header;
