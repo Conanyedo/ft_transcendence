@@ -8,13 +8,15 @@ import { ConfigModule } from '@nestjs/config';
 import { typeOrmConfigAsync } from './config/typeorm.config';
 import { GameModule } from './game/game.module';
 import { FriendshipModule } from './friendship/friendship.module';
+import { NotificationModule } from './header/notification/notification.module';
 
 @Module({
 	imports: [UserModule, AuthModule, JwtAuthModule, Jwt2faAuthModule,
 		ConfigModule.forRoot({ isGlobal: true }),
 		TypeOrmModule.forRootAsync(typeOrmConfigAsync),
 		GameModule,
-		FriendshipModule
-	]
+		FriendshipModule,
+		NotificationModule
+	],
 })
 export class AppModule { }
