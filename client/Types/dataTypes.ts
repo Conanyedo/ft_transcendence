@@ -90,3 +90,8 @@ export interface HistoryMatchType {
 	avatar: string,
 	fullname: string
 }
+
+export interface NotificationType {
+	login: string,
+	msg: string
+}

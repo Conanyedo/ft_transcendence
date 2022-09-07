@@ -142,7 +142,7 @@ const ProfileFriendInfo: React.FC<{ id: string | undefined }> = (props) => {
 							</div>
 							<div className={classes.tier}>
 								Status:
-								<span className={classes.gold}>
+								<span className={classes.UserStatus}>
 									{" "}
 									{userInfo?.status}
 								</span>
