@@ -106,13 +106,10 @@ export const updateUserInfo = async (
 	const Image = currentImage!.files;
 	if (OldData.name !== Name)
 		params.append("fullname", nameRef.current!.value);
-	if (Image.length === 1)
+	if (Image.length === 1) {
 		params.append("avatar", Image![0]);
-	if (
-		OldData.image.includes("https://cdn.intra.42.fr") ||
-		OldData.image.includes("googleusercontent.com/")
-	)
-		params.append("isDefault", "true");
+		params.append("oldPath", OldData.image);
+	}
 	await axios
 		.post(`${baseUrl}user/editProfile`, params, {
 			headers: {
@@ -260,8 +257,11 @@ export const checkJWT = async (
 		});
 };
 
-
-export const requests = async (login: string, path: string, router: NextRouter) => {
+export const requests = async (
+	login: string,
+	path: string,
+	router: NextRouter
+) => {
 	const token = getCookie("jwt");
 	const params = new URLSearchParams();
 	params.append("login", login);
@@ -284,4 +284,4 @@ export const requests = async (login: string, path: string, router: NextRouter) 
 			}
 			return false;
 		});
-}
+};
