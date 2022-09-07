@@ -7,7 +7,7 @@ export const uploadConfig: MulterOptions = {
 		destination: '../client/public/uploads',
 		filename: (req, file, callback) => {
 			const user: userParitalDto = <userParitalDto>req.user;
-			const fileName = `${user.login}.jpg`
+			const fileName = `${user.login + Date.now()}.jpg`
 			callback(null, fileName);
 		}
 	})
