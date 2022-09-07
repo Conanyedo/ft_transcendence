@@ -11,7 +11,8 @@ import { ShowSettings, Toggle } from "../store/UI-Slice";
 import { useOutsideAlerter } from "../../customHooks/Functions";
 import { motion } from "framer-motion";
 import { fetchDATA, LogOut } from "../../customHooks/useFetchData";
-import { EmtyUser, UserTypeNew } from "../../Types/dataTypes";
+import { EmtyUser, NotificationType, UserTypeNew } from "../../Types/dataTypes";
+import { baseUrl } from "../../config/baseURL";
 
 const UserSection = () => {
 	const menu = useRef(null);
@@ -19,6 +20,9 @@ const UserSection = () => {
 	const notifMenu = useRef(null);
 	const dispatch = useAppDispatch();
 	const [dropDown, setDropDown] = useState(false);
+	const [notification, setnotification] = useState<
+		NotificationType[]
+	>();
 	const [isMounted, setIsMounted] = useState(false);
 	const [UserData, setUserData] = useState<UserTypeNew>(EmtyUser);
 	const ClickHandler = () => setDropDown((value) => !value);
@@ -38,10 +42,20 @@ const UserSection = () => {
 	useEffect(() => {
 		fetchDATA(setUserData, router, "user/header");
 		setIsMounted(true);
+		const owner = localStorage.getItem("owner");
+		const eventSource = new EventSource(
+			`${baseUrl}notification/notif/${owner}`
+		);
+		eventSource.onmessage = ({ data }) => {
+			console.log(data);
+			if (notification?.length)
+				setnotification((prev) => [data, ...prev!]);
+			else
+				setnotification([data]);
+		};
 	}, []);
 	useOutsideAlerter(notifMenu, setisOpen);
 	useOutsideAlerter(menu, setDropDown);
-
 	const LogOutHandler = () => LogOut(router);
 	return (
 		<>
@@ -52,7 +66,7 @@ const UserSection = () => {
 						ref={notifMenu}
 						onClick={clicknotifHandler}
 					>
-						<div className={classes.dot} />
+						{notification?.length && <div className={classes.dot} />}
 						<Image src={Notification} />
 						{isOpen && (
 							<motion.div
@@ -61,30 +75,24 @@ const UserSection = () => {
 								animate={{ scale: 1 }}
 								className={classes.ctnNotif}
 							>
-								<span className={classes.notif}>
-									<span className={classes.notifTitle}>
-										Friend Request
-									</span>
-									abdellah want to be your friend
-								</span>
-								<span className={classes.notif}>
-									<span className={classes.notifTitle}>
-										Challenge Request
-									</span>
-									abdellah Invite you to play pong game
-								</span>
-								<span className={classes.notif}>
-									<span className={classes.notifTitle}>
-										Friend Request
-									</span>
-									ayoub want to be your friend
-								</span>
-								<span className={classes.notif}>
-									<span className={classes.notifTitle}>
-										Challenge Request
-									</span>
-									younes Invite you to play pong game
-								</span>
+								{notification?.length &&
+									notification?.map((notif) => (
+										<span className={classes.notif}>
+											<span
+												className={classes.notifTitle}
+											>
+												{notif?.msg === 'Request' ? "Friend Request" : 'Game Challenge'}
+											</span>
+											{notif?.login}
+											{notif?.msg === "Request"
+												? " want to be your friend"
+												: " invited you to play pong game"}
+										</span>
+									)) || <span
+									className={classes.notifTitle} style={{ fontSize: '1.4rem', padding: '.5rem' }}
+								>
+									No Notification
+								</span>}
 							</motion.div>
 						)}
 					</div>
