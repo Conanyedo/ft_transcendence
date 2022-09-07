@@ -140,6 +140,7 @@
     display: flex;
     gap: 24px;
     align-items: center;
+    cursor: pointer;
 }
 
 .chatUsername {
@@ -861,10 +862,17 @@
 .members>div {
     display: flex;
     align-items: center;
-    gap: 14px;
+    justify-content: space-between;
     color: #D9D9D9;
     font-size: 16px;
     font-weight: 500;
+    width: 100%;
+}
+
+.membersAvtr {
+    display: flex;
+    gap: 14px;
+    align-items: center;
 }
 
 .members>div>span {
