@@ -172,11 +172,12 @@ export class UserService {
 		const users: User[] = await this.userRepository
 			.createQueryBuilder('users')
 			.select(['users.login', 'users.fullname', 'users.avatar'])
-			.where(`LOWER(users.fullname) LIKE '%${search}%'`)
+			.where(`LOWER(users.fullname) LIKE '%${search}%' AND users.login != :login`, { login: login })
 			.getMany();
 		const usersList = await Promise.all(users.map(async (user) => {
 			const relation = await this.friendshipService.getRelation(login, user.login);
-			return { ...user, relation }
+			if (relation !== 'blocked')
+				return { ...user, relation }
 		}))
 		return [...usersList];
 	}
