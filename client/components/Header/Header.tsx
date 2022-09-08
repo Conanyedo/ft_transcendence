@@ -24,20 +24,19 @@ const Notif: React.FC = () => {
 	};
 	useOutsideAlerter(notifMenu, setisOpen);
 	useEffect(() => {
-		const owner = localStorage.getItem("owner");
-		const eventSource = new EventSource(
-			`${baseUrl}notification/notif/${owner}`
-		);
-		eventSource.onmessage = ({ data }) => {
-			let jsonData = JSON.parse(data);
-			if (!jsonData.length || len === jsonData.length) return;
-			console.log('loop');
-			len = jsonData.length;
-			jsonData = jsonData.reverse()
-			setnotification(jsonData);
-		};
+		// const owner = localStorage.getItem("owner");
+		// const eventSource = new EventSource(
+		// 	`${baseUrl}notification/notif/${owner}`
+		// );
+		// eventSource.onmessage = ({ data }) => {
+		// 	let jsonData = JSON.parse(data);
+		// 	if (!jsonData.length || len === jsonData.length) return;
+		// 	console.log('loop');
+		// 	len = jsonData.length;
+		// 	jsonData = jsonData.reverse()
+		// 	setnotification(jsonData);
+		// };
 	}, []);
-	console.log(notification);
 	return (
 		<div
 			className={classes.NotifIcon}
