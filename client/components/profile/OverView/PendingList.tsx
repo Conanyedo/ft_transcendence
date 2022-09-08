@@ -4,6 +4,7 @@ import { UserTypeNew } from "../../../Types/dataTypes";
 import { useRouter } from "next/router";
 import { fetchDATA, requests } from "../../../customHooks/useFetchData";
 import LoadingElm from "../../loading/Loading_elm";
+import { getImageBySize } from "../../../customHooks/Functions";
 
 class types extends UserTypeNew {
 	refresh: any
@@ -20,11 +21,12 @@ const Pendingfriend: React.FC<types> = (props) => {
 		await requests(props.login, "friendship/refuseRequest", router);
 		props.refresh();
 	};
+	const pathImage = getImageBySize(props.avatar, 70);
 	return (
 		<div className={classes.friend}>
 			<div className={classes.Avatar_name} onClick={Clickhandler}>
 				<div className={classes.avatar}>
-					<img src={props.avatar} />
+					<img src={pathImage} />
 				</div>
 				<div className={classes.friendName}>{props.fullname}</div>
 			</div>

@@ -5,7 +5,7 @@ import Router, { useRouter } from "next/router";
 
 import Message from "../../../public/ChatIcon.svg";
 import Options from "../../../public/LeaderBoard/Options.svg";
-import { useOutsideAlerter } from "../../../customHooks/Functions";
+import { getImageBySize, useOutsideAlerter } from "../../../customHooks/Functions";
 import { fetchDATA, requests } from "../../../customHooks/useFetchData";
 import { UserTypeNew } from "../../../Types/dataTypes";
 import LoadingElm from "../../loading/Loading_elm";
@@ -30,12 +30,12 @@ const Friend: React.FC<types> = (props) => {
 	}
 	const goToChat = () => Router.push("/chat/" + props.login);
 	useOutsideAlerter(wrapperRef, setoptionTaggle);
-	
+	const pathImage = getImageBySize(props.avatar, 70);
 	return (
 		<div className={classes.friend}>
 			<div className={classes.Avatar_name}>
 				<div className={classes.avatar}>
-					<img src={props.avatar} />
+					<img src={pathImage} />
 				</div>
 				<div
 					className={classes.friendName}
