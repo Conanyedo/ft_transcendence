@@ -55,3 +55,11 @@ export function getRankUser(GamePoint: number): rankObj {
 	else
 		return {rank: allRanks[4], color: '#BEB5B6', tier: unranked};
 }
+
+export function getImageBySize(path: string, size: number) {
+	if (path.includes('cdn.intra.42.fr') || path.includes('robohash.org/') || !path)
+		return path;
+	let tmppath = path.split('.');
+	const newPath = tmppath[0] + 'x' + size + '.jpg';
+	return newPath;
+}
