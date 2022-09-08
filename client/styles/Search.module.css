@@ -10,6 +10,7 @@
 	padding-right: 0.667rem;
 	overflow-y: auto;
 	scrollbar-color: #2B2B2D #3A3A3C;
+	height: 93%;
 	max-height: 93%;
 	gap: 0.667rem;
 	display: flex;
@@ -34,7 +35,6 @@
 	display: flex;
 	flex-direction: row;
 	align-items: center;
-	/* flex: 60%; */
 }
 
 .avatar {

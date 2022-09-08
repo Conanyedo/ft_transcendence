@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import SearchUserList from "./SearchUser";
 import SearchChannelsList from "./SearchChannels";
 
-const SearchComponent = () => {
+const SearchComponent: React.FC<{value: string}> = (props) => {
 	const [overUsers, setOverUsers] = useState(true);
 
 	const showOverView = () => setOverUsers(true)
@@ -36,8 +36,8 @@ const SearchComponent = () => {
 					className={classesIndic}
 				></motion.div>
 			</div>
-            {overUsers && <SearchUserList />}
-            {!overUsers && <SearchChannelsList  />}
+            {overUsers && <SearchUserList {...props}/>}
+            {!overUsers && <SearchChannelsList />}
 		</div>
 	);
 };

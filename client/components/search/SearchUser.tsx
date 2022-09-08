@@ -90,25 +90,25 @@ const User: React.FC<types> = (props) => {
 	);
 };
 
-const SearchUserList: React.FC = () => {
+const SearchUserList: React.FC<{value: string}> = (props) => {
 	const router = useRouter();
 	const [searchData, setSearchData] = useState<UserTypeNew[]>([]);
 	const refresh = () =>
 		fetchDATA(
 			setSearchData,
 			router,
-			`search/users/?search=${router.query.search}`
+			`search/users/?search=${props.value}`
 		);
 	useEffect(() => {
 		fetchDATA(
 			setSearchData,
 			router,
-			`search/users/?search=${router.query.search}`
+			`search/users/?search=${props.value}`
 		);
 		return () => {
 			setSearchData([]);
 		};
-	}, []);
+	}, [props.value]);
 	return (
 		<>
 			<motion.div className={classes.SearchCTNIN}>
