@@ -9,6 +9,7 @@ import { typeOrmConfigAsync } from './config/typeorm.config';
 import { GameModule } from './game/game.module';
 import { FriendshipModule } from './friendship/friendship.module';
 import { NotificationModule } from './header/notification/notification.module';
+import { SearchModule } from './header/search/search.module';
 
 @Module({
 	imports: [UserModule, AuthModule, JwtAuthModule, Jwt2faAuthModule,
@@ -16,7 +17,8 @@ import { NotificationModule } from './header/notification/notification.module';
 		TypeOrmModule.forRootAsync(typeOrmConfigAsync),
 		GameModule,
 		FriendshipModule,
-		NotificationModule
+		NotificationModule,
+		SearchModule
 	],
 })
 export class AppModule { }
