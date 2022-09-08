@@ -10,7 +10,7 @@ import Chart from "../../chart/chartProgress";
 import { motion } from "framer-motion";
 import { useRouter } from "next/router";
 import { fetchDATA } from "../../../customHooks/useFetchData";
-import { getRankUser } from "../../../customHooks/Functions";
+import { getImageBySize, getRankUser } from "../../../customHooks/Functions";
 
 const ElmRank: React.FC<matchDataType> = (props) => {
 	const avatar =
@@ -28,6 +28,7 @@ const ElmRank: React.FC<matchDataType> = (props) => {
 	const tier: rankObj = getRankUser(props.GP);
 	let winRatio = Math.floor((props.Win / props.games) * 100);
 	winRatio = (winRatio) ? winRatio : 0;
+	const pathImage = getImageBySize(props.avatar, 70);
 	return (
 		<div className={classes.tableElments}>
 			<div className={classes.Rank}>
@@ -41,7 +42,7 @@ const ElmRank: React.FC<matchDataType> = (props) => {
 				onClick={Clickhandler}
 			>
 				<div className={classes.profileUser}>
-					<img src={props.avatar} />
+					<img src={pathImage} />
 				</div>
 				{props.fullName}
 			</div>

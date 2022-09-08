@@ -8,7 +8,7 @@ import Router, { useRouter } from "next/router";
 import { useAppDispatch } from "../store/hooks";
 
 import { ShowSettings, Toggle } from "../store/UI-Slice";
-import { useOutsideAlerter } from "../../customHooks/Functions";
+import { getImageBySize, useOutsideAlerter } from "../../customHooks/Functions";
 import { motion } from "framer-motion";
 import { fetchDATA, LogOut } from "../../customHooks/useFetchData";
 import { EmtyUser, NotificationType, UserTypeNew } from "../../Types/dataTypes";
@@ -54,7 +54,6 @@ const Notif: React.FC = () => {
 				>
 					{(notification &&
 						notification?.map((notif) => {
-							console.log('hna ', notif);
 							return  <span className={classes.notif} key={Math.random()} onClick={() => Router.push('/profile/' + notif?.login)}>
 								<span className={classes.notifTitle}>
 									{notif?.msg === "Request"
@@ -106,6 +105,7 @@ const UserSection = () => {
 	}, []);
 	useOutsideAlerter(menu, setDropDown);
 	const LogOutHandler = () => LogOut(router);
+	const pathImage = getImageBySize(UserData?.avatar, 70);
 	return (
 		<>
 			{isMounted && (
@@ -116,7 +116,7 @@ const UserSection = () => {
 						onClick={ClickHandler}
 					>
 						<img
-							src={UserData?.avatar}
+							src={pathImage}
 							className={classes.avatar}
 						/>
 						<p className={classes.userName}>{UserData?.fullname}</p>

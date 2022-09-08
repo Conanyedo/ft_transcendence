@@ -7,7 +7,7 @@ import { Toggle } from "../store/UI-Slice";
 import { EmtyUser, rankObj, UserTypeNew } from "../../Types/dataTypes";
 import { useRouter } from "next/router";
 import { fetchDATA } from "../../customHooks/useFetchData";
-import { getRankUser } from "../../customHooks/Functions";
+import { getImageBySize, getRankUser } from "../../customHooks/Functions";
 
 const ProfileInfo: React.FC = () => {
 	const [user, setUser] = useState<UserTypeNew>(EmtyUser);
@@ -25,6 +25,7 @@ const ProfileInfo: React.FC = () => {
 	const tier: rankObj = getRankUser(user?.stats.GP as number);
 	if (user?.login !== '')
 		localStorage.setItem("owner", user?.login);
+	const pathImage = getImageBySize(user?.avatar, 220);
 	return (
 		<div className={`${classes.profile} `}>
 			<div className={classes.editBtn}>
@@ -38,7 +39,7 @@ const ProfileInfo: React.FC = () => {
 				<div className={classes.avatar}>
 					<img
 						alt={user?.fullname}
-						src={(user) ? user.avatar: '#'}
+						src={pathImage}
 					/>
 				</div>
 				<div className={classes.profileSection}>

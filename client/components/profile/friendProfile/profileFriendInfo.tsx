@@ -11,7 +11,7 @@ import {
 	PendingButton,
 	RequestButton,
 } from "../../../components/buttons";
-import { getRankUser, useOutsideAlerter } from "../../../customHooks/Functions";
+import { getImageBySize, getRankUser, useOutsideAlerter } from "../../../customHooks/Functions";
 import { EmtyUser, rankObj, UserTypeNew } from "../../../Types/dataTypes";
 import { fetchDATA, requests } from "../../../customHooks/useFetchData";
 import LoadingElm from "../../loading/Loading_elm";
@@ -114,6 +114,7 @@ const ProfileFriendInfo: React.FC<{ id: string | undefined }> = (props) => {
 	);
 	const lvlP = (userInfo?.stats.XP % 1000) / 10;
 	const tier: rankObj = getRankUser(userInfo?.stats.GP);
+	const pathImage = getImageBySize(userInfo?.avatar, 220);
 	return (
 		<>
 			{isMounted && (
@@ -125,7 +126,7 @@ const ProfileFriendInfo: React.FC<{ id: string | undefined }> = (props) => {
 					/>
 					<div className={classes.profileInfo}>
 						<div className={classes.avatar}>
-							{userInfo && <img src={userInfo?.avatar} />}
+							{userInfo && <img src={pathImage} />}
 						</div>
 						<div className={classes.profileSection}>
 							<div className={classes.nameFriend}>
