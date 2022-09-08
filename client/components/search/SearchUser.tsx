@@ -123,6 +123,8 @@ const SearchUserList: React.FC<{value: string}> = (props) => {
 								/>
 							);
 					})}
+					{!searchData.length && <div className={classes.userNotFound}>couldn't find anyone with '{props.value}'</div>}
+					
 			</motion.div>
 		</>
 	);

@@ -444,6 +444,20 @@
 	line-height: 19px;
 }
 
+.userNotFound {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+	color: #758293;
+	font-family: 'Inter';
+	font-style: normal;
+	font-weight: 500;
+	font-size: 2rem;
+	line-height: 15px;
+	height: 100%;
+}
+
 @media screen and (max-width:800px) {
 	.Channeltype {
 		display: none;
