@@ -9,16 +9,16 @@ export class NotificationController {
 
 	constructor(private readonly notifService: NotificationService) { }
 
-	@Get()
-	index(@Res() response: Response) {
-		response
-			.type('text/html')
-			.send(readFileSync(join(__dirname, 'index.html')).toString());
-	}
+	// @Get()
+	// index(@Res() response: Response) {
+	// 	response
+	// 		.type('text/html')
+	// 		.send(readFileSync(join(__dirname, 'index.html')).toString());
+	// }
 
-	@Sse('notif/:login')
-	async sse(@Param('login') login: string) {
-		return await this.notifService.getNotif(login);
-	}
+	// @Sse('notif/:login')
+	// async sse(@Param('login') login: string) {
+	// 	return await this.notifService.getNotif(login);
+	// }
 
 }

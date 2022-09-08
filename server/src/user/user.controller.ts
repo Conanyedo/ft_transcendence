@@ -5,9 +5,6 @@ import { JwtAuthGuard } from '../2fa-jwt/jwt/jwt-auth.guard';
 import { User } from './user.decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { uploadConfig } from 'src/config/upload.config';
-// import fs from 'fs';
-const fs = require('fs')
-// import image from '../../../client/public/uploads/'
 
 @Controller('user')
 export class UserController {
@@ -18,9 +15,7 @@ export class UserController {
 	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(FileInterceptor('avatar', uploadConfig))
 	async editProfile(@User() user: userParitalDto, @UploadedFile() avatar: Express.Multer.File, @Body('fullname') fullname: string, @Body('oldPath') oldPath: string) {
-		if (oldPath)
-			fs.unlink(`../client/public${oldPath}`, (err) => {});
-		return await this.userService.editProfile(user.id, fullname, avatar?.filename);
+		return await this.userService.editProfile(user.id, fullname, avatar?.filename, oldPath);
 	}
 
 	@Get('/header')
