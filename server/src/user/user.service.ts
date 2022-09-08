@@ -49,7 +49,8 @@ export class UserService {
 		if (fullname)
 			await this.setName(id, fullname);
 		if (oldPath) {
-			let smallSize = oldPath.slice(0, oldPath.indexOf('.jpg'));
+			let smallSize = oldPath.split('/').pop();
+			smallSize = smallSize.slice(0, smallSize.indexOf('.jpg'));
 			fs.unlink(`../client/public/uploads/${smallSize}x70.jpg`, (err) => {});
 			fs.unlink(`../client/public/uploads/${smallSize}x220.jpg`, (err) => {});
 		}
