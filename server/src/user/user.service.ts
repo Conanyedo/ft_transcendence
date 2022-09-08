@@ -51,16 +51,16 @@ export class UserService {
 		if (oldPath) {
 			let smallSize = oldPath.split('/').pop();
 			smallSize = smallSize.slice(0, smallSize.indexOf('.jpg'));
-			fs.unlink(`../client/public/uploads/${smallSize}x70.jpg`, (err) => {});
-			fs.unlink(`../client/public/uploads/${smallSize}x220.jpg`, (err) => {});
+			fs.unlink(`../client/public/uploads/${smallSize}x70.jpg`, (err) => { });
+			fs.unlink(`../client/public/uploads/${smallSize}x220.jpg`, (err) => { });
 		}
 		if (avatar) {
 			await this.setAvatar(id, `/uploads/${avatar}`);
 			const image = await Jimp.read(`../client/public/uploads/${avatar}`);
 			const resizeName = avatar.slice(0, avatar.indexOf('.jpg'));
-			image.resize(220,220).write(`../client/public/uploads/${resizeName}x220.jpg`);
-			image.resize(70,70).write(`../client/public/uploads/${resizeName}x70.jpg`);
-			fs.unlink(`../client/public/uploads/${avatar}`, (err) => {});
+			image.resize(220, 220).write(`../client/public/uploads/${resizeName}x220.jpg`);
+			image.resize(70, 70).write(`../client/public/uploads/${resizeName}x70.jpg`);
+			fs.unlink(`../client/public/uploads/${avatar}`, (err) => { });
 		}
 	}
 
@@ -165,6 +165,20 @@ export class UserService {
 			return { ...user, relation }
 		}))
 		return [...leaderBoard];
+	}
+
+	async searchUsers(login: string, search: string) {
+		search = search.toLowerCase();
+		const users: User[] = await this.userRepository
+			.createQueryBuilder('users')
+			.select(['users.login', 'users.fullname', 'users.avatar'])
+			.where(`LOWER(users.fullname) LIKE '%${search}%'`)
+			.getMany();
+		const usersList = await Promise.all(users.map(async (user) => {
+			const relation = await this.friendshipService.getRelation(login, user.login);
+			return { ...user, relation }
+		}))
+		return [...usersList];
 	}
 
 	async getOpponent(login: string) {
