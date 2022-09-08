@@ -648,7 +648,7 @@
     height: fit-content;
     overflow-y: auto;
     max-height: 67px;
-    width: 100%;
+    max-width: 100%;
 }
 
 .usrsInpt::-webkit-scrollbar {

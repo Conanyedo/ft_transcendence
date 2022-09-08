@@ -6,6 +6,7 @@ import { useFormik } from "formik"
 import { UsersModalInput } from "@components/Modal/index"
 import { useState } from "react"
 import Avatar from "@public/profile.jpg"
+import { filterUsers, SuggestedUsr, addUsrToChannel, removeUsrFromChannel, } from "@components/Modal/utils"
 
 const Input = (props: { title: string, handleChange: any, value: any, name: string }) => {
     return (<div className={`${Styles.inputContainer}`}>
@@ -14,16 +15,19 @@ const Input = (props: { title: string, handleChange: any, value: any, name: stri
     </div>)
 }
 
+const initialUsrState = [{ id: 0, imgSrc: Avatar, firstName: "Youness", lastName: "Santir", status: "Online" },
+{ id: 1, imgSrc: Avatar, firstName: "Youness", lastName: "Crew", status: "In Game" },
+{ id: 2, imgSrc: Avatar, firstName: "Ikram", lastName: "Kharbouch", status: "Offline" },]
+
 export const MembersModal = (props: { setShowSetModal: any, showSetModal: any }) => {
 
-    const [users, setUsers] = useState([{ id: 0, imgSrc: Avatar, firstName: "Youness", lastName: "Santir", status: "Online" },
-    { id: 1, imgSrc: Avatar, firstName: "Youness", lastName: "Crew", status: "In Game" },
-    { id: 2, imgSrc: Avatar, firstName: "Ikram", lastName: "Kharbouch", status: "Offline" },]);
+    const [users, setUsers] = useState(initialUsrState);
+    const [showDrpdown, setshowDrpdown] = useState(false);
+    const [usrTags, setUsrTags] = useState<Array<string>>([]);
 
     const formik = useFormik({
         initialValues: {
-            members: [],
-            roles: [],
+            member: "",
         },
         onSubmit: values => {
             console.log(values);
@@ -31,8 +35,20 @@ export const MembersModal = (props: { setShowSetModal: any, showSetModal: any })
     });
 
     const removeUser = () => {
-        console.log("remoe user here");
+        console.log("remove user here");
     }
+
+    const handleOnChange = (event: any) => {
+        let value = event.target.value;
+
+        formik.setFieldValue("member", value);
+
+        console.log(formik.values.member);
+
+        // Filter values here
+        filterUsers(value, setUsers, setshowDrpdown, initialUsrState);
+
+    };
 
     return (<>
         {props.showSetModal && <><div style={{ display: props.showSetModal ? "block" : "none" }} className={Styles.grayBg}>&nbsp;</div>
@@ -43,10 +59,12 @@ export const MembersModal = (props: { setShowSetModal: any, showSetModal: any })
                 </div>
                 <form className={Styles.form} onSubmit={formik.handleSubmit}>
 
-                    <Input title="Select Members" name="members" handleChange={formik.handleChange} value={formik.values.members} />
+                    {/* <Input title="Select Members" name="members" handleChange={formik.handleChange} value={formik.values.members} /> */}
 
-                    <UsersModalInput UsersArray={users} setUsersArray={setUsers} removeUser={removeUser} handleChange={formik.handleChange} value={formik.values.members} />
-
+                    <UsersModalInput UsersArray={usrTags} setUsersArray={setUsrTags} removeUser={removeUser} handleChange={formik.handleChange} value={formik.values.member} />
+                    {showDrpdown && <div className={Styles.dropMembers}>
+                        {users.map((usr, i) => <SuggestedUsr key={i} user={usr} userStatus={true} addUsrToChannel={addUsrToChannel} removeUsrFromChannel={removeUsrFromChannel} setUsrTags={setUsrTags} setshowDropdown={setshowDrpdown} usrTags={usrTags} setValue={formik.setFieldValue} />)}
+                    </div>}
                     <button type="button">Create</button>
                 </form>
             </motion.div></>}

@@ -66,7 +66,9 @@ export function SuggestedUsr(props: { user: chatUser, userStatus: boolean, addUs
     </div>)
 }
 
-export function UsrTag(props: { fullname: string, removeTag: any, id: number, usrTags: Array<string>, setUsrTags: any }) {
+export function UsrTag(props: { fullname: string, removeTag: any, id: number, usrTags: any, setUsrTags: any }) {
+
+    console.log(props.usrTags);
     return (
         <div className={Styles.usrTag} id={props.id.toString()}>
             {props.fullname}

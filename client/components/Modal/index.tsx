@@ -18,8 +18,12 @@ const initialUsrState = [{ id: 0, imgSrc: Avatar, firstName: "Youness", lastName
 { id: 2, imgSrc: Avatar, firstName: "Ikram", lastName: "Kharbouch", status: "Offline" },];
 
 export const UsersModalInput = (props: { UsersArray: any, setUsersArray: any, removeUser: any, handleChange: any, value: any, }) => {
+
+    // Render an array of objects
+    const enteredTags = props.UsersArray.map((element: any, i: number) => {<UsrTag key={i} fullname={element} removeTag={removeTag} id={i} usrTags={props.UsersArray} setUsrTags={props.setUsersArray} />});
+
     return (<div className={Styles.usrsInpt}>
-        {props.UsersArray.map((tag: any, i: any) => <UsrTag key={i} fullname={tag} removeTag={removeTag} id={i} usrTags={props.UsersArray} setUsrTags={props.setUsersArray} />)}
+        {enteredTags}
         {(props.UsersArray.length < 10) && <input name="member" type="text" onChange={props.handleChange} value={props.value} />}
     </div>)
 }
