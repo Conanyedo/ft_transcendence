@@ -96,7 +96,7 @@ export class FriendshipService {
 		friendship.friend = friend;
 		friendship.relation = userRelation.REQUESTED;
 		this.friendshipRepository.save(friendship);
-		this.notifService.addNotif(user, friend);
+		this.notifService.addFriendNotif(user, friend);
 	}
 
 	async unfriend(user: string, friend: string) {
