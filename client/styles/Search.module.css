@@ -388,6 +388,8 @@
 	width: 5.333rem;
 	height: 5.333rem;
 	margin-right: 1.6rem;
+	border-radius: 5px;
+	overflow: hidden;
 }
 
 .ChannelName {
