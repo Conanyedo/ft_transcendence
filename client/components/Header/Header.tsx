@@ -13,29 +13,24 @@ import { motion } from "framer-motion";
 import { fetchDATA, LogOut } from "../../customHooks/useFetchData";
 import { EmtyUser, NotificationType, UserTypeNew } from "../../Types/dataTypes";
 import { baseUrl } from "../../config/baseURL";
+import { getCookie } from "cookies-next";
+import socket_notif from "../../config/socketNotif";
 
 let len = 0;
 const Notif: React.FC = () => {
 	const [notification, setnotification] = useState<NotificationType[] | null>(null);
 	const [isOpen, setisOpen] = useState(false);
 	const notifMenu = useRef(null);
+	const token = getCookie("jwt");
 	const clicknotifHandler = () => {
 		setisOpen((value) => !value);
 	};
 	useOutsideAlerter(notifMenu, setisOpen);
 	useEffect(() => {
-		// const owner = localStorage.getItem("owner");
-		// const eventSource = new EventSource(
-		// 	`${baseUrl}notification/notif/${owner}`
-		// );
-		// eventSource.onmessage = ({ data }) => {
-		// 	let jsonData = JSON.parse(data);
-		// 	if (!jsonData.length || len === jsonData.length) return;
-		// 	console.log('loop');
-		// 	len = jsonData.length;
-		// 	jsonData = jsonData.reverse()
-		// 	setnotification(jsonData);
-		// };
+		socket_notif.emit('getNotif');
+		socket_notif.on("Notif", (data) => {
+			setnotification(data);
+		});
 	}, []);
 	return (
 		<div

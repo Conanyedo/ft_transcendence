@@ -10,6 +10,7 @@ import { requests } from "../customHooks/useFetchData";
 import { NextRouter } from "next/router";
 import { useRef, useState } from "react";
 import { useOutsideAlerter } from "../customHooks/Functions";
+import socket_notif from "../config/socketNotif";
 
 export const FriendButton: React.FC<{
 	login: string;
@@ -40,6 +41,7 @@ export const ADDButton: React.FC<{
 }> = (props) => {
 	const handler = async () => {
 		await requests(props.login, "friendship/addFriend", props.router);
+		socket_notif.emit('addFriend', props.login);
 		props.refresh();
 	};
 	return (
