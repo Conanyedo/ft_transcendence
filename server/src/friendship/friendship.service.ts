@@ -1,6 +1,5 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { NotificationService } from 'src/header/notification/notification.service';
 import { UserService } from 'src/user/user.service';
 import { Repository } from 'typeorm';
 import { friendDto } from './friendship.dto';
@@ -12,8 +11,7 @@ export class FriendshipService {
 		@InjectRepository(Friendship)
 		private friendshipRepository: Repository<Friendship>,
 		@Inject(forwardRef(() => UserService))
-		private readonly userService: UserService,
-		private notifService: NotificationService
+		private readonly userService: UserService
 	) { }
 
 	async getRelation(user: string, friend: string) {
@@ -96,7 +94,6 @@ export class FriendshipService {
 		friendship.friend = friend;
 		friendship.relation = userRelation.REQUESTED;
 		this.friendshipRepository.save(friendship);
-		this.notifService.addFriendNotif(user, friend);
 	}
 
 	async unfriend(user: string, friend: string) {
