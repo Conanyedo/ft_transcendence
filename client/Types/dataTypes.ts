@@ -93,5 +93,34 @@ export interface HistoryMatchType {
 
 export interface NotificationType {
 	login: string,
-	msg: string
+	msg: string,
+	read: boolean
+}
+
+
+export class GameDataType {
+	ball: {ballX: number, ballY: number};
+	paddleLeft: {paddleY: number};
+	paddleRight: {paddleY: number};
+	GameStatus: string
+	myScore: number;
+	otherScore: number;
+	widthPaddle: number;
+	HieghtPaddle: number;
+	canvasWidth: number;
+	canvasHieght: number;
+	ballRadius: number;
+	constructor(width: number, hieght: number) {
+		this.ball = {ballX: width / 2, ballY: hieght / 2};
+		this.HieghtPaddle = hieght / 8;
+		this.paddleLeft = {paddleY: hieght / 2 - this.HieghtPaddle / 2};
+		this.paddleRight = {paddleY: hieght / 2 - this.HieghtPaddle / 2};
+		this.GameStatus = '';
+		this.myScore = 0;
+		this.otherScore = 0;
+		this.canvasWidth = width;
+		this.canvasHieght = hieght;
+		this.widthPaddle = 10;
+		this.ballRadius = 10;
+	}
 }
