@@ -2,15 +2,11 @@ import { UseGuards } from "@nestjs/common";
 import { ConnectedSocket, MessageBody, OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, SubscribeMessage, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
 import { Server, Socket } from 'socket.io'
 import { NotificationService } from "./notification.service";
-import { Notification, notifMsg } from './notification.entity';
+import { notifMsg } from './notification.entity';
 import { User } from "src/user/user.decorator";
 import { WsJwtGuard } from "src/2fa-jwt/jwt/jwt-ws.guard";
 import { UserService } from "src/user/user.service";
 import { notificationDto } from "./notificatios.dto";
-
-class Online {
-	constructor(public socket: Socket, public login: string) { }
-}
 
 @WebSocketGateway({
 	cors: {
@@ -26,8 +22,6 @@ export class NotificationGateway implements OnGatewayConnection, OnGatewayDiscon
 
 	@WebSocketServer()
 	server: Server;
-
-	online: Online[] = [];
 
 	async handleConnection(@ConnectedSocket() client: Socket) {
 		console.log('Connected', client.id);
