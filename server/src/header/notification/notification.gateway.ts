@@ -5,44 +5,59 @@ import { NotificationService } from "./notification.service";
 import { Notification, notifMsg } from './notification.entity';
 import { User } from "src/user/user.decorator";
 import { WsJwtGuard } from "src/2fa-jwt/jwt/jwt-ws.guard";
+import { UserService } from "src/user/user.service";
+import { notificationDto } from "./notificatios.dto";
 
 class Online {
-	constructor(public socket: Socket, public login: string) {}
+	constructor(public socket: Socket, public login: string) { }
 }
 
-@WebSocketGateway()
+@WebSocketGateway({
+	cors: {
+		origin: '*'
+	}
+})
 export class NotificationGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
-	constructor(private notifService: NotificationService) {}
+	constructor(
+		private notifService: NotificationService,
+		private userService: UserService
+	) { }
 
 	@WebSocketServer()
 	server: Server;
 
 	online: Online[] = [];
 
-	handleConnection(client: Socket) {
-		console.log('Connection : ', client.id);
-		const payload = this.notifService.connectClient(client);
-		if (payload)
-			this.online.push(new Online(client, payload.login));
+	async handleConnection(client: Socket) {
+		console.log('Connected', client.id);
+		this.notifService.connectClient(client);
 	}
 
-	handleDisconnect(client: any) {
-		this.online = this.online.filter((user) => user.socket !== client)
+	async handleDisconnect(client: Socket) {
 		console.log('Disconneted');
+		this.notifService.disconnectClient(client);
 	}
 
 	@UseGuards(WsJwtGuard)
 	@SubscribeMessage('addFriend')
-	addFriend(@User('login') login: string, @MessageBody() data: string) {
-		console.log('login: ', login);
-		console.log('friend: ', data);
-		// const client = this.online.find((el) => el.login === data).socket;
-		// client.emit('Notif', { login: login, msg: notifMsg.INVITATION });
+	async sendNotif(@User('login') login: string, @MessageBody() friend: string) {
+		await this.notifService.saveNofit({ from: login, to: friend, read: false, msg: notifMsg.INVITATION });
+		await this.notifService.sendNotif(this.server, friend);
 	}
 
-	// @SubscribeMessage('getNotifs')
-	// getNotifs(@MessageBody() data) {
-	// 	this.server.emit(`${data.to}`, { login: data.from, msg: data.msg });
-	// }
+	@UseGuards(WsJwtGuard)
+	@SubscribeMessage('getNotif')
+	async getNotifs(@User('login') login: string, @User('socket') client: Socket) {
+		const notifs: notificationDto[] = await this.notifService.getNotifs(login);
+		this.server.to(client.id).emit('Notif', notifs);
+	}
+
+	@UseGuards(WsJwtGuard)
+	@SubscribeMessage('allRead')
+	async setRead(@User('login') login: string, @User('socket') client: Socket) {
+		await this.notifService.setRead(login);
+		const notifs: notificationDto[] = await this.notifService.getNotifs(login);
+		this.server.to(client.id).emit('Notif', notifs);
+	}
 }
