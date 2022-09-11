@@ -16,7 +16,8 @@ export class WsJwtGuard implements CanActivate {
 			let token: string = client.handshake?.headers?.authorization;
 			token = token.split(' ')[1];
 			const payload = this.jwtService.verify(token);
-			context.switchToHttp().getRequest().user = { id: payload.id, login: payload.login, socket: client };
+			context.switchToHttp().getRequest().user = { id: payload.id, login: payload.login };
+			context.switchToWs();
 			return true;
 		} catch (err) {
 			throw new WsException(err.message);
