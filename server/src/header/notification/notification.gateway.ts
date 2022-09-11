@@ -1,5 +1,5 @@
 import { UseGuards } from "@nestjs/common";
-import { MessageBody, OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, SubscribeMessage, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
+import { ConnectedSocket, MessageBody, OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, SubscribeMessage, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
 import { Server, Socket } from 'socket.io'
 import { NotificationService } from "./notification.service";
 import { Notification, notifMsg } from './notification.entity';
@@ -29,12 +29,12 @@ export class NotificationGateway implements OnGatewayConnection, OnGatewayDiscon
 
 	online: Online[] = [];
 
-	async handleConnection(client: Socket) {
+	async handleConnection(@ConnectedSocket() client: Socket) {
 		console.log('Connected', client.id);
 		this.notifService.connectClient(client);
 	}
 
-	async handleDisconnect(client: Socket) {
+	async handleDisconnect(@ConnectedSocket()client: Socket) {
 		console.log('Disconneted');
 		this.notifService.disconnectClient(client);
 	}
@@ -48,14 +48,14 @@ export class NotificationGateway implements OnGatewayConnection, OnGatewayDiscon
 
 	@UseGuards(WsJwtGuard)
 	@SubscribeMessage('getNotif')
-	async getNotifs(@User('login') login: string, @User('socket') client: Socket) {
+	async getNotifs(@User('login') login: string, @ConnectedSocket() client: Socket) {
 		const notifs: notificationDto[] = await this.notifService.getNotifs(login);
 		this.server.to(client.id).emit('Notif', notifs);
 	}
 
 	@UseGuards(WsJwtGuard)
 	@SubscribeMessage('allRead')
-	async setRead(@User('login') login: string, @User('socket') client: Socket) {
+	async setRead(@User('login') login: string, @ConnectedSocket() client: Socket) {
 		await this.notifService.setRead(login);
 		const notifs: notificationDto[] = await this.notifService.getNotifs(login);
 		this.server.to(client.id).emit('Notif', notifs);
