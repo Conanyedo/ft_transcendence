@@ -10,6 +10,7 @@ import { GameModule } from './game/game.module';
 import { FriendshipModule } from './friendship/friendship.module';
 import { NotificationModule } from './header/notification/notification.module';
 import { SearchModule } from './header/search/search.module';
+import { ChatModule } from './chat/chat.module';
 
 @Module({
 	imports: [UserModule, AuthModule, JwtAuthModule, Jwt2faAuthModule,
@@ -18,7 +19,8 @@ import { SearchModule } from './header/search/search.module';
 		GameModule,
 		FriendshipModule,
 		NotificationModule,
-		SearchModule
+		SearchModule,
+		ChatModule
 	],
 })
 export class AppModule { }
