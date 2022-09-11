@@ -20,9 +20,12 @@ export class User {
 
 	@Column()
 	avatar: string;
-
+	
 	@Column({ type: 'enum', enum: userStatus, default: userStatus.ONLINE })
 	status: userStatus;
+
+	@Column({ nullable: true })
+	socketId: string;
 
 	@Column({ default: false })
 	isAuthenticated: boolean;
