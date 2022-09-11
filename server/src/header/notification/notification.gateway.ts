@@ -16,8 +16,7 @@ import { notificationDto } from "./notificatios.dto";
 export class NotificationGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 	constructor(
-		private notifService: NotificationService,
-		private userService: UserService
+		private notifService: NotificationService
 	) { }
 
 	@WebSocketServer()
