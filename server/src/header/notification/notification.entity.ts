@@ -16,6 +16,9 @@ export class Notification {
 	@Column()
 	to: string;
 
+	@Column({ default: false })
+	read: boolean;
+
 	@Column({ type: 'enum', enum: notifMsg })
 	msg: notifMsg;
 }
