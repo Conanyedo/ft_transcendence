@@ -1,0 +1,302 @@
+.LivegamesContainer {
+    background-color: #242426;
+    border-radius: 25px;
+    width: 100%;
+    height: 95%;
+    padding: 2.667rem;
+}
+
+.TitleLiveGame {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 2.667rem;
+    line-height: 29px;
+    color: #C6E1FF;
+    margin-bottom: 4.889rem;
+}
+
+.listLiveGames {
+    width: 100%;
+    height: 93%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 1.111rem;
+}
+
+.liveGameContainer {
+    width: 100%;
+    max-width: 2050px;
+    background: #2C2C2E;
+    border-radius: 25px;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+}
+
+.TypeGame {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 2.222rem;
+    line-height: 24px;
+    color: #A0CEFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+.GameContent {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.UserSection {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 45%;
+}
+.UserSectionSecond {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 45%;
+}
+
+.vs {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 2.222rem;
+    line-height: 24px;
+    color: #c6e1ff80;
+    margin: 0 1rem;
+    width: 10%;
+    text-align: center;
+}
+
+.userNameAvatar {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    width: max-content;
+}
+
+
+.avatar {
+    overflow: hidden;
+    border-radius: 8px;
+    width: 6.111rem;
+    height: 6.111rem;
+    margin-right: 2.667rem;
+}
+
+.secondavatar {
+    overflow: hidden;
+    border-radius: 8px;
+    width: 6.111rem;
+    height: 6.111rem;
+    margin-left: 2.667rem;
+}
+
+.ScoreTier {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    gap: 2rem;
+}
+
+.tierContainer {
+    width: 4.444rem;
+    height: 4.444rem;
+    margin: 0 1rem;
+}
+
+.tierContainerSecond {
+    width: 4.444rem;
+    height: 4.444rem;
+    margin: 0 1rem;
+}
+
+.Score {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 2.667rem;
+    line-height: 29px;
+    color: #FFFFFF;
+    text-align: center;
+    padding: 0 1rem;
+}
+
+.secondUserName,
+.userName {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 2.222rem;
+    line-height: 24px;
+    color: #FFFFFF;
+    padding-right: 1rem;
+    /* width: max-content; */
+}
+
+.secondUserName {
+    padding-left: 1rem;
+    padding-right: 0;
+}
+
+.ButtonWatch {
+    position: absolute;
+    display: flex;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    z-index: 2;
+}
+
+.ButtonWatch:hover {
+    background-color: #2c2c2ee6;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 1;
+}
+
+.Button {
+    background-color: #2C2C2E;
+    padding: 2rem 3.111rem;
+    gap: 1.111rem;
+    border: 4px solid #409CFF;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.WatchGame {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 600;
+    font-size: 2.667rem;
+    line-height: 29px;
+    color: #409CFF;
+}
+
+
+.GameContainerOutside {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.GameContainerOutside>canvas {
+    max-width: 2050px;
+    width: 100%;
+    margin-top: 1.5rem;
+    border-radius: 10px;
+}
+
+
+
+@media only screen and (max-width: 1230px) {
+    .tierContainerSecond,
+    .tierContainer {
+        display: none;
+    }
+    .vs {
+        padding: 0;
+        margin: 0 .5rem;
+    }
+    .Button {
+        padding: 1rem;
+    }
+    .WatchGame,
+    .vs,
+    .Score {
+        font-size: 2.1rem;
+    }
+    .secondUserName,
+    .userName {
+        font-size: 1.7rem;
+        padding: 0;
+        margin: 0;
+        width: auto;
+    }
+    .avatar,
+    .secondavatar {
+        width: 5rem;
+        height: 5rem;
+    }
+    .avatar {
+        margin-right: .6rem;
+    }
+    .secondavatar {
+        margin-left: .6rem;
+    }
+}
+
+@media only screen and (max-width: 840px) {
+    .TypeGame {
+        font-size: 1.5rem;
+        margin-bottom: .5rem;
+    }
+    .WatchGame,
+    .vs,
+    .Score {
+        font-size: 1.4rem;
+        padding: 0;
+        margin: 0;
+    }
+    .vs {
+        margin: 0 1rem;
+    }
+    .Score {
+        margin: 0;
+    }
+    .secondUserName,
+    .userName {
+        font-size: 1.2rem;
+        padding: 0;
+        margin: 0;
+    }
+    .avatar,
+    .secondavatar {
+        width: 4rem;
+        height: 4rem;
+    }
+}
+
+@media only screen and (max-width: 500px) {
+    .secondUserName,
+    .userName {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 60%;
+        max-height: 2.5rem;
+        padding: 0;
+        margin: 0;
+    }
+}
