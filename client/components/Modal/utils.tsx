@@ -68,7 +68,6 @@ export function SuggestedUsr(props: { user: chatUser, userStatus: boolean, addUs
 
 export function UsrTag(props: { fullname: string, removeTag: any, id: number, usrTags: any, setUsrTags: any }) {
 
-    console.log(props.usrTags);
     return (
         <div className={Styles.usrTag} id={props.id.toString()}>
             {props.fullname}
@@ -88,7 +87,7 @@ export function removeUsrFromChannel() {
     console.log("removed");
 }
 
-export function filterUsers(value: string, setCloseUsrs:any, setshowDrpdown: any, initialUsrState: any ) {
+export function filterUsers(value: string, setCloseUsrs:any, setshowDrpdown: any, initialUsrState: any, setUsrTags: any ) {
 
     let upvalue = value.toUpperCase();
 

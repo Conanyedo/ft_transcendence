@@ -10,68 +10,85 @@ import sendArrow from "@public/send-arrow.svg";
 import arrowBack from "@public/arrow-back.svg";
 import { chatUser } from "@Types/dataTypes";
 import { ChatContext, ChatContextType } from "@contexts/chatContext";
-import { useContext, useState, useRef } from "react";
+import { useContext, useState, useRef, useEffect } from "react";
+import { scrollToBottom } from "@utils/chat";
+import { SettingsModal } from "@components/SettingsModal";
+import { MembersModal } from "@components/MembersModal";
+import Link from 'next/link'
+
 
 const Members = (props: { role: string, users: Array<Object> }) => {
+
+    const [dropdwn, setdropdwn] = useState(false);
+
+    const setRefs: any = useRef([]);
+    const MenuElement = () => {
+        return (<MenuDropdown content={["Dismiss Admin", "Remove Member"]} functions={[() => console.log("test"), () => console.log("test")]} />)
+    }
+
+    // {dropdwn && menus.map((Element:any, i:any) => <div key={i} ref={element => setRefs.current[i] = element}><Element /></div>)}
+
     return (<div className={Styles.members}>
         {props.role}
-        {props.users.map((user: any) => (<div>
+        {props.users.map((user: any, i: number) => (<div key={i}>
             <div className={Styles.membersAvtr}>
                 <Image src={user.avatar} width={40} height={40} />
                 <span>{user.fullName}</span>
             </div>
-            <MenuAsset />
+            <div onClick={() => setdropdwn(!dropdwn)}>
+                <MenuAsset />
+                <div style={{ display: dropdwn ? "block" : "none" }} ref={element => setRefs.current[i] = element}><MenuElement /></div>
+            </div>
         </div>))}
     </div>)
 }
 
-const Header = (props: {setShowSetModal: any}) => {
+const Header = (props: { setShowSetModal: any }) => {
     return (<div className={Styles.profileHeader}>
         <h1>Channel Profile</h1>
         <button onClick={() => props.setShowSetModal(true)}><Image src={addUser} width={18} height={18} />Add Member</button>
     </div>)
 }
 
-export const Profile = (props: {setShowSetModal: any}) => {
+export const Profile = (props: { setShowSetModal: any }) => {
 
     const owners = [{ fullName: "Ikram Kharbouch", avatar: Avatar }];
     const admins = [{ fullName: "Abdellah Belhachmi", avatar: Avatar }, { fullName: "Youness Bouddou", avatar: Avatar }]
     const members = [{ fullName: "Abdellah Belhachmi", avatar: Avatar }, { fullName: "Youness Bouddou", avatar: Avatar }, { fullName: "choaib abouelwafa", avatar: Avatar }, { fullName: "nounou lhilwa", avatar: Avatar }];
 
     return (<>
-        <Header setShowSetModal={props.setShowSetModal}/>
-        <Members role="Owner" users={owners} key="Owner"/>
-        <Members role="Admins" users={admins} key="Admins"/>
+        <Header setShowSetModal={props.setShowSetModal} />
+        <Members role="Owner" users={owners} key="Owner" />
+        <Members role="Admins" users={admins} key="Admins" />
         <Members role="Members" users={members} key="Members" />
     </>)
 }
 
 export const ChatLeft = () => {
-    
+
     // Setting some local state
-    const { lastUsers, setCurrentUser, setShowCnv, showCnv, setLastUsers, initialUsersState } = useContext(ChatContext) as ChatContextType;
+    const { lastUsers, setCurrentUser, setShowCnv, showCnv, setLastUsers, initialUsersState, chatUsersRefs, prevUser, setPrevUser } = useContext(ChatContext) as ChatContextType;
     const [show, setShow] = useState<boolean>(false);
     const [displayBlueIcon, setDisplayBlueIcon] = useState(false);
-    const [prevUser, setPrevUser] = useState<number>(0);
 
-    // setting the chat users refs
-    const chatUsersRefs: Array<HTMLDivElement> | any = useRef([]);
 
     // functions
-    function createChannel(channelName: string, password: string, usrLen: number, setShow: any) {
+    function createChannel(channelName: string, password: string, usrLen: number, setUsrTags: any, formik: any) {
 
         console.log(channelName);
         setShow(!show);
         const chatUser = { id: lastUsers.length, imgSrc: Avatar, channelName: channelName, status: usrLen === 10 ? "+" + usrLen + " Members" : usrLen + " Members" };
         setLastUsers([chatUser, ...lastUsers]);
-    
-        // select the current chat
-        setChatUser(lastUsers[0], chatUsersRefs, 0, setCurrentUser, setPrevUser, setShowCnv, prevUser);
-    }
 
-    // function filterChatUsers(e:any) {
-    //     console.log("filter chat users");
-    // }
+        // select the current chat
+        setChatUser(lastUsers[0], setShowCnv);
+
+        // reset the necessary fields
+        formik.setFieldValue("cName", "")
+        formik.setFieldValue("password", "")
+        formik.setFieldValue("member", "")
+        setUsrTags([]);
+    }
 
     return (<>
         <div className={`${Styles.chatLeft} ${showCnv ? Styles.hideUsers : ""}`}>
@@ -87,39 +104,55 @@ export const ChatLeft = () => {
                     <input type="Text" className={Styles.chatInput} placeholder="Search" onChange={(e) => filterChatUsers(e, lastUsers, setLastUsers, initialUsersState)} />
                 </div>
                 <div className={Styles.bottomSection}>
-                    {lastUsers.map((user: any, i: any) => <div key={i} ref={(element) => { chatUsersRefs.current[i] = element }} className={Styles.chatUser} onClick={() => setChatUser(user, chatUsersRefs, i, setCurrentUser, setPrevUser, setShowCnv, prevUser)}>
-                        <div className={Styles.avatarName}>
+                    {lastUsers.map((user: any, i: any) => <Link href={"/chat?id=" + i} key={i}><div key={i} ref={(element) => { chatUsersRefs.current[parseInt(i)] = element }} className={Styles.chatUser}>
+                         <div className={Styles.avatarName}>
                             <Image src={user.imgSrc} width={49.06} height={49} className={Styles.avatar} />
                             <div className={Styles.username}>{user.fullName} {user.channelName}</div>
                         </div>
                         <p className={Styles.status}>{user.status}</p>
-                    </div>)}
+                    </div></Link>)}
                 </div>
             </div>
         </div>
     </>)
 }
 
-export const ChatRight = (props: { setShowSetModal: any }) => {
+export const ChatRight = (props: { setShowSetModal: any, uid: number }) => {
 
-    const { currentUser, showCnv, setShowCnv, chatMsgs, setChatMsgs } = useContext(ChatContext) as ChatContextType;
+    const { lastUsers, showCnv, setShowCnv, chatMsgs, setChatMsgs, messagesEndRef } = useContext(ChatContext) as ChatContextType;
 
     // Setting some local state
     const [profile, setShowprofile] = useState(false);
     const [showMenuDropdown, setShowMenuDropdown] = useState(false);
     const [enteredMsg, setEnteredMsg] = useState("");
 
+    // Settings and members modal show state
+    const [showSetModal, setShowSetModal] = useState(false);
+    const [membersMdl, showMembersMdl] = useState(false);
+    const [currentUser, setCurrentUser] = useState(lastUsers[0]);
+
+
     // functions
     function showUsrMenu() {
-		setShowMenuDropdown(!showMenuDropdown);
-	}
+        setShowMenuDropdown(!showMenuDropdown);
+    }
 
     // refs
     const msgsDisplayDiv = useRef<any>();
-    const messagesEndRef: HTMLDivElement | any = useRef<HTMLDivElement>(null);
 
-    return (<div className={`${Styles.chatRight} ${showCnv ? Styles.displayChat : ""}`}>
-        <div className={Styles.rightContent}>
+    // UseEffect here
+    useEffect(() => {
+        scrollToBottom(messagesEndRef);
+        if (props.uid) {
+            setCurrentUser(lastUsers[props.uid]);
+        }
+            
+    }, [chatMsgs, currentUser, props.uid])
+
+    return (<div className={`${Styles.chatRight}`}>
+        <MembersModal showSetModal={membersMdl} setShowSetModal={showMembersMdl} />
+        <SettingsModal showSetModal={showSetModal} setShowSetModal={setShowSetModal} />
+        {currentUser && <div className={`${Styles.rightContent} ${showCnv ? Styles.displayChat : ""}`} >
             {currentUser && (<>
                 <div className={Styles.topDetails}>
                     <div className={Styles.flex}>
@@ -129,7 +162,7 @@ export const ChatRight = (props: { setShowSetModal: any }) => {
 
                         {profile && <div onClick={() => setShowprofile(false)}><BackArrow /></div>}
 
-                        <div onClick={currentUser?.channelName ? () => showProfile : () => null} className={Styles.flex}>
+                        <div onClick={currentUser?.channelName ? () => showProfile(profile, setShowprofile) : () => null} className={Styles.flex}>
                             <div className={Styles.avatarProps}>
                                 <Image src={currentUser?.imgSrc} width={76} height={76} className={Styles.avatar} />
                             </div>
@@ -141,11 +174,7 @@ export const ChatRight = (props: { setShowSetModal: any }) => {
 
                     </div>
                     <div className={Styles.menu} onClick={showUsrMenu}><MenuAsset />
-
-                        {showMenuDropdown && <div className={Styles.menuDropdown}>
-                            <div onClick={() => console.log("Settings modal should be shown here")}>Settings</div>
-                            <div>Leave Channel</div>
-                        </div>}
+                        {showMenuDropdown && <MenuDropdown content={["Settings", "Leave Channel"]} functions={[() => setShowSetModal(true), () => console.log("test")]} />}
                     </div>
 
                 </div>
@@ -165,10 +194,10 @@ export const ChatRight = (props: { setShowSetModal: any }) => {
                     </div>
                     <div className={Styles.sendDiv} style={{ gap: enteredMsg != "" ? "1.5rem" : "0" }}>
                         <div className={Styles.msgInput}>
-                            <input type="text" placeholder="message" value={enteredMsg} onChange={(e) => setEnteredMsg(e.target.value)} onKeyDown={(event) => setMsg(enteredMsg, event.keyCode, setChatMsgs, chatMsgs, setEnteredMsg)} />
+                            <input type="text" placeholder="message" value={enteredMsg} onChange={(e) => setEnteredMsg(e.target.value)} onKeyDown={(event) => setMsg(event, enteredMsg, setChatMsgs, chatMsgs, setEnteredMsg)} />
                             <div onClick={() => sendInvite} className={Styles.console}><GameIconAsset color="#D9D9D9" /></div>
                         </div>
-                        <div onClick={() => setMsg(enteredMsg, 13, setChatMsgs, chatMsgs as Object[], setEnteredMsg)} className={Styles.sendCtr}>{enteredMsg && <Image src={sendArrow} width={30} height={30} className={Styles.animatedBtn} />}</div>
+                        <div onClick={(e) => setMsg(event, enteredMsg, setChatMsgs, chatMsgs as Object[], setEnteredMsg)} className={Styles.sendCtr}>{enteredMsg && <Image src={sendArrow} width={30} height={30} className={Styles.animatedBtn} />}</div>
                     </div>
 
                 </div>}
@@ -178,19 +207,26 @@ export const ChatRight = (props: { setShowSetModal: any }) => {
                 <h1>Start a new conversation</h1>
             </div>)}
 
-        </div>
+        </div>}
     </div>)
 }
 
 export function InviteMsg(invitedUser: chatUser) {
-	return (<div className={Styles.inviteMsg}>
-		<div>
-			<Image src={invitedUser.imgSrc} width={38} height={38} className={Styles.inviteAvatar} />
-			<div>
-				{invitedUser.fullName}
-				<p>You invite them to play pong game</p>
-			</div>
-		</div>
-		<button className={Styles.inviteBtn}>Cancel Invitation</button>
-	</div>)
+    return (<div className={Styles.inviteMsg}>
+        <div>
+            <Image src={invitedUser.imgSrc} width={38} height={38} className={Styles.inviteAvatar} />
+            <div>
+                {invitedUser.fullName}
+                <p>You invite them to play pong game</p>
+            </div>
+        </div>
+        <button className={Styles.inviteBtn}>Cancel Invitation</button>
+    </div>)
+}
+
+export const MenuDropdown = (props: { content: Array<string>, functions: Array<any> }) => {
+
+    return (<div className={Styles.menuDropdown}>
+        {props.content.map((element, i) => <div key={i} onClick={props.functions[i]}>{element}</div>)}
+    </div>)
 }

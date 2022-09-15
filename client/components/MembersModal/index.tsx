@@ -43,12 +43,18 @@ export const MembersModal = (props: { setShowSetModal: any, showSetModal: any })
 
         formik.setFieldValue("member", value);
 
-        console.log(formik.values.member);
-
         // Filter values here
-        filterUsers(value, setUsers, setshowDrpdown, initialUsrState);
+        filterUsers(value, setUsers, setshowDrpdown, initialUsrState, setUsrTags);
 
     };
+
+    const addMember = () => {
+        props.setShowSetModal(false);
+        console.log("Member added");
+
+        formik.setFieldValue("member", "");
+        setUsrTags([]);
+    }
 
     return (<>
         {props.showSetModal && <><div style={{ display: props.showSetModal ? "block" : "none" }} className={Styles.grayBg}>&nbsp;</div>
@@ -61,11 +67,11 @@ export const MembersModal = (props: { setShowSetModal: any, showSetModal: any })
 
                     {/* <Input title="Select Members" name="members" handleChange={formik.handleChange} value={formik.values.members} /> */}
 
-                    <UsersModalInput UsersArray={usrTags} setUsersArray={setUsrTags} removeUser={removeUser} handleChange={formik.handleChange} value={formik.values.member} />
+                    <UsersModalInput UsersArray={usrTags} setUsersArray={setUsrTags} removeUser={removeUser} handleChange={handleOnChange} value={formik.values.member} />
                     {showDrpdown && <div className={Styles.dropMembers}>
                         {users.map((usr, i) => <SuggestedUsr key={i} user={usr} userStatus={true} addUsrToChannel={addUsrToChannel} removeUsrFromChannel={removeUsrFromChannel} setUsrTags={setUsrTags} setshowDropdown={setshowDrpdown} usrTags={usrTags} setValue={formik.setFieldValue} />)}
                     </div>}
-                    <button type="button">Create</button>
+                    <button type="button" onClick={addMember}>Create</button>
                 </form>
             </motion.div></>}
 

@@ -9,8 +9,9 @@ import Section from "../section";
 import Setting from "../Settings/settings";
 import ProfileInfoEdit from "../Settings/ProfileInfoEdit";
 import { useDispatch, useSelector } from "react-redux";
-import { Settings, Toggle, ToggleValue } from "../store/UI-Slice";
+import { Settings, Toggle, ToggleValue } from "../../store/UI-Slice";
 import { fetchDATA } from "../../customHooks/useFetchData";
+import { ChatProvider } from "@contexts/chatContext";
 
 type PropsType = {
 	children: JSX.Element;

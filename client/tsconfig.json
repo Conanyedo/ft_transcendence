@@ -9,7 +9,9 @@
       "@utils/*": ["utils/*"],
       "@public/*": ["public/*"],
       "@contexts/*": ["contexts/*"],
-      "@svg/*": ["svg/*"]
+      "@svg/*": ["svg/*"],
+      "@hooks/*": ["customHooks/*"],
+      "@store/*": ["store/*"]
     },
     "target": "es5",
     "lib": ["dom", "dom.iterable", "esnext"],

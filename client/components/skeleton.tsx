@@ -4,14 +4,14 @@ import SideNav from "./Header/sideNav";
 import classesNav from "../styles/sideNav.module.css";
 import { NextRouter, useRouter } from "next/router";
 import ProfileInfoEdit from "./Settings/ProfileInfoEdit";
-import { useAppDispatch, useAppSelector } from "./store/hooks";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
 import {
   HideErrorMsg,
   Settings,
   Toggle,
   ToggleErrorValue,
   ToggleValue,
-} from "./store/UI-Slice";
+} from "../store/UI-Slice";
 import Section from "./section";
 import classes from "../styles/Profile.module.css";
 import { getCookie } from "cookies-next";

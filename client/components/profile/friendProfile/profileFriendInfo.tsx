@@ -11,8 +11,8 @@ import {
 	PendingButton,
 } from "../../../pages/search";
 import { getRankUser, useOutsideAlerter } from "../../../customHooks/Functions";
-import { useAppDispatch } from "../../store/hooks";
-import { addFriend, RemoveFriend } from "../../store/userSlice";
+import { useAppDispatch } from "../../../store/hooks";
+import { addFriend, RemoveFriend } from "../../../store/userSlice";
 import { EmtyUser, UserTypeNew } from "../../../Types/dataTypes";
 import { fetchDATA } from "../../../customHooks/useFetchData";
 import LoadingElm from "../../loading/Loading_elm";

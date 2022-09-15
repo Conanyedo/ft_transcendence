@@ -62,7 +62,7 @@ const FriendProfileList = () => {
 		friendClass = classes.btnFriend;
 	};
 	const searchHandler = () => {
-		console.log(ref_input.current!["value"]);
+		
 	};
 	return (
 		<div className={classes.FriendCtn}>

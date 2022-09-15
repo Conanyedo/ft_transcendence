@@ -5,9 +5,9 @@ import Search from "../../public/SearchIcon.svg";
 import Notification from "../../public/Notification.svg";
 import DownArrow from "../../public/Caret down.svg";
 import { useRouter } from "next/router";
-import { useAppDispatch } from "../store/hooks";
+import { useAppDispatch } from "../../store/hooks";
 
-import { ShowSettings, Toggle } from "../store/UI-Slice";
+import { ShowSettings, Toggle } from "../../store/UI-Slice";
 import { useOutsideAlerter } from "../../customHooks/Functions";
 import { motion } from "framer-motion";
 import { fetchDATA, LogOut } from "../../customHooks/useFetchData";

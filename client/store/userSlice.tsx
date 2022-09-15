@@ -5,7 +5,7 @@ import ikrkharb from "../../public/Profils/ikrkharb.jpg";
 import abbelhac from "../../public/Profils/abbelhac.png";
 import ybouddou from "../../public/Profils/ybouddou.jpg";
 import aboulbaz from "../../public/Profils/aboulbaz.png";
-import { UserType } from "../../Types/dataTypes";
+import { UserType } from "../Types/dataTypes";
 
 // export interface UserType {
 // 	id: number,

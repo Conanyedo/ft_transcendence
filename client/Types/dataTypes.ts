@@ -78,7 +78,7 @@ export interface chatUser {
 	fullName?: string;
 	channelName?: string;
 	status: string
-  }
+}
 
 export interface chatMsg {
 	msgContent: string | JSX.Element, 

@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { createContext, useState, useEffect, SetStateAction } from "react";
+import React, { createContext, useState, useEffect, SetStateAction, useRef } from "react";
 import { chatMsg, chatUser } from "@Types/dataTypes"
 import Avatar from "@public/profile.jpg"
 
@@ -17,6 +17,10 @@ interface ChatContextType {
   setShowCnv: React.Dispatch<React.SetStateAction<boolean>>;
   chatMsgs: Array<chatMsg>;
   setChatMsgs: React.Dispatch<React.SetStateAction<chatMsg[]>>;
+  messagesEndRef: any;
+  chatUsersRefs: any;
+  prevUser: number;
+  setPrevUser: React.Dispatch<React.SetStateAction<number>>;
 }
 
 const ChatContext = createContext<ChatContextType | null>(null);
@@ -53,7 +57,7 @@ const ChatProvider = ({ children }: any) => {
 		{ id: 10, imgSrc: Avatar, fullName: "Oussama Oussama", status: "Offline" }
 	]);
   const [lastUsers, setLastUsers] = useState<Array<chatUser>>(initialUsersState);
-  const [currentUser, setCurrentUser] = useState<chatUser>();
+  const [currentUser, setCurrentUser] = useState<chatUser>(lastUsers[0]);
   const [showCnv, setShowCnv] = useState<boolean>(false);
   const [chatMsgs, setChatMsgs] = useState<Array<chatMsg>>([
 		{ msgContent: "Test1", time: "07:19 PM", type: "sender", name: "You" },
@@ -61,30 +65,18 @@ const ChatProvider = ({ children }: any) => {
 		{ msgContent: "Test3", time: "07:19 PM", type: "sender", name: "You" }
 	]);
 
-  // useEffect(() => {
-  //   async function fetchChatUsers() {
-  //     const { data } = await axios.get(
-  //       `http://localhost:7000/usersInitialState`
-  //     );
-  //     setLastUsers(data);
-  //     setInitialUsersState(data);
-  //     setCurrentUser(data[0]);
-  //   }
+  const messagesEndRef: any = useRef(null);
 
-  //   async function fetchChatMsgs() {
-  //     const { data } = await axios.get(
-  //       `http://localhost:7000/chatMsgs`
-  //     );
+  // setting the chat users refs
+  const chatUsersRefs: Array<HTMLDivElement> | any = useRef([]);
+  const [prevUser, setPrevUser] = useState<number>(0);
 
-  //     setChatMsgs(data);
-  //   }
-
-  //   fetchChatUsers();
-  //   fetchChatMsgs();
-  // }, [lastUsers, chatMsgs]);
+  useEffect(() => {
+    setCurrentUser(lastUsers[0]);
+  }, [lastUsers])
 
   return (
-    <ChatContext.Provider value={{ protectedChannel, setProtectedChannel, channelMode, setChannelMode, lastUsers, setLastUsers, initialUsersState, currentUser, setCurrentUser, showCnv, setShowCnv, chatMsgs, setChatMsgs }}>
+    <ChatContext.Provider value={{ protectedChannel, setProtectedChannel, channelMode, setChannelMode, lastUsers, setLastUsers, initialUsersState, currentUser, setCurrentUser, showCnv, setShowCnv, chatMsgs, setChatMsgs, messagesEndRef, chatUsersRefs, prevUser, setPrevUser }}>
       {children}
     </ChatContext.Provider>
   );

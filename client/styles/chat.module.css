@@ -230,11 +230,14 @@
     color: #D9D9D9;
     width: 100%;
     margin-right: 12px;
+    border: 0;
+    height: 1.5rem;
 }
 
 .msgInput>input:focus {
     outline: none;
 }
+
 .msgBox {
     display: flex;
     align-items: center;
@@ -249,7 +252,7 @@
     padding: 0.625rem 1.25rem;
     margin-top: 1.313rem;
     /* width: 40%; */
-    max-width: 27.063rem;
+    max-width: 45%;
     margin-bottom: 1rem;
     font-size: 1.333rem;
     color: #fff;
@@ -680,7 +683,8 @@
 .usrsInpt>input {
     background-color: inherit;
     color: #fff;
-    width: 100%;
+    max-width: fit-content;
+    min-width: fit-content;
 }
 
 .usrsInpt>input:focus, .modalbox>div>input:focus {
@@ -870,6 +874,22 @@
     width: 100%;
 }
 
+.members>div>div:nth-child(2)>svg {
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    
+}
+.members>div>div:nth-child(2) {
+    position: relative;
+}
+
+.members>div>div:nth-child(3) {
+    border: 1px solid red;
+    position: absolute;
+    right: 0;
+}
+
 .membersAvtr {
     display: flex;
     gap: 14px;
@@ -878,4 +898,10 @@
 
 .membersAvtr>span {
     border-radius: 8px;
+}
+
+.flexCenter {
+    display: flex;
+    text-align: center;
+    justify-content: center;
 }
