@@ -11,7 +11,7 @@ export class Ball {
 	public constructor() {
 		this.ballX = GameControlers.canvasW / 2;
 		this.ballY = GameControlers.canvasH / 2;
-		let der = Math.floor((Math.random() + 1) * -1)
+		let der = Math.floor(Math.random() * 2) + 1;
 		this.deltaX = (der > 0) ? 5 : -5;
 		this.deltaY = (der > 0) ? 5 : -5;
         this.ballSpeed = 0.5;
