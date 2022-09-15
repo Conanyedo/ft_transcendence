@@ -110,17 +110,43 @@ export class GameDataType {
 	canvasWidth: number;
 	canvasHieght: number;
 	ballRadius: number;
-	constructor(width: number, hieght: number) {
-		this.ball = {ballX: width / 2, ballY: hieght / 2};
-		this.HieghtPaddle = hieght / 8;
-		this.paddleLeft = {paddleY: hieght / 2 - this.HieghtPaddle / 2};
-		this.paddleRight = {paddleY: hieght / 2 - this.HieghtPaddle / 2};
+	constructor(width: number) {
+		this.canvasHieght = width / 2;
+		this.ball = {ballX: width / 2, ballY: this.canvasHieght / 2};
+		this.HieghtPaddle = this.canvasHieght / 8;
+		this.paddleLeft = {paddleY: this.canvasHieght / 2 - this.HieghtPaddle / 2};
+		this.paddleRight = {paddleY: this.canvasHieght / 2 - this.HieghtPaddle / 2};
 		this.GameStatus = '';
 		this.myScore = 0;
 		this.otherScore = 0;
 		this.canvasWidth = width;
-		this.canvasHieght = hieght;
-		this.widthPaddle = 10;
+		this.widthPaddle = 20.1;
 		this.ballRadius = 10;
+	}
+	setWidth(width: number) {
+		this.canvasWidth = width;
+		this.canvasHieght = width / 2;
+		this.ball = {ballX: width / 2, ballY: this.canvasHieght / 2};
+		this.HieghtPaddle = this.canvasHieght / 8;
+		this.paddleLeft = {paddleY: this.canvasHieght / 2 - this.HieghtPaddle / 2};
+		this.paddleRight = {paddleY: this.canvasHieght / 2 - this.HieghtPaddle / 2};
+	}
+}
+
+export class liveGamesType {
+    firstPlayer: string;
+    firstScore: number;
+    matchType: string;
+    secondPlayer: string;
+    secondScore: number;
+    gameId: string;
+	constructor() {
+		this.firstPlayer = '';
+		this.firstScore = 0;
+		this.matchType = '';
+		this.secondPlayer = '';
+		this.secondScore = 0;
+		this.gameId = '';
+		
 	}
 }

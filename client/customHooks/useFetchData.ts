@@ -3,6 +3,7 @@ import { CookieValueTypes, getCookie } from "cookies-next";
 import { NextRouter } from "next/router";
 import { Dispatch, SetStateAction } from "react";
 import { baseUrl, eraseCookie } from "../config/baseURL";
+import socket_notif from "../config/socketNotif";
 import { UserTypeNew } from "../Types/dataTypes";
 
 export const getQRcodeOrdisableCode = async (
@@ -86,7 +87,10 @@ export const LogOut = (route: NextRouter) => {
 			},
 			withCredentials: true,
 		})
-		.then(() => route.replace("/"))
+		.then(() => {
+			socket_notif.disconnect();
+			route.replace("/");
+		})
 		.catch((err) => {
 			eraseCookie("jwt");
 			route.replace("/");
