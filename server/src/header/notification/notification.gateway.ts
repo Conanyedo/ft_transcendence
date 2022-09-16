@@ -6,7 +6,7 @@ import { notifMsg } from './notification.entity';
 import { User } from "src/user/user.decorator";
 import { WsJwtGuard } from "src/2fa-jwt/jwt/jwt-ws.guard";
 import { UserService } from "src/user/user.service";
-import { notificationDto } from "./notificatios.dto";
+import { notificationDto } from "./notification.dto";
 
 @WebSocketGateway({
 	cors: {
@@ -23,13 +23,13 @@ export class NotificationGateway implements OnGatewayConnection, OnGatewayDiscon
 	server: Server;
 
 	async handleConnection(@ConnectedSocket() client: Socket) {
-		console.log('Connected', client.id);
-		this.notifService.connectClient(client);
+		console.log('Connected notif: ', client.id);
+		// this.notifService.connectClient(client);
 	}
 
 	async handleDisconnect(@ConnectedSocket()client: Socket) {
 		console.log('Disconneted');
-		this.notifService.disconnectClient(client);
+		// this.notifService.disconnectClient(client);
 	}
 
 	@UseGuards(WsJwtGuard)
