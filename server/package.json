@@ -45,6 +45,7 @@
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0",
     "socket.io": "^4.5.2",
+    "socket.io-client": "^4.5.2",
     "typeorm": "^0.3.7"
   },
   "devDependencies": {

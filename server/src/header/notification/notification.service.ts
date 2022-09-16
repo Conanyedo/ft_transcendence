@@ -5,7 +5,7 @@ import { Notification } from './notification.entity';
 import { Server, Socket } from 'socket.io'
 import { JwtAuthService } from 'src/2fa-jwt/jwt/jwt-auth.service';
 import { UserService } from 'src/user/user.service';
-import { notificationCreateDto, notificationDto } from './notificatios.dto';
+import { notificationCreateDto, notificationDto } from './notification.dto';
 
 @Injectable()
 export class NotificationService {
