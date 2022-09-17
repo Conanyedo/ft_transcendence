@@ -5,7 +5,26 @@ export class createMsgDto {
 	@IsNotEmpty()
 	msg: string;
 
+	@IsString()
+	receiver?: string;
+
+	@IsString()
+	convId?: string;
+
+}
+
+export class msgDto {
+
 	@IsNotEmpty()
-	receiver: string;
+	msg: string;
+
+	@IsNotEmpty()
+	sender: string;
+
+	@IsNotEmpty()
+	date: Date;
+
+	@IsNotEmpty()
+	convId: string;
 
 }
