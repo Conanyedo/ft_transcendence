@@ -44,7 +44,6 @@ const OverView: React.FC = () => {
 			</div>
 			<div className={classes.ctnIndic}>
 				<motion.div
-					// exit={{ opacity: 0 }}
 					animate="animate"
 					className={classesIndic}
 				></motion.div>

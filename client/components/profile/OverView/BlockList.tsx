@@ -1,72 +1,90 @@
 import classes from "../../../styles/BlockList.module.css";
 import { useEffect, useState } from "react";
-import { UserType } from "../../../Types/dataTypes";
-import axios from "axios";
+import { UserTypeNew } from "../../../Types/dataTypes";
 import { useRouter } from "next/router";
+import { fetchDATA, requests } from "../../../customHooks/useFetchData";
+import LoadingElm from "../../loading/Loading_elm";
+import { getImageBySize } from "../../../customHooks/Functions";
 
-const Pendingfriend: React.FC<friendDataType> = (props) => {
-	const route = useRouter();
-	const Clickhandler = () => route.push('/profile/' + props.id);
+class types extends UserTypeNew {
+	refresh: any
+}
+
+const BlockedUser: React.FC<types> = (props) => {
+	const router = useRouter();
+	const UnblockHandler = async () => {
+		await requests(props.login, "friendship/unblock", router);
+		props.refresh();
+	};
+	const pathImage = getImageBySize(props.avatar, 70);
 	return (
 		<div className={classes.friend}>
-			<div className={classes.Avatar_name} onClick={Clickhandler} >
+			<div className={classes.Avatar_name}>
 				<div className={classes.avatar}>
-					<img src={props.Avatar} />
+					<img src={pathImage} />
 				</div>
-				<div className={classes.friendName}>{props.fullName}</div>
+				<div className={classes.friendName}>{props.fullname}</div>
 			</div>
-			<div className={`${classes.sendMsg}`}>Unblock</div>
+			<div className={`${classes.sendMsg}`} onClick={UnblockHandler}>
+				Unblock
+			</div>
 		</div>
 	);
 };
 
-interface friendDataType {
-	Avatar: any;
-	fullName: string;
-	id:number;
-}
-
-const BlockList = () => {
-	const [listblock, setListblock] = useState<UserType[]>();
-	let users:UserType[] = [];
+const BlockList: React.FC<{ search: string }> = (props) => {
+	const [listblock, setListblock] = useState<UserTypeNew[] | null>(null);
+	const [isUp, SetIsUp] = useState(false);
+	const router = useRouter();
+	const refresh = () => fetchDATA(setListblock, router, "friendship/blocked");
 	useEffect(() => {
-		const fetchData = async () => {
-			const data = await axios
-				.get("https://test-76ddc-default-rtdb.firebaseio.com/friend.json")
-				.then((res) => {
-					const entries = Object.entries(res.data);
-					entries.map((user) => {
-						users.push(user[1]);
-					});
-					setListblock(users);
-				});
+		fetchDATA(setListblock, router, "friendship/blocked");
+		SetIsUp(true);
+		return () => {
+			setListblock(null);
 		};
-		if (!listblock) fetchData();
 	}, []);
 
+	if (!isUp) {
+		return (
+			<div className={classes.listFriends}>
+				<LoadingElm />
+			</div>
+		);
+	}
 
 	return (
-		<div className={classes.listFriends}>
-			{
-				listblock?.map((user) => <Pendingfriend key={user.id} fullName={user.fullName} Avatar={user.avatar} id={user.id} />)
-			}{
-				listblock?.map((user) => <Pendingfriend key={user.id} fullName={user.fullName} Avatar={user.avatar} id={user.id} />)
-			}{
-				listblock?.map((user) => <Pendingfriend key={user.id} fullName={user.fullName} Avatar={user.avatar} id={user.id} />)
-			}{
-				listblock?.map((user) => <Pendingfriend key={user.id} fullName={user.fullName} Avatar={user.avatar} id={user.id} />)
-			}{
-				listblock?.map((user) => <Pendingfriend key={user.id} fullName={user.fullName} Avatar={user.avatar} id={user.id} />)
-			}{
-				listblock?.map((user) => <Pendingfriend key={user.id} fullName={user.fullName} Avatar={user.avatar} id={user.id} />)
-			}{
-				listblock?.map((user) => <Pendingfriend key={user.id} fullName={user.fullName} Avatar={user.avatar} id={user.id} />)
-			}{
-				listblock?.map((user) => <Pendingfriend key={user.id} fullName={user.fullName} Avatar={user.avatar} id={user.id} />)
-			}{
-				listblock?.map((user) => <Pendingfriend key={user.id} fullName={user.fullName} Avatar={user.avatar} id={user.id} />)
-			}
-		</div>
+		<>
+			{isUp && (
+				<div className={classes.listFriends}>
+					{(listblock?.length &&
+						listblock?.map((user) => {
+							if (props.search === "")
+								return (
+									<BlockedUser
+										{...user}
+										key={Math.random()}
+										refresh={refresh}
+									/>
+								);
+							else if (
+								user.fullname
+									.toLocaleLowerCase()
+									.includes(props.search.toLocaleLowerCase())
+							)
+								return (
+									<BlockedUser
+										{...user}
+										key={Math.random()}
+										refresh={refresh}
+									/>
+								);
+						})) || (
+						<div className={classes.noBlockers}>Not Yet</div>
+					)}
+				</div>
+			)}
+		</>
 	);
 };
 

@@ -61,7 +61,7 @@
 	display: flex;
 	justify-content: flex-start;
 	align-items: center;
-	width: 67%;
+	width: 50%;
 	max-width: 76.667rem;
 }
 
@@ -135,6 +135,7 @@
 	display: flex;
 	justify-self: center;
 	position: relative;
+	width: max-content;
 }
 
 .avatar {
@@ -145,6 +146,7 @@
 
 .userName {
 	font-family: 'Inter';
+	width: max-content;
 	font-style: normal;
 	font-weight: 400;
 	font-size: 18px;

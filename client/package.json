@@ -33,7 +33,9 @@
     "react-router-dom": "^5.3.3",
     "reactjs-popup": "^2.0.5",
     "styled-components": "^5.3.5",
-    "yup": "^0.32.11"
+    "yup": "^0.32.11",
+    "socket.io": "^4.5.2",
+    "socket.io-client": "^4.5.2"
   },
   "devDependencies": {
     "@types/lodash": "^4.14.184",

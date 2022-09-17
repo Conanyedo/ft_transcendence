@@ -10,7 +10,7 @@ import { motion } from "framer-motion";
 import { getCookie } from "cookies-next";
 import { useRouter } from "next/router";
 import { fetchUserInfo, updateUserInfo } from "../../customHooks/useFetchData";
-import { useOutsideAlerter } from "../../customHooks/Functions";
+import { getImageBySize, useOutsideAlerter } from "../../customHooks/Functions";
 
 interface profileData {
 	setTagle: (t: boolean) => void;
@@ -49,7 +49,7 @@ const ProfileInfoEdit: React.FC<profileData> = (props) => {
 	const clickHandler = () => {
 		props.setTagle(false);
 	};
-
+	const pathImage = getImageBySize(UserData?.avatar, 70);
 	return (
 		<motion.div
 			className={classes.background}
@@ -83,7 +83,7 @@ const ProfileInfoEdit: React.FC<profileData> = (props) => {
 					</motion.div>
 				</div>
 				<div className={classes.avatar}>
-					<img src={UserData?.avatar} ref={avatarRef} />
+					<img src={pathImage} ref={avatarRef} />
 					<input
 						type="file"
 						className={`${classes.toggle} ${classes.inputHide}`}

@@ -1,10 +1,16 @@
-import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { friendDto } from 'src/friendship/friendship.dto';
+import { userRelation } from 'src/friendship/friendship.entity';
+import { FriendshipService } from 'src/friendship/friendship.service';
 import { opponentDto } from 'src/game/game.dto';
 import { Repository, SelectQueryBuilder } from 'typeorm';
 import { Stats, userAchievements } from './stats.entity';
 import { userDto, userParitalDto } from './user.dto';
 import { User, userStatus } from './user.entity';
+
+const fs = require('fs');
+const Jimp = require('jimp');
 
 
 @Injectable()
@@ -15,6 +21,7 @@ export class UserService {
 		private userRepository: Repository<User>,
 		@InjectRepository(Stats)
 		private statsRepository: Repository<Stats>,
+		private readonly friendshipService: FriendshipService
 	) { }
 
 	async registerUser(newUser: userDto): Promise<userParitalDto> {
@@ -25,7 +32,6 @@ export class UserService {
 		// stats.achievement = [userAchievements.FIRSTPLACE, userAchievements.GOLDTIER, userAchievements.WON20];
 		let user: User = new User();
 		user.login = newUser.login;
-		user.email = newUser.email;
 		user.fullname = newUser.fullname;
 		user.avatar = newUser.avatar;
 		user.stats = stats;
@@ -39,20 +45,31 @@ export class UserService {
 	}
 
 	// Edit Profile
-	async editProfile(id: string, fullname: string, avatar: string) {
-
+	async editProfile(id: string, fullname: string, avatar: string, oldPath: string) {
 		if (fullname)
 			await this.setName(id, fullname);
-		if (avatar)
+		if (oldPath) {
+			let smallSize = oldPath.split('/').pop();
+			smallSize = smallSize.slice(0, smallSize.indexOf('.jpg'));
+			fs.unlink(`../client/public/uploads/${smallSize}x70.jpg`, (err) => { });
+			fs.unlink(`../client/public/uploads/${smallSize}x220.jpg`, (err) => { });
+		}
+		if (avatar) {
 			await this.setAvatar(id, `/uploads/${avatar}`);
+			const image = await Jimp.read(`../client/public/uploads/${avatar}`);
+			const resizeName = avatar.slice(0, avatar.indexOf('.jpg'));
+			image.resize(220, 220).write(`../client/public/uploads/${resizeName}x220.jpg`);
+			image.resize(70, 70).write(`../client/public/uploads/${resizeName}x70.jpg`);
+			fs.unlink(`../client/public/uploads/${avatar}`, (err) => { });
+		}
 	}
 
 	// User Getters
-	async getPartialUser(email: string): Promise<userParitalDto> {
+	async getPartialUser(login: string): Promise<userParitalDto> {
 		const user: User = await this.userRepository
 			.createQueryBuilder('users')
 			.select(['users.id', 'users.login'])
-			.where('users.email = :email', { email: email })
+			.where('users.login = :login', { login: login })
 			.getOne();
 		if (!user)
 			return user;
@@ -60,6 +77,15 @@ export class UserService {
 			id: user.id,
 			login: user.login
 		};
+	}
+
+	async getSocketId(login: string) {
+		const user: User = await this.userRepository
+			.createQueryBuilder('users')
+			.select(['users.socketId'])
+			.where('users.login = :login', { login: login })
+			.getOne();
+		return user.socketId;
 	}
 
 	async getSecret(id: string) {
@@ -101,16 +127,19 @@ export class UserService {
 		return { ...user };
 	}
 
-	async getUserInfo(id: string, by: string) {
+	async getUserInfo(login: string, id: string) {
+		let relation: userRelation = userRelation.NONE;
 		const user: User = await this.userRepository
 			.createQueryBuilder('users')
 			.leftJoinAndSelect("users.stats", "stats")
 			.select(['users.login', 'users.fullname', 'users.avatar', 'users.status', 'stats.XP', 'stats.GP', 'stats.rank'])
-			.where(`users.${by} = :id`, { id: id })
+			.where(`users.login = :id`, { id: id })
 			.getOne();
 		if (!user)
 			throw new NotFoundException('User not found');
-		return { ...user };
+		if (login !== id)
+			relation = await this.friendshipService.getRelation(login, id);
+		return { ...user, relation };
 	}
 
 	async getUserStats(id: string, by: string) {
@@ -133,22 +162,38 @@ export class UserService {
 		return { achievements: user.stats.achievement };
 	}
 
-	async getLeaderBoard() {
+	async getLeaderBoard(login: string) {
 		const users: User[] = await this.userRepository
 			.createQueryBuilder('users')
 			.leftJoinAndSelect("users.stats", "stats")
 			.select(['users.login', 'users.fullname', 'users.avatar', 'stats.rank', 'stats.numGames', 'stats.gamesWon', 'stats.GP'])
-			// .orderBy('stats.GP', 'DESC')
-			// .take(10)
+			.orderBy('stats.GP', 'DESC')
 			.getMany();
+		const leaderBoard = await Promise.all(users.map(async (user) => {
+			const relation = await this.friendshipService.getRelation(login, user.login);
+			return { ...user, relation }
+		}))
+		return [...leaderBoard];
+	}
 
-		return [...users];
+	async searchUsers(login: string, search: string) {
+		search = search.toLowerCase();
+		const users: User[] = await this.userRepository
+			.createQueryBuilder('users')
+			.select(['users.login', 'users.fullname', 'users.avatar'])
+			.where(`LOWER(users.fullname) LIKE '%${search}%' AND users.login != :login`, { login: login })
+			.getMany();
+		const usersList = await Promise.all(users.map(async (user) => {
+			const relation = await this.friendshipService.getRelation(login, user.login);
+			if (relation !== 'blocked')
+				return { ...user, relation }
+		}))
+		return [...usersList];
 	}
 
 	async getOpponent(login: string) {
 		const user: User = await this.userRepository
 			.createQueryBuilder('users')
-			.leftJoinAndSelect("users.stats", "stats")
 			.select(['users.fullname', 'users.avatar'])
 			.where('users.login = :login', { login: login })
 			.getOne();
@@ -156,6 +201,18 @@ export class UserService {
 			throw new NotFoundException('User not found');
 		const opponent: opponentDto = { fullname: user.fullname, avatar: user.avatar };
 		return { ...opponent };
+	}
+
+	async getFriend(login: string) {
+		const user: User = await this.userRepository
+			.createQueryBuilder('users')
+			.select(['users.login', 'users.fullname', 'users.avatar', 'users.status'])
+			.where('users.login = :login', { login: login })
+			.getOne();
+		if (!user)
+			throw new NotFoundException('User not found');
+		const friend: friendDto = { login: user.login, fullname: user.fullname, avatar: user.avatar, status: user.status };
+		return { ...friend };
 	}
 	// ------------------------------
 
@@ -206,6 +263,14 @@ export class UserService {
 		return await this.userRepository
 			.createQueryBuilder('users')
 			.update({ status: status })
+			.where('id = :id', { id: id })
+			.execute();
+	}
+
+	async setSocketId(id: string, value: string | null) {
+		return await this.userRepository
+			.createQueryBuilder('users')
+			.update({ socketId: value })
 			.where('id = :id', { id: id })
 			.execute();
 	}

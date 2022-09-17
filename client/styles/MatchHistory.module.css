@@ -53,7 +53,9 @@
 .avatar {
 	display: flex;
 	width: 3.8rem;
-	/* margin-right: 0.667rem; */
+	height: 3.8rem;
+	border-radius: 5px;
+	overflow: hidden;
 }
 
 .dataMatch {
@@ -96,6 +98,13 @@
 }
 
 .NoHistory {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100%;
+}
+
+.NoHistory>span {
 	text-align: center;
 	color: #758293;
 	font-family: 'Inter';

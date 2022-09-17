@@ -148,6 +148,10 @@
 	background-color: inherit;
 }
 
+.UserStatus {
+	color: #C6E1FF;
+}
+
 .lvlContainer {
 	padding: 0.533rem;
 	border: 2px solid #3A3A3C;

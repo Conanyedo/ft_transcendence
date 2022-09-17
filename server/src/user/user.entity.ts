@@ -12,20 +12,20 @@ export class User {
 	@PrimaryGeneratedColumn("uuid")
 	id: string;
 
-	@Column()
+	@Column({ unique: true })
 	login: string;
 
 	@Column()
 	fullname: string;
 
-	@Column({ unique: true })
-	email: string;
-
 	@Column()
 	avatar: string;
-
+	
 	@Column({ type: 'enum', enum: userStatus, default: userStatus.ONLINE })
 	status: userStatus;
+
+	@Column({ default: null, nullable: true })
+	socketId: string;
 
 	@Column({ default: false })
 	isAuthenticated: boolean;

@@ -27,7 +27,6 @@
 	align-items: center;
 	padding: 0.4rem;
 	border-radius: 3px;
-	/* height: 2rem; */
 	width: 20rem;
 	transition: all 1s;
 }
@@ -87,8 +86,6 @@
 	height: 48.5rem;
 	overflow-y: auto;
 	scrollbar-color: #2B2B2D #3A3A3C;
-	/* border: 1px solid red; */
-	/* padding-right: 0.6rem; */
 	margin-top: 1.333rem;
 }
 
@@ -106,8 +103,8 @@
 	border-radius: 5px;
 	padding: 0.667rem 0.8rem;
 	margin: 0.667rem 0 0 0;
-	/* max-height: 3.333rem; */
 	width: 100%;
+	cursor: pointer;
 }
 
 .friend:first-of-type {
@@ -189,6 +186,18 @@
 
 .hideSearch {
 	display: none;
+}
+
+
+.noFriends {
+	text-align: center;
+	color: #758293;
+	font-family: 'Inter';
+	font-style: normal;
+	font-weight: 300;
+	font-size: 1.5rem;
+	line-height: 15px;
+	padding-top: 1rem;
 }
 
 @media only screen and (max-width: 2050px) {
@@ -278,6 +287,7 @@
 		width: 100%;
 		transition: all 1s;
 	}
+
 	.listFriends {
 		margin-top: 0.8rem;
 	}

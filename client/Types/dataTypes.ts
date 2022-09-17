@@ -1,4 +1,6 @@
 import { StaticImageData } from "next/image"
+import { allRanks } from "../config/baseURL";
+import unranked from '../public/Tiers/Unranked.svg';
 
 class Stats {
 	XP: number = 0;
@@ -7,6 +9,13 @@ class Stats {
 	numGames: number = 0;
 	gamesWon: number = 0;
 }
+
+export class rankObj {
+	rank: string = allRanks[4];
+	color: string = '#BEB5B6';
+	tier: any = unranked;
+}
+
 
 export class UserTypeNew {
 	id: number = 0;
@@ -19,6 +28,7 @@ export class UserTypeNew {
 	gamesWon: number = 0;
 	achievement: number[] = [];
 	status: string = '';
+	relation: string = '';
 };
 
 export const EmtyUser : UserTypeNew = {
@@ -32,6 +42,7 @@ export const EmtyUser : UserTypeNew = {
 	gamesWon: 0,
 	achievement: [],
 	status: '',
+	relation: ''
 }
 
 export interface UserType {
@@ -61,6 +72,7 @@ export interface matchDataType {
 	games: number;
 	Win: number;
 	GP: number;
+	relation: string;
 }
 
 export interface achievementType {
@@ -105,4 +117,64 @@ export interface chatFormValues {
     cName: string,
     password: string,
     members: Array<string>
+}
+
+export interface NotificationType {
+	login: string,
+	msg: string,
+	read: boolean
+}
+
+
+export class GameDataType {
+	ball: {ballX: number, ballY: number};
+	paddleLeft: {paddleY: number};
+	paddleRight: {paddleY: number};
+	GameStatus: string
+	myScore: number;
+	otherScore: number;
+	widthPaddle: number;
+	HieghtPaddle: number;
+	canvasWidth: number;
+	canvasHieght: number;
+	ballRadius: number;
+	constructor(width: number) {
+		this.canvasHieght = width / 2;
+		this.ball = {ballX: width / 2, ballY: this.canvasHieght / 2};
+		this.HieghtPaddle = this.canvasHieght / 8;
+		this.paddleLeft = {paddleY: this.canvasHieght / 2 - this.HieghtPaddle / 2};
+		this.paddleRight = {paddleY: this.canvasHieght / 2 - this.HieghtPaddle / 2};
+		this.GameStatus = '';
+		this.myScore = 0;
+		this.otherScore = 0;
+		this.canvasWidth = width;
+		this.widthPaddle = 20.1;
+		this.ballRadius = 10;
+	}
+	setWidth(width: number) {
+		this.canvasWidth = width;
+		this.canvasHieght = width / 2;
+		this.ball = {ballX: width / 2, ballY: this.canvasHieght / 2};
+		this.HieghtPaddle = this.canvasHieght / 8;
+		this.paddleLeft = {paddleY: this.canvasHieght / 2 - this.HieghtPaddle / 2};
+		this.paddleRight = {paddleY: this.canvasHieght / 2 - this.HieghtPaddle / 2};
+	}
+}
+
+export class liveGamesType {
+    firstPlayer: string;
+    firstScore: number;
+    matchType: string;
+    secondPlayer: string;
+    secondScore: number;
+    gameId: string;
+	constructor() {
+		this.firstPlayer = '';
+		this.firstScore = 0;
+		this.matchType = '';
+		this.secondPlayer = '';
+		this.secondScore = 0;
+		this.gameId = '';
+		
+	}
 }

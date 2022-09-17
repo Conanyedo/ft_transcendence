@@ -2,12 +2,12 @@ import classes from "../../styles/Profile.module.css";
 import Image from "next/image";
 import pen from "../../public/editPen.svg";
 import React, { useEffect, useState } from "react";
-import { useAppDispatch } from "../../store/hooks";
-import { Toggle } from "../../store/UI-Slice";
-import { EmtyUser, UserTypeNew } from "../../Types/dataTypes";
+import { EmtyUser, rankObj, UserTypeNew } from "../../Types/dataTypes";
 import { useRouter } from "next/router";
 import { fetchDATA } from "../../customHooks/useFetchData";
-import { getRankUser } from "../../customHooks/Functions";
+import { getImageBySize, getRankUser } from "../../customHooks/Functions";
+import { Toggle } from "@store/UI-Slice";
+import { useAppDispatch } from "@store/hooks";
 
 const ProfileInfo: React.FC = () => {
 	const [user, setUser] = useState<UserTypeNew>(EmtyUser);
@@ -15,13 +15,17 @@ const ProfileInfo: React.FC = () => {
 	const dispatch = useAppDispatch();
 	useEffect(() => {
 		fetchDATA(setUser, router, 'user/info');
+		return () => {
+			setUser(EmtyUser);
+		}
 	}, []);
 	const lvl = Math.floor((user?.stats.XP === 0) ? 0 : user?.stats.XP / 1000);
 	const lvlP = (user?.stats.XP % 1000) / 10;
 	const toggleHandler = () => dispatch(Toggle());
-	const tier = getRankUser(user?.stats.GP);
-	if (user.login !== '')
-		localStorage.setItem("owner", user.login);
+	const tier: rankObj = getRankUser(user?.stats.GP as number);
+	if (user?.login !== '')
+		localStorage.setItem("owner", user?.login);
+	const pathImage = getImageBySize(user?.avatar, 220);
 	return (
 		<div className={`${classes.profile} `}>
 			<div className={classes.editBtn}>
@@ -35,7 +39,7 @@ const ProfileInfo: React.FC = () => {
 				<div className={classes.avatar}>
 					<img
 						alt={user?.fullname}
-						src={user?.avatar}
+						src={pathImage}
 					/>
 				</div>
 				<div className={classes.profileSection}>
@@ -47,14 +51,14 @@ const ProfileInfo: React.FC = () => {
 					<div className={classes.rank}>Rank: {user?.stats.rank}</div>
 					<div className={classes.tier}>
 						Tier: <span className={classes.gold} style={{
-							color:`${tier[1]}`
-						}}>{tier[0]}</span>
+							color:`${tier.color}`
+						}}>{tier.rank}</span>
 					</div>
 				</div>
 				<div className={classes.tierIcon}>
 					<Image
 						style={{ backgroundColor: "transparent" }}
-						src={tier[2]}
+						src={tier.tier}
 					/>
 				</div>
 			</div>

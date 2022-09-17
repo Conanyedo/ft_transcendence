@@ -10,6 +10,7 @@
 	padding-right: 0.667rem;
 	overflow-y: auto;
 	scrollbar-color: #2B2B2D #3A3A3C;
+	height: 93%;
 	max-height: 93%;
 	gap: 0.667rem;
 	display: flex;
@@ -19,7 +20,6 @@
 .friend {
 	display: flex;
 	justify-content: flex-start;
-	/* max-height: 6.667rem; */
 	width: 100%;
 	background: #2B2B2D;
 	border-radius: 5px;
@@ -35,7 +35,6 @@
 	display: flex;
 	flex-direction: row;
 	align-items: center;
-	/* flex: 60%; */
 }
 
 .avatar {
@@ -48,13 +47,12 @@
 	font-family: 'Inter';
 	font-style: normal;
 	font-weight: 500;
-	font-size: 1.6rem;
+	font-size: 1.4rem;
 	line-height: 29px;
 	color: #FFFFFF;
 }
 
 .optionFriend {
-	/* flex: 2%; */
 	display: flex;
 	align-items: center;
 	justify-content: space-around;
@@ -78,18 +76,16 @@
 	background: #3A3A3C;
 	box-shadow: 0px 0px 25px #00000080;
 	border-radius: 5px;
-	top: 2.2rem;
-	right: .4rem;
+	top: 3.5rem;
+	right: 0rem;
 	display: flex;
 	padding: 0.3rem;
 	flex-direction: column;
 	justify-content: center;
-	align-items: left;
-	width: 120%;
 }
 
 .itemListoption {
-	text-align: left;
+	text-align: center;
 	font-family: 'Inter';
 	font-style: normal;
 	font-weight: 400;
@@ -100,6 +96,8 @@
 	padding: 0.3rem;
 	border-radius: 5px;
 	cursor: pointer;
+	width: 100%;
+	
 }
 
 .itemListoption:hover {
@@ -107,7 +105,7 @@
 }
 
 .itemListoptionBlock {
-	text-align: left;
+	text-align: center;
 	font-family: 'Inter';
 	font-style: normal;
 	font-weight: 400;
@@ -247,8 +245,8 @@
 /* Add Friend Stander  ++++++++++++++++++++++++++++++*/
 
 .icon {
-	width: 2rem;
-	height: 2rem;
+	width: 1.6rem;
+	height: 1.6rem;
 }
 
 .btnFriendADD {
@@ -276,16 +274,50 @@
 	color: #409CFF;
 }
 
+/* Request button  ++++++++++++++++++++++++++++++*/
+
+
+.btnRequest {
+	border: 2px solid #C6E1FF;
+	border-radius: 5px;
+	width: 9.333rem;
+	padding: 0.667rem 0;
+	display: flex;
+	justify-content: space-evenly;
+	align-items: center;
+	font-family: 'Inter';
+	font-style: normal;
+	font-weight: 600;
+	font-size: 1.067rem;
+	line-height: 19px;
+	cursor: pointer;
+	position: relative;
+}
+
+.Request {
+	display: flex;
+	align-items: center;
+	width: 1.6rem;
+	height: 1.6rem;
+}
+
+.RequestBTN {
+	font-family: 'Inter';
+	font-style: normal;
+	font-weight: 600;
+	font-size: 1.067rem;
+	line-height: 19px;
+	color: #C6E1FF;
+}
+
 /* Nav between UserList and Channels */
 /* ///////////////////////////////// */
 
 .navView {
 	display: flex;
 	justify-content: flex-start;
-	/* margin: 2rem 2rem; */
 	padding: 1.333rem;
 	padding-bottom: 0;
-	/* margin-bottom: 0; */
 }
 
 .TitleOverView {
@@ -294,7 +326,7 @@
 	font-family: 'Inter';
 	font-style: normal;
 	font-weight: 600;
-	font-size: 1.4rem;
+	font-size: 1.8rem;
 	line-height: 22px;
 	color: #C6E1FF;
 	padding-bottom: 0.333rem;
@@ -309,14 +341,14 @@
 .ctnIndic {
 	margin-bottom: 1.867rem;
 	height: 0.333rem;
-	margin-left: 2rem;
+	margin-left: 1.7rem;
 	border-radius: 2px;
 }
 
 .Indic {
 	background: #409CFF;
 	border-radius: 2px;
-	width: 4.5rem;
+	width: 4.2rem;
 	height: 0.333rem;
 	transition: all .3s ease-in-out;
 }
@@ -325,8 +357,8 @@
 	background: #409CFF;
 	border-radius: 2px;
 	height: 0.333rem;
-	margin-left: 9rem;
-	width: 6.8rem;
+	margin-left: 7.95rem;
+	width: 7rem;
 	transition: all .3s ease-in-out;
 }
 
@@ -347,14 +379,17 @@
 
 .Avatar_Channel {
 	display: flex;
-	justify-content: space-evenly;
+	justify-content: flex-start;
 	align-items: center;
+	width: 50%;
 }
 
 .avatar {
 	width: 5.333rem;
 	height: 5.333rem;
 	margin-right: 1.6rem;
+	border-radius: 5px;
+	overflow: hidden;
 }
 
 .ChannelName {
@@ -363,7 +398,8 @@
 	font-weight: 500;
 	font-size: 1.333rem;
 	line-height: 22px;
-	color: #D9D9D9;
+	color: #fff;
+	width: 50%;
 }
 
 .Channeltype {
@@ -372,11 +408,13 @@
 	font-weight: 500;
 	font-size: 1.6rem;
 	line-height: 22px;
-	color: #D9D9D9;
+	color: #fff;
+	justify-self: flex-start;
+	width: 30%;
 }
 
 
-.LeaveBtn{
+.LeaveBtn {
 	cursor: pointer;
 	border: 2px solid #758293;
 	border-radius: 5px;
@@ -408,31 +446,44 @@
 	line-height: 19px;
 }
 
+.userNotFound {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+	color: #758293;
+	font-family: 'Inter';
+	font-style: normal;
+	font-weight: 500;
+	font-size: 2rem;
+	line-height: 15px;
+	height: 100%;
+}
 
-
+@media screen and (max-width:800px) {
+	.Channeltype {
+		display: none;
+	}
+	.ChannelName,
+	.friendName {
+		font-size: 1rem;
+	}
+	.avatar {
+		width: 4rem;
+		height: 4rem;
+	}
+	.Avatar_Channel {
+		width: 70%;
+	}
+}
 
 @media screen and (max-width:450px) {
-
 	.Hover,
 	.notHover,
 	.icon,
 	.PendingHover,
 	.PendingnotHover {
 		display: none !important;
-	}
-
-	/* .Channeltype {
-		font-size: 1rem;
-	} */
-
-	.ChannelName,
-	.friendName {
-		font-size: 1.3rem;
-	}
-
-	.avatar {
-		width: 4rem;
-		height: 4rem;
 	}
 
 	.LeaveBtn,

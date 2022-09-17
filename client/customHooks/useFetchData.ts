@@ -3,6 +3,7 @@ import { CookieValueTypes, getCookie } from "cookies-next";
 import { NextRouter } from "next/router";
 import { Dispatch, SetStateAction } from "react";
 import { baseUrl, eraseCookie } from "../config/baseURL";
+import socket_notif from "../config/socketNotif";
 import { UserTypeNew } from "../Types/dataTypes";
 
 export const getQRcodeOrdisableCode = async (
@@ -86,7 +87,10 @@ export const LogOut = (route: NextRouter) => {
 			},
 			withCredentials: true,
 		})
-		.then(() => route.replace("/"))
+		.then(() => {
+			socket_notif.disconnect();
+			route.replace("/");
+		})
 		.catch((err) => {
 			eraseCookie("jwt");
 			route.replace("/");
@@ -106,13 +110,10 @@ export const updateUserInfo = async (
 	const Image = currentImage!.files;
 	if (OldData.name !== Name)
 		params.append("fullname", nameRef.current!.value);
-	if (Image.length === 1)
+	if (Image.length === 1) {
 		params.append("avatar", Image![0]);
-	if (
-		OldData.image.includes("https://cdn.intra.42.fr") ||
-		OldData.image.includes("googleusercontent.com/")
-	)
-		params.append("isDefault", "true");
+		params.append("oldPath", OldData.image);
+	}
 	await axios
 		.post(`${baseUrl}user/editProfile`, params, {
 			headers: {
@@ -257,5 +258,34 @@ export const checkJWT = async (
 			set(false);
 			eraseCookie("jwt");
 			router.push("/");
+		});
+};
+
+export const requests = async (
+	login: string,
+	path: string,
+	router: NextRouter
+) => {
+	const token = getCookie("jwt");
+	const params = new URLSearchParams();
+	params.append("login", login);
+	return await axios({
+		method: "post",
+		url: `${baseUrl}${path}`,
+		data: params,
+		headers: {
+			Authorization: `Bearer ${token}`,
+		},
+		withCredentials: true,
+	})
+		.then((res) => {
+			return true;
+		})
+		.catch((err) => {
+			if (err.response.data.message !== "Wrong authentication code") {
+				eraseCookie("jwt");
+				router.replace("/");
+			}
+			return false;
 		});
 };

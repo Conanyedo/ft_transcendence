@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { HistoryMatchType } from "../../Types/dataTypes";
 import { useRouter } from "next/router";
 import { fetchDATA } from "../../customHooks/useFetchData";
+import { getImageBySize } from "../../customHooks/Functions";
 
 
 export const Match: React.FC<HistoryMatchType> = (props) => {
@@ -10,11 +11,12 @@ export const Match: React.FC<HistoryMatchType> = (props) => {
 	const profileHandler = () => {
 		router.push(`/profile/${props.login}`);
 	}
+	const pathImage = getImageBySize(props.avatar, 70);
 	return (
 		<div className={classes.match}>
 			<div className={classes.Avatar_name} onClick={profileHandler}>
 				<div className={classes.avatar}>
-					<img src={props.avatar} />
+					<img src={pathImage} />
 				</div>
 				<div className={classes.dataMatch}>{props.fullname}</div>
 			</div>
@@ -51,7 +53,7 @@ const MatchHistory: React.FC = () => {
 							)
 					)) || (
 					<div className={classes.NoHistory}>
-						No Match played Yet
+						No Match History
 					</div>
 				)}
 			</div>

@@ -2,45 +2,73 @@ import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import classes from "../../styles/Search.module.css";
-import { useOutsideAlerter } from "../../customHooks/Functions";
+import { getImageBySize, useOutsideAlerter } from "../../customHooks/Functions";
+import profile from "../../public/profileImage.png";
+import Option from "../../public/FriendIcons/OptionIcon.svg";
 import {
 	ADDButton,
 	FriendButton,
 	OptionMenu,
 	PendingButton,
-} from "../../pages/search";
-import profile from "../../public/profileImage.png";
-import Option from "../../public/FriendIcons/OptionIcon.svg";
+	RequestButton,
+} from "../buttons";
+import { EmtyUser, UserTypeNew } from "../../Types/dataTypes";
+import { useRouter } from "next/router";
+import { fetchDATA, requests } from "../../customHooks/useFetchData";
 
-interface friendDataType {
-	Avatar: any;
-	fullName: string;
-	stat: string;
+class types extends UserTypeNew {
+	refresh: any;
 }
 
-const User: React.FC<friendDataType> = (props) => {
+const User: React.FC<types> = (props) => {
+	const router = useRouter();
 	const [option, setOption] = useState(false);
 	const TaggleHandler = () => setOption(!option);
-	const [classBtn, setClassBtn] = useState(classes.friendvalue);
-	const [classeBtnAfter, setClasseBtnAfter] = useState(classes.afterFriend);
-	useEffect(() => {
-		if (props.stat === "pending") setClassBtn(classes.pendingvalue);
-		if (props.stat === "notFriend") setClassBtn(classes.notFriendvalue);
-	}, [classBtn]);
+	const goToChat = () => router.push("/chat/" + props.login);
 	const wrapperRef = useRef(null);
+	const BlockHandler = async () => {
+		await requests(props.login, "friendship/blockUser", router);
+		props.refresh();
+	};
 	useOutsideAlerter(wrapperRef, setOption);
+	const pathImage = getImageBySize(props.avatar, 70);
 	return (
 		<div className={classes.friend}>
 			<div className={classes.Avatar_name}>
 				<div className={classes.avatar}>
-					<Image src={props.Avatar} />
+					<img src={pathImage} />
 				</div>
-				<div className={classes.friendName}>{props.fullName}</div>
+				<div className={classes.friendName}>{props.fullname}</div>
 			</div>
 			<div className={classes.optionFriend}>
-				{props.stat === "notFriend" && <ADDButton />}
-				{props.stat === "pending" && <PendingButton />}
-				{props.stat === "friend" && <FriendButton />}
+				{props.relation === "none" && (
+					<ADDButton
+						login={props.login}
+						router={router}
+						refresh={props.refresh}
+					/>
+				)}
+				{props.relation === "pending" && (
+					<PendingButton
+						login={props.login}
+						router={router}
+						refresh={props.refresh}
+					/>
+				)}
+				{props.relation === "friend" && (
+					<FriendButton
+						login={props.login}
+						router={router}
+						refresh={props.refresh}
+					/>
+				)}
+				{props.relation === "requested" && (
+					<RequestButton
+						login={props.login}
+						router={router}
+						refresh={props.refresh}
+					/>
+				)}
 				<div
 					className={classes.optionsbtnctn}
 					onClick={TaggleHandler}
@@ -50,7 +78,9 @@ const User: React.FC<friendDataType> = (props) => {
 					{option && (
 						<OptionMenu
 							FirstBtn="Direct message"
+							firstClick={goToChat}
 							SecondBtn="Block user"
+							SecondClick={BlockHandler}
 							width="9rem"
 						/>
 					)}
@@ -60,122 +90,41 @@ const User: React.FC<friendDataType> = (props) => {
 	);
 };
 
-const SearchUserList: React.FC = () => {
+const SearchUserList: React.FC<{value: string}> = (props) => {
+	const router = useRouter();
+	const [searchData, setSearchData] = useState<UserTypeNew[]>([]);
+	const refresh = () =>
+		fetchDATA(
+			setSearchData,
+			router,
+			`search/users/?search=${props.value}`
+		);
+	useEffect(() => {
+		fetchDATA(
+			setSearchData,
+			router,
+			`search/users/?search=${props.value}`
+		);
+		return () => {
+			setSearchData([]);
+		};
+	}, [props.value]);
 	return (
 		<>
 			<motion.div className={classes.SearchCTNIN}>
-				<User fullName="Ayoub boulbaz" Avatar={profile} stat="friend" />
-				<User
-					fullName="Ayoub boulbaz"
-					Avatar={profile}
-					stat="pending"
-				/>
-				<User
-					fullName="Ayoub boulbaz"
-					Avatar={profile}
-					stat="notFriend"
-				/>
-				<User fullName="Ayoub boulbaz" Avatar={profile} stat="friend" />
-				<User
-					fullName="Ayoub boulbaz"
-					Avatar={profile}
-					stat="pending"
-				/>
-				<User
-					fullName="Ayoub boulbaz"
-					Avatar={profile}
-					stat="notFriend"
-				/>
-				<User fullName="Ayoub boulbaz" Avatar={profile} stat="friend" />
-				<User
-					fullName="Ayoub boulbaz"
-					Avatar={profile}
-					stat="pending"
-				/>
-				<User
-					fullName="Ayoub boulbaz"
-					Avatar={profile}
-					stat="notFriend"
-				/>
-				<User fullName="Ayoub boulbaz" Avatar={profile} stat="friend" />
-				<User
-					fullName="Ayoub boulbaz"
-					Avatar={profile}
-					stat="pending"
-				/>
-				<User
-					fullName="Ayoub boulbaz"
-					Avatar={profile}
-					stat="notFriend"
-				/>
-				<User fullName="Ayoub boulbaz" Avatar={profile} stat="friend" />
-				<User
-					fullName="Ayoub boulbaz"
-					Avatar={profile}
-					stat="pending"
-				/>
-				<User
-					fullName="Ayoub boulbaz"
-					Avatar={profile}
-					stat="notFriend"
-				/>
-				<User fullName="Ayoub boulbaz" Avatar={profile} stat="friend" />
-				<User
-					fullName="Ayoub boulbaz"
-					Avatar={profile}
-					stat="pending"
-				/>
-				<User
-					fullName="Ayoub boulbaz"
-					Avatar={profile}
-					stat="notFriend"
-				/>
-				<User fullName="Ayoub boulbaz" Avatar={profile} stat="friend" />
-				<User
-					fullName="Ayoub boulbaz"
-					Avatar={profile}
-					stat="pending"
-				/>
-				<User
-					fullName="Ayoub boulbaz"
-					Avatar={profile}
-					stat="notFriend"
-				/>
-				<User
-					fullName="Ayoub boulbaz"
-					Avatar={profile}
-					stat="notFriend"
-				/>
-				<User
-					fullName="Ayoub boulbaz"
-					Avatar={profile}
-					stat="notFriend"
-				/>
-				<User
-					fullName="Ayoub boulbaz"
-					Avatar={profile}
-					stat="notFriend"
-				/>
-				<User
-					fullName="Ayoub boulbaz"
-					Avatar={profile}
-					stat="notFriend"
-				/>
-				<User
-					fullName="Ayoub boulbaz"
-					Avatar={profile}
-					stat="notFriend"
-				/>
-				<User
-					fullName="Ayoub boulbaz"
-					Avatar={profile}
-					stat="notFriend"
-				/>
-				<User
-					fullName="Ayoub boulbaz"
-					Avatar={profile}
-					stat="notFriend"
-				/>
+				{searchData &&
+					searchData?.map((user) => {
+						if (user)
+							return (
+								<User
+									{...user}
+									refresh={refresh}
+									key={user.login}
+								/>
+							);
+					})}
+					{!searchData.length && <div className={classes.userNotFound}>couldn't find anyone with '{props.value}'</div>}
+					
 			</motion.div>
 		</>
 	);

@@ -14,10 +14,8 @@ export class UserController {
 	@Post('/editProfile')
 	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(FileInterceptor('avatar', uploadConfig))
-	async editProfile(@User() user: userParitalDto, @UploadedFile() avatar: Express.Multer.File, @Body('fullname') fullname: string, @Body('isDefault') isDefault: string) {
-		if (!isDefault)
-		avatar = undefined;
-		return await this.userService.editProfile(user.id, fullname, avatar?.filename);
+	async editProfile(@User() user: userParitalDto, @UploadedFile() avatar: Express.Multer.File, @Body('fullname') fullname: string, @Body('oldPath') oldPath: string) {
+		return await this.userService.editProfile(user.id, fullname, avatar?.filename, oldPath);
 	}
 
 	@Get('/header')
@@ -29,13 +27,13 @@ export class UserController {
 	@Get('/info')
 	@UseGuards(JwtAuthGuard)
 	async getMyInfo(@User() user: userParitalDto) {
-		return await this.userService.getUserInfo(user.id, 'id');
+		return await this.userService.getUserInfo(user.login, user.login);
 	}
 
 	@Get('/info/:login')
 	@UseGuards(JwtAuthGuard)
-	async getUserInfo(@Param('login') login: string) {
-		return await this.userService.getUserInfo(login, 'login');
+	async getUserInfo(@User() user: userParitalDto, @Param('login') login: string) {
+		return await this.userService.getUserInfo(user.login, login);
 	}
 
 	@Get('/stats')
@@ -65,7 +63,7 @@ export class UserController {
 	@Get('/leaderborad')
 	@UseGuards(JwtAuthGuard)
 	async leaderBoard(@User() user: userParitalDto) {
-		return await this.userService.getLeaderBoard();
+		return await this.userService.getLeaderBoard(user.login);
 	}
 
 }

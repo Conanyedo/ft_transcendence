@@ -1,5 +1,14 @@
 import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm";
 
+
+export enum userRelation {
+	NONE = 'none',
+	FRIEND = 'friend',
+	REQUESTED = 'requested',
+	BLOCKED = 'blocked',
+	PENDING = 'pending',
+}
+
 @Entity({ name: 'friendships' })
 export class Friendship {
 	@PrimaryGeneratedColumn("uuid")
@@ -10,5 +19,8 @@ export class Friendship {
 
 	@Column()
 	friend: string;
+
+	@Column({ type: 'enum', enum: userRelation, default: userRelation.NONE })
+	relation: userRelation;
 
 }
