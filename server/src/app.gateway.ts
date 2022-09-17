@@ -26,6 +26,7 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
 		const token = client.handshake.headers.authorization.split(' ')[1];
 		try {
 			const payload = this.jwtService.verify(token);
+			client.data.login = payload.login;
 			this.userService.setSocketId(payload.id, client.id);
 		}
 		catch (e) {
