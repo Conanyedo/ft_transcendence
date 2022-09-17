@@ -64,13 +64,12 @@ export const Profile = (props: { setShowSetModal: any }) => {
     </>)
 }
 
-export const ChatLeft = () => {
+export const ChatLeft = (props: {cnvs: any}) => {
 
     // Setting some local state
     const { lastUsers, setCurrentUser, setShowCnv, showCnv, setLastUsers, initialUsersState, chatUsersRefs, prevUser, setPrevUser } = useContext(ChatContext) as ChatContextType;
     const [show, setShow] = useState<boolean>(false);
     const [displayBlueIcon, setDisplayBlueIcon] = useState(false);
-
 
     // functions
     function createChannel(channelName: string, password: string, usrLen: number, setUsrTags: any, formik: any) {
@@ -84,9 +83,9 @@ export const ChatLeft = () => {
         setChatUser(lastUsers[0], setShowCnv);
 
         // reset the necessary fields
-        formik.setFieldValue("cName", "")
-        formik.setFieldValue("password", "")
-        formik.setFieldValue("member", "")
+        formik.setFieldValue("cName", "");
+        formik.setFieldValue("password", "");
+        formik.setFieldValue("member", "");
         setUsrTags([]);
     }
 
@@ -104,10 +103,10 @@ export const ChatLeft = () => {
                     <input type="Text" className={Styles.chatInput} placeholder="Search" onChange={(e) => filterChatUsers(e, lastUsers, setLastUsers, initialUsersState)} />
                 </div>
                 <div className={Styles.bottomSection}>
-                    {lastUsers.map((user: any, i: any) => <Link href={"/chat?id=" + i} key={i}><div key={i} ref={(element) => { chatUsersRefs.current[parseInt(i)] = element }} className={Styles.chatUser}>
+                    {props.cnvs.map((user: any, i: any) => <Link href={"/chat?id=" + i} key={i}><div key={i} ref={(element) => { chatUsersRefs.current[parseInt(i)] = element }} className={Styles.chatUser}>
                          <div className={Styles.avatarName}>
-                            <Image src={user.imgSrc} width={49.06} height={49} className={Styles.avatar} />
-                            <div className={Styles.username}>{user.fullName} {user.channelName}</div>
+                            <Image src={user.avatar} width={49.06} height={49} className={Styles.avatar} />
+                            <div className={Styles.username}>{user.fullname} {user.channelname}</div>
                         </div>
                         <p className={Styles.status}>{user.status}</p>
                     </div></Link>)}
