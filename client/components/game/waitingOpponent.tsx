@@ -1,14 +1,14 @@
 import classes from "../../styles/WaitingOpponent.module.css";
-import { LoadingGame } from "./GameLobby";
+import classesELM from "../../styles/Loading.module.css";
 
 const WaitingOpponent = () => {
 	return (
 		<>
 			<div className={classes.background}>
 				<div className={classes.waitingContainer}>
-                    <LoadingGame />
-                    <p>Waiting for your opponent</p>
-                </div>
+					<div className={`${classesELM["pong-loader"]} ${classes.loading}`} />
+					<p>Waiting for your opponent</p>
+				</div>
 			</div>
 		</>
 	);
