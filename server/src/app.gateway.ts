@@ -22,7 +22,7 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
 	}
 
 	async handleConnection(client: Socket) {
-		console.log('Connected /: ', client.id);
+		console.log('Connected to the server:  ', client.id);
 		const token = client.handshake.headers.authorization.split(' ')[1];
 		try {
 			const payload = this.jwtService.verify(token);
@@ -30,20 +30,23 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
 			this.userService.setSocketId(payload.id, client.id);
 		}
 		catch (e) {
+			// client.emit('onDisconnect', 'jrit 3lik');
 			client.disconnect();
+			console.log('Disconnected due to invalid token!!');
 		}
 	}
 
 	async handleDisconnect(client: Socket) {
-		console.log('Disconneted /: ');
-		const token = client.handshake.headers.authorization.split(' ')[1];
-		try {
-			const payload = this.jwtService.verify(token);
-			this.userService.setSocketId(payload.id, null);
-			client.disconnect();
-		}
-		catch (e) {
-			client.disconnect();
-		}
+		console.log('Disconneted from the server:  ', client.id);
+		// console.log('size: ', (await this.server.fetchSockets()).length);
+		// const token = client.handshake.headers.authorization.split(' ')[1];
+		// try {
+		// 	const payload = this.jwtService.verify(token);
+		// 	this.userService.setSocketId(payload.id, null);
+		// 	client.disconnect();
+		// }
+		// catch (e) {
+		// 	client.disconnect();
+		// }
 	}
 }

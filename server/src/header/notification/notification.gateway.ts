@@ -13,7 +13,7 @@ import { notificationDto } from "./notification.dto";
 		origin: '*'
 	}
 })
-export class NotificationGateway implements OnGatewayConnection, OnGatewayDisconnect {
+export class NotificationGateway/* implements OnGatewayConnection, OnGatewayDisconnect*/ {
 
 	constructor(
 		private notifService: NotificationService
@@ -21,16 +21,6 @@ export class NotificationGateway implements OnGatewayConnection, OnGatewayDiscon
 
 	@WebSocketServer()
 	server: Server;
-
-	async handleConnection(@ConnectedSocket() client: Socket) {
-		console.log('Connected notif: ', client.id);
-		// this.notifService.connectClient(client);
-	}
-
-	async handleDisconnect(@ConnectedSocket()client: Socket) {
-		console.log('Disconneted');
-		// this.notifService.disconnectClient(client);
-	}
 
 	@UseGuards(WsJwtGuard)
 	@SubscribeMessage('addFriend')
