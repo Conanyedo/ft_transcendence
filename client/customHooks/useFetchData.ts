@@ -28,6 +28,7 @@ export const getQRcodeOrdisableCode = async (
 		})
 		.catch((err) => {
 			eraseCookie("jwt");
+			socket_notif.disconnect();
 			route.replace("/");
 		});
 };
@@ -47,6 +48,7 @@ export const Is2FAEnaled = (set: any, setP: any, route: NextRouter) => {
 		})
 		.catch((err) => {
 			eraseCookie("jwt");
+			socket_notif.disconnect();
 			route.replace("/");
 		});
 };
@@ -73,6 +75,7 @@ export const check2FACode = async (
 		.catch((err) => {
 			if (err.response.data.message !== "Wrong authentication code") {
 				eraseCookie("jwt");
+				socket_notif.disconnect();
 				route.replace("/");
 			}
 			return false;
@@ -94,6 +97,7 @@ export const LogOut = (route: NextRouter) => {
 		})
 		.catch((err) => {
 			eraseCookie("jwt");
+			socket_notif.disconnect();
 			route.replace("/");
 		});
 };
@@ -145,6 +149,7 @@ export const fetchUserInfo = async (
 		})
 		.catch(() => {
 			eraseCookie("jwt");
+			socket_notif.disconnect();
 			router.replace("/");
 		});
 };
@@ -169,6 +174,7 @@ export const fetchAchievements = async (
 		})
 		.catch(() => {
 			eraseCookie("jwt");
+			socket_notif.disconnect();
 			router.replace("/");
 		});
 };
@@ -187,6 +193,7 @@ export const fetchDATA = async (set: any, router: NextRouter, Path: string) => {
 		})
 		.catch((err) => {
 			eraseCookie("jwt");
+			socket_notif.disconnect();
 			router.replace("/");
 		});
 };
@@ -210,6 +217,7 @@ export const checkCode2FA = async (code: string, router: NextRouter) => {
 		.catch((err) => {
 			if (err.response.data.message !== "Wrong authentication code") {
 				eraseCookie("jwt-2fa");
+				socket_notif.disconnect();
 				router.replace("/");
 			}
 			return false;
@@ -234,6 +242,7 @@ export const check2FA_JWT = async (
 		})
 		.catch(() => {
 			eraseCookie("jwt-2fa");
+			socket_notif.disconnect();
 			router.replace("/");
 		});
 };
@@ -258,6 +267,7 @@ export const checkJWT = async (
 		.catch((e) => {
 			set(false);
 			eraseCookie("jwt");
+			socket_notif.disconnect();
 			router.push("/");
 		});
 };
@@ -285,6 +295,7 @@ export const requests = async (
 		.catch((err) => {
 			if (err.response.data.message !== "Wrong authentication code") {
 				eraseCookie("jwt");
+				socket_notif.disconnect();
 				router.replace("/");
 			}
 			return false;

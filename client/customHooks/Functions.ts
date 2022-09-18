@@ -66,6 +66,5 @@ export function getImageBySize(path: string, size: number) {
 }
 
 export function eraseCookie(name: string) {
-    socket_notif.disconnect();
     document.cookie = name+'=; Max-Age=0;';
 }
