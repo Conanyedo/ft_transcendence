@@ -17,6 +17,16 @@ export class ChatService {
 		private userService: UserService,
 	) { }
 
+	async joinConversations(client: Socket) {
+		const convs: Conversation[] = await this.conversationRepository
+			.createQueryBuilder('conversations')
+			.where('conversations.sender = :login OR conversations.receiver = :login', { login: client.data.login })
+			.getMany();
+		if (!convs.length)
+			return ;
+		convs.forEach((conv) => (client.join(conv.id)));
+	}
+
 	async getConversations(login: string) {
 		const convs: Conversation[] = await this.conversationRepository
 			.createQueryBuilder('conversations')
