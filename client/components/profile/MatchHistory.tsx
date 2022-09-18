@@ -53,7 +53,7 @@ const MatchHistory: React.FC = () => {
 							)
 					)) || (
 					<div className={classes.NoHistory}>
-						No Match History
+						<span >No Match History</span>
 					</div>
 				)}
 			</div>
