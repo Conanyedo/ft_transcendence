@@ -4,41 +4,73 @@ import Play from "../../public/WatchLiveGame.svg";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import socket_game from "../../config/socketGameConfig";
-import { liveGamesType } from "../../Types/dataTypes";
+import {
+	EmtyUser,
+	headerDataType,
+	headerGameType,
+	UserTypeNew,
+} from "../../Types/dataTypes";
 import { useRouter } from "next/router";
+import { fetchDATA } from "../../customHooks/useFetchData";
+import { getImageBySize, getRankUser } from "../../customHooks/Functions";
 
-export const LiveGame: React.FC<liveGamesType> = (props) => {
+export const LiveGame: React.FC<headerGameType> = (props) => {
 	const router = useRouter();
+	const [userInfo1, setUserInfo1] = useState<UserTypeNew>(EmtyUser);
+	const [userInfo2, setUserInfo2] = useState<UserTypeNew>(EmtyUser);
+	const [Data, setData] = useState<headerDataType>();
+
+	useEffect(() => {
+		socket_game.emit("watchGame", { ID: props.gameId });
+		socket_game.on("ScoreStatus", (data) => {
+			setData(data);
+		});
+		return () => {
+			socket_game.off("ScoreStatus");
+		};
+	}, [props.gameId]);
+	useEffect(() => {
+		if (Data?.firstPlayer)
+			fetchDATA(setUserInfo1, router, `user/info/${Data?.firstPlayer}`);
+		if (Data?.secondPlayer)
+			fetchDATA(setUserInfo2, router, `user/info/${Data?.secondPlayer}`);
+	}, [Data?.firstPlayer]);
+	const rank1 = getRankUser(userInfo1.stats.GP);
+	const rank2 = getRankUser(userInfo2.stats.GP);
+	const pathImage1 = getImageBySize(userInfo1?.avatar, 220);
+	const pathImage2 = getImageBySize(userInfo2?.avatar, 220);
 	const clickHandler = () => {
 		router.push("/live-games/" + props.gameId);
 	};
 	return (
 		<>
 			<div className={classes.liveGameContainer}>
-				<div className={classes.ButtonWatch} onClick={clickHandler}>
-					<div className={classes.Button}>
-						<Image src={Play} />
-						<div className={classes.WatchGame}>Watch Game</div>
+				{props.click && (
+					<div className={classes.ButtonWatch} onClick={clickHandler}>
+						<div className={classes.Button}>
+							<Image src={Play} />
+							<div className={classes.WatchGame}>Watch Game</div>
+						</div>
 					</div>
-				</div>
-				<div className={classes.TypeGame}>{props.matchType}</div>
+				)}
+				<div className={classes.TypeGame}>{Data?.gameType}</div>
 				<div className={classes.GameContent}>
 					<div className={classes.UserSection}>
 						<div className={classes.userNameAvatar}>
 							<div className={classes.avatar}>
-								<img src="/uploads/cabouelw1662918372479x70.jpg" />
+								<img src={pathImage1} />
 							</div>
 							<div className={classes.userName}>
-								Choaib Abouelwafa
+								{userInfo1.fullname.split(" ")[0]}
 							</div>
 						</div>
 
 						<div className={classes.ScoreTier}>
 							<div className={classes.tierContainer}>
-								<Image src={Gold} />
+								<Image src={rank1.tier} />
 							</div>
 							<div className={classes.Score}>
-								{props.firstScore}
+								{Data?.firstScore}
 							</div>
 						</div>
 					</div>
@@ -46,18 +78,18 @@ export const LiveGame: React.FC<liveGamesType> = (props) => {
 					<div className={classes.UserSectionSecond}>
 						<div className={classes.ScoreTier}>
 							<div className={classes.Score}>
-								{props.secondScore}
+								{Data?.secondScore}
 							</div>
 							<div className={classes.tierContainerSecond}>
-								<Image src={Gold} />
+								<Image src={rank2.tier} />
 							</div>
 						</div>
 						<div className={classes.userNameAvatar}>
 							<div className={classes.secondUserName}>
-								{/* {props.secondPlayer} */}ikram
+								{userInfo2.fullname.split(" ")[0]}
 							</div>
 							<div className={classes.secondavatar}>
-								<img src="/uploads/watchytb13371662644889624x70.jpg" />
+								<img src={pathImage2} />
 							</div>
 						</div>
 					</div>
@@ -68,17 +100,14 @@ export const LiveGame: React.FC<liveGamesType> = (props) => {
 };
 
 const LiveGames = () => {
-	const [liveMatchs, setLiveMatchs] = useState<liveGamesType[] | null>(null);
+	const [liveMatchs, setLiveMatchs] = useState<headerGameType[] | null>(null);
 	useEffect(() => {
-		socket_game.connect();
 		socket_game.emit("liveGames");
 		socket_game.on("AllGames", (data) => {
-			console.log("data ", data);
-			if (data) setLiveMatchs(data.arry);
+			setLiveMatchs(data.arry);
 		});
 		return () => {
 			socket_game.off("AllGames");
-			// socket_game.disconnect();
 		};
 	}, []);
 
@@ -89,7 +118,13 @@ const LiveGames = () => {
 				<div className={classes.listLiveGames}>
 					{liveMatchs &&
 						liveMatchs?.map((game) => {
-							return <LiveGame {...game} key={game.gameId} />;
+							return (
+								<LiveGame
+									key={game.gameId}
+									click={true}
+									gameId={game.gameId}
+								/>
+							);
 						})}
 				</div>
 			</div>

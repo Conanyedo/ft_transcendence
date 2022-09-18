@@ -7,6 +7,7 @@ import Bronze from '../public/Tiers/Bronze.svg';
 import Silver from '../public/Tiers/Silver.svg';
 import Gold from '../public/Tiers/Gold.svg';
 import { rankObj } from "../Types/dataTypes";
+import socket_notif from "../config/socketNotif";
 
 export function useOutsideAlerter(ref: any, setToggle: (t: boolean) => void) {
 	useEffect(() => {
@@ -62,4 +63,9 @@ export function getImageBySize(path: string, size: number) {
 	let tmppath = path.split('.');
 	const newPath = tmppath[0] + 'x' + size + '.jpg';
 	return newPath;
+}
+
+export function eraseCookie(name: string) {
+    socket_notif.disconnect();
+    document.cookie = name+'=; Max-Age=0;';
 }

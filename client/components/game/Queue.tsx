@@ -1,66 +1,87 @@
 import Image from "next/image";
-import Router from "next/router";
+import Router, { useRouter } from "next/router";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import socket_game from "../../config/socketGameConfig";
-import { getRankUser } from "../../customHooks/Functions";
+import { getImageBySize, getRankUser } from "../../customHooks/Functions";
 import classes from "../../styles/Queue.module.css";
 import { LoadingGame } from "./GameLobby";
+import classesELM from "../../styles/Loading.module.css";
+import { EmtyUser, UserTypeNew } from "../../Types/dataTypes";
+import { fetchDATA } from "../../customHooks/useFetchData";
 
-const CardPlayer: React.FC<{ Loading: boolean }> = ({ Loading }) => {
-	const rank = getRankUser(1600);
+const CardPlayer: React.FC<{ Loading: boolean, login: string }> = ({ Loading, login }) => {
+	const router = useRouter();
+	const [userInfo, setUserInfo] = useState<UserTypeNew>(EmtyUser);
+	const [isMounted, setIsMounted] = useState(false);
+	useEffect(() => {
+		if (login)
+			fetchDATA(setUserInfo, router, `user/info/${login}`);
+		setIsMounted(true);
+		return () => {
+			setUserInfo(EmtyUser);
+		};
+	}, [login]);
+	const rank = getRankUser(userInfo.stats.GP);
+	const pathImage = getImageBySize(userInfo?.avatar, 220);
 	return (
 		<>
-			<div className={classes.Card}>
+			{isMounted && <div className={classes.Card}>
 				{(Loading && (
 					<>
-						<LoadingGame />
+						<div
+							className={`${classesELM["pong-loader"]} ${classes.loading}`}
+						/>
 						<p>Waiting for player ...</p>
 					</>
 				)) || (
 					<>
 						<div className={classes.items}>
 							<div className={classes.imgContainer}>
-								<img src="https://cdn.intra.42.fr/users/cabouelw.jpg" />
+								<img src={pathImage} />
 							</div>
-							<div className={classes.NAme}>Youness Santir</div>
+							<div className={classes.NAme}>{userInfo.fullname}</div>
 						</div>
 						<div className={classes.items}>
 							<div className={classes.imgContainer}>
 								<Image src={rank.tier} />
 							</div>
-							<div className={classes.rank}>Rank 5</div>
+							<div className={classes.rank}>Rank {userInfo.rank}</div>
 						</div>
 					</>
 				)}
-			</div>
+			</div>}
 		</>
 	);
 };
 
-const Queue: React.FC<{ cancel: Dispatch<SetStateAction<boolean>> }> = ({
+const Queue: React.FC<{ cancel: (t: string) => void }> = ({
 	cancel,
 }) => {
-	const [waiting, setWaiting] = useState(true);
-	const owner = localStorage.getItem("owner");
+	const [waiting, setWaiting] = useState('');
+	const owner = localStorage.getItem("owner") as string;
 	useEffect(() => {
 		socket_game.connect();
-		socket_game.emit('joinGame', owner);
+		socket_game.emit("joinGame", owner);
+		socket_game.on("errorCheck", (data) => {
+			cancel('error');
+		});
 		socket_game.on("getCode", (data) => {
-			setWaiting(false)
+			setWaiting(data.login);
 			const time = setTimeout(() => {
-				Router.push('/game/' + data);
+				Router.push("/game/" + data.id);
 			}, 5000);
 			return () => {
 				clearTimeout(time);
-			}
+			};
 		});
 		return () => {
-			socket_game.off('getCode');
+			socket_game.off("getCode");
+			socket_game.off("errorCheck");
 		};
 	}, []);
 	const GoBackHandler = () => {
-		socket_game.emit('leaveQueue', owner);
-		cancel(false);
+		socket_game.emit("leaveQueue", owner);
+		cancel('');
 	};
 	return (
 		<>
@@ -72,10 +93,10 @@ const Queue: React.FC<{ cancel: Dispatch<SetStateAction<boolean>> }> = ({
 					Thank you for your patience.
 				</p>
 				<div className={classes.CardsContainer}>
-					<CardPlayer Loading={false} />
-					<CardPlayer Loading={waiting} />
+					<CardPlayer Loading={false} login={owner} />
+					<CardPlayer Loading={(waiting === '' ? true : false)} login={waiting} />
 				</div>
-				{waiting && (
+				{waiting === '' && (
 					<div className={classes.btnLeave} onClick={GoBackHandler}>
 						Leave Queue
 					</div>

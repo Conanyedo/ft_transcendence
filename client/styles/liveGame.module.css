@@ -30,7 +30,6 @@
 
 .liveGameContainer {
     width: 100%;
-    max-width: 2050px;
     background: #2C2C2E;
     border-radius: 25px;
     padding: 2rem;
@@ -202,10 +201,18 @@
     color: #409CFF;
 }
 
+.container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 
 .GameContainerOutside {
     width: 100%;
     height: 100%;
+    max-width: 2050px;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -213,13 +220,10 @@
 }
 
 .GameContainerOutside>canvas {
-    max-width: 2050px;
     width: 100%;
     margin-top: 1.5rem;
     border-radius: 10px;
 }
-
-
 
 @media only screen and (max-width: 1230px) {
     .tierContainerSecond,

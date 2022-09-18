@@ -8,6 +8,9 @@ import Image from "next/image";
 import GameLobby from "./GameLobby";
 import Queue from "./Queue";
 import socket_game from "../../config/socketGameConfig";
+import RankStar from "../../public/Game/raking-stars.svg";
+import Classic from "../../public/Game/Classic.svg";
+import MsgSlideUp from "../Settings/slideUpMsg";
 
 const Friend = () => {
 	return (
@@ -94,6 +97,7 @@ const Lobby = () => {
 	const [cardisOpen, setCardisOpen] = useState(false);
 	const [GamePage, setGamePage] = useState(false);
 	const [QueuePage, setQueuePage] = useState(false);
+	const [ErrorMsg, setErrorMsg] = useState(false);
 	const closeHandler = () => {
 		setGamePage(false);
 	};
@@ -101,18 +105,37 @@ const Lobby = () => {
 		setCardisOpen(true);
 	};
 	const HideCardHandler = () => setCardisOpen(false);
+	const cancelHandler = (text: string) => {
+		if (text === "error") {
+			setErrorMsg(true);
+			const id = setTimeout(() => {
+				setErrorMsg(false);
+				return () => {
+					clearTimeout(id);
+				}
+			}, 3000);
+		}
+		setQueuePage(false);
+	};
 	const joinRankHandler = () => {
-		setQueuePage(true)
+		setQueuePage(true);
 	};
 	useEffect(() => {
 		socket_game.connect();
-		return (() => {
+		return () => {
 			// socket_game.disconnect();
-		})
-	}, [])
+		};
+	}, []);
 	return (
 		<>
-			{QueuePage && <Queue cancel={setQueuePage}/>}
+			{ErrorMsg && (
+				<MsgSlideUp
+					msg="in game already"
+					colorCtn="#FF6482"
+					colorMsg="#ECF5FF"
+				/>
+			)}
+			{QueuePage && <Queue cancel={cancelHandler} />}
 			{GamePage && !QueuePage && <GameLobby close={closeHandler} />}
 			{!GamePage && !QueuePage && (
 				<>
@@ -138,35 +161,35 @@ const Lobby = () => {
 						<div className={classes.cardContainers}>
 							<div className={classes.RankContainer}>
 								<span>Ranked Game</span>
+								<div className={classes.logoContainer}>
+									<Image src={RankStar} />
+								</div>
 								<p>
 									Lorem ipsum dolor sit amet consectetur
 									adipiscing elit Ut et massa mi. Aliquam in
-									hendrerit urna. Pellentesque sit amet sapien
-									fringilla, mattis ligula consectetur,
-									ultrices mauris. Maecenas vitae mattis
-									tellus. Nullam quis.
-								</p>
-								<p>
 									Lorem ipsum dolor sit amet consectetur
-									adipiscing elit Ut et massa mi. Aliquam in{" "}
+									adipiscing elit Ut et massa. Lorem ipsum
+									dolor sit amet consectetur adipiscing elit
+									Ut et massa mi.
 								</p>
-								<div className={classes.JoinQueue} onClick={joinRankHandler}>
+								<div
+									className={classes.JoinQueue}
+									onClick={joinRankHandler}
+								>
 									Join Queue
 								</div>
 							</div>
 							<div className={classes.RankContainer}>
 								<span>Friend Game</span>
+								<div className={classes.logoContainer}>
+									<Image src={Classic} />
+								</div>
 								<p>
 									Lorem ipsum dolor sit amet consectetur
-									adipiscing elit Ut et massa mi. Aliquam in
-									hendrerit urna. Pellentesque sit amet sapien
-									fringilla, mattis ligula consectetur,
-									ultrices mauris. Maecenas vitae mattis
-									tellus. Nullam quis.
-								</p>
-								<p>
-									Lorem ipsum dolor sit amet consectetur
-									adipiscing elit Ut et massa mi. Aliquam in{" "}
+									adipiscing elit Ut et massa mi. Lorem ipsum
+									dolor sit amet consectetur adipiscing elit
+									Ut et massa mi. Lorem ipsum dolor sit amet
+									consectetur adipiscing elit Ut et massa mi.
 								</p>
 								<div
 									className={classes.JoinQueue}

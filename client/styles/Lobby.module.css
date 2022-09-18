@@ -60,7 +60,7 @@
 
 .RankContainer {
     width: 53.333rem;
-    height: 55.556rem;
+    height: max-content;
     background: #2D2D2F;
     box-shadow: -1.111rem -1.111rem 5.556rem #00000040, 1.111rem 1.111rem 5.556rem #00000040;
     border-radius: 15px;
@@ -91,9 +91,11 @@
     color: #D9D9D9;
 }
 
-.RankContainer>p:first-of-type {
-    margin-top: 4.444rem;
-    margin-bottom: 9.444rem;
+.logoContainer {
+    margin-top: 3.111rem;
+    margin-bottom: 4.444rem;
+    width: 15.556rem;
+    height: 15.556rem;
 }
 
 .JoinQueue {
@@ -343,6 +345,37 @@
     .select {
         width: 100%;
     }
+
+    .RankContainer>span {
+        font-size: 2rem;
+    }
+    
+    .RankContainer>p {
+        font-size: 1.5rem;
+    }
+    .RankContainer>p:first-of-type {
+        margin-top: 2rem;
+        margin-bottom: 3rem;
+    }    
+    .JoinQueue {
+        margin-top: 2.5rem;
+        padding: 1.8rem;
+        font-size: 1.6rem;
+    }
+    .pingPongContainer {
+        padding-top: 2rem;
+    }
+    .pingPongContainer>span {
+        font-size: 1.6rem;
+    }
+    
+    .pingPongContainer>p {
+        margin-top: 2rem;
+        font-size: 1.6rem;
+    }
+    .cardContainers {
+        padding-top: 2rem;
+    }
 }
 
 @media only screen and (max-width: 600px) {
@@ -354,5 +387,35 @@
     .LobbyContainer {
         height: max-content;
         margin-bottom: 5rem;
+    }
+    .RankContainer>span {
+        font-size: 1.6rem;
+    }
+    
+    .RankContainer>p {
+        font-size: 1rem;
+    }
+    .RankContainer>p:first-of-type {
+        margin-top: 2rem;
+        margin-bottom: 3rem;
+    }    
+    .JoinQueue {
+        margin-top: 2.5rem;
+        padding: 1.8rem;
+        font-size: 1.6rem;
+    }
+    .pingPongContainer {
+        padding-top: 2rem;
+    }
+    .pingPongContainer>span {
+        font-size: 1.6rem;
+    }
+    
+    .pingPongContainer>p {
+        margin-top: 2rem;
+        font-size: 1.6rem;
+    }
+    .cardContainers {
+        padding-top: 2rem;
     }
 }

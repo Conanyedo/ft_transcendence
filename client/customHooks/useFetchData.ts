@@ -2,9 +2,10 @@ import axios from "axios";
 import { CookieValueTypes, getCookie } from "cookies-next";
 import { NextRouter } from "next/router";
 import { Dispatch, SetStateAction } from "react";
-import { baseUrl, eraseCookie } from "../config/baseURL";
+import { baseUrl } from "../config/baseURL";
 import socket_notif from "../config/socketNotif";
 import { UserTypeNew } from "../Types/dataTypes";
+import { eraseCookie } from "./Functions";
 
 export const getQRcodeOrdisableCode = async (
 	status: string,

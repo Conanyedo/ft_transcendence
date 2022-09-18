@@ -48,15 +48,22 @@
     justify-content: center;
     align-items: center;
     gap: 2.222rem;
+    position: relative;
+}
+
+.loading {
+    position: initial !important;
 }
 
 .Card>p {
+    margin-top: 2rem;
     font-family: 'Inter';
     font-style: normal;
     font-weight: 400;
     font-size: 20px;
     line-height: 24px;
     color: #A0CEFF;
+    text-align: center;
 }
 
 .items {
@@ -82,6 +89,7 @@
     font-size: 20px;
     line-height: 24px;
     color: #FFFFFF;
+    text-align: center;
 }
 
 .rank {
@@ -137,11 +145,13 @@
 
     .Card {
         width: 100%;
-        height: 31.778rem;
+        height: 33rem;
+        gap: .5rem;
     }
 
     .imgContainer {
         width: 9rem;
         height: 9rem;
+        margin-bottom: 1rem;
     }
 }

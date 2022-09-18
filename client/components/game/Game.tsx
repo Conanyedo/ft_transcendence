@@ -1,86 +1,53 @@
 import React, { useEffect, useRef, useState } from "react";
-import { render } from "../../config/game";
-import { ThemeDarkMode, ThemeSky } from "../../config/gameMap";
+import { green, ThemeDarkMode, ThemeSky } from "../../config/gameMap";
 import Cross from "../../public/ArrowLeft.svg";
 import Image from "next/image";
 import socket_game from "../../config/socketGameConfig";
 import classes from "../../styles/Game.module.css";
-import { GameDataType } from "../../Types/dataTypes";
-import { LiveGame } from "../liveGame/GameToWatch";
-import Router from "next/router";
+import { useRouter } from "next/router";
+import { LiveGame } from "../liveGame/liveGame";
+import WinerCard from "./WinerCard";
+import CanvasGame from "./CanvasGame";
 
-function Game() {
-	const gameData: GameDataType = new GameDataType(1500);
-	const [newData, setNewData] = useState<GameDataType>(gameData);
+const Game: React.FC<{ GameID: string }> = (props) => {
+	const [showWinner, setShowWinner] = useState("");
 	const owner = localStorage.getItem("owner");
-	const ref_camvas = useRef(null);
+	const Router = useRouter();
 	useEffect(() => {
-		gameData.ball.ballX = newData.ball.ballX;
-		gameData.ball.ballY = newData.ball.ballY;
-		gameData.myScore = newData.myScore;
-		gameData.otherScore = newData.otherScore;
-		gameData.paddleLeft.paddleY = newData.paddleLeft.paddleY;
-		gameData.paddleRight.paddleY = newData.paddleRight.paddleY;
-		gameData.GameStatus = newData.GameStatus;
-		render(
-			gameData,
-			ref_camvas.current,
-			ThemeDarkMode
-		);
-	}, [newData]);
-	useEffect(() => {
-		socket_game.on("gameStats", (data) => {
-			setNewData(data);
-		});
-		socket_game.on("GameOver", () => {
-			// TODO set Card Winner
-			const id = setTimeout(() => {
-				Router.replace('/game');
-			}, 6000);
-			return (() => {
-				clearTimeout(id);
-			})
-		});
-		document.addEventListener("keydown", (ev) => {
-			if (ev.key === "ArrowUp")
-				socket_game.emit("go_Up", { login: owner });
-			else if (ev.key === "ArrowDown")
-				socket_game.emit("go_Down", { login: owner });
-		});
-		document.addEventListener("keyup", (ev) => {
-			socket_game.emit("stop", { login: owner });
-		});
+		if (props.GameID) {
+			socket_game.emit('resumeGame', owner);
+			socket_game.on("GameOver", (data) => {
+				setShowWinner(data.winner);
+				const id = setTimeout(() => {
+					Router.replace("/game");
+				}, 4000);
+				return () => {
+					clearTimeout(id);
+				};
+			});
+		}
 		return () => {
-			socket_game.off("gameStats");
 			socket_game.off("GameOver");
 		};
-	}, []);
+	}, [props.GameID]);
 	const GoBackHandler = () => {
+		socket_game.disconnect();
 		Router.replace("/game");
 	};
 	return (
-		<>
+		<div className={classes.container}>
 			<div className={classes.GameContainer}>
+				{showWinner !== "" && <WinerCard showWinner={showWinner} />}
 				<div className={classes.goBack} onClick={GoBackHandler}>
 					<Image src={Cross} />
 				</div>
-				<LiveGame
-					firstScore={newData.myScore}
-					secondScore={newData.otherScore}
-					firstPlayer={"Choaib Abouelwafa"}
-					secondPlayer="Ikram"
-					matchType="Classic"
-					gameId=""
-				/>
-				<canvas
-					width={gameData.canvasWidth}
-					height={gameData.canvasHieght}
-					ref={ref_camvas}
-					id="pong"
-				></canvas>
+				{props.GameID !== "" && (
+					<LiveGame gameId={props.GameID} click={false} />
+				)}
+				<CanvasGame GameID={props.GameID} />
 			</div>
-		</>
+		</div>
 	);
-}
+};
 
 export default Game;
