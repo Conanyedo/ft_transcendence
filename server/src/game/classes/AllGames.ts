@@ -208,12 +208,12 @@ export class allGames {
 		if (this.RankGames.length && login) {
 			const game = this.RankGames.find(game => game._PlayerLeft.getlogin() === login || game._PlayerRight.getlogin() === login)
 			if (game && client.id !== game._PlayerLeft.getsocket().id && client.id !== game._PlayerRight.getsocket().id)
-				game.resumeGame(client, login);
+				game.resumeGame(client, login, this.server);
 		}
 		if (this.FriendGames.length && login) {
 			const game = this.FriendGames.find(game => game._PlayerLeft.getlogin() === login || game._PlayerRight.getlogin() === login)
 			if (game && client.id !== game._PlayerLeft.getsocket().id && client.id !== game._PlayerRight.getsocket().id)
-				game.resumeGame(client, login);
+				game.resumeGame(client, login, this.server);
 		}
 	}
 	clientDisconnect(client: Socket) {

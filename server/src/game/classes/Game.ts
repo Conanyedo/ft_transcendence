@@ -127,21 +127,26 @@ export class Game {
   }
   public pausegame(server: Server, games: allGames) {
     this.pause = true;
+    server.to(this._ID).emit('GameOnpause', true);
     setTimeout(() => {
-      if (this.pause)
+      if (this.pause) {
+        server.to(this._ID).emit('GameOnpause', false);
         this.EndGame(server, games);
+      }
     }, 5000);
   }
-  public resumeGame(client: Socket, login: string) {
+  public resumeGame(client: Socket, login: string, server: Server) {
     if (login === this._PlayerLeft.getlogin() && client.id !== this._PlayerLeft.getsocket().id) {
       this._PlayerLeft.getsocket().leave(this._ID);
       this._PlayerLeft.setsocket(client);
+      server.to(this._ID).emit('GameOnpause', false);
       client.join(this._ID);
       this.pause = false;
     }
     else  if (login === this._PlayerRight.getlogin() && client.id !== this._PlayerRight.getsocket().id) {
       this._PlayerRight.getsocket().leave(this._ID);
       this._PlayerRight.setsocket(client);
+      server.to(this._ID).emit('GameOnpause', false);
       client.join(this._ID);
       this.pause = false;
     }
