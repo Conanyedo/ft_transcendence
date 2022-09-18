@@ -6,9 +6,9 @@ import { useEffect, useState } from "react";
 import { Grid } from "@material-ui/core";
 import LoadingElm from "../loading/Loading_elm";
 import { check2FA_JWT, checkCode2FA } from "../../customHooks/useFetchData";
-import { eraseCookie } from "../../config/baseURL";
 import { useRouter } from "next/router";
 import { getCookie } from "cookies-next";
+import { eraseCookie } from "../../customHooks/Functions";
 
 const FactorAuth = () => {
 	const router = useRouter();
@@ -21,7 +21,8 @@ const FactorAuth = () => {
 	const [inputValue, setInputValue] = useState("");
 	const [isError, setisError] = useState(false);
 	useEffect(() => {
-		check2FA_JWT(jwt, setisValid, router);
+		if (jwt)
+			check2FA_JWT(jwt, setisValid, router);
 	}, []);
 	if (!isValid) return <LoadingElm />;
 	const CheckHandler = async () => {
