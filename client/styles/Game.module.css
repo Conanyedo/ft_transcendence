@@ -1,11 +1,20 @@
+.container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    padding: 6.333rem 10.333rem;
+    align-items: center;
+    justify-content: center;
+}
+
 .GameContainer {
     width: 100%;
+    max-width: 2050px;
     height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
-    padding: 6.333rem 10.333rem;
 }
 
 .homeGameContainer {
@@ -25,7 +34,7 @@
     font-style: normal;
     font-weight: 500;
     font-size: 1.5rem;
-    line-height: 24px;
+    line-height: 2.667rem;
     color: #FFFFFF;
     background: #409CFF;
     border-radius: 5px;
@@ -37,7 +46,6 @@
 
 .GameContainer>canvas {
     width: 100%;
-    max-width: 2050px;
     margin-top: 1.5rem;
     border-radius: 10px;
     /* height: 100%; */
@@ -57,7 +65,7 @@
     font-style: normal;
     font-weight: 500;
     font-size: 4rem;
-    line-height: 24px;
+    line-height: 2.667rem;
     color: #409CFF;
     padding-bottom: 2rem;
 }
@@ -67,7 +75,7 @@
     font-style: normal;
     font-weight: 500;
     font-size: 4rem;
-    line-height: 24px;
+    line-height: 2.667rem;
     color: #409CFF;
     padding-bottom: 2rem;
 }
@@ -79,7 +87,7 @@
     font-style: normal;
     font-weight: 500;
     font-size: 2rem;
-    line-height: 24px;
+    line-height: 2.667rem;
     color: #409CFF;
     border: 2px solid #409CFF;
     border-radius: 10px;
@@ -93,13 +101,73 @@
     margin-bottom: 2rem;
 }
 
+/* WinnerCard */
+
+.BackGround {
+    z-index: 101;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #242426cc;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 2.222rem;
+    padding-left: 7rem;
+}
+
+.BackGround>h1 {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 2.667rem;
+    line-height: 3.222rem;
+    color: #FFFFFF;
+    margin-top: 2rem;
+}
+
+.BackGround>h2 {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 8.889rem;
+    line-height: 10.778rem;
+    color: #E6C187;
+    margin-top: 5.556rem;
+}
+
+.avatar {
+    border-radius: 8px;
+    width: 15.556rem;
+    height: 15.556rem;
+    overflow: hidden;
+}
+
 @media only screen and (max-width: 1300px) {
-    .GameContainer {
+    
+    .container {
         padding: 5rem 4rem;
     }
+
     .goBack {
         width: 3rem;
         height: 3rem;
     }
-}
 
+    .BackGround {
+        padding: 0;
+    }
+
+    .BackGround>h1 {
+        margin-top: 1.5rem;
+        font-size: 1.8rem;
+    }
+
+    .BackGround>h2 {
+        margin-top: 1.5rem;
+        font-size: 6rem;
+    }
+}
