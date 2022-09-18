@@ -5,7 +5,7 @@ import socket_game from "../../config/socketGameConfig";
 import { gameControleType } from "../../Types/dataTypes";
 import { useRouter } from "next/router";
 
-const CanvasGame: React.FC<{GameID: string, theme: Theme}> = (props) => {
+const CanvasGame: React.FC<{GameID: string}> = (props) => {
 	const gameData: gameControleType = new gameControleType(1500);
 	const [newData, setNewData] = useState<gameControleType>(gameData);
 	const owner = localStorage.getItem("owner");
