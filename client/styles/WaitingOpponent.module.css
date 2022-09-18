@@ -21,10 +21,15 @@
 }
 
 .waitingContainer>p {
+    margin-top: 2rem;
     font-family: 'Inter';
     font-style: normal;
     font-weight: 500;
     font-size: 24px;
     line-height: 29px;
     color: #A0CEFF;
+}
+
+.loading {
+    position: initial !important;
 }
