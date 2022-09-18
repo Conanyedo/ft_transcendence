@@ -19,6 +19,7 @@
 .historyMatchCtn {
 	margin-top: 2rem;
 	max-height: 55rem;
+	height: 100%;
 	overflow-y: auto;
 	scrollbar-color: #2B2B2D #3A3A3C;
 }
