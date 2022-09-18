@@ -85,7 +85,7 @@ export class UserService {
 			.select(['users.socketId'])
 			.where('users.login = :login', { login: login })
 			.getOne();
-		return user.socketId;
+		return user?.socketId;
 	}
 
 	async getSecret(id: string) {
@@ -94,7 +94,7 @@ export class UserService {
 			.select(['users._2faSecret'])
 			.where('users.id = :id', { id: id })
 			.getOne();
-		return user._2faSecret;
+		return user?._2faSecret;
 	}
 
 	async get2faEnabled(id: string) {
@@ -103,7 +103,7 @@ export class UserService {
 			.select(['users.is2faEnabled'])
 			.where('users.id = :id', { id: id })
 			.getOne();
-		return user.is2faEnabled;
+		return user?.is2faEnabled;
 	}
 
 	async getIsAuthenticated(id: string) {
@@ -112,7 +112,7 @@ export class UserService {
 			.select(['users.isAuthenticated'])
 			.where('users.id = :id', { id: id })
 			.getOne();
-		return user.isAuthenticated;
+		return user?.isAuthenticated;
 	}
 
 	async getUserHeader(id: string) {

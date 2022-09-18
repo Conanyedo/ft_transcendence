@@ -12,7 +12,7 @@ import { createMsgDto, msgDto } from "./chat.dto";
 		origin: '*'
 	}
 })
-export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
+export class ChatGateway/* implements OnGatewayConnection, OnGatewayDisconnect*/ {
 
 	constructor(
 		private readonly chatService: ChatService,
@@ -22,11 +22,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	server: Server;
 
 	async handleConnection(@ConnectedSocket() client: Socket) {
-		console.log('Connected chat: ', client.id);
-	}
-
-	async handleDisconnect(@ConnectedSocket() client: Socket) {
-		// console.log('Disconneted');
+		this.chatService.joinConversations(client);
 	}
 
 	@UseGuards(WsJwtGuard)
