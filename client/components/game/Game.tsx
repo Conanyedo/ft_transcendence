@@ -8,14 +8,16 @@ import { useRouter } from "next/router";
 import { LiveGame } from "../liveGame/liveGame";
 import WinerCard from "./WinerCard";
 import CanvasGame from "./CanvasGame";
+import WaitingOpponent from "./waitingOpponent";
 
 const Game: React.FC<{ GameID: string }> = (props) => {
 	const [showWinner, setShowWinner] = useState("");
+	const [showloading, setshowloading] = useState(false);
 	const owner = localStorage.getItem("owner");
 	const Router = useRouter();
 	useEffect(() => {
 		if (props.GameID) {
-			socket_game.emit('resumeGame', owner);
+			socket_game.emit("resumeGame", owner);
 			socket_game.on("GameOver", (data) => {
 				setShowWinner(data.winner);
 				const id = setTimeout(() => {
@@ -25,8 +27,14 @@ const Game: React.FC<{ GameID: string }> = (props) => {
 					clearTimeout(id);
 				};
 			});
+			socket_game.on("GameOnpause", (data) => {
+				console.log(data);
+				
+				setshowloading(data);
+			});
 		}
 		return () => {
+			socket_game.off("GameOnpause");
 			socket_game.off("GameOver");
 		};
 	}, [props.GameID]);
@@ -35,18 +43,21 @@ const Game: React.FC<{ GameID: string }> = (props) => {
 		Router.replace("/game");
 	};
 	return (
-		<div className={classes.container}>
-			<div className={classes.GameContainer}>
-				{showWinner !== "" && <WinerCard showWinner={showWinner} />}
-				<div className={classes.goBack} onClick={GoBackHandler}>
-					<Image src={Cross} />
+		<>
+			{showloading && <WaitingOpponent />}
+			<div className={classes.container}>
+				<div className={classes.GameContainer}>
+					{showWinner !== "" && <WinerCard showWinner={showWinner} />}
+					<div className={classes.goBack} onClick={GoBackHandler}>
+						<Image src={Cross} />
+					</div>
+					{props.GameID !== "" && (
+						<LiveGame gameId={props.GameID} click={false} />
+					)}
+					<CanvasGame GameID={props.GameID} />
 				</div>
-				{props.GameID !== "" && (
-					<LiveGame gameId={props.GameID} click={false} />
-				)}
-				<CanvasGame GameID={props.GameID} />
 			</div>
-		</div>
+		</>
 	);
 };
 
