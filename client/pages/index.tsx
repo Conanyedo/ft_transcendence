@@ -8,7 +8,7 @@ import LoginWrapper from "../components/wrapper/LoginWrapper";
 const HomePage = () => {
 	const router = useRouter();
 	const [isMounted, setIsMounted] = useState(false);
-	const open = (router.asPath !== '/');
+	const open = (router.asPath === '/');
 	
 	useEffect(() => {
 		setIsMounted(true);
@@ -17,7 +17,7 @@ const HomePage = () => {
 	if (!isMounted) return <LoadingElm />;
 
 	return (
-		<LoginWrapper children={open && <FactorAuth /> || <Login />}/>
+		<LoginWrapper children={open && <Login /> || <FactorAuth />}/>
 	);
 };
 
