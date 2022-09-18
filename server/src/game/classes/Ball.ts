@@ -3,17 +3,17 @@ import { GameControlers } from "./Game";
 import { Paddle } from "./Paddle";
 
 export class Ball {
-	public ballX: number;
-	public ballY: number;
-	public deltaX: number;
-	public deltaY: number;
-	public ballSpeed: number;
+	private ballX: number;
+	private ballY: number;
+	private deltaX: number;
+	private deltaY: number;
+	private ballSpeed: number;
 	public constructor() {
 		this.ballX = GameControlers.canvasW / 2;
 		this.ballY = GameControlers.canvasH / 2;
 		let der = Math.floor(Math.random() * 2) + 1;
-		this.deltaX = (der > 0) ? 5 : -5;
-		this.deltaY = (der > 0) ? 5 : -5;
+		this.deltaX = (der > 0) ? 5 : -6;
+		this.deltaY = (der < 0) ? 5 : -4;
         this.ballSpeed = 0.5;
 	}
 	public resetBall() {
@@ -38,10 +38,10 @@ export class Ball {
 		const ballleft = this.ballX - GameControlers.BallRadius;
 		const ballright = this.ballX + GameControlers.BallRadius;
 
-		const paddletop = paddle.paddleY;
-		const paddlebottom = paddle.paddleY + GameControlers.PaddleH;
-		const paddleleft = paddle.paddleX;
-		const paddleright = paddle.paddleX + GameControlers.PaddleW;
+		const paddletop = paddle.getPaddleY();
+		const paddlebottom = paddle.getPaddleY() + GameControlers.PaddleH;
+		const paddleleft = paddle.getPaddleX();
+		const paddleright = paddle.getPaddleX() + GameControlers.PaddleW;
 
 		return (
 			ballright > paddleleft &&
@@ -49,5 +49,29 @@ export class Ball {
 			ballleft < paddleright &&
 			balltop < paddlebottom
 		);
+	}
+	public getBallX() {
+		return this.ballX;
+	}
+	public getBallY() {
+		return this.ballY;
+	}
+	public getdeltaX() {
+		return this.deltaX;
+	}
+	public getDeltaY() {
+		return this.deltaY;
+	}
+	public getBallSpeed() {
+		return this.ballSpeed;
+	}
+	public reverseDeltaX() {
+		this.deltaX = -this.deltaX;
+	}
+	public reverseDeltaY() {
+		this.deltaY = -this.deltaY;
+	}
+	public increaseSpeed() {
+		this.ballSpeed += GameControlers.MaxSpeedBall;
 	}
 }
