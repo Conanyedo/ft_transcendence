@@ -7,9 +7,12 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { allGames } from './classes/AllGames';
+import { GameService } from './game.service';
 
 @WebSocketGateway(5551, { cors: { origin: '*' } })
 export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
+
+	constructor (public readonly gameService: GameService) {}
 	@WebSocketServer()
 	server: Server;
 	allGames: allGames;
@@ -18,7 +21,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		console.log('game connection: ', client.id);
 		// client.disconnect();
 		if (this.allGames?.server !== this.server) {
-			this.allGames = new allGames(this.server)
+			this.allGames = new allGames(this.server, this.gameService)
 		}
 	}
 	handleDisconnect(client: Socket) {

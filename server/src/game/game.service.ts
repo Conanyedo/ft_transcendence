@@ -2,7 +2,7 @@ import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/co
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserService } from 'src/user/user.service';
 import { Repository } from 'typeorm';
-import { historyDto, opponentDto } from './game.dto';
+import { gameDto, historyDto, opponentDto } from './game.dto';
 import { Game } from './game.entity';
 
 @Injectable()
@@ -13,8 +13,14 @@ export class GameService {
 		private readonly userService: UserService,
 	) { }
 
-	async insertMatches(login: string) {
-
+	async insertMatches(gameResult: gameDto) {
+		let game: Game = new Game();
+		game.playerOne = gameResult.playerOne;
+		game.playerTwo = gameResult.playerTwo;
+		game.playerOneScore = gameResult.playerOneScore;
+		game.playerTwoScore = gameResult.playerTwoScore;
+		game = await this.gameRepository.save(game);
+		// console.log('Game Result : ', game);
 	}
 
 	async getMatches(login: string) {

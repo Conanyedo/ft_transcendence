@@ -45,4 +45,7 @@ export class Player {
 	increasescore() {
 		this.score++;
 	}
+	setscore(score: number) {
+		this.score = score;
+	}
 }
