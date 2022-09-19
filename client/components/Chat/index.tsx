@@ -114,7 +114,7 @@ export const ChatLeft = () => {
                 <div className={Styles.bottomSection}>
                     {lastUsers.map((user: any, i: any) => <Link href={"/chat?login=" + user.login} key={i}><div key={i} ref={(element) => { chatUsersRefs.current[parseInt(i)] = element }} className={Styles.chatUser}>
                         <div className={Styles.avatarName}>
-                            <Image src={user.avatar} width={49.06} height={49} className={Styles.avatar} />
+                            <img src={user.avatar} className={Styles.avatar} />
                             <div className={Styles.username}>{user.name} {user.channelname}</div>
                         </div>
                         <p className={Styles.status}>{user?.status ? user.status : user?.membersNum + " members"}</p>
@@ -203,12 +203,18 @@ export const ChatRight = (props: { setShowSetModal: any, login: number }) => {
             router.push("/chat");
         }
 
+        // listening for new messages
+        socket_notif.on("newMsg", (response) => {
+            console.log(response);
+            console.log(chatMsgs);
+            setChatMsgs([...chatMsgs, response] as any);
+            setEnteredMsg("");
+        })
         // scroll conversation messages to bottom
         scrollToBottom(messagesEndRef);
 
-        console.log(chatMsgs);
-
     }, [props.login])
+
 
     return (<div className={`${Styles.chatRight}`}>
         <MembersModal showSetModal={membersMdl} setShowSetModal={showMembersMdl} />
@@ -225,7 +231,7 @@ export const ChatRight = (props: { setShowSetModal: any, login: number }) => {
 
                         <div onClick={currentUser?.name ? () => showProfile(profile, setShowprofile) : () => null} className={Styles.flex}>
                             <div className={Styles.avatarProps}>
-                                <Image src={currentUser?.avatar} width={76} height={76} className={Styles.avatar} />
+                                <img src={currentUser?.avatar} className={Styles.avatar} />
                             </div>
                             <div>
                                 <h1 className={Styles.chatUsername}>{currentUser?.name ? currentUser.name : currentUser?.name}</h1>
@@ -249,8 +255,8 @@ export const ChatRight = (props: { setShowSetModal: any, login: number }) => {
                                         {chatMsg.msg}
                                     </div>
                                 </div>
-                                <div className={Styles.msgTime} style={{ justifyContent: chatMsg.sender == currentUser.login ? "flex-start" : "flex-end" }}>{chatMsg?.createDate?.substring(16, 11)}</div>
-                            </div>)
+                                <div className={Styles.msgTime} style={{ justifyContent: chatMsg.sender == currentUser.login ? "flex-start" : "flex-end" }}>{chatMsg?.date?.substring(16, 11)}{chatMsg?.createDate?.substring(16, 11)}</div>
+                            </div>)}
                         }
                     </div>}
                     {
@@ -295,3 +301,6 @@ export const MenuDropdown = (props: { content: Array<string>, functions: Array<a
         {props.content.map((element, i) => <><div key={i} onClick={props.functions[i]}>{element}</div></>)}
     </div>)
 }
+
+// condition  to imlement later
+// (currentUser.convId == chatMsg.convId)

@@ -3,29 +3,28 @@ import Styles from "@styles/chat.module.css"
 import { InviteMsg } from "@components/Chat";
 
 import socket_notif from "config/socketNotif";
+import { useEffect } from "react";
 
 // Introducing in scope functions here
 export const setMsg = (event: any, enteredMessage: string, setEnteredMsg:any, convId: number, login: string, setChatMsgs :any, chatMsgs: any) => {
 
     if (enteredMessage !== "" && event.keyCode == 13) {
+
+        // console.log("----------------msg sent");
         const data = { msg: enteredMessage, convId, receiver: login }
 
         socket_notif.emit("sendMsg", data, (response:any) => {
             // handle msg
-            
-            response["createDate"] = response["date"];
-            delete response["date"];
+            console.log(chatMsgs);
+
+            console.log("response is", response);
             setChatMsgs([...chatMsgs, response]);
+
+            console.log("msg sent");
             setEnteredMsg("");
         })
-
-        socket_notif.on("newMsg", (...args) => {
-            console.log(args);
-        })
+        
     }
-}
-
-export function showConversation() {
 }
 
 export const scrollToBottom = (messagesEndRef: any) => {

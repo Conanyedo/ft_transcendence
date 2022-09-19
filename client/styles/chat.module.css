@@ -98,6 +98,8 @@
 
 .avatar {
     border-radius: 8px;
+    width: 48px !important;
+    height: 46.93px !important;
 }
 
 .status {

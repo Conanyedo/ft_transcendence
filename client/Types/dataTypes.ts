@@ -84,11 +84,12 @@ export interface achievementType {
 
 export interface chatUser {
 	convId: number;
-	avatar: StaticImageData;
+	avatar: string;
 	name: string;
 	membersNum?: string;
 	status?: string;
 	type: string;
+	login: string;
 }
 
 export interface chatMsg {
