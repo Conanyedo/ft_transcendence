@@ -1,5 +1,4 @@
 import classes from "../../styles/liveGame.module.css";
-import Gold from "../../public/Tiers/Gold.svg";
 import Play from "../../public/WatchLiveGame.svg";
 import Image from "next/image";
 import { useEffect, useState } from "react";
@@ -42,6 +41,8 @@ export const LiveGame: React.FC<headerGameType> = (props) => {
 	const clickHandler = () => {
 		router.push("/live-games/" + props.gameId);
 	};
+	const goToFirstProfile = () => router.push('/profile/' + userInfo1.login);
+	const goToSecondProfile = () => router.push('/profile/' + userInfo2.login);
 	return (
 		<>
 			<div className={classes.liveGameContainer}>
@@ -56,7 +57,7 @@ export const LiveGame: React.FC<headerGameType> = (props) => {
 				<div className={classes.TypeGame}>{Data?.gameType}</div>
 				<div className={classes.GameContent}>
 					<div className={classes.UserSection}>
-						<div className={classes.userNameAvatar}>
+						<div className={classes.userNameAvatar} onClick={goToFirstProfile} >
 							<div className={classes.avatar}>
 								<img src={pathImage1} />
 							</div>
@@ -64,7 +65,6 @@ export const LiveGame: React.FC<headerGameType> = (props) => {
 								{userInfo1.fullname.split(" ")[0]}
 							</div>
 						</div>
-
 						<div className={classes.ScoreTier}>
 							<div className={classes.tierContainer}>
 								<Image src={rank1.tier} />
@@ -84,7 +84,7 @@ export const LiveGame: React.FC<headerGameType> = (props) => {
 								<Image src={rank2.tier} />
 							</div>
 						</div>
-						<div className={classes.userNameAvatar}>
+						<div className={classes.userNameAvatar} onClick={goToSecondProfile}>
 							<div className={classes.secondUserName}>
 								{userInfo2.fullname.split(" ")[0]}
 							</div>
