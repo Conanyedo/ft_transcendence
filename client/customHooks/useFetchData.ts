@@ -190,6 +190,7 @@ export const fetchDATA = async (set: any, router: NextRouter, Path: string) => {
 		})
 		.then((res) => {
 			set(res.data);
+			console.log(res.data);
 		})
 		.catch((err) => {
 			eraseCookie("jwt");

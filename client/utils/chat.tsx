@@ -12,6 +12,7 @@ export const setMsg = (event: any, enteredMessage: string, setEnteredMsg:any, co
 
         socket_notif.emit("sendMsg", data, (response:any) => {
             // handle msg
+            
             response["createDate"] = response["date"];
             delete response["date"];
             setChatMsgs([...chatMsgs, response]);

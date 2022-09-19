@@ -17,6 +17,10 @@ import { MembersModal } from "@components/MembersModal";
 import Link from 'next/link'
 import socket_notif from "config/socketNotif";
 import { useRouter } from 'next/router'
+import axios from "axios";
+import { baseUrl } from "config/baseURL";
+import { getCookie } from "cookies-next";
+import { fetchDATA } from "@hooks/useFetchData";
 
 
 const Members = (props: { role: string, users: Array<Object> }) => {
@@ -74,6 +78,7 @@ export const ChatLeft = () => {
     const [displayBlueIcon, setDisplayBlueIcon] = useState(false);
 
     useEffect(() => {
+        console.log(lastUsers);
     }, []);
 
     // functions
@@ -114,6 +119,7 @@ export const ChatLeft = () => {
                         </div>
                         <p className={Styles.status}>{user.status}</p>
                     </div></Link>)}
+                    {(lastUsers.length == 0) && <div className={Styles.newCnv}>No conversations yet</div>}
                 </div>
             </div>
         </div>
@@ -147,15 +153,25 @@ export const ChatRight = (props: { setShowSetModal: any, login: number }) => {
 
     // refs
     const msgsDisplayDiv = useRef<any>();
+    const token = getCookie("jwt");
+
 
     const getLastUsers = async () => {
-        await socket_notif.emit("getConversations", async (response: any) => {
-            await setLastUsers(response);
+
+        socket_notif.emit("getConversations", [], (response: any) => {
+
+            console.log(props.login);
+            if (response != undefined)
+                setLastUsers(response);
+
+            console.log(props.login);
 
             // handling the route login received
             if (props.login) {
                 // check first if login exists
                 let item: any = response.find((user: any) => user.login == props.login);
+
+                console.log(item);
                 if (item != undefined) {
                     setCurrentUser(item);
                     // get messages 
@@ -165,7 +181,9 @@ export const ChatRight = (props: { setShowSetModal: any, login: number }) => {
                 } else {
                     // if user doesnt exist start a new converation
                     console.log("user doesnt exist, handle it");
-                    fetch("")
+                    console.log(props.login);
+                    fetchDATA(setCurrentUser, router, `chat/loginInfo/${props.login}`);
+                    setChatMsgs([]);
                 }
             }
         })
@@ -176,6 +194,7 @@ export const ChatRight = (props: { setShowSetModal: any, login: number }) => {
 
         // lets make an asychronous call here
         if (props.login !== undefined) {
+            console.log(props.login);
             getLastUsers();
         }
         else if (props.login == undefined) {
@@ -186,6 +205,8 @@ export const ChatRight = (props: { setShowSetModal: any, login: number }) => {
 
         // scroll conversation messages to bottom
         scrollToBottom(messagesEndRef);
+
+        console.log(chatMsgs);
 
     }, [props.login])
 
@@ -220,7 +241,7 @@ export const ChatRight = (props: { setShowSetModal: any, login: number }) => {
                 </div>
                 {profile && (<Profile setShowSetModal={props.setShowSetModal} />)}
                 {currentUser && !profile && <div className={Styles.chatSection}>
-                    <div className={Styles.msgsDisplay} ref={msgsDisplayDiv}>
+                    {chatMsgs.length != 0 && <div className={Styles.msgsDisplay} ref={msgsDisplayDiv}>
                         {
                             chatMsgs.map((chatMsg: any, i: any) => <div key={i} className={Styles.chatMsg} style={{ left: chatMsg.sender == currentUser.login ? "0" : "auto", right: chatMsg.sender != currentUser.login ? "0" : "auto" }}>
                                 <div className={Styles.msgBox} style={{ justifyContent: chatMsg.sender == currentUser.login ? "flex-start" : "flex-end" }}>
@@ -231,7 +252,12 @@ export const ChatRight = (props: { setShowSetModal: any, login: number }) => {
                                 <div className={Styles.msgTime} style={{ justifyContent: chatMsg.sender == currentUser.login ? "flex-start" : "flex-end" }}>{chatMsg?.createDate?.substring(16, 11)}</div>
                             </div>)
                         }
-                    </div>
+                    </div>}
+                    {
+                        chatMsgs.length == 0 && <div className={Styles.newCnv}>
+                            <h1>{`Send your friend ${currentUser.fullname} a new message.`}</h1>
+                        </div>
+                    }
                     <div className={Styles.sendDiv} style={{ gap: enteredMsg != "" ? "1.5rem" : "0" }}>
                         <div className={Styles.msgInput}>
                             <input type="text" placeholder="message" value={enteredMsg} onChange={(e) => setEnteredMsg(e.target.value)} onKeyDown={(event) => setMsg(event, enteredMsg, setEnteredMsg, currentUser.convId, currentUser.login, setChatMsgs, chatMsgs)} />
