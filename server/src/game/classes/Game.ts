@@ -1,5 +1,7 @@
-import { throws } from 'assert';
 import { Server, Socket } from 'socket.io';
+import { gameDto } from '../game.dto';
+import { GameService } from '../game.service';
+import { allGames } from './AllGames';
 import { Ball } from './Ball';
 import { Paddle } from './Paddle';
 import { Player } from './Player';
@@ -13,75 +15,152 @@ export class Game {
   public _matchType: string;
   public _ID: string;
   public _sockets: Socket[];
-  constructor(first: Player, second: Player, matchType: string, socket: Server) {
+  public theme: number;
+  public pause: boolean;
+  public pauseTime: NodeJS.Timeout;
+
+  constructor(
+    first: Player,
+    second: Player,
+    matchType: string,
+    socket: Server,
+    games: allGames
+  ) {
+    games.gameService;
+    this.pause = false;
+    this.theme = Math.floor(Math.random() * 3);
     this._matchType = matchType;
     this._PlayerLeft = first;
     this._PlayerRight = second;
     this._ID = Math.random().toString(16).slice(2);
-    first.socket.join(`${this._ID}`);
-    second.socket.join(`${this._ID}`);
-    socket.to(`${this._ID}`).emit('getCode', this._ID);
+    first.getsocket().join(this._ID);
+    second.getsocket().join(this._ID);
+    socket.to(this._ID).emit('startsoon');
+    const tmp = {
+      id: this._ID,
+      login: this._PlayerRight.getlogin(),
+    };
+    this._PlayerLeft.getsocket().emit('getCode', tmp);
+    tmp.login = this._PlayerLeft.getlogin();
+    this._PlayerRight.getsocket().emit('getCode', tmp);
     this._Ball = new Ball();
-    socket.to(`${this._ID}`).emit('startsoon');
+    setTimeout(() => {
+      this.EmitScore(socket);
+    }, 5100);
     setTimeout(() => {
       this._inTerval = setInterval(() => {
-        this.startGame(socket);
+        this.startGame(socket, games);
         this.EmitStatusGame(socket);
       }, 1000 / 60);
     }, 5000);
   }
-  public startGame(socket: Server) {
+
+  public startGame(socket: Server, games: allGames) {
+    if (this.pause)
+      return ;
     this._Ball.moveBall();
     const paddle: Paddle =
-      this._Ball.ballX < GameControlers.canvasW / 2
-        ? this._PlayerLeft.paddle
-        : this._PlayerRight.paddle;
+      this._Ball.getBallX() < GameControlers.canvasW / 2
+        ? this._PlayerLeft.getpaddle()
+        : this._PlayerRight.getpaddle();
     if (this._Ball.collision(paddle)) {
       if (
-        (this._Ball.ballY < paddle.paddleY + GameControlers.PaddleH / 3 &&
-          this._Ball.deltaY > 0) ||
-        (this._Ball.ballY >
-          paddle.paddleY +
+        (this._Ball.getBallY() < paddle.getPaddleY() + GameControlers.PaddleH / 3 &&
+          this._Ball.getDeltaY() > 0) ||
+        (this._Ball.getBallY() >
+          paddle.getPaddleY() +
             GameControlers.PaddleH -
             GameControlers.PaddleH / 3 &&
-          this._Ball.deltaY < 0)
+          this._Ball.getDeltaY() < 0)
       )
-        this._Ball.deltaY = -this._Ball.deltaY;
-      this._Ball.deltaX = -this._Ball.deltaX;
-      if (this._Ball.ballSpeed < 4.4)
-        this._Ball.ballSpeed += GameControlers.MaxSpeedBall;
+        this._Ball.reverseDeltaY();
+      this._Ball.reverseDeltaX()
+      if (this._Ball.getBallSpeed() < 4.4)
+        this._Ball.increaseSpeed();
     }
-    if (this._Ball.ballX - GameControlers.BallRadius < 0) {
-      this._PlayerRight.score++;
+    if (this._Ball.getBallX() - GameControlers.BallRadius < 0) {
+      this._PlayerRight.increasescore();
+      this.EmitScore(socket);
       this._Ball.resetBall();
     } else if (
-      this._Ball.ballX + GameControlers.BallRadius >
+      this._Ball.getBallX() + GameControlers.BallRadius >
       GameControlers.canvasW
     ) {
-      this._PlayerLeft.score++;
+      this._PlayerLeft.increasescore();
+      this.EmitScore(socket);
       this._Ball.resetBall();
     }
     this._Status = 'In Game';
-    if (this._PlayerLeft.score === 3 || this._PlayerRight.score === 3)
-      this.EndGame(socket);
+    if (this._PlayerLeft.getscore() === GameControlers.MaxScore || this._PlayerRight.getscore() === GameControlers.MaxScore)
+      this.EndGame(socket, games);
   }
-  public EndGame(socket: Server) {
-    socket.to(`${this._ID}`).emit('GameOver');
+
+  public EndGame(socket: Server, games: allGames) {
     this._Status = 'GameOver';
-    console.log('salat game');
+    socket.to(`${this._ID}`).emit('GameOver', {
+      winner:
+        this._PlayerLeft.getscore() > this._PlayerRight.getscore()
+          ? this._PlayerLeft.getlogin()
+          : this._PlayerRight.getlogin(),
+    });
     clearInterval(this._inTerval);
-    socket.to(`${this._ID}`).disconnectSockets();
-    socket.socketsLeave(`${this._ID}`);
+    games.removeGame(this._ID);
+    const gameResult: gameDto = {playerOne: this._PlayerLeft.getlogin(), playerTwo: this._PlayerRight.getlogin(), playerOneScore: this._PlayerLeft.getscore(), playerTwoScore: this._PlayerRight.getscore()}
+    games.gameService.insertMatches(gameResult);
   }
+
   public EmitStatusGame(server: Server) {
     server.to(`${this._ID}`).emit('gameStats', {
-          ball: { ballX: this._Ball.ballX, ballY: this._Ball.ballY },
-          paddleLeft: { paddleY: this._PlayerLeft.paddle.paddleY },
-          paddleRight: { paddleY: this._PlayerRight.paddle.paddleY },
-          GameStatus: this._Status,
-          myScore: this._PlayerRight.score,
-          otherScore: this._PlayerLeft.score,
-        })
+      ball: { ballX: this._Ball.getBallX(), ballY: this._Ball.getBallY() },
+      paddleLeft: { paddleY: this._PlayerLeft.getpaddle().getPaddleY() },
+      paddleRight: { paddleY: this._PlayerRight.getpaddle().getPaddleY() },
+      themeMap: this.theme,
+    });
+  }
+
+  public EmitScore(server: Server) {
+    server.to(`${this._ID}`).emit('ScoreStatus', {
+      firstPlayer: this._PlayerLeft.getlogin(),
+      secondPlayer: this._PlayerRight.getlogin(),
+      gameType: this._matchType,
+      gameId: this._ID,
+      secondScore: this._PlayerRight.getscore(),
+      firstScore: this._PlayerLeft.getscore(),
+    });
+  }
+  public pausegame(server: Server, games: allGames, client: Socket) {
+    this.pause = true;
+    clearTimeout(this.pauseTime);
+    server.to(this._ID).emit('GameOnpause', true);
+    this.pauseTime = setTimeout(() => {
+      if (this.pause) {
+        server.to(this._ID).emit('GameOnpause', false);
+        if (this._PlayerLeft.getsocket().id === client.id)
+          this._PlayerRight.setscore(GameControlers.MaxScore);
+        else if (this._PlayerRight.getsocket().id === client.id)
+          this._PlayerLeft.setscore(GameControlers.MaxScore);
+        this.EndGame(server, games);
+        clearTimeout(this.pauseTime);
+      }
+    }, 8000);
+  }
+  public resumeGame(client: Socket, login: string, server: Server) {
+    if (login === this._PlayerLeft.getlogin() && client.id !== this._PlayerLeft.getsocket().id) {
+      this._PlayerLeft.getsocket().leave(this._ID);
+      this._PlayerLeft.setsocket(client);
+      server.to(this._ID).emit('GameOnpause', false);
+      client.join(this._ID);
+      this.pause = false;
+      clearTimeout(this.pauseTime);
+    }
+    else  if (login === this._PlayerRight.getlogin() && client.id !== this._PlayerRight.getsocket().id) {
+      this._PlayerRight.getsocket().leave(this._ID);
+      this._PlayerRight.setsocket(client);
+      server.to(this._ID).emit('GameOnpause', false);
+      client.join(this._ID);
+      this.pause = false;
+      clearTimeout(this.pauseTime);
+    }
   }
 }
 
@@ -116,14 +195,15 @@ export class LobbyFriends {
   friend: string;
   friendSocket: Socket;
   idGame: string;
+
   constructor(admin: string, adminSocket: Socket) {
     this.friend = '';
     this.admin = admin;
     this.adminSocket = adminSocket;
     this.idGame = Math.random().toString(16).slice(2);
-    console.log('GameFriend Id: ', this.idGame);
-	adminSocket.emit('idLobby', this.idGame);
+    adminSocket.emit('idLobby', this.idGame);
   }
+
   startGame(friend: string, friendSocket: Socket) {
     this.friend = friend;
     this.friendSocket = friendSocket;

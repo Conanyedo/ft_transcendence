@@ -1,5 +1,6 @@
 import { getCookie } from "cookies-next";
 import { io } from "socket.io-client";
+import { baseUrl } from "./baseURL";
 
 const token = getCookie("jwt");
 const socketOptions = {
@@ -11,6 +12,5 @@ const socketOptions = {
       }
     }
  };
-const socket_notif = io(`http://localhost:5000`, socketOptions);
-
+const socket_notif = io(`${baseUrl}`, socketOptions);
 export default socket_notif;

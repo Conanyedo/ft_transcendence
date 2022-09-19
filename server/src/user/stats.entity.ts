@@ -13,7 +13,7 @@ export enum userAchievements {
 
 @Entity({ name: 'stats' })
 export class Stats {
-	@PrimaryGeneratedColumn()
+	@PrimaryGeneratedColumn("uuid")
 	id: string;
 
 	@Column({ default: 0 })

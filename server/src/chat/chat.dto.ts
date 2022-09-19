@@ -28,3 +28,25 @@ export class msgDto {
 	convId: string;
 
 }
+
+export class conversationDto {
+
+	@IsNotEmpty()
+	convId: string;
+
+	// @IsString()
+	name?: string;
+
+	// @IsString()
+	avatar?: string;
+
+	// @IsString()
+	status?: string;
+
+	// @IsString()
+	membersNum?: number;
+
+	@IsNotEmpty()
+	type: string;
+
+}

@@ -1,12 +1,10 @@
 import { AppProps } from "next/app";
 import { AnimatePresence } from "framer-motion";
-import "@styles/globals.css"
-import Skeleton from "../components/skeleton";
-import { store } from "../store/store";
+import "../styles/globals.css";
+import { store } from "@store/store";
 import { Provider } from "react-redux";
 import { ChatProvider } from "@contexts/chatContext";
 import Head from "next/head";
-// import { ProvideAuth } from "../customHooks/useAuth";
 
 function MyApp({ Component, pageProps }: AppProps) {
 	return (

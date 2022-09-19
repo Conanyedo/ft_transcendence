@@ -11,12 +11,18 @@ export class ChatController {
 	@Get('/conversations')
 	@UseGuards(JwtAuthGuard)
 	async getConversations(@User() user: userParitalDto) {
-		return await this.chatService.getConversations(user.login);
+		// return await this.chatService.getConversations(user.login);
 	}
 	
 	@Get('/messages/:convId')
 	@UseGuards(JwtAuthGuard)
 	async getMessages(@Param('convId') convid: string) {
-		return await this.chatService.getMessages(convid);
+		// return await this.chatService.getMessages(convid);
+	}
+	
+	@Get('loginInfo/:login')
+	@UseGuards(JwtAuthGuard)
+	async getFriend(@Param('login') login: string) {
+		return await this.chatService.getFriend(login);
 	}
 }
