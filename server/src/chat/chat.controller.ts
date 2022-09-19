@@ -19,4 +19,10 @@ export class ChatController {
 	async getMessages(@Param('convId') convid: string) {
 		// return await this.chatService.getMessages(convid);
 	}
+	
+	@Get('loginInfo/:login')
+	@UseGuards(JwtAuthGuard)
+	async getFriend(@Param('login') login: string) {
+		return await this.chatService.getFriend(login);
+	}
 }
