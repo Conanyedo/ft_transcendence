@@ -28,7 +28,7 @@ export class Game {
   ) {
     games.gameService;
     this.pause = false;
-    this.theme = Math.floor(Math.random() * 3);
+    this.theme = Math.floor(Math.random() * 4);
     this._matchType = matchType;
     this._PlayerLeft = first;
     this._PlayerRight = second;
