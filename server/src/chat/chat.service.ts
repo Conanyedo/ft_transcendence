@@ -1,10 +1,11 @@
 import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { type } from 'os';
 import { Server, Socket } from 'socket.io';
 import { friendDto } from 'src/friendship/friendship.dto';
 import { UserService } from 'src/user/user.service';
 import { Repository } from 'typeorm';
-import { createMsgDto, msgDto } from './chat.dto';
+import { conversationDto, createMsgDto, msgDto } from './chat.dto';
 import { Conversation, Member, Message } from './chat.entity';
 
 @Injectable()
@@ -29,10 +30,29 @@ export class ChatService {
 	// 	convs.forEach((conv) => (client.join(conv.id)));
 	// }
 
+	async getFriend(login: string) {
+		return await this.userService.getFriend(login);
+	}
+
 	async getConversations(login: string) {
-		const conversations: Member[] = await this.memberRepository
-			.query(`select users.login, members.status, conversations.name, conversations.type from members Join users ON members."userId" = users.id Join conversations ON members."conversationId" = conversations.id where users."login" = '${login}';`);
-		return [ ...conversations];
+		// const convs: conversationDto[] = await this.memberRepository
+		// 	.query(`select conversations.id as "convId", conversations.type, conversations.avatar, conversations.name, COUNT() from members Join users ON members."userId" = users.id Join conversations ON members."conversationId" = conversations.id where users."login" = '${login}';`);
+		// const conversations: conversationDto[] = await Promise.all(convs.map(async (conv) => {
+		// 	const convInfo: conversationDto = { ...conv }
+		// 	if (conv.type === 'Dm') {
+		// 		const users = await this.memberRepository
+		// 			.query(`select users.login, users.fullname, users.status, users.avatar from members Join users ON members."userId" = users.id where members."conversationId" = '${conv.convId}' AND users.login != '${login}';`);
+		// 		convInfo.name = users[0].fullname;
+		// 		convInfo.status = users[0].status;
+		// 		convInfo.avatar = users[0].avatar
+		// 		return convInfo;
+		// 	}
+		// 	else {
+		// 		convInfo.membersNum = 10;
+		// 		return convInfo;
+		// 	}
+		// }))
+		// return [...conversations];
 		// const convs: Conversation[] = await this.conversationRepository
 		// 	.createQueryBuilder('conversations')
 		// 	.where('conversations.sender = :login OR conversations.receiver = :login', { login: login })
