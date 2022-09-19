@@ -208,12 +208,12 @@ export class allGames {
 		if (this.RankGames.length && login) {
 			const game = this.RankGames.find(game => game._PlayerLeft.getlogin() === login || game._PlayerRight.getlogin() === login)
 			if (game && client.id !== game._PlayerLeft.getsocket().id && client.id !== game._PlayerRight.getsocket().id)
-				game.resumeGame(client, login);
+				game.resumeGame(client, login, this.server);
 		}
 		if (this.FriendGames.length && login) {
 			const game = this.FriendGames.find(game => game._PlayerLeft.getlogin() === login || game._PlayerRight.getlogin() === login)
 			if (game && client.id !== game._PlayerLeft.getsocket().id && client.id !== game._PlayerRight.getsocket().id)
-				game.resumeGame(client, login);
+				game.resumeGame(client, login, this.server);
 		}
 	}
 	clientDisconnect(client: Socket) {
@@ -227,11 +227,9 @@ export class allGames {
 			if (game)
 				game.pausegame(this.server, this);
 		}
-		if (this.RankLobby.length) {
+		if (this.RankLobby.length)
 			this.RankLobby = this.RankLobby.filter(user => user.client.id !== client.id);
-		}
-		if (this.FriendsLobby.length) {
+		if (this.FriendsLobby.length)
 			this.FriendsLobby = this.FriendsLobby.filter(user => user.adminSocket.id !== client.id);
-		}
 	}
 }

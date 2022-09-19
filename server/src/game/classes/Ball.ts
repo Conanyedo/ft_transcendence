@@ -24,13 +24,11 @@ export class Ball {
 		this.deltaY = -this.deltaY;
 	}
 	public moveBall() {
+		if ( this.ballY + GameControlers.BallRadius > GameControlers.canvasH ||
+		this.ballY - GameControlers.BallRadius < 0 )
+		this.deltaY = -this.deltaY;
 		this.ballX += this.deltaX * this.ballSpeed;
 		this.ballY += this.deltaY * this.ballSpeed;
-		if (
-		this.ballY + GameControlers.BallRadius > GameControlers.canvasH ||
-		this.ballY - GameControlers.BallRadius < 0
-		)
-		this.deltaY = -this.deltaY;
 	}
 	public collision(paddle: Paddle) {
 		const balltop = this.ballY - GameControlers.BallRadius;
