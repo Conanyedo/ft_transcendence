@@ -1,4 +1,5 @@
-import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Member } from "src/chat/chat.entity";
+import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Stats } from "./stats.entity";
 
 export enum userStatus {
@@ -39,4 +40,7 @@ export class User {
 	@OneToOne(() => Stats)
 	@JoinColumn()
 	stats: Stats;
+
+	@OneToMany(() => Member, (member) => member.user)
+	members: Member[];
 }
