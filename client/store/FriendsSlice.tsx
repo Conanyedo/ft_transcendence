@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { UserTypeNew } from "../../Types/dataTypes";
+import { UserTypeNew } from "../Types/dataTypes";
 import type { RootState } from "./store";
 export const initialState: UserTypeNew[] = [
 ];

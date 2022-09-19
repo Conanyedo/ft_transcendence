@@ -1,0 +1,25 @@
+{
+    "usersInitialState": [
+		{ "id": 0, "imgSrc": "/public/profile.jpg", "fullName": "Ikram Kharbouch", "status": "Online" },
+		{ "id": 1, "imgSrc": "/public/profile.jpg", "fullName": "Ikram Kharbouch", "status": "In Game" },
+		{ "id": 2, "imgSrc": "/public/profile.jpg", "fullName": "Ikram Kharbouch", "status": "Offline" },
+		{ "id": 3, "imgSrc": "/public/profile.jpg", "fullName": "Chouaib Elwafa", "status": "Offline" },
+		{ "id": 4, "imgSrc": "/public/profile.jpg", "fullName": "Ikram Kharbouch", "status": "In Game" },
+		{ "id": 5, "imgSrc": "/public/profile.jpg", "fullName": "Ikram Kharbouch", "status": "Offline" },
+		{ "id": 6, "imgSrc": "/public/profile.jpg", "fullName": "Wafa cash", "status": "Online" },
+		{ "id": 7, "imgSrc": "/public/profile.jpg", "fullName": "Youness Bouddou", "status": "Online" },
+		{ "id": 8, "imgSrc": "/public/profile.jpg", "fullName": "Ikram Kharbouch", "status": "In Game" },
+		{ "id": 9, "imgSrc": "/public/profile.jpg", "fullName": "Ikram Kharbouch", "status": "Online" },
+		{ "id": 10, "imgSrc": "/public/profile.jpg", "fullName": "Abdellah Belhachmi", "status": "Offline" },
+		{ "id": 10, "imgSrc": "/public/profile.jpg", "fullName": "Ikram Kharbouch", "status": "Offline" },
+		{ "id": 10, "imgSrc": "/public/profile.jpg", "fullName": "Ikram Kharbouch", "status": "Offline" },
+		{ "id": 10, "imgSrc": "/public/profile.jpg", "fullName": "Ikram Kharbouch", "status": "Offline" },
+		{ "id": 10, "imgSrc": "/public/profile.jpg", "fullName": "Ikram Kharbouch", "status": "Offline" },
+		{ "id": 10, "imgSrc": "/public/profile.jpg", "fullName": "Oussama Oussama", "status": "Offline" }
+	],
+	"chatMsgs": [
+		{ "msgContent": "Test1", "time": "07:19 PM", "type": "sender", "name": "You" },
+		{ "msgContent": "Test2", "time": "07:19 PM", "type": "receiver", "name": "Ikram Kharbouch" },
+		{ "msgContent": "Test3", "time": "07:19 PM", "type": "sender", "name": "You" }
+	]
+}

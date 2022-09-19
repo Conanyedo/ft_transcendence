@@ -1,3 +1,4 @@
+import { StaticImageData } from "next/image"
 import { allRanks } from "../config/baseURL";
 import unranked from "../public/Tiers/Unranked.svg";
 
@@ -80,6 +81,26 @@ export interface achievementType {
 	disc: string;
 }
 
+export interface chatUser {
+    login: any;
+	convId: number;
+	avatar: StaticImageData;
+	fullname?: string;
+	channelname?: string;
+	status: string
+}
+
+export interface chatMsg {
+	msgContent: string | JSX.Element, 
+	time: string,
+	type: string,
+	name: string
+}
+
+export interface color {
+	color: string
+}
+
 export interface HistoryMatchType {
 	opponent: string;
 	yourScore: number;
@@ -88,6 +109,12 @@ export interface HistoryMatchType {
 	login: string;
 	avatar: string;
 	fullname: string;
+}
+
+export interface chatFormValues {
+    cName: string,
+    password: string,
+    members: Array<string>
 }
 
 export interface NotificationType {

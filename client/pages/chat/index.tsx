@@ -1,15 +1,41 @@
+import Styles from "@styles/chat.module.css"
+import { useState, useEffect, useContext } from "react";
+import { ChatContext, ChatContextType, ChatProvider } from "@contexts/chatContext"
+import ContentWrapper from "@components/wrapper/appWrapper";
+import { ChatLeft, ChatRight } from "@components/Chat";
+import { useRouter } from 'next/router';
 
-const Game = () => {
+// importing socket io
+import socket_notif from "config/socketNotif";
+
+const Chat = () => {
+
+	// Setting local state
+	const [showSetModal, setShowSetModal] = useState(false);
+	// const [membersMdl, showMembersMdl] = useState(false);
+
+    const router = useRouter();
+	const [login, setLogin] = useState<any>("");
+
+	useEffect(() => {
+		//upon entering execute this
+		if (router.isReady) {
+			const { login } = router.query;
+			setLogin(login);
+		}
+		
+	}, [router])
+
 	return (
-		<>
-			<p
-				style={{
-					color: "white",
-				}}
-			>
-				Chat
-			</p>
-		</>
+		<ContentWrapper children={
+			<ChatProvider>
+				<div className={Styles.chatContainer}>
+					<ChatLeft />
+					<ChatRight setShowSetModal={setShowSetModal} login={login} />
+				</div>
+			</ChatProvider>
+		}
+		/>
 	);
 };
-export default Game;
+export default Chat;
