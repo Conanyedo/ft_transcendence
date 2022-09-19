@@ -15,6 +15,7 @@ export class Game {
   public _sockets: Socket[];
   public theme: number;
   public pause: boolean;
+  public pauseTime: NodeJS.Timeout;
 
   constructor(
     first: Player,
@@ -25,8 +26,6 @@ export class Game {
   ) {
     this.pause = false;
     this.theme = Math.floor(Math.random() * 3);
-    console.log(this.theme);
-    
     this._matchType = matchType;
     this._PlayerLeft = first;
     this._PlayerRight = second;
@@ -101,7 +100,6 @@ export class Game {
           ? this._PlayerLeft.getlogin()
           : this._PlayerRight.getlogin(),
     });
-    console.log('salat game', this._ID);
     clearInterval(this._inTerval);
     games.removeGame(this._ID);
   }
@@ -127,13 +125,15 @@ export class Game {
   }
   public pausegame(server: Server, games: allGames) {
     this.pause = true;
+    clearTimeout(this.pauseTime);
     server.to(this._ID).emit('GameOnpause', true);
-    setTimeout(() => {
+    this.pauseTime = setTimeout(() => {
       if (this.pause) {
         server.to(this._ID).emit('GameOnpause', false);
         this.EndGame(server, games);
+        clearTimeout(this.pauseTime);
       }
-    }, 5000);
+    }, 8000);
   }
   public resumeGame(client: Socket, login: string, server: Server) {
     if (login === this._PlayerLeft.getlogin() && client.id !== this._PlayerLeft.getsocket().id) {
@@ -142,6 +142,7 @@ export class Game {
       server.to(this._ID).emit('GameOnpause', false);
       client.join(this._ID);
       this.pause = false;
+      clearTimeout(this.pauseTime);
     }
     else  if (login === this._PlayerRight.getlogin() && client.id !== this._PlayerRight.getsocket().id) {
       this._PlayerRight.getsocket().leave(this._ID);
@@ -149,6 +150,7 @@ export class Game {
       server.to(this._ID).emit('GameOnpause', false);
       client.join(this._ID);
       this.pause = false;
+      clearTimeout(this.pauseTime);
     }
   }
 }

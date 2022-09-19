@@ -28,8 +28,6 @@ const Game: React.FC<{ GameID: string }> = (props) => {
 				};
 			});
 			socket_game.on("GameOnpause", (data) => {
-				console.log(data);
-				
 				setshowloading(data);
 			});
 		}
