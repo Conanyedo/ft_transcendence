@@ -39,7 +39,7 @@ const Members = (props: { role: string, users: Array<Object> }) => {
         {props.users.map((user: any, i: number) => (<div key={i}>
             <div className={Styles.membersAvtr}>
                 <Image src={user.avatar} width={40} height={40} />
-                <span>{user.fullName}</span>
+                <span>{user.name}</span>
             </div>
             <div onClick={() => setdropdwn(!dropdwn)}>
                 <MenuAsset />
@@ -58,9 +58,9 @@ const Header = (props: { setShowSetModal: any }) => {
 
 export const Profile = (props: { setShowSetModal: any }) => {
 
-    const owners = [{ fullName: "Ikram Kharbouch", avatar: Avatar }];
-    const admins = [{ fullName: "Abdellah Belhachmi", avatar: Avatar }, { fullName: "Youness Bouddou", avatar: Avatar }]
-    const members = [{ fullName: "Abdellah Belhachmi", avatar: Avatar }, { fullName: "Youness Bouddou", avatar: Avatar }, { fullName: "choaib abouelwafa", avatar: Avatar }, { fullName: "nounou lhilwa", avatar: Avatar }];
+    const owners = [{ name: "Ikram Kharbouch", avatar: Avatar }];
+    const admins = [{ name: "Abdellah Belhachmi", avatar: Avatar }, { name: "Youness Bouddou", avatar: Avatar }]
+    const members = [{ name: "Abdellah Belhachmi", avatar: Avatar }, { name: "Youness Bouddou", avatar: Avatar }, { name: "choaib abouelwafa", avatar: Avatar }, { name: "nounou lhilwa", avatar: Avatar }];
 
     return (<>
         <Header setShowSetModal={props.setShowSetModal} />
@@ -79,7 +79,7 @@ export const ChatLeft = () => {
 
     useEffect(() => {
         console.log(lastUsers);
-    }, []);
+    }, [lastUsers]);
 
     // functions
     function createChannel(channelName: string, password: string, usrLen: number, setUsrTags: any, formik: any) {
@@ -115,9 +115,9 @@ export const ChatLeft = () => {
                     {lastUsers.map((user: any, i: any) => <Link href={"/chat?login=" + user.login} key={i}><div key={i} ref={(element) => { chatUsersRefs.current[parseInt(i)] = element }} className={Styles.chatUser}>
                         <div className={Styles.avatarName}>
                             <Image src={user.avatar} width={49.06} height={49} className={Styles.avatar} />
-                            <div className={Styles.username}>{user.fullname} {user.channelname}</div>
+                            <div className={Styles.username}>{user.name} {user.channelname}</div>
                         </div>
-                        <p className={Styles.status}>{user.status}</p>
+                        <p className={Styles.status}>{user?.status ? user.status : user?.membersNum + " members"}</p>
                     </div></Link>)}
                     {(lastUsers.length == 0) && <div className={Styles.newCnv}>No conversations yet</div>}
                 </div>
@@ -223,12 +223,12 @@ export const ChatRight = (props: { setShowSetModal: any, login: number }) => {
 
                         {profile && <div onClick={() => setShowprofile(false)}><BackArrow /></div>}
 
-                        <div onClick={currentUser?.channelname ? () => showProfile(profile, setShowprofile) : () => null} className={Styles.flex}>
+                        <div onClick={currentUser?.name ? () => showProfile(profile, setShowprofile) : () => null} className={Styles.flex}>
                             <div className={Styles.avatarProps}>
                                 <Image src={currentUser?.avatar} width={76} height={76} className={Styles.avatar} />
                             </div>
                             <div>
-                                <h1 className={Styles.chatUsername}>{currentUser?.channelname ? currentUser.channelname : currentUser?.fullname}</h1>
+                                <h1 className={Styles.chatUsername}>{currentUser?.name ? currentUser.name : currentUser?.name}</h1>
                                 <p className={Styles.chatUserStatus}>{currentUser?.status}</p>
                             </div>
                         </div>
@@ -255,7 +255,7 @@ export const ChatRight = (props: { setShowSetModal: any, login: number }) => {
                     </div>}
                     {
                         chatMsgs.length == 0 && <div className={Styles.newCnv}>
-                            <h1>{`Send your friend ${currentUser.fullname} a new message.`}</h1>
+                            <h1>{`Send your friend ${currentUser.name} a new message.`}</h1>
                         </div>
                     }
                     <div className={Styles.sendDiv} style={{ gap: enteredMsg != "" ? "1.5rem" : "0" }}>
@@ -281,7 +281,7 @@ export function InviteMsg(invitedUser: chatUser) {
         <div>
             <Image src={invitedUser.avatar} width={38} height={38} className={Styles.inviteAvatar} />
             <div>
-                {invitedUser.fullname}
+                {invitedUser.name}
                 <p>You invite them to play pong game</p>
             </div>
         </div>
