@@ -27,15 +27,12 @@ const Chat = () => {
 	}, [router])
 
 	return (
-		<ContentWrapper children={
 			<ChatProvider>
 				<div className={Styles.chatContainer}>
 					<ChatLeft />
 					<ChatRight setShowSetModal={setShowSetModal} login={login} />
 				</div>
 			</ChatProvider>
-		}
-		/>
 	);
 };
 export default Chat;

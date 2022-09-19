@@ -18,4 +18,5 @@ export class Theme {
 export const ThemeDarkMode = new Theme("black", "white", "white", "white", "white", 'white');
 export const ThemeSky = new Theme("#FDF4E3", "#C7B446", "#354D73", "#354D73", "#8E402A", '#C7B446');
 export const green = new Theme("#3c9519", "white", "#c80000", "#0058c8", "white", '#C7B446');
-export const allTheme = [ThemeDarkMode, ThemeSky, green];
+export const abdo = new Theme("#4C5454", "white", "#FF715B", "#1EA896", "white", '#C7B446');
+export const allTheme = [ThemeDarkMode, ThemeSky, green, abdo];

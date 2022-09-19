@@ -1,5 +1,6 @@
 import { gameControleType, GameDataType } from "../Types/dataTypes";
 import { Theme } from "./gameMap";
+// import onePeice from '../public/Game/onePiece.jpg'
 
 function drawRect(x: number, y: number, w: number, h: number, color: string, ctx: CanvasRenderingContext2D) {
 	ctx.fillStyle = color;
@@ -29,7 +30,12 @@ export function render(data: gameControleType, canvas: any, theme: Theme) {
 	const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
 	drawRect(0, 0, data.canvasWidth, data.canvasHieght, theme.backgroundColor, ctx);
 
+	// var img = new Image;
+	// img.src = onePeice.src;
+	// ctx.drawImage(img, 0, 0, data.canvasWidth, data.canvasHieght);
+
 	drawNet(data, ctx, theme.lineColor);
+
 
 	drawRect(
 		0,

@@ -39,8 +39,10 @@ const ContentWrapper: React.FC<PropsType> = ({ children }) => {
 	useEffect(() => {
 		if (jwt)
 			fetchDATA(setIsAuth, router, 'auth/isAuthorized');
+	}, []);
+	useEffect(() => {
 		navBarHandler(router.asPath);
-	}, [socketID]);
+	}, [router.asPath])
 	if (!jwt) {
 		router.replace("/");
 		return <LoadingElm />;

@@ -41,12 +41,14 @@ export class ChatService {
 				const users = await this.memberRepository
 					.query(`select users.login, users.fullname, users.status, users.avatar from members Join users ON members."userId" = users.id where members."conversationId" = '${conv.convId}' AND users.login != '${login}';`);
 				convInfo.name = users[0].fullname;
+				convInfo.login = users[0].login;
 				convInfo.status = users[0].status;
 				convInfo.avatar = users[0].avatar;
 			}
 			else {
 				const membersNum = await this.memberRepository
 					.query(`select COUNT(*) from members where members."conversationId" = '${convInfo.convId}';`);
+				convInfo.login = convInfo.name;
 				convInfo.membersNum = membersNum[0].count;
 			}
 			return convInfo;

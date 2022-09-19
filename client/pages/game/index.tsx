@@ -6,7 +6,7 @@ import GameWrapper from "../../components/wrapper/gameWrapper";
 const GameHome = () => {
 	return (
 		<>
-			<ContentWrapper children={<Lobby />} />
+			<Lobby />
 		</>
 	);
 };

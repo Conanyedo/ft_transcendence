@@ -6,11 +6,7 @@ import socket_game from "../../config/socketGameConfig";
 const Game = () => {
 	return (
 		<>
-			<ContentWrapper children={
-				<>
 				<LiveGames />
-				</>
-			}/>
 		</>
 	);
 };

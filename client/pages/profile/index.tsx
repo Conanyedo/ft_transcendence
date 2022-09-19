@@ -10,8 +10,6 @@ const Profile = () => {
 	const id = 1001;
 	const login = '';
 	return (
-		<ContentWrapper
-			children={
 				<div className={classes.profileCtn}>
 					<ProfileInfo />
 					<Achievements id="" />
@@ -19,8 +17,6 @@ const Profile = () => {
 					<MatchHistory />
 					<div className={classes.buttom}></div>
 				</div>
-			}
-		/>
 	);
 };
 export default Profile;

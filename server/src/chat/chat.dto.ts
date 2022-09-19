@@ -38,6 +38,9 @@ export class conversationDto {
 	name?: string;
 
 	@IsString()
+	login?: string;
+
+	@IsString()
 	avatar?: string;
 
 	@IsString()
