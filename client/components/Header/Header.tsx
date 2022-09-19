@@ -5,15 +5,14 @@ import Search from "../../public/SearchIcon.svg";
 import Notification from "../../public/Notification.svg";
 import DownArrow from "../../public/Caret down.svg";
 import Router, { useRouter } from "next/router";
-import { useAppDispatch } from "../store/hooks";
-
-import { ShowSettings, Toggle } from "../store/UI-Slice";
 import { getImageBySize, useOutsideAlerter } from "../../customHooks/Functions";
 import { motion } from "framer-motion";
 import { fetchDATA, LogOut } from "../../customHooks/useFetchData";
 import { EmtyUser, NotificationType, UserTypeNew } from "../../Types/dataTypes";
 import { getCookie } from "cookies-next";
 import socket_notif from "../../config/socketNotif";
+import { useAppDispatch } from "@store/hooks";
+import { ShowSettings, Toggle } from "@store/UI-Slice";
 
 let len = 0;
 const Notif: React.FC = () => {

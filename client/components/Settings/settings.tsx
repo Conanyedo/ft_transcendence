@@ -4,7 +4,7 @@ import CrossIcon from "../../public/FriendIcons/Cross.svg";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useDispatch, useSelector } from "react-redux";
-import { HideSettings, Settings } from "../store/UI-Slice";
+import { HideSettings, Settings } from "../../store/UI-Slice";
 import MsgSlideUp from "./slideUpMsg";
 import OtpInput from "react-otp-input";
 import Grid from "@material-ui/core/Grid";

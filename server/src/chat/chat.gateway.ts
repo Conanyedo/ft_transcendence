@@ -22,7 +22,7 @@ export class ChatGateway/* implements OnGatewayConnection, OnGatewayDisconnect*/
 	server: Server;
 
 	async handleConnection(@ConnectedSocket() client: Socket) {
-		// this.chatService.joinConversations(client);
+		this.chatService.joinConversations(client);
 	}
 
 	@UseGuards(WsJwtGuard)
@@ -34,38 +34,24 @@ export class ChatGateway/* implements OnGatewayConnection, OnGatewayDisconnect*/
 		return convs;
 	}
 
-	// @UseGuards(WsJwtGuard)
-	// @SubscribeMessage('getMsgs')
-	// async getMsgs(@User('login') login: string, @ConnectedSocket() client: Socket, @MessageBody() convId: string) {
-	// 	const msgs = this.chatService.getMessages(convId);
-	// 	console.log('Messages: ', msgs);
-	// 	// client.emit('msgs', msgs);
-	// 	return msgs;
-	// }
+	@UseGuards(WsJwtGuard)
+	@SubscribeMessage('getMsgs')
+	async getMsgs(@User('login') login: string, @ConnectedSocket() client: Socket, @MessageBody() convId: string) {
+		const msgs = await this.chatService.getMessages(convId);
+		console.log('Messages: ', msgs);
+		// client.emit('msgs', msgs);
+		return msgs;
+	}
 
-	// // @UseGuards(WsJwtGuard)
-	// // @SubscribeMessage('createConv')
-	// // async createConv(@User('login') login: string, @ConnectedSocket() client: Socket, @MessageBody() data: createMsgDto) {
-	// // 	const conv: Conversation = await this.chatService.createConv(login, data.receiver);
-	// // 	const date = await this.chatService.storeMsg(data.msg, login, conv);
-	// // 	client.join(conv.id);
-	// // 	const sockets = await this.server.fetchSockets();
-	// // 	const friendSocket = sockets.find((socket) => (socket.data.login === data.receiver))
-	// // 	if (friendSocket)
-	// // 		friendSocket.join(conv.id);
-	// // 	const msg: msgDto = {msg: data.msg, sender: login, date: date, convId: conv.id};
-	// // 	this.server.to(conv.id).emit('newMsg', msg);
-	// // }
-
-	// @UseGuards(WsJwtGuard)
-	// @SubscribeMessage('sendMsg')
-	// async sendMsg(@User('login') login: string, @ConnectedSocket() client: Socket, @MessageBody() data: createMsgDto) {
-	// 	let msg: msgDto;
-	// 	if (!data.convId)
-	// 		msg = await this.chatService.createNewConv(this.server, login, client, data)
-	// 	else
-	// 		msg = await this.chatService.createNewMessage(login, data);
-	// 	this.server.to(msg.convId).emit('newMsg', msg);
-	// }
+	@UseGuards(WsJwtGuard)
+	@SubscribeMessage('sendMsg')
+	async sendMsg(@User('login') login: string, @ConnectedSocket() client: Socket, @MessageBody() data: createMsgDto) {
+		let msg: msgDto;
+		if (!data.convId)
+			msg = await this.chatService.createNewConv(this.server, login, client, data)
+		else
+			msg = await this.chatService.createNewMessage(login, data);
+		this.server.to(msg.convId).emit('newMsg', msg);
+	}
 
 }

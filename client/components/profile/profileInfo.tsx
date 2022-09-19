@@ -2,12 +2,12 @@ import classes from "../../styles/Profile.module.css";
 import Image from "next/image";
 import pen from "../../public/editPen.svg";
 import React, { useEffect, useState } from "react";
-import { useAppDispatch } from "../store/hooks";
-import { Toggle } from "../store/UI-Slice";
 import { EmtyUser, rankObj, UserTypeNew } from "../../Types/dataTypes";
 import { useRouter } from "next/router";
 import { fetchDATA } from "../../customHooks/useFetchData";
 import { getImageBySize, getRankUser } from "../../customHooks/Functions";
+import { Toggle } from "@store/UI-Slice";
+import { useAppDispatch } from "@store/hooks";
 
 const ProfileInfo: React.FC = () => {
 	const [user, setUser] = useState<UserTypeNew>(EmtyUser);
