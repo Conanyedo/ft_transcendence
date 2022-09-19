@@ -24,8 +24,7 @@ const ProfileFriend = () => {
 	}
 	return (
 		<>
-			{userId && <ContentWrapper
-				children={
+			{userId && 
 					<div className={classes.profileCtn}>
 						{userId && (
 							<>
@@ -37,7 +36,6 @@ const ProfileFriend = () => {
 						)}
 					</div>
 				}
-			/>}
 		</>
 	);
 };

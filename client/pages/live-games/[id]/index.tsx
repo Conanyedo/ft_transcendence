@@ -25,13 +25,7 @@ const WatchGame = () => {
 	if (!auth) return <LoadingElm />;
 	return (
 		<>
-			<ContentWrapper
-				children={
-					<>
 						<GameToWatch />
-					</>
-				}
-			/>
 		</>
 	);
 };

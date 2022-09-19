@@ -73,15 +73,16 @@ const SideNav: React.FC<{
 }> = (props) => {
 	const token = getCookie("jwt");
 	const ref_nav = useRef(null);
-	const ctn = useRouter();
-	const NamePage = "/" + ctn.pathname.split("/")[1];
+	const router = useRouter();
+	const NamePage = "/" + router.pathname.split("/")[1];
 
-	const handlerLogOut = () =>  LogOut(ctn);
+	const handlerLogOut = () =>  LogOut(router);
 	const [isOpen, setIsOpen] = useState(false);
 
 	const ToggleAll = (value: boolean) => {
 		setIsOpen(value);
 	};
+
 	useOutside(ref_nav, ToggleAll);
 	const NAVITEMS: N_ITEMS[] = [
 		{
