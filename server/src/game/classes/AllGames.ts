@@ -1,4 +1,5 @@
 import { Server, Socket } from 'socket.io';
+import { GameService } from '../game.service';
 import { Game, Lobby, LobbyFriends } from './Game';
 import { LiveGame } from './liveGames';
 import { Player } from './Player';
@@ -11,7 +12,8 @@ export class allGames {
   countLiveGames: number;
   server: Server;
 
-  constructor(server: Server) {
+  constructor(server: Server,
+    public readonly gameService: GameService) {
     this.server = server;
     this.RankGames = [];
     this.FriendGames = [];
@@ -252,7 +254,7 @@ export class allGames {
           game._PlayerLeft.getsocket().id === client.id ||
           game._PlayerRight.getsocket().id === client.id,
       );
-      if (game) game.pausegame(this.server, this);
+      if (game) game.pausegame(this.server, this, client);
     }
     if (this.FriendGames.length) {
       const game = this.FriendGames.find(
@@ -260,7 +262,7 @@ export class allGames {
           game._PlayerLeft.getsocket().id === client.id ||
           game._PlayerRight.getsocket().id === client.id,
       );
-      if (game) game.pausegame(this.server, this);
+      if (game) game.pausegame(this.server, this, client);
     }
     if (this.RankLobby.length)
       this.RankLobby = this.RankLobby.filter(

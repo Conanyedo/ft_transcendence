@@ -1,4 +1,6 @@
 import { Server, Socket } from 'socket.io';
+import { gameDto } from '../game.dto';
+import { GameService } from '../game.service';
 import { allGames } from './AllGames';
 import { Ball } from './Ball';
 import { Paddle } from './Paddle';
@@ -24,6 +26,7 @@ export class Game {
     socket: Server,
     games: allGames
   ) {
+    games.gameService;
     this.pause = false;
     this.theme = Math.floor(Math.random() * 3);
     this._matchType = matchType;
@@ -88,7 +91,7 @@ export class Game {
       this._Ball.resetBall();
     }
     this._Status = 'In Game';
-    if (this._PlayerLeft.getscore() === 3 || this._PlayerRight.getscore() === 3)
+    if (this._PlayerLeft.getscore() === GameControlers.MaxScore || this._PlayerRight.getscore() === GameControlers.MaxScore)
       this.EndGame(socket, games);
   }
 
@@ -102,6 +105,8 @@ export class Game {
     });
     clearInterval(this._inTerval);
     games.removeGame(this._ID);
+    const gameResult: gameDto = {playerOne: this._PlayerLeft.getlogin(), playerTwo: this._PlayerRight.getlogin(), playerOneScore: this._PlayerLeft.getscore(), playerTwoScore: this._PlayerRight.getscore()}
+    games.gameService.insertMatches(gameResult);
   }
 
   public EmitStatusGame(server: Server) {
@@ -123,13 +128,17 @@ export class Game {
       firstScore: this._PlayerLeft.getscore(),
     });
   }
-  public pausegame(server: Server, games: allGames) {
+  public pausegame(server: Server, games: allGames, client: Socket) {
     this.pause = true;
     clearTimeout(this.pauseTime);
     server.to(this._ID).emit('GameOnpause', true);
     this.pauseTime = setTimeout(() => {
       if (this.pause) {
         server.to(this._ID).emit('GameOnpause', false);
+        if (this._PlayerLeft.getsocket().id === client.id)
+          this._PlayerRight.setscore(GameControlers.MaxScore);
+        else if (this._PlayerRight.getsocket().id === client.id)
+          this._PlayerLeft.setscore(GameControlers.MaxScore);
         this.EndGame(server, games);
         clearTimeout(this.pauseTime);
       }
