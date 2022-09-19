@@ -4,12 +4,12 @@ import { ChatController } from './chat.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtAuthModule } from 'src/2fa-jwt/jwt/jwt-auth.module';
 import { UserModule } from 'src/user/user.module';
-import { Conversation, Message } from './chat.entity';
+import { Conversation, Member, Message } from './chat.entity';
 import { ChatGateway } from './chat.gateway';
 
 @Module({
   providers: [ChatService, ChatGateway],
   controllers: [ChatController],
-	imports: [TypeOrmModule.forFeature([Message, Conversation]), JwtAuthModule, UserModule],
+	imports: [TypeOrmModule.forFeature([Message, Conversation, Member]), JwtAuthModule, UserModule],
 })
 export class ChatModule {}
