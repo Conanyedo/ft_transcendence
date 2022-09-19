@@ -227,11 +227,9 @@ export class allGames {
 			if (game)
 				game.pausegame(this.server, this);
 		}
-		if (this.RankLobby.length) {
+		if (this.RankLobby.length)
 			this.RankLobby = this.RankLobby.filter(user => user.client.id !== client.id);
-		}
-		if (this.FriendsLobby.length) {
+		if (this.FriendsLobby.length)
 			this.FriendsLobby = this.FriendsLobby.filter(user => user.adminSocket.id !== client.id);
-		}
 	}
 }
