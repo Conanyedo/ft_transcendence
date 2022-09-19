@@ -34,16 +34,16 @@ export class conversationDto {
 	@IsNotEmpty()
 	convId: string;
 
-	// @IsString()
+	@IsString()
 	name?: string;
 
-	// @IsString()
+	@IsString()
 	avatar?: string;
 
-	// @IsString()
+	@IsString()
 	status?: string;
 
-	// @IsString()
+	@IsString()
 	membersNum?: number;
 
 	@IsNotEmpty()
