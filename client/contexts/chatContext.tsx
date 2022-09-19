@@ -1,7 +1,6 @@
-import axios from "axios";
-import React, { createContext, useState, useEffect, SetStateAction, useRef } from "react";
+import React, { createContext, useState, useEffect, SetStateAction, useRef, useMemo } from "react";
 import { chatMsg, chatUser } from "@Types/dataTypes"
-import Avatar from "@public/profile.jpg"
+import socket_notif from "config/socketNotif";
 
 interface ChatContextType {
   protectedChannel: boolean;  
@@ -10,9 +9,8 @@ interface ChatContextType {
   setChannelMode: React.Dispatch<React.SetStateAction<string>>;
   lastUsers:chatUser[];
   setLastUsers: React.Dispatch<SetStateAction<chatUser[]>>;
-  initialUsersState:chatUser[] | undefined;
   currentUser: chatUser | undefined;
-  setCurrentUser: React.Dispatch<React.SetStateAction<chatUser>>;
+  setCurrentUser: any;
   showCnv: boolean;
   setShowCnv: React.Dispatch<React.SetStateAction<boolean>>;
   chatMsgs: Array<chatMsg>;
@@ -21,6 +19,7 @@ interface ChatContextType {
   chatUsersRefs: any;
   prevUser: number;
   setPrevUser: React.Dispatch<React.SetStateAction<number>>;
+  initialusrData: any;
 }
 
 const ChatContext = createContext<ChatContextType | null>(null);
@@ -32,39 +31,15 @@ const ChatProvider = ({ children }: any) => {
 
   // Setting all the chat state here
 
-  // Setting ChatLeft state variables here s
-
   // const [showCnv, setShowCnv] = useState<boolean>(false);
-	const [profile, setShowprofile] = useState(false);
-	const [showSetModal, setShowSetModal] = useState(false);
+	// const [profile, setShowprofile] = useState(false);
+	// const [showSetModal, setShowSetModal] = useState(false);
 
-  const [initialUsersState, setInitialUsersState] = useState<Array<chatUser>>([
-		{ id: 0, imgSrc: Avatar, fullName: "Ikram Kharbouch", status: "Online" },
-		{ id: 1, imgSrc: Avatar, fullName: "Ikram Kharbouch", status: "In Game" },
-		{ id: 2, imgSrc: Avatar, fullName: "Ikram Kharbouch", status: "Offline" },
-		{ id: 3, imgSrc: Avatar, fullName: "Chouaib Elwafa", status: "Offline" },
-		{ id: 4, imgSrc: Avatar, fullName: "Ikram Kharbouch", status: "In Game" },
-		{ id: 5, imgSrc: Avatar, fullName: "Ikram Kharbouch", status: "Offline" },
-		{ id: 6, imgSrc: Avatar, fullName: "Wafa cash", status: "Online" },
-		{ id: 7, imgSrc: Avatar, fullName: "Youness Bouddou", status: "Online" },
-		{ id: 8, imgSrc: Avatar, fullName: "Ikram Kharbouch", status: "In Game" },
-		{ id: 9, imgSrc: Avatar, fullName: "Ikram Kharbouch", status: "Online" },
-		{ id: 10, imgSrc: Avatar, fullName: "Abdellah Belhachmi", status: "Offline" },
-		{ id: 10, imgSrc: Avatar, fullName: "Ikram Kharbouch", status: "Offline" },
-		{ id: 10, imgSrc: Avatar, fullName: "Ikram Kharbouch", status: "Offline" },
-		{ id: 10, imgSrc: Avatar, fullName: "Ikram Kharbouch", status: "Offline" },
-		{ id: 10, imgSrc: Avatar, fullName: "Ikram Kharbouch", status: "Offline" },
-		{ id: 10, imgSrc: Avatar, fullName: "Oussama Oussama", status: "Offline" }
-	]);
-  const [lastUsers, setLastUsers] = useState<Array<chatUser>>(initialUsersState);
+  const [lastUsers, setLastUsers] = useState<Array<chatUser>>([]);
+
   const [currentUser, setCurrentUser] = useState<chatUser>(lastUsers[0]);
   const [showCnv, setShowCnv] = useState<boolean>(false);
-  const [chatMsgs, setChatMsgs] = useState<Array<chatMsg>>([
-		{ msgContent: "Test1", time: "07:19 PM", type: "sender", name: "You" },
-		{ msgContent: "Test2", time: "07:19 PM", type: "receiver", name: "Ikram Kharbouch" },
-		{ msgContent: "Test3", time: "07:19 PM", type: "sender", name: "You" }
-	]);
-
+  const [initialusrData, setInitialUsrData] = useState<Array<chatUser>>([]);
   const messagesEndRef: any = useRef(null);
 
   // setting the chat users refs
@@ -72,11 +47,24 @@ const ChatProvider = ({ children }: any) => {
   const [prevUser, setPrevUser] = useState<number>(0);
 
   useEffect(() => {
+
+    socket_notif.on("connect", () => {
+			console.log(socket_notif.id);
+		});
+
+    socket_notif.emit("getConversations", (response:any) => {
+      setLastUsers(response);
+      setInitialUsrData(response);
+    })
+
     setCurrentUser(lastUsers[0]);
-  }, [lastUsers])
+    return () => {
+      socket_notif.off('connect');
+    }
+  }, [])
 
   return (
-    <ChatContext.Provider value={{ protectedChannel, setProtectedChannel, channelMode, setChannelMode, lastUsers, setLastUsers, initialUsersState, currentUser, setCurrentUser, showCnv, setShowCnv, chatMsgs, setChatMsgs, messagesEndRef, chatUsersRefs, prevUser, setPrevUser }}>
+    <ChatContext.Provider value={{ protectedChannel, setProtectedChannel, channelMode, setChannelMode, lastUsers, setLastUsers, currentUser, setCurrentUser, showCnv, setShowCnv, messagesEndRef, chatUsersRefs, prevUser, setPrevUser, initialusrData }}>
       {children}
     </ChatContext.Provider>
   );

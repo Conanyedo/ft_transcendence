@@ -69,7 +69,9 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			msg = await this.chatService.createNewConv(this.server, login, client, data)
 		else
 			msg = await this.chatService.createNewMessage(login, data);
-		this.server.to(msg.convId).emit('newMsg', msg);
+		console.log('Msg : ', msg);
+		return msg;
+		// this.server.to(msg.convId).emit('newMsg', msg);
 	}
 
 }

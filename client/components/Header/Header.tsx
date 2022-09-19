@@ -30,6 +30,9 @@ const Notif: React.FC = () => {
   };
   useOutsideAlerter(notifMenu, setisOpen);
   useEffect(() => {
+    if (socket_notif.disconnected)
+      socket_notif.connect();
+    console.log('++++++++++++++++++', socket_notif.id);
     socket_notif.emit("getNotif");
     socket_notif.on("Notif", (data: any) => {
       if (data) {
@@ -42,7 +45,11 @@ const Notif: React.FC = () => {
         setnotification(data);
       }
     });
-  }, []);
+    return () => {
+      socket_notif.off('Notif');
+    }
+  }, [socket_notif]);
+
   return (
     <div
       className={classes.NotifIcon}

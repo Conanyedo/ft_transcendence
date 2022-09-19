@@ -12,4 +12,5 @@ const socketOptions = {
     }
  };
 const socket_notif = io(`http://localhost:5000`, socketOptions);
+
 export default socket_notif;

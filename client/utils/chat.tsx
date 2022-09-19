@@ -2,12 +2,25 @@ import { chatUser } from "@Types/dataTypes";
 import Styles from "@styles/chat.module.css"
 import { InviteMsg } from "@components/Chat";
 
+import socket_notif from "config/socketNotif";
+
 // Introducing in scope functions here
-export const setMsg = (event: any, enteredMessage: string, setChatMsgs: Function, chatMsgs: Array<Object>, setEnteredMsg: Function) => {
+export const setMsg = (event: any, enteredMessage: string, setEnteredMsg:any, convId: number, login: string, setChatMsgs :any, chatMsgs: any) => {
 
     if (enteredMessage !== "" && event.keyCode == 13) {
-        setChatMsgs([...chatMsgs, { msgContent: enteredMessage, time: "07:19 PM", type: "sender", name: "You" }]);
-        setEnteredMsg("");
+        const data = { msg: enteredMessage, convId, receiver: login }
+
+        socket_notif.emit("sendMsg", data, (response:any) => {
+            // handle msg
+            response["createDate"] = response["date"];
+            delete response["date"];
+            setChatMsgs([...chatMsgs, response]);
+            setEnteredMsg("");
+        })
+
+        socket_notif.on("newMsg", (...args) => {
+            console.log(args);
+        })
     }
 }
 
@@ -45,12 +58,13 @@ export function sendInvite(currentUser: any, setChatMsgs: any, chatMsgs: any) {
 
 export function filterChatUsers(e: React.ChangeEvent<HTMLInputElement>, lastUsers: any, setLastUsers: any, initialUsersState: any) {
     let value = e.target.value.toUpperCase();
+
     // Return to initial state
     if (value == "") {
         setLastUsers(initialUsersState);
         return;
     }
-    let newUsers: Array<chatUser> = lastUsers.filter((user: chatUser) => user?.fullName?.toUpperCase().includes(value));
+    let newUsers: Array<chatUser> = lastUsers.filter((user: chatUser) => user?.fullname?.toUpperCase().includes(value));
 
     setLastUsers(newUsers);
 }

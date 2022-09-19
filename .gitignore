@@ -70,6 +70,9 @@
 # vercel
 /client/.vercel
 
+# next hidden file
+/client/.next
+
 # typescript
 /client/*.tsbuildinfo
 /client/node_modules

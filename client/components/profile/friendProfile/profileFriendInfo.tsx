@@ -9,20 +9,11 @@ import {
 	FriendButton,
 	OptionMenu,
 	PendingButton,
-<<<<<<< HEAD
-} from "../../../pages/search";
-import { getRankUser, useOutsideAlerter } from "../../../customHooks/Functions";
-import { useAppDispatch } from "../../../store/hooks";
-import { addFriend, RemoveFriend } from "../../../store/userSlice";
-import { EmtyUser, UserTypeNew } from "../../../Types/dataTypes";
-import { fetchDATA } from "../../../customHooks/useFetchData";
-=======
 	RequestButton,
 } from "../../../components/buttons";
 import { getImageBySize, getRankUser, useOutsideAlerter } from "../../../customHooks/Functions";
 import { EmtyUser, rankObj, UserTypeNew } from "../../../Types/dataTypes";
 import { fetchDATA, requests } from "../../../customHooks/useFetchData";
->>>>>>> e8502ff23b4bb4c52dc79ed5ca98b3482a3b2a0b
 import LoadingElm from "../../loading/Loading_elm";
 
 const OptionOfFriend: React.FC<{

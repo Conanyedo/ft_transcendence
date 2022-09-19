@@ -83,12 +83,11 @@ export interface achievementType {
 }
 
 export interface chatUser {
-	id: number;
-	imgSrc: StaticImageData;
-	firstName?: string;
-	lastName?: string;
-	fullName?: string;
-	channelName?: string;
+    login: any;
+	convId: number;
+	avatar: StaticImageData;
+	fullname?: string;
+	channelname?: string;
 	status: string
 }
 

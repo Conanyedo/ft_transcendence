@@ -12,6 +12,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Settings, Toggle, ToggleValue } from "../../store/UI-Slice";
 import { fetchDATA } from "../../customHooks/useFetchData";
 import { ChatProvider } from "@contexts/chatContext";
+import socket_notif from "config/socketNotif";
 
 type PropsType = {
 	children: JSX.Element;
@@ -19,6 +20,7 @@ type PropsType = {
 
 const ContentWrapper: React.FC<PropsType> = ({ children }) => {
 	const [isAuth, setIsAuth] = useState(false);
+	const [socketID, setsocketID] = useState('');
 	const displayCard = useSelector(ToggleValue);
 	const displaymsg = useSelector(Settings);
 	const dispatch = useDispatch();
@@ -38,12 +40,16 @@ const ContentWrapper: React.FC<PropsType> = ({ children }) => {
 		if (jwt)
 			fetchDATA(setIsAuth, router, 'auth/isAuthorized');
 		navBarHandler(router.asPath);
-	}, []);
+	}, [socketID]);
 	if (!jwt) {
 		router.replace("/");
 		return <LoadingElm />;
 	}
-	else if (!isAuth) return <LoadingElm />;
+	else if (!isAuth || !socket_notif.id) {
+		socket_notif.on("connect", () => {
+			setsocketID(socket_notif.id);
+	})
+		return <LoadingElm />;}
 	const toggleHandler = () => dispatch(Toggle());
 
 	return (

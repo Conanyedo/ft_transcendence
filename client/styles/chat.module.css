@@ -253,7 +253,7 @@
     margin-top: 1.313rem;
     /* width: 40%; */
     max-width: 45%;
-    margin-bottom: 1rem;
+    margin-bottom: 2px;
     font-size: 1.333rem;
     color: #fff;
     font-weight: 500;
@@ -323,7 +323,7 @@
 
 .msgTime {
     display: flex;
-    margin-top: -1px;
+    /* margin-top: -1px; */
     font-size: 0.625rem;
     color: #D9D9D9;
 }
