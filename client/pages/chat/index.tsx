@@ -5,9 +5,6 @@ import ContentWrapper from "@components/wrapper/appWrapper";
 import { ChatLeft, ChatRight } from "@components/Chat";
 import { useRouter } from 'next/router';
 
-// importing socket io
-import socket_notif from "config/socketNotif";
-
 const Chat = () => {
 
 	// Setting local state
@@ -29,7 +26,7 @@ const Chat = () => {
 	return (
 			<ChatProvider>
 				<div className={Styles.chatContainer}>
-					<ChatLeft />
+					<ChatLeft login={login} />
 					<ChatRight setShowSetModal={setShowSetModal} login={login} />
 				</div>
 			</ChatProvider>

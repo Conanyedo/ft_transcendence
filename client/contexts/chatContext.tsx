@@ -46,6 +46,8 @@ const ChatProvider = ({ children }: any) => {
   const chatUsersRefs: Array<HTMLDivElement> | any = useRef([]);
   const [prevUser, setPrevUser] = useState<number>(0);
 
+  const [chatMsgs, setChatMsgs] = useState<any>([{ msg: "testmsg", sender: "ikrkharb", date: "2022-09-20T17:04:06.792Z", convId: "a3f392e8-c6de-471b-bc71-3105a14b5998" }]);
+
   useEffect(() => {
 
     socket_notif.on("connect", () => {
@@ -64,7 +66,7 @@ const ChatProvider = ({ children }: any) => {
   }, [])
 
   return (
-    <ChatContext.Provider value={{ protectedChannel, setProtectedChannel, channelMode, setChannelMode, lastUsers, setLastUsers, currentUser, setCurrentUser, showCnv, setShowCnv, messagesEndRef, chatUsersRefs, prevUser, setPrevUser, initialusrData }}>
+    <ChatContext.Provider value={{ protectedChannel, setProtectedChannel, channelMode, setChannelMode, lastUsers, setLastUsers, currentUser, setCurrentUser, showCnv, setShowCnv, messagesEndRef, chatUsersRefs, prevUser, setPrevUser, initialusrData, chatMsgs, setChatMsgs }}>
       {children}
     </ChatContext.Provider>
   );

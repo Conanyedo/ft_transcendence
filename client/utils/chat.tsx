@@ -17,6 +17,8 @@ export const setMsg = (event: any, enteredMessage: string, setEnteredMsg:any, co
             // handle msg
             console.log(chatMsgs);
 
+            console.log("it erases here  ?")
+
             console.log("response is", response);
             setChatMsgs([...chatMsgs, response]);
 
@@ -64,7 +66,7 @@ export function filterChatUsers(e: React.ChangeEvent<HTMLInputElement>, lastUser
         setLastUsers(initialUsersState);
         return;
     }
-    let newUsers: Array<chatUser> = lastUsers.filter((user: chatUser) => user?.fullname?.toUpperCase().includes(value));
+    let newUsers: Array<chatUser> = lastUsers.filter((user: chatUser) => user?.name?.toUpperCase().includes(value));
 
     setLastUsers(newUsers);
 }

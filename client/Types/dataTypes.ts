@@ -93,10 +93,11 @@ export interface chatUser {
 }
 
 export interface chatMsg {
+	convId: any,
 	msgContent: string | JSX.Element, 
 	time: string,
 	type: string,
-	name: string
+	name: string;
 }
 
 export interface color {
