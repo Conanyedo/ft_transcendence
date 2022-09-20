@@ -27,8 +27,10 @@ const OptionOfFriend: React.FC<{
 	const wrapperRef = useRef(null);
 	useOutsideAlerter(wrapperRef, setoptionTaggle);
 	const optionTaggleHandler = () => setoptionTaggle(!optionTaggle);
-	const Blockhandler = () =>
+	const Blockhandler = () => {
 		requests(props.login, "friendship/blockUser", router);
+		router.back();
+	}
 	const unfriendhandler = () =>
 		requests(props.login, "friendship/unfriend", router);
 	const goToChat = () => router.push(`/chat/${props.login}`);
