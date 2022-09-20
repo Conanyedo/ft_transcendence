@@ -65,6 +65,17 @@ export class UserService {
 	}
 
 	// User Getters
+	async getUser(login: string) {
+		const user: User = await this.userRepository
+			.createQueryBuilder('users')
+			.select(['users.id'])
+			.where('users.login = :login', { login: login })
+			.getOne();
+		if (!user)
+			return user;
+		return user;
+	}
+
 	async getPartialUser(login: string): Promise<userParitalDto> {
 		const user: User = await this.userRepository
 			.createQueryBuilder('users')
