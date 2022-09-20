@@ -1,4 +1,4 @@
-import { UseGuards } from "@nestjs/common";
+import { forwardRef, Inject, UseGuards } from "@nestjs/common";
 import { ConnectedSocket, MessageBody, OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, SubscribeMessage, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
 import { Server, Socket } from 'socket.io'
 import { User } from "src/user/user.decorator";
@@ -12,9 +12,10 @@ import { createMsgDto, msgDto } from "./chat.dto";
 		origin: '*'
 	}
 })
-export class ChatGateway/* implements OnGatewayConnection, OnGatewayDisconnect*/ {
+export class ChatGateway {
 
 	constructor(
+		@Inject(forwardRef(() => ChatService))
 		private readonly chatService: ChatService,
 	) { }
 
@@ -28,19 +29,13 @@ export class ChatGateway/* implements OnGatewayConnection, OnGatewayDisconnect*/
 	@UseGuards(WsJwtGuard)
 	@SubscribeMessage('getConversations')
 	async getConversations(@User('login') login: string, @ConnectedSocket() client: Socket) {
-		const convs = await this.chatService.getConversations(login);
-		console.log('Conversations: ', convs);
-		// client.emit('conversations', convs);
-		return convs;
+		return await this.chatService.getConversations(login);
 	}
 
 	@UseGuards(WsJwtGuard)
 	@SubscribeMessage('getMsgs')
 	async getMsgs(@User('login') login: string, @ConnectedSocket() client: Socket, @MessageBody() convId: string) {
-		const msgs = await this.chatService.getMessages(convId);
-		console.log('Messages: ', msgs);
-		// client.emit('msgs', msgs);
-		return msgs;
+		return await this.chatService.getMessages(convId);
 	}
 
 	@UseGuards(WsJwtGuard)
@@ -48,7 +43,7 @@ export class ChatGateway/* implements OnGatewayConnection, OnGatewayDisconnect*/
 	async sendMsg(@User('login') login: string, @ConnectedSocket() client: Socket, @MessageBody() data: createMsgDto) {
 		let msg: msgDto;
 		if (!data.convId)
-			msg = await this.chatService.createNewConv(this.server, login, client, data)
+			msg = await this.chatService.createNewDm(client, data)
 		else
 			msg = await this.chatService.createNewMessage(login, data);
 		this.server.to(msg.convId).emit('newMsg', msg);
