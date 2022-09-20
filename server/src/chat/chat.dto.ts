@@ -1,4 +1,6 @@
 import { IsBoolean, IsEmail, IsNotEmpty, IsString } from "class-validator";
+import { User } from "src/user/user.entity";
+import { Conversation, convType, memberStatus } from "./chat.entity";
 
 export class createMsgDto {
 
@@ -10,6 +12,29 @@ export class createMsgDto {
 
 	@IsString()
 	convId?: string;
+
+}
+
+export class createMemberDto {
+
+	@IsNotEmpty()
+	status: memberStatus;
+
+	@IsNotEmpty()
+	login: string;
+
+}
+
+export class createConvDto {
+
+	@IsNotEmpty()
+	name?: string;
+
+	@IsNotEmpty()
+	type: convType;
+
+	@IsString()
+	password?: string;
 
 }
 
@@ -34,8 +59,14 @@ export class conversationDto {
 	@IsNotEmpty()
 	convId: string;
 
+	@IsNotEmpty()
+	type: string;
+
 	@IsString()
 	name?: string;
+
+	@IsString()
+	login?: string;
 
 	@IsString()
 	avatar?: string;
@@ -45,8 +76,5 @@ export class conversationDto {
 
 	@IsString()
 	membersNum?: number;
-
-	@IsNotEmpty()
-	type: string;
 
 }
