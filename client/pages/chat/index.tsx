@@ -11,6 +11,8 @@ const Chat = () => {
 	const [showSetModal, setShowSetModal] = useState(false);
 	// const [membersMdl, showMembersMdl] = useState(false);
 
+	const { showCnv, setShowCnv } = useContext(ChatContext) as ChatContextType;
+
     const router = useRouter();
 	const [login, setLogin] = useState<any>("");
 
@@ -19,6 +21,7 @@ const Chat = () => {
 		if (router.isReady) {
 			const { login } = router.query;
 			setLogin(login);
+			setShowCnv(true);
 		}
 		
 	}, [router])

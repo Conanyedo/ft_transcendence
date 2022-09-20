@@ -6,23 +6,13 @@ import socket_notif from "config/socketNotif";
 import { useEffect } from "react";
 
 // Introducing in scope functions here
-export const setMsg = (event: any, enteredMessage: string, setEnteredMsg:any, convId: number, login: string, setChatMsgs :any, chatMsgs: any) => {
+export const setMsg = (keycode: any, enteredMessage: string, setEnteredMsg:any, convId: number, login: string, setChatMsgs :any, chatMsgs: any) => {
 
-    if (enteredMessage !== "" && event.keyCode == 13) {
-
-        // console.log("----------------msg sent");
+    if (enteredMessage !== "" && keycode == 13) {
         const data = { msg: enteredMessage, convId, receiver: login }
-
         socket_notif.emit("sendMsg", data, (response:any) => {
             // handle msg
-            console.log(chatMsgs);
-
-            console.log("it erases here  ?")
-
-            console.log("response is", response);
             setChatMsgs([...chatMsgs, response]);
-
-            console.log("msg sent");
             setEnteredMsg("");
         })
         

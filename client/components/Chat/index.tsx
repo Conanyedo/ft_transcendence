@@ -221,6 +221,11 @@ export const ChatRight = (props: { setShowSetModal: any, login: number }) => {
         
     }, [chatMsgs]);
 
+    const unshowCnv = () => {
+        setShowCnv(false);
+        router.push("/chat");
+    }
+
     return (<div className={`${Styles.chatRight} ${showCnv ? Styles.displayChat : ""}`}>
         <MembersModal showSetModal={membersMdl} setShowSetModal={showMembersMdl} />
         <SettingsModal showSetModal={showSetModal} setShowSetModal={setShowSetModal} />
@@ -229,7 +234,7 @@ export const ChatRight = (props: { setShowSetModal: any, login: number }) => {
                 <div className={Styles.topDetails}>
                     <div className={Styles.flex}>
                         <div className={Styles.arrowAsset}>
-                            <Image src={arrowBack} width={16} height={16} onClick={() => setShowCnv(false)} />
+                            <Image src={arrowBack} width={16} height={16} onClick={unshowCnv} />
                         </div>
 
                         {profile && <div onClick={() => setShowprofile(false)}><BackArrow /></div>}
@@ -273,7 +278,7 @@ export const ChatRight = (props: { setShowSetModal: any, login: number }) => {
                             <input type="text" placeholder="message" value={enteredMsg} onChange={(e) => setEnteredMsg(e.target.value)} onKeyDown={(event) => setMsg(event, enteredMsg, setEnteredMsg, currentUser.convId, currentUser.login, setChatMsgs, chatMsgs)} />
                             <div onClick={() => sendInvite} className={Styles.console}><GameIconAsset color="#D9D9D9" /></div>
                         </div>
-                        <div onClick={(e) => setMsg(event, enteredMsg, setEnteredMsg, currentUser.convId, currentUser.login, setChatMsgs, chatMsgs)} className={Styles.sendCtr}>{enteredMsg && <Image src={sendArrow} width={30} height={30} className={Styles.animatedBtn} />}</div>
+                        <div onClick={(e) => setMsg(13, enteredMsg, setEnteredMsg, currentUser.convId, currentUser.login, setChatMsgs, chatMsgs)} className={Styles.sendCtr}>{enteredMsg && <Image src={sendArrow} width={30} height={30} className={Styles.animatedBtn} />}</div>
                     </div>
 
                 </div>}
