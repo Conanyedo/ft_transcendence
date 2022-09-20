@@ -414,6 +414,10 @@
     margin-bottom: 1.25rem;
 }
 
+.inputContainer {
+    position: relative;
+}
+
 .inputContainer>span {
     font-weight: 500;
     font-size: 18px;
@@ -600,6 +604,10 @@
     margin-top: 8px;
     border-radius: 5px;
     height: fit-content;
+    z-index: 999;
+    position: absolute;
+    max-height: 20.667rem;
+    overflow-y: scroll;
 }
 
 .sUsr {

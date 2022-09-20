@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { ChatContext, ChatContextType } from "@contexts/chatContext";
 import { chatUser } from "@Types/dataTypes";
 import Styles from "@styles/chat.module.css"
@@ -56,13 +56,14 @@ export function Option(props: { type: string }) {
     </>)
 }
 
-export function SuggestedUsr(props: { user: chatUser, userStatus: boolean, addUsrToChannel: any, removeUsrFromChannel: any, setUsrTags: any, setshowDropdown: any, usrTags: any, setValue: any }): JSX.Element {
+export function SuggestedUsr(props: { user: chatUser, userStatus: boolean, addUsrToChannel: any, removeUsrFromChannel: any, setUsrTags: any, setshowDropdown: any, usrTags: any, setValue: any, inputRef: any }): JSX.Element {
+    
     return (<div className={Styles.sUsr}>
         <div>
             <div><Image src={Avatar} width={32} height={32} /></div>
             <span>{props.user.firstName + " " + props.user.lastName}</span>
         </div>
-        <button onClick={props.userStatus ? () => props.addUsrToChannel(props.user, props.setUsrTags, props.setshowDropdown, props.usrTags, props.setValue) : () => props.removeUsrFromChannel()} className={props.userStatus ? Styles.btnAdd : Styles.btnRmv}>{props.userStatus ? "Add" : "Remove"}</button>
+        <button onClick={props.userStatus ? () => props.addUsrToChannel(props.user, props.setUsrTags, props.setshowDropdown, props.usrTags, props.setValue, props.inputRef) : () => props.removeUsrFromChannel()} className={props.userStatus ? Styles.btnAdd : Styles.btnRmv}>{props.userStatus ? "Add" : "Remove"}</button>
     </div>)
 }
 
@@ -76,10 +77,12 @@ export function UsrTag(props: { fullname: string, removeTag: any, id: number, us
     )
 }
 
-export function addUsrToChannel( user: chatUser, setUsrTags: any, setshowDrpdown: any, usrTags: any, setValue: any) {
+export function addUsrToChannel( user: chatUser, setUsrTags: any, setshowDrpdown: any, usrTags: any, setValue: any, inputRef: any) {
+
     let fullname = user.firstName + " " + user.lastName;
     setUsrTags([...usrTags, fullname]);
     setValue("member", "", false);
+    inputRef.current.focus();
     setshowDrpdown(false);
 }
 
