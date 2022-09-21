@@ -121,7 +121,7 @@ export class ChatService {
 		leftDate = (!leftDate) ? new Date().toISOString() : leftDate;
 		console.log('dates', joinDate, leftDate);
 		const msgs: Message[] = await this.messageRepository
-			.query(`SELECT messages."sender", messages."msg", messages."createDate", messages."conversationId" as "convId" FROM messages where messages."conversationId" = '${convId}' order by messages."createDate" ASC;`)
+			.query(`SELECT messages."sender", messages."msg", messages."createDate", messages."conversationId" as "convId" FROM messages where messages."conversationId" = '${convId}' order by messages."createDate" DESC;`)
 		if (!msgs.length)
 			return null;
 		return [...msgs];
