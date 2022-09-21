@@ -20,39 +20,40 @@ export class ChatController {
 
 	@Post('/createChannel')
 	@UseGuards(JwtAuthGuard)
-	async createChannel(@User() user: userParitalDto, @Body() data: createChannelDto) {
-		return await this.chatService.createChannel(user.login, data);
+	async createChannel(@User('login') login: string, @Body() body) {
+		const data: createChannelDto = { ...body };
+		return await this.chatService.createChannel(login, data);
 	}
 
 	@Post('/leaveChannel')
 	@UseGuards(JwtAuthGuard)
-	async leaveChannel(@User() user: userParitalDto, @Body('convId') convId: string) {
-
+	async leaveChannel(@User('login') login: string, @Body('convId') convId: string) {
+		return await this.chatService.leaveChannel(login, convId);
 	}
 
 	@Post('/channelProfile')
 	@UseGuards(JwtAuthGuard)
-	async channelProfile(@User() user: userParitalDto, @Body('convId') convId: string) {
-		return await this.chatService.channelProfile(user.login, convId);
+	async channelProfile(@User('login') login: string, @Body('convId') convId: string) {
+		return await this.chatService.channelProfile(login, convId);
 	}
 
 	@Post('/setMemberStatus')
 	@UseGuards(JwtAuthGuard)
-	async setMemberStatus(@User() user: userParitalDto, @Body('convId') convId: string, @Body('member') member: string, @Body('status') status: memberStatus) {
-		return await this.chatService.setMemberStatus(user.login, convId, member, status);
+	async setMemberStatus(@User('login') login: string, @Body('convId') convId: string, @Body('member') member: string, @Body('status') status: memberStatus) {
+		return await this.chatService.setMemberStatus(login, convId, member, status);
 	}
 
 	@Post('/addMembers')
 	@UseGuards(JwtAuthGuard)
-	async addMembers(@User() user: userParitalDto, @Body('convId') convId: string, @Body('members') members: string[]) {
-		return await this.chatService.addMembers(user.login, convId, members);
+	async addMembers(@User('login') login: string, @Body('convId') convId: string, @Body('members') members: string[]) {
+		return await this.chatService.addMembers(login, convId, members);
 	}
 
 	@Post('/updateChannel')
 	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(FileInterceptor('avatar', uploadChannelConfig))
-	async updateChannel(@User() user: userParitalDto, @Body('convId') convId: string, @UploadedFile() avatar: Express.Multer.File, @Body() body) {
+	async updateChannel(@User('login') login: string, @Body('convId') convId: string, @UploadedFile() avatar: Express.Multer.File, @Body() body) {
 		const data: updateChannelDto = { ...body, avatar: avatar?.filename }
-		return await this.chatService.updateChannel(user.login, convId, data);
+		return await this.chatService.updateChannel(login, convId, data);
 	}
 }
