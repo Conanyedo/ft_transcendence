@@ -32,10 +32,42 @@ export class createConvDto {
 
 	@IsNotEmpty()
 	type: convType;
-
+	
 	@IsString()
 	password?: string;
+	
+	@IsString()
+	avatar?: string;
 
+}
+
+export class createChannelDto {
+
+	@IsNotEmpty()
+	name: string;
+
+	@IsNotEmpty()
+	type: convType;
+
+	@IsNotEmpty()
+	members: string[];
+
+	// @IsNotEmpty()
+	password?: string;
+
+}
+
+export class updateChannelDto {
+
+	name?: string;
+
+	type?: convType;
+
+	password?: string;
+
+	avatar?: string;
+	
+	oldPath?: string;
 }
 
 export class msgDto {

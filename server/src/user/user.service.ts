@@ -1,5 +1,6 @@
 import { forwardRef, Inject, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { deleteAvatar, deleteOldAvatar, isFileValid, resizeAvatar } from 'src/config/upload.config';
 import { friendDto } from 'src/friendship/friendship.dto';
 import { userRelation } from 'src/friendship/friendship.entity';
 import { FriendshipService } from 'src/friendship/friendship.service';
@@ -48,19 +49,13 @@ export class UserService {
 	async editProfile(id: string, fullname: string, avatar: string, oldPath: string) {
 		if (fullname)
 			await this.setName(id, fullname);
-		if (oldPath) {
-			let smallSize = oldPath.split('/').pop();
-			smallSize = smallSize.slice(0, smallSize.indexOf('.jpg'));
-			fs.unlink(`../client/public/uploads/${smallSize}x70.jpg`, (err) => { });
-			fs.unlink(`../client/public/uploads/${smallSize}x220.jpg`, (err) => { });
-		}
+		if (avatar)
+			avatar = await isFileValid('users', avatar);
+		if (avatar && oldPath)
+			deleteOldAvatar('users', oldPath);
 		if (avatar) {
-			await this.setAvatar(id, `/uploads/${avatar}`);
-			const image = await Jimp.read(`../client/public/uploads/${avatar}`);
-			const resizeName = avatar.slice(0, avatar.indexOf('.jpg'));
-			image.resize(220, 220).write(`../client/public/uploads/${resizeName}x220.jpg`);
-			image.resize(70, 70).write(`../client/public/uploads/${resizeName}x70.jpg`);
-			fs.unlink(`../client/public/uploads/${avatar}`, (err) => { });
+			await this.setAvatar(id, `/uploads/users/${avatar}`);
+			resizeAvatar('users', avatar);
 		}
 	}
 
