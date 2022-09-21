@@ -71,7 +71,7 @@ export class Member {
 	@CreateDateColumn()
 	joinDate: Date;
 
-	@CreateDateColumn({ default: null })
+	@Column({ default: null })
 	leftDate: Date;
 
 	@ManyToOne(() => Conversation, (conversation) => conversation.members)
