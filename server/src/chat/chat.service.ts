@@ -44,7 +44,7 @@ export class ChatService {
 
 	async getConversations(login: string) {
 		const convs: conversationDto[] = await this.memberRepository
-			.query(`select conversations.id as "convId", conversations.type, conversations.avatar, conversations.name from members Join users ON members."userId" = users.id Join conversations ON members."conversationId" = conversations.id where users."login" = '${login}';`);
+			.query(`select conversations.id as "convId", conversations.type, conversations.avatar, conversations.name from members Join users ON members."userId" = users.id Join conversations ON members."conversationId" = conversations.id where users."login" = '${login}' order by conversations."lastUpdate" ASC;`);
 		const conversations: conversationDto[] = await Promise.all(convs.map(async (conv) => {
 			const convInfo: conversationDto = { ...conv }
 			if (conv.type === 'Dm') {
