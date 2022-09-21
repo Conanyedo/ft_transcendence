@@ -17,9 +17,8 @@ import { MembersModal } from "@components/MembersModal";
 import Link from 'next/link'
 import socket_notif from "config/socketNotif";
 import { useRouter } from 'next/router'
-import axios from "axios";
-import { baseUrl } from "config/baseURL";
 import { getCookie } from "cookies-next";
+import { postChannel } from "@hooks/useFetchData";
 import { fetchDATA } from "@hooks/useFetchData";
 
 
@@ -59,8 +58,8 @@ const Header = (props: { setShowSetModal: any }) => {
 export const Profile = (props: { setShowSetModal: any }) => {
 
     const owners = [{ name: "Ikram Kharbouch", avatar: Avatar }];
-    const admins = [{ name: "Abdellah Belhachmi", avatar: Avatar }, { name: "Youness Bouddou", avatar: Avatar }]
-    const members = [{ name: "Abdellah Belhachmi", avatar: Avatar }, { name: "Youness Bouddou", avatar: Avatar }, { name: "choaib abouelwafa", avatar: Avatar }, { name: "nounou lhilwa", avatar: Avatar }];
+    const admins = [{ name: "Youness Bouddou", avatar: Avatar }, { name: "Youness Bouddou", avatar: Avatar }]
+    const members = [{ name: "Youness Bouddou", avatar: Avatar }, { name: "Youness Bouddou", avatar: Avatar }, { name: "choaib abouelwafa", avatar: Avatar }, { name: "nounou lhilwa", avatar: Avatar }];
 
     return (<>
         <Header setShowSetModal={props.setShowSetModal} />
@@ -70,22 +69,34 @@ export const Profile = (props: { setShowSetModal: any }) => {
     </>)
 }
 
-export const ChatLeft = (props: {login: any}) => {
+export const ChatLeft = (props: { login: any }) => {
 
     // Setting some local state
     const { lastUsers, setShowCnv, showCnv, setLastUsers, chatUsersRefs, initialusrData } = useContext(ChatContext) as ChatContextType;
     const [show, setShow] = useState<boolean>(false);
     const [displayBlueIcon, setDisplayBlueIcon] = useState(false);
 
+    const [channelDetails, setChannelDetails] = useState({});
+
+    const router = useRouter();
+
     // functions
-    function createChannel(channelName: string, password: string, usrLen: number, setUsrTags: any, formik: any) {
+    function createChannel(channelName: string, convType: string, password: string, members: Array<string>, setUsrTags: any, formik: any) {
 
         setShow(!show);
-        const chatUser = { id: lastUsers.length, imgSrc: Avatar, channelName: channelName, status: usrLen === 10 ? "+" + usrLen + " Members" : usrLen + " Members" };
-        // setLastUsers([chatUser, ...lastUsers]);
+        let loginList = lastUsers.filter((item, i) => item.name = members[i]).map((item) => item.login);
+
+        const data = {name: channelName, type: convType, members: loginList, password: password};
+
+        // next: you need to filter data to not pick it again
+
+        // send data to channel create route here
+
+        postChannel(setChannelDetails ,router, data);
+        console.log(channelDetails);
 
         // select the current chat
-        setChatUser(lastUsers[0], setShowCnv);
+        // setChatUser(lastUsers[0], setShowCnv);
 
         // reset the necessary fields
         formik.setFieldValue("cName", "");
@@ -144,8 +155,6 @@ export const ChatRight = (props: { setShowSetModal: any, login: number }) => {
     const [currentUser, setCurrentUser] = useState<chatUser>();
     const [lastUsers, setLastUsers] = useState([]);
 
-    const [chatType, setChatType] = useState("bidirectional");
-
     // functions
     function showUsrMenu() {
         setShowMenuDropdown(!showMenuDropdown);
@@ -178,7 +187,7 @@ export const ChatRight = (props: { setShowSetModal: any, login: number }) => {
                         // run on first render only
                         scrollToBottom(messagesEndRef);
                     })
-                    
+
                 } else {
                     // if user doesnt exist start a new converation
                     fetchDATA(setCurrentUser, router, `chat/loginInfo/${props.login}`);
@@ -194,6 +203,9 @@ export const ChatRight = (props: { setShowSetModal: any, login: number }) => {
         if (props.login !== undefined) {
             getLastUsers();
             setShowCnv(true);
+            console.log(currentUser);
+            if (profile)
+                setShowprofile(false);
         }
         else if (props.login == undefined) {
             setCurrentUser(undefined);
@@ -201,24 +213,21 @@ export const ChatRight = (props: { setShowSetModal: any, login: number }) => {
         }
         // run on first render only
         scrollToBottom(messagesEndRef);
-
-        // console.log(showCnv);
     }, [props.login])
 
     useEffect(() => {
-         // listening for new messages
+        // listening for new messages
         socket_notif.on("newMsg", (response) => {
-             console.log(response);
             setChatMsgs([...chatMsgs, response] as any);
             setEnteredMsg("");
-             // scroll conversation messages to bottom
+            // scroll conversation messages to bottom
             scrollToBottom(messagesEndRef);
         })
 
         return () => {
             socket_notif.off('newMsg');
         }
-        
+
     }, [chatMsgs]);
 
     const unshowCnv = () => {
@@ -239,19 +248,19 @@ export const ChatRight = (props: { setShowSetModal: any, login: number }) => {
 
                         {profile && <div onClick={() => setShowprofile(false)}><BackArrow /></div>}
 
-                        <div onClick={currentUser?.name ? () => showProfile(profile, setShowprofile) : () => null} className={Styles.flex}>
+                        <div onClick={currentUser?.membersNum ? () => showProfile(profile, setShowprofile) : null} className={Styles.flex}>
                             <div className={Styles.avatarProps}>
                                 <img src={currentUser?.avatar} className={Styles.avatar} />
                             </div>
                             <div>
                                 <h1 className={Styles.chatUsername}>{currentUser?.name ? currentUser.name : currentUser?.name}</h1>
-                                <p className={Styles.chatUserStatus}>{currentUser?.status ? currentUser?.status : "+" +  currentUser?.membersNum + " members"}</p>
+                                <p className={Styles.chatUserStatus}>{currentUser?.status ? currentUser?.status : "+" + currentUser?.membersNum + " members"}</p>
                             </div>
                         </div>
 
                     </div>
                     <div className={Styles.menu} onClick={showUsrMenu}><MenuAsset />
-                        {showMenuDropdown && <MenuDropdown content={chatType == "bidirectional" ? [, "Block User"] : ["Settings", "Leave Channel"]} functions={[() => setShowSetModal(true), () => console.log("test")]} />}
+                        {showMenuDropdown && <MenuDropdown content={currentUser.type == "Dm" ? [, "Block User"] : ["Settings", "Leave Channel"]} functions={[() => setShowSetModal(true), () => console.log("test")]} />}
                     </div>
 
                 </div>
@@ -275,7 +284,7 @@ export const ChatRight = (props: { setShowSetModal: any, login: number }) => {
                     }
                     <div className={Styles.sendDiv} style={{ gap: enteredMsg != "" ? "1.5rem" : "0" }}>
                         <div className={Styles.msgInput}>
-                            <input type="text" placeholder="message" value={enteredMsg} onChange={(e) => setEnteredMsg(e.target.value)} onKeyDown={(event) => setMsg(event, enteredMsg, setEnteredMsg, currentUser.convId, currentUser.login, setChatMsgs, chatMsgs)} />
+                            <input type="text" placeholder="message" value={enteredMsg} onChange={(e) => setEnteredMsg(e.target.value)} onKeyDown={(event) => setMsg(event.keyCode, enteredMsg, setEnteredMsg, currentUser.convId, currentUser.login, setChatMsgs, chatMsgs)} />
                             <div onClick={() => sendInvite} className={Styles.console}><GameIconAsset color="#D9D9D9" /></div>
                         </div>
                         <div onClick={(e) => setMsg(13, enteredMsg, setEnteredMsg, currentUser.convId, currentUser.login, setChatMsgs, chatMsgs)} className={Styles.sendCtr}>{enteredMsg && <Image src={sendArrow} width={30} height={30} className={Styles.animatedBtn} />}</div>
@@ -307,12 +316,9 @@ export function InviteMsg(invitedUser: chatUser) {
 export const MenuDropdown = (props: { content: Array<string>, functions: Array<any> }) => {
 
     return (<div className={Styles.menuDropdown}>
-        {props.content.map((element, i) => <div key={i} onClick={props.functions[i]}>{element}</div>)}
+        {props.content.map((element, i) => <div key={i} onClick={props.functions[i]} className={(i == 1) ? Styles.redText : ""}>{element}</div>)}
     </div>)
 }
-
-// condition  to imlement later
-// (currentUser.convId == chatMsg.convId)
 
 // keep for later
 // ${showCnv ? Styles.displayChat : ""}

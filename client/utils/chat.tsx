@@ -7,7 +7,7 @@ import { useEffect } from "react";
 
 // Introducing in scope functions here
 export const setMsg = (keycode: any, enteredMessage: string, setEnteredMsg:any, convId: number, login: string, setChatMsgs :any, chatMsgs: any) => {
-
+    
     if (enteredMessage !== "" && keycode == 13) {
         const data = { msg: enteredMessage, convId, receiver: login }
         socket_notif.emit("sendMsg", data, (response:any) => {

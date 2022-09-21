@@ -580,8 +580,8 @@
     background-color: #2B2B2D;
 }
 
-.menuDropdown>div:nth-child(2) {
-    color: #FF6482;
+.redText {
+    color: #FF6482 !important;
 }
 
 .arrowAsset {

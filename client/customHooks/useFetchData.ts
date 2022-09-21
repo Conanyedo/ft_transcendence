@@ -225,6 +225,29 @@ export const checkCode2FA = async (code: string, router: NextRouter) => {
 		});
 };
 
+export const postChannel = async (set: any, router: NextRouter, data: any) => {
+	const token = getCookie("jwt");
+	const json = JSON.stringify(data);
+	return await axios({
+		method: "post",
+		url: `${baseUrl}chat/createChannel`,
+		headers: {
+			Authorization: `Bearer ${token}`,
+			'Content-Type': 'application/json'
+		},
+		data: json,
+		withCredentials: true,
+	})
+		.then((res) => {
+			console.log(res);
+			// set(res.data);
+			return true;
+		})
+		.catch((err) => {
+			return false;
+		});
+};
+
 export const check2FA_JWT = async (
 	jwt: CookieValueTypes,
 	set: any,

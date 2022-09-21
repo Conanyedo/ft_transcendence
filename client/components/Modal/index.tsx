@@ -42,8 +42,6 @@ export function ModalForm(props: { createChannel: any }) {
 
     // setting local state
     const { protectedChannel, channelMode } = useContext(ChatContext) as ChatContextType;
-    const [channelName, setChannelName] = useState("");
-    const [password, setPassword] = useState("");
     const [showDrpdown, setshowDrpdown] = useState(false);
     const [usrTags, setUsrTags] = useState<Array<string>>([]);
     const [closeUsrs, setCloseUsrs] = useState(initialUsrState);
@@ -103,7 +101,7 @@ export function ModalForm(props: { createChannel: any }) {
                     {closeUsrs.map((usr, i) => <SuggestedUsr key={i} user={usr} userStatus={true} addUsrToChannel={addUsrToChannel} removeUsrFromChannel={removeUsrFromChannel} setUsrTags={setUsrTags} setshowDropdown={setshowDrpdown} usrTags={usrTags} setValue={formik.setFieldValue} inputRef={inputRef} />)}
                 </div>}
             </div>
-            <button type="button" onClick={(e) => props.createChannel(formik.values.cName, formik.values.password, usrTags.length, setUsrTags, formik)}>Create</button>
+            <button type="button" onClick={(e) => props.createChannel(formik.values.cName, channelMode, formik.values.password, usrTags, setUsrTags, formik)}>Create</button>
         </form>
     )
 }
@@ -134,3 +132,30 @@ export function ModalBox(props: { show: boolean, setShow: (Dispatch<SetStateActi
         {usrTags.map((tag, i) => <UsrTag key={i} fullname={tag} removeTag={removeTag} id={i} usrTags={usrTags} setUsrTags={setUsrTags} />)}
         {(usrTags.length < 10) && <input name="member" type="text" onChange={handleOnChange} value={formik.values.member} />}
 </div> */}
+
+// Method: "POST"
+
+// @IsNotEmpty()
+// name: string;
+
+// @IsNotEmpty()
+// type: convType;
+
+// @IsNotEmpty()
+// members: string[];
+
+// @IsNotEmpty()
+// password: string;
+
+// export enum memberStatus {
+// 	OWNER = "Owner",
+// 	ADMIN = "Admin",
+// 	MEMBER = "Member",
+// }
+
+// export enum convType {
+// 	DM = "Dm",
+// 	PUBLIC = "Public",
+// 	PROTECTED = "Protected",
+// 	PRIVATE = "Private",
+// }
