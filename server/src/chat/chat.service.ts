@@ -71,6 +71,8 @@ export class ChatService {
 		conv.type = newConv.type;
 		if (newConv.name)
 			conv.name = newConv.name;
+		if (newConv.avatar)
+			conv.avatar = newConv.avatar;
 		if (newConv.password)
 			conv.password = await this.encryptPassword(newConv.password);
 		conv = await this.conversationRepository.save(conv);
