@@ -9,6 +9,8 @@ import { conversationDto, createChannelDto, createConvDto, createMemberDto, crea
 import { Conversation, convType, Member, memberStatus, Message } from './chat.entity';
 import { ChatGateway } from './chat.gateway';
 
+import * as bcrypt from 'bcrypt';
+
 @Injectable()
 export class ChatService {
 	constructor(
@@ -33,6 +35,11 @@ export class ChatService {
 
 	async getFriend(login: string) {
 		return await this.userService.getFriend(login);
+	}
+
+	async encryptPassword(password: string) {
+		const salt = await bcrypt.genSalt();
+		return await bcrypt.hash(password, salt);
 	}
 
 	async getConversations(login: string) {
@@ -62,8 +69,10 @@ export class ChatService {
 	async createConv(newConv: createConvDto, members: createMemberDto[]) {
 		let conv: Conversation = new Conversation();
 		conv.type = newConv.type;
-		conv.name = newConv.name;
-		conv.password = newConv.password;
+		if (newConv.name)
+			conv.name = newConv.name;
+		if (newConv.password)
+			conv.password = await this.encryptPassword(newConv.password);
 		conv = await this.conversationRepository.save(conv);
 
 		members.forEach(async (mem) => {
@@ -135,6 +144,9 @@ export class ChatService {
 	}
 
 	async createChannel(owner: string, data: createChannelDto) {
+		if (data.type === convType.PROTECTED && !data.password.length)
+			return 'Please provide password';
+		if (data.type !== convType.PROTECTED) data.password = undefined;
 		const avatar: string = `https://ui-avatars.com/api/?name=${data.name}&size=220&background=2C2C2E&color=409CFF&length=1`;
 		const newConv: createConvDto = { type: data.type, name: data.name, avatar: avatar, password: data?.password };
 		data.members.unshift(owner);
@@ -231,9 +243,10 @@ export class ChatService {
 	}
 
 	async setChannelPassword(convId: string, password: string) {
+		const encryptedPassword = await this.encryptPassword(password);
 		return await this.conversationRepository
 			.createQueryBuilder('conversations')
-			.update({ password: password })
+			.update({ password: encryptedPassword })
 			.where('id = :id', { id: convId })
 			.execute();
 	}
