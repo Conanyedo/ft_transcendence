@@ -84,7 +84,9 @@ export const ChatLeft = (props: { login: any }) => {
     function createChannel(channelName: string, convType: string, password: string, members: Array<string>, setUsrTags: any, formik: any) {
 
         setShow(!show);
-        let loginList = lastUsers.filter((item, i) => item.name = members[i]).map((item) => item.login);
+
+        let tempusrs = lastUsers;
+        let loginList = tempusrs.filter((item, i) => item.name = members[i]).map((item) => item.login);
 
         const data = {name: channelName, type: convType, members: loginList, password: password};
 
@@ -94,6 +96,8 @@ export const ChatLeft = (props: { login: any }) => {
 
         postChannel(setChannelDetails ,router, data);
         console.log(channelDetails);
+
+        console.log(lastUsers);
 
         // select the current chat
         // setChatUser(lastUsers[0], setShowCnv);
