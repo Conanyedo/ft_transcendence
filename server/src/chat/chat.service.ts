@@ -27,7 +27,7 @@ export class ChatService {
 
 	async joinConversations(client: Socket) {
 		const convs: conversationDto[] = await this.memberRepository
-			.query(`select conversations.id as "convId" from members Join users ON members."userId" = users.id Join conversations ON members."conversationId" = conversations.id where users."login" = '${client.data.login}';`);
+			.query(`select conversations.id as "convId" from members Join users ON members."userId" = users.id Join conversations ON members."conversationId" = conversations.id where users."login" = '${client.data.login}' AND members."leftDate" IS null;`);
 		if (!convs.length)
 			return;
 		convs.forEach((conv) => (client.join(conv.convId)));
@@ -110,7 +110,14 @@ export class ChatService {
 		return msgs.createDate;
 	}
 
-	async getMessages(convId: string) {
+	async getMessages(id: string, convId: string) {
+		const dates = await this.memberRepository
+			.query(`select members."joinDate", members."leftDate" from members where members."conversationId" = '${convId}' AND members."userId" = '${id}';`);
+		if (!dates.length)
+			return null;
+		let { joinDate, leftDate } = dates[0];
+		leftDate = (!leftDate) ? new Date().toISOString() : leftDate;
+		console.log('dates', joinDate, leftDate);
 		const msgs: Message[] = await this.messageRepository
 			.query(`SELECT messages."sender", messages."msg", messages."createDate", messages."conversationId" as "convId" FROM messages where messages."conversationId" = '${convId}' order by messages."createDate" ASC;`)
 		if (!msgs.length)
@@ -144,7 +151,7 @@ export class ChatService {
 	}
 
 	async createChannel(owner: string, data: createChannelDto) {
-		if (data.type === convType.PROTECTED && !data.password.length)
+		if (data.type === convType.PROTECTED && !data?.password.length)
 			return 'Please provide password';
 		if (data.type !== convType.PROTECTED) data.password = undefined;
 		const avatar: string = `https://ui-avatars.com/api/?name=${data.name}&size=220&background=2C2C2E&color=409CFF&length=1`;
@@ -157,12 +164,20 @@ export class ChatService {
 		});
 		const conv: Conversation = await this.createConv(newConv, newMembers);
 		const sockets = await this.chatGateway.server.fetchSockets();
-		data.members.forEach((member) => {
-			sockets.find((socket) => {
-				if (socket.data.login === member) socket.join(conv.id);
-			});
-		});
+		data.members.forEach((member) => (sockets.find((socket) => (socket.data.login === member)).join(conv.id)));
 		return { convId: conv.id, name: conv.name, login: conv.name, type: conv.type, membersNum: data.members.length, avatar: conv.avatar };
+	}
+
+	async leaveChannel(login: string, convId: string) {
+		const exist = await this.memberRepository
+			.query(`select from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND users."login" = '${login}' AND members."status" != 'Owner' AND members."leftDate" is null;`);
+		if (!exist.length)
+			return null;
+		const currDate = new Date().toISOString();
+		this.memberRepository
+			.query(`update members set "leftDate" = '${currDate}' FROM users where members."userId" = users.id AND members."conversationId" = '${convId}' AND users."login" = '${login}';`);
+		const sockets = await this.chatGateway.server.fetchSockets();
+		sockets.find((socket) => (socket.data.login === login)).leave(convId);
 	}
 
 	async channelProfile(login: string, convId: string) {
