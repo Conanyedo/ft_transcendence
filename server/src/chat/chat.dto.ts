@@ -52,22 +52,27 @@ export class createChannelDto {
 	@IsNotEmpty()
 	members: string[];
 
-	// @IsNotEmpty()
-	password?: string;
+	@IsNotEmpty()
+	password: string;
 
 }
 
 export class updateChannelDto {
 
-	name?: string;
+	@IsNotEmpty()
+	name: string;
 
-	type?: convType;
+	@IsNotEmpty()
+	type: convType;
 
-	password?: string;
+	@IsNotEmpty()
+	password: string;
 
-	avatar?: string;
-	
-	oldPath?: string;
+	@IsNotEmpty()
+	avatar: string;
+
+	@IsNotEmpty()
+	oldPath: string;
 }
 
 export class msgDto {
