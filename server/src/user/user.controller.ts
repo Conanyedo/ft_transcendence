@@ -4,7 +4,7 @@ import { UserService } from './user.service';
 import { JwtAuthGuard } from '../2fa-jwt/jwt/jwt-auth.guard';
 import { User } from './user.decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { uploadConfig } from 'src/config/upload.config';
+import { uploadUsersConfig } from 'src/config/upload.config';
 
 @Controller('user')
 export class UserController {
@@ -13,7 +13,7 @@ export class UserController {
 	
 	@Post('/editProfile')
 	@UseGuards(JwtAuthGuard)
-	@UseInterceptors(FileInterceptor('avatar', uploadConfig))
+	@UseInterceptors(FileInterceptor('avatar', uploadUsersConfig))
 	async editProfile(@User() user: userParitalDto, @UploadedFile() avatar: Express.Multer.File, @Body('fullname') fullname: string, @Body('oldPath') oldPath: string) {
 		return await this.userService.editProfile(user.id, fullname, avatar?.filename, oldPath);
 	}
