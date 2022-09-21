@@ -48,7 +48,7 @@ export class UserService {
 	async editProfile(id: string, fullname: string, avatar: string, oldPath: string) {
 		if (fullname)
 			await this.setName(id, fullname);
-		if (oldPath) {
+		if (avatar && oldPath) {
 			let oldName = oldPath.split('/').pop();
 			oldName = oldName.slice(0, oldName.indexOf('.jpg'));
 			fs.unlink(`../client/public/uploads/users/${oldName}x70.jpg`, (err) => { });
