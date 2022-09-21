@@ -164,7 +164,7 @@ export class ChatService {
 		});
 		const conv: Conversation = await this.createConv(newConv, newMembers);
 		const sockets = await this.chatGateway.server.fetchSockets();
-		data.members.forEach((member) => (sockets.find((socket) => (socket.data.login === member)).join(conv.id)));
+		data.members.forEach((member) => (sockets.find((socket) => (socket.data.login === member))?.join(conv.id)));
 		return { convId: conv.id, name: conv.name, login: conv.name, type: conv.type, membersNum: data.members.length, avatar: conv.avatar };
 	}
 
