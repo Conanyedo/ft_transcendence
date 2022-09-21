@@ -61,7 +61,7 @@ export function getImageBySize(path: string, size: number) {
 	if (path.includes('cdn.intra.42.fr') || path.includes('robohash.org/') || !path)
 		return path;
 	let tmppath = path.split('.');
-	const newPath = tmppath[0] + 'x' + size + '.jpg';
+	const newPath = tmppath[0] + 'x' + size + '.' + tmppath[1];
 	return newPath;
 }
 
