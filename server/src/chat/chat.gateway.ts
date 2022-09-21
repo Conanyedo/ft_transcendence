@@ -34,8 +34,8 @@ export class ChatGateway {
 
 	@UseGuards(WsJwtGuard)
 	@SubscribeMessage('getMsgs')
-	async getMsgs(@User('login') login: string, @ConnectedSocket() client: Socket, @MessageBody() convId: string) {
-		return await this.chatService.getMessages(convId);
+	async getMsgs(@User('id') id: string, @ConnectedSocket() client: Socket, @MessageBody() convId: string) {
+		return await this.chatService.getMessages(id, convId);
 	}
 
 	@UseGuards(WsJwtGuard)
