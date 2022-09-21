@@ -240,7 +240,7 @@ export const postChannel = async (set: any, router: NextRouter, data: any) => {
 	})
 		.then((res) => {
 			console.log(res);
-			// set(res.data);
+			set(res.data);
 			return true;
 		})
 		.catch((err) => {
