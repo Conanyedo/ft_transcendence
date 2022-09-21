@@ -4,13 +4,13 @@ import { UserService } from './user.service';
 import { JwtAuthGuard } from '../2fa-jwt/jwt/jwt-auth.guard';
 import { User } from './user.decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { uploadUsersConfig } from 'src/config/upload.config';
+import { isFileValid, uploadUsersConfig } from 'src/config/upload.config';
 
 @Controller('user')
 export class UserController {
 
 	constructor(private readonly userService: UserService) { }
-	
+
 	@Post('/editProfile')
 	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(FileInterceptor('avatar', uploadUsersConfig))
