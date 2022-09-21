@@ -76,28 +76,24 @@ export const ChatLeft = (props: { login: any }) => {
     const [show, setShow] = useState<boolean>(false);
     const [displayBlueIcon, setDisplayBlueIcon] = useState(false);
 
-    const [channelDetails, setChannelDetails] = useState({});
+    const [channelDetails, setChannelDetails] = useState<any>();
 
     const router = useRouter();
 
     // functions
-    function createChannel(channelName: string, convType: string, password: string, members: Array<string>, setUsrTags: any, formik: any) {
+    async function createChannel(channelName: string, convType: string, password: string, members: Array<string>, setUsrTags: any, formik: any) {
 
         setShow(!show);
 
-        let tempusrs = lastUsers;
-        let loginList = tempusrs.filter((item, i) => item.name = members[i]).map((item) => item.login);
-
+        let loginList = lastUsers.filter((item, i) => item.name == members[i]).map((item) => item.login);
         const data = {name: channelName, type: convType, members: loginList, password: password};
-
-        // next: you need to filter data to not pick it again
 
         // send data to channel create route here
 
-        postChannel(setChannelDetails ,router, data);
-        console.log(channelDetails);
-
-        console.log(lastUsers);
+        postChannel(setChannelDetails ,router, data)
+        
+        // reset the users here
+        // setLastUsers([channelDetails, ...lastUsers]);
 
         // select the current chat
         // setChatUser(lastUsers[0], setShowCnv);

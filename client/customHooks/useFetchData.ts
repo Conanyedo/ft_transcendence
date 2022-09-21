@@ -241,6 +241,7 @@ export const postChannel = async (set: any, router: NextRouter, data: any) => {
 		.then((res) => {
 			console.log(res);
 			set(res.data);
+			router.push("/chat?login=" + res.data.login);
 			return true;
 		})
 		.catch((err) => {
