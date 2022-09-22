@@ -60,8 +60,9 @@ export function getRankUser(GamePoint: number): rankObj {
 export function getImageBySize(path: string, size: number) {
 	if (path.includes('cdn.intra.42.fr') || path.includes('robohash.org/') || !path)
 		return path;
-	let tmppath = path.split('.');
-	const newPath = tmppath[0] + 'x' + size + '.' + tmppath[1];
+	const tmppath = path.substring(0, path.lastIndexOf('.'));
+	const extenstion = path.substring(path.lastIndexOf('.'), path.length);
+	const newPath = tmppath + 'x' + size + extenstion;
 	return newPath;
 }
 
