@@ -44,7 +44,7 @@ export class ChatService {
 
 	async getConversations(login: string) {
 		const convs: conversationDto[] = await this.memberRepository
-			.query(`select conversations.id as "convId", conversations.type, conversations.avatar, conversations.name from members Join users ON members."userId" = users.id Join conversations ON members."conversationId" = conversations.id where users."login" = '${login}' order by conversations."lastUpdate" ASC;`);
+			.query(`select conversations.id as "convId", conversations.type, conversations.avatar, conversations.name from members Join users ON members."userId" = users.id Join conversations ON members."conversationId" = conversations.id where users."login" = '${login}' order by conversations."lastUpdate" DESC;`);
 		const conversations: conversationDto[] = await Promise.all(convs.map(async (conv) => {
 			const convInfo: conversationDto = { ...conv }
 			if (conv.type === 'Dm') {
@@ -117,11 +117,10 @@ export class ChatService {
 			.query(`select members."joinDate", members."leftDate" from members where members."conversationId" = '${convId}' AND members."userId" = '${id}';`);
 		if (!dates.length)
 			return null;
-		let { joinDate, leftDate } = dates[0];
-		leftDate = (!leftDate) ? new Date().toISOString() : leftDate;
-		console.log('dates', joinDate, leftDate);
+		const joinDate: string = new Date(dates[0].joinDate).toISOString();
+		const leftDate: string  = (!dates[0]?.leftDate) ? new Date().toISOString() : new Date(dates[0].leftDate).toISOString();
 		const msgs: Message[] = await this.messageRepository
-			.query(`SELECT messages."sender", messages."msg", messages."createDate", messages."conversationId" as "convId" FROM messages where messages."conversationId" = '${convId}' order by messages."createDate" DESC;`)
+			.query(`SELECT messages."sender", messages."msg", messages."createDate", messages."conversationId" as "convId" FROM messages where messages."conversationId" = '${convId}' AND messages."createDate" >= '${joinDate}' AND messages."createDate" <= '${leftDate}' order by messages."createDate" ASC;`);
 		if (!msgs.length)
 			return null;
 		return [...msgs];
