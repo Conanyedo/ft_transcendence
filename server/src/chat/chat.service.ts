@@ -25,6 +25,26 @@ export class ChatService {
 		private chatGateway: ChatGateway
 	) { }
 
+	async searchChannels(login: string, search: string) {
+		search = search.toLowerCase();
+		const convs: Conversation[] = await this.conversationRepository
+			.createQueryBuilder('conversations')
+			.select(['conversations.id', 'conversations.name', 'conversations.avatar', 'conversations.type'])
+			.where(`(conversations.type = 'Public' OR conversations.type = 'Protected') AND LOWER(conversations.name) LIKE '%${search}%'`)
+			.getMany()
+		if (!convs.length)
+			return convs;
+		const convsList = await Promise.all(convs.map(async (conv) => {
+			const convId = await this.memberRepository
+				.query(`select members.id as "convId" from members Join users ON members."userId" = users.id where members."conversationId" = '${conv.id}' AND users."login" = '${login}' AND members."leftDate" IS null;`);
+			let isMember: boolean = false;
+			if (convId.length)
+				isMember = true;
+			return { Avatar: conv.avatar, title: conv.name, type: conv.type, member: isMember };
+		}))
+		return [...convsList];
+	}
+
 	async joinConversations(client: Socket) {
 		const convs: conversationDto[] = await this.memberRepository
 			.query(`select conversations.id as "convId" from members Join users ON members."userId" = users.id Join conversations ON members."conversationId" = conversations.id where users."login" = '${client.data.login}' AND members."leftDate" IS null;`);
@@ -44,7 +64,7 @@ export class ChatService {
 
 	async getConversations(login: string) {
 		const convs: conversationDto[] = await this.memberRepository
-			.query(`select conversations.id as "convId", conversations.type, conversations.avatar, conversations.name from members Join users ON members."userId" = users.id Join conversations ON members."conversationId" = conversations.id where users."login" = '${login}' order by conversations."lastUpdate" ASC;`);
+			.query(`select conversations.id as "convId", conversations.type, conversations.avatar, conversations.name from members Join users ON members."userId" = users.id Join conversations ON members."conversationId" = conversations.id where users."login" = '${login}' order by conversations."lastUpdate" DESC;`);
 		const conversations: conversationDto[] = await Promise.all(convs.map(async (conv) => {
 			const convInfo: conversationDto = { ...conv }
 			if (conv.type === 'Dm') {
@@ -117,11 +137,10 @@ export class ChatService {
 			.query(`select members."joinDate", members."leftDate" from members where members."conversationId" = '${convId}' AND members."userId" = '${id}';`);
 		if (!dates.length)
 			return null;
-		let { joinDate, leftDate } = dates[0];
-		leftDate = (!leftDate) ? new Date().toISOString() : leftDate;
-		console.log('dates', joinDate, leftDate);
+		const joinDate: string = new Date(dates[0].joinDate).toISOString();
+		const leftDate: string = (!dates[0]?.leftDate) ? new Date().toISOString() : new Date(dates[0].leftDate).toISOString();
 		const msgs: Message[] = await this.messageRepository
-			.query(`SELECT messages."sender", messages."msg", messages."createDate", messages."conversationId" as "convId" FROM messages where messages."conversationId" = '${convId}' order by messages."createDate" DESC;`)
+			.query(`SELECT messages."sender", messages."msg", messages."createDate", messages."conversationId" as "convId" FROM messages where messages."conversationId" = '${convId}' AND messages."createDate" >= '${joinDate}' AND messages."createDate" <= '${leftDate}' order by messages."createDate" ASC;`);
 		if (!msgs.length)
 			return null;
 		return [...msgs];
@@ -170,6 +189,31 @@ export class ChatService {
 		return { convId: conv.id, name: conv.name, login: conv.name, type: conv.type, membersNum: data.members.length, avatar: conv.avatar };
 	}
 
+	async joinChannel(login: string, convId: string) {
+		const exist = await this.conversationRepository
+			.query(`select id from conversations where conversations.id = '${convId}';`);
+		console.log('Exist: ', exist);
+		if (!exist.length)
+			return null;
+		const memberExist = await this.memberRepository
+			.query(`select members.id, members."leftDate" from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND users."login" = '${login}';`);
+		console.log('Member: ', memberExist);
+		if (!memberExist.length) {
+			const member = new Member();
+			member.status = memberStatus.MEMBER;
+			member.conversation = await this.getConvById(convId);;
+			member.user = await this.userService.getUser(login);
+			await this.memberRepository.save(member);
+		}
+		else if (memberExist[0].leftDate) {
+			this.memberRepository
+				.query(`update members set "leftDate" = null FROM users where members."userId" = users.id AND members."conversationId" = '${convId}' AND users."login" = '${login}';`);
+		}
+		const sockets = await this.chatGateway.server.fetchSockets();
+		sockets.find((socket) => (socket.data.login === login))?.join(convId);
+		return { convId };
+	}
+
 	async leaveChannel(login: string, convId: string) {
 		const exist = await this.memberRepository
 			.query(`select from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND users."login" = '${login}' AND members."status" != 'Owner' AND members."leftDate" is null;`);
@@ -179,7 +223,8 @@ export class ChatService {
 		this.memberRepository
 			.query(`update members set "leftDate" = '${currDate}' FROM users where members."userId" = users.id AND members."conversationId" = '${convId}' AND users."login" = '${login}';`);
 		const sockets = await this.chatGateway.server.fetchSockets();
-		sockets.find((socket) => (socket.data.login === login)).leave(convId);
+		sockets.find((socket) => (socket.data.login === login))?.leave(convId);
+		return { convId };
 	}
 
 	async channelProfile(login: string, convId: string) {
@@ -211,11 +256,7 @@ export class ChatService {
 		if (!exist.length)
 			return null;
 		members.forEach(async (mem) => {
-			const member: Member = new Member();
-			member.status = memberStatus.MEMBER;
-			member.conversation = await this.getConvById(convId);;
-			member.user = await this.userService.getUser(mem);
-			await this.memberRepository.save(member);
+			await this.joinChannel(mem, convId);
 		})
 		return true;
 	}

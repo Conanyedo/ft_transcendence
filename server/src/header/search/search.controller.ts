@@ -14,4 +14,10 @@ export class SearchController {
 	async getUsers(@User() user: userParitalDto, @Query('search') query: string) {
 		return await this.searchService.getUsers(user.login, query);
 	}
+
+	@Get('/channels')
+	@UseGuards(JwtAuthGuard)
+	async getChannels(@User() user: userParitalDto, @Query('search') query: string) {
+		return await this.searchService.getChannels(user.login, query);
+	}
 }
