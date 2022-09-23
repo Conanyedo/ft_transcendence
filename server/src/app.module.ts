@@ -12,12 +12,14 @@ import { NotificationModule } from './header/notification/notification.module';
 import { SearchModule } from './header/search/search.module';
 import { ChatModule } from './chat/chat.module';
 import { AppGateway } from './app.gateway';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
 	providers: [AppGateway],
 	imports: [UserModule, AuthModule, JwtAuthModule, Jwt2faAuthModule,
 		ConfigModule.forRoot({ isGlobal: true }),
 		TypeOrmModule.forRootAsync(typeOrmConfigAsync),
+		ScheduleModule.forRoot(),
 		GameModule,
 		FriendshipModule,
 		NotificationModule,
