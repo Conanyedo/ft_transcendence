@@ -189,6 +189,31 @@ export class ChatService {
 		return { convId: conv.id, name: conv.name, login: conv.name, type: conv.type, membersNum: data.members.length, avatar: conv.avatar };
 	}
 
+	async joinChannel(login: string, convId: string) {
+		const exist = await this.conversationRepository
+			.query(`select id from conversations where conversations.id = '${convId}';`);
+		console.log('Exist: ', exist);
+		if (!exist.length)
+			return null;
+		const memberExist = await this.memberRepository
+			.query(`select members.id, members."leftDate" from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND users."login" = '${login}';`);
+		console.log('Member: ', memberExist);
+		if (!memberExist.length) {
+			const member = new Member();
+			member.status = memberStatus.MEMBER;
+			member.conversation = await this.getConvById(convId);;
+			member.user = await this.userService.getUser(login);
+			await this.memberRepository.save(member);
+		}
+		else if (memberExist[0].leftDate) {
+			this.memberRepository
+				.query(`update members set "leftDate" = null FROM users where members."userId" = users.id AND members."conversationId" = '${convId}' AND users."login" = '${login}';`);
+		}
+		const sockets = await this.chatGateway.server.fetchSockets();
+		sockets.find((socket) => (socket.data.login === login))?.join(convId);
+		return { convId };
+	}
+
 	async leaveChannel(login: string, convId: string) {
 		const exist = await this.memberRepository
 			.query(`select from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND users."login" = '${login}' AND members."status" != 'Owner' AND members."leftDate" is null;`);
@@ -198,7 +223,8 @@ export class ChatService {
 		this.memberRepository
 			.query(`update members set "leftDate" = '${currDate}' FROM users where members."userId" = users.id AND members."conversationId" = '${convId}' AND users."login" = '${login}';`);
 		const sockets = await this.chatGateway.server.fetchSockets();
-		sockets.find((socket) => (socket.data.login === login)).leave(convId);
+		sockets.find((socket) => (socket.data.login === login))?.leave(convId);
+		return { convId };
 	}
 
 	async channelProfile(login: string, convId: string) {
@@ -230,11 +256,7 @@ export class ChatService {
 		if (!exist.length)
 			return null;
 		members.forEach(async (mem) => {
-			const member: Member = new Member();
-			member.status = memberStatus.MEMBER;
-			member.conversation = await this.getConvById(convId);;
-			member.user = await this.userService.getUser(mem);
-			await this.memberRepository.save(member);
+			await this.joinChannel(mem, convId);
 		})
 		return true;
 	}
