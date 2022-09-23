@@ -297,6 +297,8 @@ export class ChatService {
 		});
 		this.schedulerRegistry.addCronJob(name, job);
 		job.start();
+		const sockets = await this.chatGateway.server.fetchSockets();
+		sockets.find((socket) => (socket.data.login === member))?.leave(convId);
 		return true;
 	}
 
