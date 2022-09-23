@@ -192,12 +192,10 @@ export class ChatService {
 	async joinChannel(login: string, convId: string) {
 		const exist = await this.conversationRepository
 			.query(`select id from conversations where conversations.id = '${convId}';`);
-		console.log('Exist: ', exist);
 		if (!exist.length)
 			return null;
 		const memberExist = await this.memberRepository
 			.query(`select members.id, members."leftDate" from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND users."login" = '${login}';`);
-		console.log('Member: ', memberExist);
 		if (!memberExist.length) {
 			const member = new Member();
 			member.status = memberStatus.MEMBER;
@@ -233,11 +231,11 @@ export class ChatService {
 		if (!exist.length)
 			return null;
 		const owner: Member[] = await this.memberRepository
-			.query(`select users."login", users."fullname", users."avatar", members."status" from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND members."status" = 'Owner';`);
+			.query(`select users."login", users."fullname", users."avatar", members."status" from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND members."leftDate" IS NULL AND members."status" = 'Owner';`);
 		const admins: Member[] = await this.memberRepository
-			.query(`select users."login", users."fullname", users."avatar", members."status" from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND members."status" = 'Admin';`);
+			.query(`select users."login", users."fullname", users."avatar", members."status" from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND members."leftDate" IS NULL AND members."status" = 'Admin';`);
 		const members: Member[] = await this.memberRepository
-			.query(`select users."login", users."fullname", users."avatar", members."status" from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND members."status" = 'Member';`);
+			.query(`select users."login", users."fullname", users."avatar", members."status" from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND members."leftDate" IS NULL AND members."status" = 'Member';`);
 		return { owner, admins, members };
 	}
 
@@ -247,7 +245,7 @@ export class ChatService {
 		if (!exist.length)
 			return null;
 		this.memberRepository
-			.query(`update members set status = '${status}' FROM users where members."userId" = users.id AND members."conversationId" = '${convId}' AND users."login" = '${member}' AND members."status" != 'Owner';`);
+			.query(`update members set status = '${status}' FROM users where members."userId" = users.id AND members."conversationId" = '${convId}' AND users."login" = '${member}' AND members."leftDate" IS NULL AND members."status" != 'Owner';`);
 	}
 
 	async addMembers(login: string, convId: string, members: string[]) {
@@ -258,6 +256,17 @@ export class ChatService {
 		members.forEach(async (mem) => {
 			await this.joinChannel(mem, convId);
 		})
+		return true;
+	}
+
+	async banMember(login: string, convId: string, member: string) {
+		const exist = await this.memberRepository
+			.query(`select from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND users."login" = '${login}' AND members."status" != 'Member';`);
+		if (!exist.length)
+			return null;
+		const currDate = new Date().toISOString();
+		this.memberRepository
+			.query(`update members set "leftDate" = '${currDate}' FROM users where members."userId" = users.id AND members."conversationId" = '${convId}' AND members."status" != 'Owner' AND users."login" = '${member}';`);
 		return true;
 	}
 
