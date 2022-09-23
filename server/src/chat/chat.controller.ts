@@ -31,6 +31,12 @@ export class ChatController {
 		return await this.chatService.leaveChannel(login, convId);
 	}
 
+	@Post('/joinChannel')
+	@UseGuards(JwtAuthGuard)
+	async joinChannel(@User('login') login: string, @Body('convId') convId: string) {
+		return await this.chatService.joinChannel(login, convId);
+	}
+
 	@Post('/channelProfile')
 	@UseGuards(JwtAuthGuard)
 	async channelProfile(@User('login') login: string, @Body('convId') convId: string) {
