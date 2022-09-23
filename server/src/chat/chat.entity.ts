@@ -74,6 +74,9 @@ export class Member {
 	@Column({ default: null })
 	leftDate: Date;
 
+	@Column({ default: false })
+	isMuted: boolean;
+
 	@ManyToOne(() => Conversation, (conversation) => conversation.members)
 	conversation: Conversation;
 

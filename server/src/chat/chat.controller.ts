@@ -55,6 +55,18 @@ export class ChatController {
 		return await this.chatService.addMembers(login, convId, members);
 	}
 
+	@Post('/banMember')
+	@UseGuards(JwtAuthGuard)
+	async banMember(@User('login') login: string, @Body('convId') convId: string, @Body('member') member: string) {
+		return await this.chatService.banMember(login, convId, member);
+	}
+
+	@Post('/muteMember')
+	@UseGuards(JwtAuthGuard)
+	async muteMember(@User('login') login: string, @Body('convId') convId: string, @Body('member') member: string, @Body('seconds') seconds: number) {
+		return await this.chatService.muteMember(login, convId, member, seconds);
+	}
+
 	@Post('/updateChannel')
 	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(FileInterceptor('avatar', uploadChannelConfig))
