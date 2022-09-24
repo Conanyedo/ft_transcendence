@@ -189,10 +189,11 @@ export class UserService {
 			.select(['users.login', 'users.fullname', 'users.avatar'])
 			.where(`LOWER(users.fullname) LIKE '%${search}%' AND users.login != :login`, { login: login })
 			.getMany();
-		const usersList = await Promise.all(users.map(async (user) => {
+		const usersList = [];
+		await Promise.all(users.map(async (user) => {
 			const relation = await this.friendshipService.getRelation(login, user.login);
 			if (relation !== 'blocked')
-				return { ...user, relation }
+				usersList.push({ ...user, relation });
 		}))
 		return [...usersList];
 	}
