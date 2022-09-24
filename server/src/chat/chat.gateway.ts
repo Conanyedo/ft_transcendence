@@ -46,6 +46,8 @@ export class ChatGateway {
 			msg = await this.chatService.createNewDm(client, data)
 		else
 			msg = await this.chatService.createNewMessage(login, data);
+		if (typeof msg === "string")
+			return msg;
 		this.server.to(msg.convId).emit('newMsg', msg);
 	}
 
