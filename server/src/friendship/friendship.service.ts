@@ -13,7 +13,7 @@ export class FriendshipService {
 		private friendshipRepository: Repository<Friendship>,
 		@Inject(forwardRef(() => UserService))
 		private readonly userService: UserService,
-		@Inject(forwardRef(() => UserService))
+		@Inject(forwardRef(() => ChatService))
 		private readonly chatService: ChatService
 	) { }
 
