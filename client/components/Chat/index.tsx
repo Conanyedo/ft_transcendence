@@ -128,7 +128,7 @@ export const ChatLeft = (props: { login: any }) => {
                 <div className={Styles.bottomSection}>
                     {lastUsers.map((user: any, i: any) => <Link href={"/chat?login=" + user.login} key={i}><div key={i} ref={(element) => { chatUsersRefs.current[parseInt(i)] = element }} className={Styles.chatUser}>
                         <div className={Styles.avatarName}>
-                            <img src={user.avatar} className={Styles.avatar} />
+                            <img src={user?.avatar} className={Styles.avatar} />
                             <div className={Styles.username}>{user.name} {user.channelname}</div>
                         </div>
                         <p className={Styles.status}>{user?.status ? user.status : user?.membersNum + " members"}</p>
@@ -303,7 +303,7 @@ export const ChatRight = (props: { setShowSetModal: any, login: number }) => {
 export function InviteMsg(invitedUser: chatUser) {
     return (<div className={Styles.inviteMsg}>
         <div>
-            <Image src={invitedUser.avatar} width={38} height={38} className={Styles.inviteAvatar} />
+            <Image src={invitedUser?.avatar} width={38} height={38} className={Styles.inviteAvatar} />
             <div>
                 {invitedUser.name}
                 <p>You invite them to play pong game</p>
