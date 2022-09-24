@@ -20,6 +20,16 @@
     color: #A0CEFF;
 }
 
+.selectedFriend {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 1.556rem;
+    line-height: 1.889rem;
+    color: #FFFFFF;
+    width: 100%;
+}
+
 .pingPongContainer {
     margin-top: 11.111rem;
     width: 100%;
@@ -192,6 +202,7 @@
     width: 22.222rem;
     height: 11.111rem;
     overflow: hidden;
+    cursor: pointer;
 }
 
 .selected {
@@ -331,10 +342,19 @@
         margin-top: 0;
         padding-top: 8rem;
     }
-
+    /* scroll  */
     .listTheme {
-        flex-direction: column;
-        align-items: flex-start;
+        display: flex;
+        width: 30rem;
+        overflow-x: scroll;
+        column-gap: 2rem;
+        scroll-padding: 2rem;
+    }
+
+    .Theme {
+        flex: 0 0 100%;
+        scroll-snap-align: start;
+        margin-bottom: 2rem;
     }
 
     .selectContainer {

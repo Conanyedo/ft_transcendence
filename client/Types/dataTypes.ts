@@ -233,3 +233,10 @@ export class headerDataType {
 		this.themeMap = 0;
 	}
 }
+
+export class FriendOnline {
+	login: string = '';
+	fullname: string = '';
+	avatar: string = '';
+	status: string = '';
+}
