@@ -36,7 +36,7 @@ const MatchHistory: React.FC = () => {
 	const rout = useRouter();
 
 	useEffect(() => {
-		fetchDATA(setData, rout, `game/onlineFriends`);
+		fetchDATA(setData, rout, `game/matchHistory`);
 		return () => {
 			setData(null);
 		}
