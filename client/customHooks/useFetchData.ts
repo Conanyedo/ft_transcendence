@@ -301,3 +301,33 @@ export const requests = async (
 			return false;
 		});
 };
+
+export const requestsChannel = async (
+	convId: string,
+	path: string,
+	router: NextRouter
+) => {
+	const token = getCookie("jwt");
+	const params = new URLSearchParams();
+	params.append("convId", convId);
+	return await axios({
+		method: "post",
+		url: `${baseUrl}${path}`,
+		data: params,
+		headers: {
+			Authorization: `Bearer ${token}`,
+		},
+		withCredentials: true,
+	})
+		.then((res) => {
+			return true;
+		})
+		.catch((err) => {
+			if (err.response.data.message !== "Wrong authentication code") {
+				eraseCookie("jwt");
+				socket_notif.disconnect();
+				router.replace("/");
+			}
+			return false;
+		});
+};

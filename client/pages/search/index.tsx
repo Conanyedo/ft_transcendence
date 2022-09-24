@@ -11,9 +11,7 @@ const Search = () => {
 		setValue(search as string);
 	}, [search])
 	return (
-		<ContentWrapper children={
 			<SearchComponent value={value} />
-		} />
 	);
 };
 export default Search;

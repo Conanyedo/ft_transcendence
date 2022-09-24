@@ -6,7 +6,7 @@ import Pending from "../public/FriendIcons/Pending.svg";
 import AddFriend from "../public/FriendIcons/ADDFriend.svg";
 import Respond from "../public/FriendIcons/Respond.svg";
 import { motion } from "framer-motion";
-import { requests } from "../customHooks/useFetchData";
+import { requests, requestsChannel } from "../customHooks/useFetchData";
 import { NextRouter } from "next/router";
 import { useRef, useState } from "react";
 import { useOutsideAlerter } from "../customHooks/Functions";
@@ -142,12 +142,12 @@ export const OptionMenu: React.FC<{
 };
 
 export const LeaveChannel: React.FC<{
-	login: string;
+	id: string;
 	router: NextRouter;
 	refresh: () => void;
 }> = (props) => {
 	const handler = async () => {
-		// await requests(props.login, "", props.router);
+		await requestsChannel(props.id, "chat/leaveChannel", props.router);
 		props.refresh();
 	};
 	return (
@@ -165,12 +165,12 @@ export const LeaveChannel: React.FC<{
 };
 
 export const JoinChannel: React.FC<{
-	login: string;
+	id: string;
 	router: NextRouter;
 	refresh: () => void;
 }> = (props) => {
 	const handler = async () => {
-		// await requests(props.login, "", props.router);
+		await requestsChannel(props.id, "chat/joinChannel", props.router);
 		props.refresh();
 	};
 	return (
