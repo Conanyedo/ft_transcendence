@@ -37,7 +37,7 @@ const SearchComponent: React.FC<{value: string}> = (props) => {
 				></motion.div>
 			</div>
             {overUsers && <SearchUserList {...props}/>}
-            {!overUsers && <SearchChannelsList />}
+            {!overUsers && <SearchChannelsList {...props}/>}
 		</div>
 	);
 };

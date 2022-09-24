@@ -12,10 +12,10 @@ import { ChatService } from './chat.service';
 export class ChatController {
 	constructor(private readonly chatService: ChatService) { }
 
-	@Get('/loginInfo/:login')
+	@Get('/loginInfo/:user')
 	@UseGuards(JwtAuthGuard)
-	async getFriend(@Param('login') login: string) {
-		return await this.chatService.getFriend(login);
+	async getUserInfo(@User('login') login: string, @Param('user') user: string) {
+		return await this.chatService.getUserInfo(login, user);
 	}
 
 	@Post('/createChannel')
@@ -33,8 +33,8 @@ export class ChatController {
 
 	@Post('/joinChannel')
 	@UseGuards(JwtAuthGuard)
-	async joinChannel(@User('login') login: string, @Body('convId') convId: string) {
-		return await this.chatService.joinChannel(login, convId);
+	async joinChannel(@User('login') login: string, @Body('convId') convId: string, @Body('password') password: string) {
+		return await this.chatService.joinChannel(login, convId, password, false);
 	}
 
 	@Post('/channelProfile')
@@ -55,11 +55,23 @@ export class ChatController {
 		return await this.chatService.addMembers(login, convId, members);
 	}
 
+	@Post('/banMember')
+	@UseGuards(JwtAuthGuard)
+	async banMember(@User('login') login: string, @Body('convId') convId: string, @Body('member') member: string) {
+		return await this.chatService.banMember(login, convId, member);
+	}
+
+	@Post('/muteMember')
+	@UseGuards(JwtAuthGuard)
+	async muteMember(@User('login') login: string, @Body('convId') convId: string, @Body('member') member: string, @Body('seconds') seconds: number) {
+		return await this.chatService.muteMember(login, convId, member, seconds);
+	}
+
 	@Post('/updateChannel')
 	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(FileInterceptor('avatar', uploadChannelConfig))
 	async updateChannel(@User('login') login: string, @Body('convId') convId: string, @UploadedFile() avatar: Express.Multer.File, @Body() body) {
-		const data: updateChannelDto = { ...body, avatar: avatar?.filename }
+		const data: updateChannelDto = { ...body, avatar: avatar.filename }
 		return await this.chatService.updateChannel(login, convId, data);
 	}
 }

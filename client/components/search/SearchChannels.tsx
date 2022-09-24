@@ -5,16 +5,18 @@ import profile from "../../public/AvatarChannel.png";
 import { JoinChannel, LeaveChannel } from "../buttons";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { fetchDATA } from "@hooks/useFetchData";
 
 interface ChannelDataType {
-	Avatar: any;
+	Avatar: string;
 	title: string;
 	type: string;
 	member: boolean;
+	refresh: any;
+	convId: string;
 }
-
 const Channel: React.FC<ChannelDataType> = (props) => {
-	const refresh = () => {};
+	const refresh = () => props.refresh();
 	const router = useRouter();
 	return (
 		<div className={classes.Channel}>
@@ -27,13 +29,13 @@ const Channel: React.FC<ChannelDataType> = (props) => {
 			<div className={classes.Channeltype}>{props.type}</div>
 			{(props.member && (
 				<LeaveChannel
-					login={props.title}
+					id={props.convId}
 					router={router}
 					refresh={refresh}
 				/>
 			)) || (
 				<JoinChannel
-					login={props.title}
+					id={props.convId}
 					router={router}
 					refresh={refresh}
 				/>
@@ -42,20 +44,29 @@ const Channel: React.FC<ChannelDataType> = (props) => {
 	);
 };
 
-const SearchChannelsList: React.FC = () => {
+const SearchChannelsList: React.FC<{value: string}> = (props) => {
 	const router = useRouter();
 	const [searchData, setSearchData] = useState<ChannelDataType[]>([]);
-	const refresh = () => {}
+	const refresh = () => fetchDATA(
+			setSearchData,
+			router,
+			`search/channels?search=${props.value}`
+		);
 	useEffect(() => {
-		// fetchDATA(setSearchData, router, '');
+		fetchDATA(
+			setSearchData,
+			router,
+			`search/channels?search=${props.value}`
+		);
 		return () => {
 			setSearchData([]);
-		}
-	}, [])
+		};
+	}, [props.value]);
 	return (
 		<>
 			<motion.div className={classes.SearchCTNIN}>
-				
+				{searchData.length === 0 && <p className={classes.userNotFound}>couldn't find anything with '{props.value}'</p>}
+				{searchData.length !== 0 && searchData?.map((channel) => <Channel {...channel} key={channel.title} refresh={refresh} />)  }
 			</motion.div>
 		</>
 	);

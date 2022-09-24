@@ -55,9 +55,7 @@ const ElmRank: React.FC<matchDataType> = (props) => {
 					<div
 						className={classes.pourcentage}
 						style={{
-							width: `${Math.floor(
-								(props.Win / props.games) * 100
-							)}%`,
+							width: `${winRatio}%`,
 						}}
 					></div>
 				</div>

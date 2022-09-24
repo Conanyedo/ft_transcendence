@@ -6,6 +6,10 @@ export enum memberStatus {
 	OWNER = "Owner",
 	ADMIN = "Admin",
 	MEMBER = "Member",
+	MUTED = "Muted",
+	LEFT = "Left",
+	BANNED = "Banned",
+	BLOCKER = "Blocker"
 }
 
 export enum convType {

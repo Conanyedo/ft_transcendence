@@ -1,5 +1,6 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { ChatService } from 'src/chat/chat.service';
 import { UserService } from 'src/user/user.service';
 import { Repository } from 'typeorm';
 import { friendDto } from './friendship.dto';
@@ -11,7 +12,9 @@ export class FriendshipService {
 		@InjectRepository(Friendship)
 		private friendshipRepository: Repository<Friendship>,
 		@Inject(forwardRef(() => UserService))
-		private readonly userService: UserService
+		private readonly userService: UserService,
+		@Inject(forwardRef(() => ChatService))
+		private readonly chatService: ChatService
 	) { }
 
 	async getRelation(user: string, friend: string) {
@@ -141,6 +144,7 @@ export class FriendshipService {
 		friendship.relation = userRelation.BLOCKED;
 		this.friendshipRepository.save(friendship);
 
+		this.chatService.blockUser(user, friend);
 	}
 
 	async unblock(user: string, friend: string) {
@@ -149,5 +153,6 @@ export class FriendshipService {
 			.delete()
 			.where('friendships.user = :user AND friendships.friend = :friend AND friendships.relation = :relation', { user: user, friend: friend, relation: userRelation.BLOCKED })
 			.execute();
+		this.chatService.unBlockUser(user, friend);
 	}
 }
