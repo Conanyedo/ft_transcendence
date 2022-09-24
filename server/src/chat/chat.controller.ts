@@ -71,7 +71,7 @@ export class ChatController {
 	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(FileInterceptor('avatar', uploadChannelConfig))
 	async updateChannel(@User('login') login: string, @Body('convId') convId: string, @UploadedFile() avatar: Express.Multer.File, @Body() body) {
-		const data: updateChannelDto = { ...body, avatar: avatar?.filename }
+		const data: updateChannelDto = { ...body, avatar: avatar.filename }
 		return await this.chatService.updateChannel(login, convId, data);
 	}
 }

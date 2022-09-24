@@ -63,7 +63,7 @@ export class ChatService {
 
 	async getUserInfo(login: string, user: string) {
 		const relation = await this.friendshipService.getRelation(login, user);
-		const userInfo = await this.userService.getFriend(login);
+		const userInfo = await this.userService.getFriend(user);
 		return { ...userInfo, relation };
 	}
 
@@ -216,11 +216,11 @@ export class ChatService {
 	}
 
 	async createChannel(owner: string, data: createChannelDto) {
-		if (data.type === convType.PROTECTED && !data?.password.length)
+		if (data.type === convType.PROTECTED && !data.password.length)
 			return 'Please provide password';
 		if (data.type !== convType.PROTECTED) data.password = undefined;
 		const avatar: string = `https://ui-avatars.com/api/?name=${data.name}&size=220&background=2C2C2E&color=409CFF&length=1`;
-		const newConv: createConvDto = { type: data.type, name: data.name, avatar: avatar, password: data?.password };
+		const newConv: createConvDto = { type: data.type, name: data.name, avatar: avatar, password: data.password };
 		data.members.unshift(owner);
 		const newMembers: createMemberDto[] = data.members.map((mem) => {
 			if (mem === owner)
@@ -334,11 +334,11 @@ export class ChatService {
 			return null;
 		const currDate = new Date().toISOString();
 		this.memberRepository
-			.query(`update members set "leftDate" = '${currDate}', "status" = 'Muted' where members."id" = '${memberId[0].id};`);
+			.query(`update members set "leftDate" = '${currDate}', "status" = 'Muted' where members."id" = '${memberId[0].id}';`);
 		const name: string = memberId[0].id;
 		const job = new CronJob(new Date(Date.now() + seconds * 1000), async () => {
 			this.memberRepository
-				.query(`update members set "leftDate" = null, "status" = 'Member' where members."id" = '${name};`);
+				.query(`update members set "leftDate" = null, "status" = 'Member' where members."id" = '${name}';`);
 			const sockets = await this.chatGateway.server.fetchSockets();
 			sockets.find((socket) => (socket.data.login === member))?.join(convId);
 			this.schedulerRegistry.deleteCronJob(name);
