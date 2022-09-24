@@ -99,6 +99,9 @@ export class conversationDto {
 	@IsNotEmpty()
 	type: string;
 
+	@IsNotEmpty()
+	relation: string;
+
 	@IsString()
 	name?: string;
 
