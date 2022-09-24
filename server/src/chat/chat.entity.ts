@@ -6,6 +6,10 @@ export enum memberStatus {
 	OWNER = "Owner",
 	ADMIN = "Admin",
 	MEMBER = "Member",
+	MUTED = "Muted",
+	LEFT = "Left",
+	BANNED = "Banned",
+	BLOCKER = "Blocker"
 }
 
 export enum convType {
@@ -73,9 +77,6 @@ export class Member {
 
 	@Column({ default: null })
 	leftDate: Date;
-
-	@Column({ default: false })
-	isMuted: boolean;
 
 	@ManyToOne(() => Conversation, (conversation) => conversation.members)
 	conversation: Conversation;
