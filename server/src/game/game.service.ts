@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { FriendshipService } from 'src/friendship/friendship.service';
 import { UserService } from 'src/user/user.service';
 import { Repository } from 'typeorm';
 import { gameDto, historyDto, opponentDto } from './game.dto';
@@ -11,7 +12,12 @@ export class GameService {
 		@InjectRepository(Game)
 		private gameRepository: Repository<Game>,
 		private readonly userService: UserService,
+		private readonly friendshipService: FriendshipService
 	) { }
+
+	async getOnlineFriends(login: string) {
+		return await this.friendshipService.getOnlineFriends(login);
+	}
 
 	async insertMatches(gameResult: gameDto) {
 		let game: Game = new Game();

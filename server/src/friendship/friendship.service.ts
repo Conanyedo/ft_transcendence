@@ -30,6 +30,24 @@ export class FriendshipService {
 		return friendship.relation;
 	}
 
+	async getOnlineFriends(login: string) {
+		const friends: Friendship[] = await this.friendshipRepository
+			.createQueryBuilder('friendships')
+			.select(['friendships.user', 'friendships.friend'])
+			.where('friendships.relation = :relation AND (friendships.user = :login OR friendships.friend = :login)', { relation: userRelation.FRIEND, login: login })
+			.getMany();
+		if (!friends.length)
+			return friends;
+		const friendList = [];
+		await Promise.all(friends.map(async (friend) => {
+			const friendLogin = (friend.user === login) ? friend.friend : friend.user;
+			const friendInfo: friendDto = await this.userService.getFriend(friendLogin);
+			if (friendInfo.status === 'Online')
+				friendList.push(friendInfo);
+		}))
+		return [...friendList];
+	}
+
 	async getFriends(login: string) {
 		const friends: Friendship[] = await this.friendshipRepository
 			.createQueryBuilder('friendships')

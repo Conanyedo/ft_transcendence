@@ -10,7 +10,7 @@ const MatchHistoryFriend: React.FC<{ login: string }> = (props) => {
 	const rout = useRouter();
 
 	useEffect(() => {
-		fetchDATA(setData, rout, `game/${props.login}`);
+		fetchDATA(setData, rout, `game/onlineFriends/${props.login}`);
 		return () => {
 			setData(null);
 		};
