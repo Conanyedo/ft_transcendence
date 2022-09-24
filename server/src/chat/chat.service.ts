@@ -12,6 +12,7 @@ import { ChatGateway } from './chat.gateway';
 import * as bcrypt from 'bcrypt';
 import { Cron, SchedulerRegistry } from '@nestjs/schedule';
 import { CronJob } from 'cron';
+import { FriendshipService } from 'src/friendship/friendship.service';
 
 @Injectable()
 export class ChatService {
@@ -22,7 +23,10 @@ export class ChatService {
 		private messageRepository: Repository<Message>,
 		@InjectRepository(Member)
 		private memberRepository: Repository<Member>,
+		@Inject(forwardRef(() => UserService))
 		private userService: UserService,
+		@Inject(forwardRef(() => FriendshipService))
+		private friendshipService: FriendshipService,
 		@Inject(forwardRef(() => ChatGateway))
 		private chatGateway: ChatGateway,
 		private schedulerRegistry: SchedulerRegistry
@@ -37,13 +41,14 @@ export class ChatService {
 			.getMany()
 		if (!convs.length)
 			return convs;
-		const convsList = await Promise.all(convs.map(async (conv) => {
+		const convsList = [];
+		await Promise.all(convs.map(async (conv) => {
 			const exist = await this.memberRepository
-				.query(`select members.id from members Join users ON members."userId" = users.id where members."conversationId" = '${conv.id}' AND users."login" = '${login}' AND members."leftDate" IS null;`);
-			let isMember: boolean = false;
-			if (exist.length)
-				isMember = true;
-			return { convId: conv.id, Avatar: conv.avatar, title: conv.name, type: conv.type, member: isMember };
+				.query(`select members.id, members."status" from members Join users ON members."userId" = users.id where members."conversationId" = '${conv.id}' AND users."login" = '${login}';`);
+			if (!exist.length)
+				convsList.push({ convId: conv.id, Avatar: conv.avatar, title: conv.name, type: conv.type, member: false });
+			else if (exist[0].status !== 'Banned' && exist[0].status !== 'Muted')
+				convsList.push({ convId: conv.id, Avatar: conv.avatar, title: conv.name, type: conv.type, member: true });
 		}))
 		return [...convsList];
 	}
@@ -56,8 +61,33 @@ export class ChatService {
 		convs.forEach((conv) => (client.join(conv.convId)));
 	}
 
-	async getFriend(login: string) {
-		return await this.userService.getFriend(login);
+	async getUserInfo(login: string, user: string) {
+		const relation = await this.friendshipService.getRelation(login, user);
+		const userInfo = await this.userService.getFriend(login);
+		return { ...userInfo, relation };
+	}
+
+	async blockUser(login: string, user: string) {
+		const conv = await this.memberRepository
+			.query(`select conversations.id, count(*) from members join users on members."userId" = users.id join conversations on members."conversationId" = conversations.id where (users.login = '${login}' or users.login = '${user}') and conversations.type = 'Dm' group by conversations.id having count(*) = 2;`);
+		if (!conv.length)
+			return null;
+		const currDate = new Date().toISOString();
+		this.memberRepository
+			.query(`update members set status = 'Blocker', "leftDate" = '${currDate}' FROM users where members."userId" = users.id AND members."conversationId" = '${conv[0].id}' AND users."login" = '${login}';`);
+		const sockets = await this.chatGateway.server.fetchSockets();
+		sockets.find((socket) => (socket.data.login === login))?.leave(conv[0].id);
+	}
+
+	async unBlockUser(login: string, user: string) {
+		const conv = await this.memberRepository
+			.query(`select conversations.id, count(*) from members join users on members."userId" = users.id join conversations on members."conversationId" = conversations.id where (users.login = '${login}' or users.login = '${user}') and conversations.type = 'Dm' group by conversations.id having count(*) = 2;`);
+		if (!conv.length)
+			return null;
+		this.memberRepository
+			.query(`update members set status = 'Member', "leftDate" = null FROM users where members."userId" = users.id AND members."conversationId" = '${conv[0].id}' AND users."login" = '${login}';`);
+		const sockets = await this.chatGateway.server.fetchSockets();
+		sockets.find((socket) => (socket.data.login === login))?.join(conv[0].id);
 	}
 
 	async encryptPassword(password: string) {
@@ -65,9 +95,13 @@ export class ChatService {
 		return await bcrypt.hash(password, salt);
 	}
 
+	async checkPassword(password: string, input: string) {
+		return await bcrypt.compare(input, password);
+	}
+
 	async getConversations(login: string) {
 		const convs: conversationDto[] = await this.memberRepository
-			.query(`select conversations.id as "convId", conversations.type, conversations.avatar, conversations.name from members Join users ON members."userId" = users.id Join conversations ON members."conversationId" = conversations.id where users."login" = '${login}' order by conversations."lastUpdate" DESC;`);
+			.query(`select conversations.id as "convId", conversations.type, conversations.avatar, conversations.name, members.status from members Join users ON members."userId" = users.id Join conversations ON members."conversationId" = conversations.id where users."login" = '${login}' order by conversations."lastUpdate" DESC;`);
 		const conversations: conversationDto[] = await Promise.all(convs.map(async (conv) => {
 			const convInfo: conversationDto = { ...conv }
 			if (conv.type === 'Dm') {
@@ -77,12 +111,14 @@ export class ChatService {
 				convInfo.login = users[0].login;
 				convInfo.status = users[0].status;
 				convInfo.avatar = users[0].avatar;
+				convInfo.relation = conv.status;
 			}
 			else {
 				const membersNum = await this.memberRepository
 					.query(`select COUNT(*) from members where members."conversationId" = '${convInfo.convId}';`);
 				convInfo.login = convInfo.name;
 				convInfo.membersNum = membersNum[0].count;
+				convInfo.relation = conv.status;
 			}
 			return convInfo;
 		}))
@@ -141,7 +177,7 @@ export class ChatService {
 		if (!dates.length)
 			return null;
 		const joinDate: string = new Date(dates[0].joinDate).toISOString();
-		const leftDate: string = (!dates[0]?.leftDate) ? new Date().toISOString() : new Date(dates[0].leftDate).toISOString();
+		const leftDate: string = (!dates[0].leftDate) ? new Date().toISOString() : new Date(dates[0].leftDate).toISOString();
 		const msgs: Message[] = await this.messageRepository
 			.query(`SELECT messages."sender", messages."msg", messages."createDate", messages."conversationId" as "convId" FROM messages where messages."conversationId" = '${convId}' AND messages."createDate" >= '${joinDate}' AND messages."createDate" <= '${leftDate}' order by messages."createDate" ASC;`);
 		if (!msgs.length)
@@ -168,6 +204,11 @@ export class ChatService {
 
 	async createNewMessage(login: string, data: createMsgDto) {
 		const conv = await this.getConvById(data.convId);
+		const exist = await this.memberRepository
+			.query(`select members.status from members Join users ON members."userId" = users.id where members."conversationId" = '${data.convId}' AND users."login" = '${login}';`);
+		const status = exist[0].status;
+		if (status === 'Muted' || status === 'Left' || status === 'Banned' || status === 'Blocker')
+			return status;
 		const date = await this.storeMsg(data.msg, login, conv);
 		this.updateConvDate(conv.id, date);
 		const msg: msgDto = { msg: data.msg, sender: login, date: date, convId: conv.id };
@@ -192,11 +233,16 @@ export class ChatService {
 		return { convId: conv.id, name: conv.name, login: conv.name, type: conv.type, membersNum: data.members.length, avatar: conv.avatar };
 	}
 
-	async joinChannel(login: string, convId: string) {
+	async joinChannel(login: string, convId: string, password: string, owner: boolean) {
 		const exist = await this.conversationRepository
-			.query(`select id from conversations where conversations.id = '${convId}';`);
+			.query(`select id, type, password from conversations where conversations.id = '${convId}';`);
 		if (!exist.length)
 			return null;
+		if (exist[0].type === 'Protected' && !owner) {
+			if (!password) return 'Please provide password';
+			const match: boolean = await this.checkPassword(exist[0].password, password);
+			if (!match) return 'Invalid password';
+		}
 		const memberExist = await this.memberRepository
 			.query(`select members.id, members."leftDate" from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND users."login" = '${login}';`);
 		if (!memberExist.length) {
@@ -208,7 +254,7 @@ export class ChatService {
 		}
 		else if (memberExist[0].leftDate) {
 			this.memberRepository
-				.query(`update members set "leftDate" = null FROM users where members."userId" = users.id AND members."conversationId" = '${convId}' AND users."login" = '${login}';`);
+				.query(`update members set "leftDate" = null, "status" = 'Member' FROM users where members."userId" = users.id AND members."conversationId" = '${convId}' AND users."login" = '${login}';`);
 		}
 		const sockets = await this.chatGateway.server.fetchSockets();
 		sockets.find((socket) => (socket.data.login === login))?.join(convId);
@@ -222,7 +268,7 @@ export class ChatService {
 			return null;
 		const currDate = new Date().toISOString();
 		this.memberRepository
-			.query(`update members set "leftDate" = '${currDate}' FROM users where members."userId" = users.id AND members."conversationId" = '${convId}' AND users."login" = '${login}';`);
+			.query(`update members set "leftDate" = '${currDate}', "status" = 'Left' FROM users where members."userId" = users.id AND members."conversationId" = '${convId}' AND users."login" = '${login}';`);
 		const sockets = await this.chatGateway.server.fetchSockets();
 		sockets.find((socket) => (socket.data.login === login))?.leave(convId);
 		return { convId };
@@ -234,17 +280,19 @@ export class ChatService {
 		if (!exist.length)
 			return null;
 		const owner: Member[] = await this.memberRepository
-			.query(`select users."login", users."fullname", users."avatar", members."status", members."isMuted" from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND (members."leftDate" IS NULL OR members."isMuted = 'true') AND members."status" = 'Owner';`);
+			.query(`select users."login", users."fullname", users."avatar", members."status" from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND members."status" = 'Owner';`);
 		const admins: Member[] = await this.memberRepository
-			.query(`select users."login", users."fullname", users."avatar", members."status", members."isMuted" from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND (members."leftDate" IS NULL OR members."isMuted = 'true') AND members."status" = 'Admin';`);
+			.query(`select users."login", users."fullname", users."avatar", members."status" from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND members."status" = 'Admin';`);
 		const members: Member[] = await this.memberRepository
-			.query(`select users."login", users."fullname", users."avatar", members."status", members."isMuted" from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND (members."leftDate" IS NULL OR members."isMuted = 'true') AND members."status" = 'Member';`);
-		return { owner, admins, members };
+			.query(`select users."login", users."fullname", users."avatar", members."status" from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND members."status" = 'Member';`);
+		const muted: Member[] = await this.memberRepository
+			.query(`select users."login", users."fullname", users."avatar", members."status" from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND members."status" = 'Muted';`);
+		return { owner, admins, members, muted };
 	}
 
 	async setMemberStatus(login: string, convId: string, member: string, status: memberStatus) {
 		const exist = await this.memberRepository
-			.query(`select from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND users."login" = '${login}' AND members."status" != 'Member';`);
+			.query(`select from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND users."login" = '${login}' AND (members."status" = 'Owner' OR members."status" = 'Admin');`);
 		if (!exist.length)
 			return null;
 		this.memberRepository
@@ -253,23 +301,23 @@ export class ChatService {
 
 	async addMembers(login: string, convId: string, members: string[]) {
 		const exist = await this.memberRepository
-			.query(`select from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND users."login" = '${login}' AND members."status" != 'Member';`);
+			.query(`select from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND users."login" = '${login}' AND (members."status" = 'Owner' OR members."status" = 'Admin');`);
 		if (!exist.length)
 			return null;
 		members.forEach(async (mem) => {
-			await this.joinChannel(mem, convId);
+			await this.joinChannel(mem, convId, undefined, true);
 		})
 		return true;
 	}
 
 	async banMember(login: string, convId: string, member: string) {
 		const exist = await this.memberRepository
-			.query(`select from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND users."login" = '${login}' AND members."status" != 'Member';`);
+			.query(`select from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND users."login" = '${login}' AND (members."status" = 'Owner' OR members."status" = 'Admin');`);
 		if (!exist.length)
 			return null;
 		const currDate = new Date().toISOString();
 		this.memberRepository
-			.query(`update members set "leftDate" = '${currDate}' FROM users where members."userId" = users.id AND members."conversationId" = '${convId}' AND members."status" != 'Owner' AND users."login" = '${member}';`);
+			.query(`update members set "leftDate" = '${currDate}', "status" = 'Banned' FROM users where members."userId" = users.id AND members."conversationId" = '${convId}' AND members."status" != 'Owner' AND users."login" = '${member}';`);
 		const sockets = await this.chatGateway.server.fetchSockets();
 		sockets.find((socket) => (socket.data.login === member))?.leave(convId);
 		return true;
@@ -277,20 +325,20 @@ export class ChatService {
 
 	async muteMember(login: string, convId: string, member: string, seconds: number) {
 		const exist = await this.memberRepository
-			.query(`select from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND users."login" = '${login}' AND members."status" != 'Member';`);
+			.query(`select from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND users."login" = '${login}' AND (members."status" = 'Owner' OR members."status" = 'Admin');`);
 		if (!exist.length)
 			return null;
 		const memberId = await this.memberRepository
-			.query(`select members.id from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND users."login" = '${member}' AND members."status" != 'Owner';`);
+			.query(`select members.id from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND users."login" = '${member}' AND (members."status" = 'Member' OR members."status" = 'Admin');`);
 		if (!memberId.length)
 			return null;
-		const currDate = new Date().toISOString(); 
+		const currDate = new Date().toISOString();
 		this.memberRepository
-			.query(`update members set "leftDate" = '${currDate}', "isMuted" = 'true' where members."id" = '${memberId[0].id};`);
+			.query(`update members set "leftDate" = '${currDate}', "status" = 'Muted' where members."id" = '${memberId[0].id};`);
 		const name: string = memberId[0].id;
 		const job = new CronJob(new Date(Date.now() + seconds * 1000), async () => {
 			this.memberRepository
-				.query(`update members set "leftDate" = 'null', "isMuted" = 'false' where members."id" = '${name};`);
+				.query(`update members set "leftDate" = null, "status" = 'Member' where members."id" = '${name};`);
 			const sockets = await this.chatGateway.server.fetchSockets();
 			sockets.find((socket) => (socket.data.login === member))?.join(convId);
 			this.schedulerRegistry.deleteCronJob(name);
@@ -304,7 +352,7 @@ export class ChatService {
 
 	async updateChannel(login: string, convId: string, data: updateChannelDto) {
 		const exist = await this.memberRepository
-			.query(`select from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND users."login" = '${login}' AND members."status" != 'Member';`);
+			.query(`select from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND users."login" = '${login}' AND (members."status" = 'Owner' OR members."status" = 'Admin');`);
 		if (!exist.length)
 			return deleteAvatar('channels', data.avatar);
 		if (data.name)
