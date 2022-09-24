@@ -8,15 +8,21 @@ import { GameService } from './game.service';
 export class GameController {
 	constructor(private readonly gameService: GameService) { }
 	
-	@Get('/')
+	@Get('/matchHistory')
 	@UseGuards(JwtAuthGuard)
 	async getMyMatches(@User() user: userParitalDto) {
 		return await this.gameService.getMatches(user.login);
 	}
 	
-	@Get('/:login')
+	@Get('/matchHistory/:login')
 	@UseGuards(JwtAuthGuard)
 	async getUserMatches(@Param('login') login: string) {
 		return await this.gameService.getMatches(login);
+	}
+
+	@Get('/onlineFriends')
+	@UseGuards(JwtAuthGuard)
+	async getOnlineFriends(@User() user: userParitalDto) {
+		return await this.gameService.getOnlineFriends(user.login);
 	}
 }
