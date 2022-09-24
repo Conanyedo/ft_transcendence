@@ -18,9 +18,8 @@ import Link from 'next/link'
 import socket_notif from "config/socketNotif";
 import { useRouter } from 'next/router'
 import { getCookie } from "cookies-next";
-import { postChannel } from "@hooks/useFetchData";
+import { leaveChannel, postChannel } from "@hooks/useFetchData";
 import { fetchDATA } from "@hooks/useFetchData";
-
 
 const Members = (props: { role: string, users: Array<Object> }) => {
 
@@ -110,7 +109,12 @@ export const ChatLeft = (props: { login: any }) => {
         console.log(props.login)
         if (props.login != undefined)
             setShowCnv(true);
+
     }, [])
+
+    useEffect(() => {
+        console.log(lastUsers);
+    }, [lastUsers])
 
     return (<>
         <div className={`${Styles.chatLeft} ${showCnv ? Styles.hideUsers : ""}`}>
@@ -128,10 +132,10 @@ export const ChatLeft = (props: { login: any }) => {
                 <div className={Styles.bottomSection}>
                     {lastUsers.map((user: any, i: any) => <Link href={"/chat?login=" + user.login} key={i}><div key={i} ref={(element) => { chatUsersRefs.current[parseInt(i)] = element }} className={Styles.chatUser}>
                         <div className={Styles.avatarName}>
-                            <img src={user?.avatar} className={Styles.avatar} />
+                            <div className={Styles.avatar}><img src={user?.avatar} /></div>
                             <div className={Styles.username}>{user.name} {user.channelname}</div>
                         </div>
-                        <p className={Styles.status}>{user?.status ? user.status : user?.membersNum + " members"}</p>
+                        <p className={Styles.status}>{user?.membersNum ? user?.membersNum + " members" : user.status}</p>
                     </div></Link>)}
                     {(lastUsers.length == 0) && <div className={Styles.newCnv}>No conversations yet</div>}
                 </div>
@@ -154,6 +158,8 @@ export const ChatRight = (props: { setShowSetModal: any, login: number }) => {
     const [membersMdl, showMembersMdl] = useState(false);
     const [currentUser, setCurrentUser] = useState<chatUser>();
     const [lastUsers, setLastUsers] = useState([]);
+    const [convId, setConvId] = useState<any>();
+
 
     // functions
     function showUsrMenu() {
@@ -203,7 +209,7 @@ export const ChatRight = (props: { setShowSetModal: any, login: number }) => {
         if (props.login !== undefined) {
             getLastUsers();
             setShowCnv(true);
-            console.log(currentUser);
+            setConvId(currentUser?.convId);
             if (profile)
                 setShowprofile(false);
         }
@@ -250,17 +256,17 @@ export const ChatRight = (props: { setShowSetModal: any, login: number }) => {
 
                         <div onClick={currentUser?.membersNum ? () => showProfile(profile, setShowprofile) : null} className={Styles.flex}>
                             <div className={Styles.avatarProps}>
-                                <img src={currentUser?.avatar} className={Styles.avatar} />
+                                <img src={currentUser?.avatar} />
                             </div>
                             <div>
                                 <h1 className={Styles.chatUsername}>{currentUser?.name ? currentUser.name : currentUser?.name}</h1>
-                                <p className={Styles.chatUserStatus}>{currentUser?.status ? currentUser?.status : "+" + currentUser?.membersNum + " members"}</p>
+                                <p className={Styles.chatUserStatus}>{currentUser?.membersNum ? currentUser?.membersNum + " members" : currentUser?.status }</p>
                             </div>
                         </div>
 
                     </div>
                     <div className={Styles.menu} onClick={showUsrMenu}><MenuAsset />
-                        {showMenuDropdown && <MenuDropdown content={currentUser.type == "Dm" ? [, "Block User"] : ["Settings", "Leave Channel"]} functions={[() => setShowSetModal(true), () => console.log("test")]} />}
+                        {showMenuDropdown && <MenuDropdown content={currentUser.type == "Dm" ? [, "Block User"] : ["Settings", "Leave Channel"]} functions={[() => setShowSetModal(true), () => leaveChannel(currentUser.convId, router, setLastUsers, lastUsers)]} />}
                     </div>
 
                 </div>

@@ -4,6 +4,7 @@ import { ChatContext, ChatContextType, ChatProvider } from "@contexts/chatContex
 import ContentWrapper from "@components/wrapper/appWrapper";
 import { ChatLeft, ChatRight } from "@components/Chat";
 import { useRouter } from 'next/router';
+import { getLoginInfo } from "@hooks/useFetchData";
 
 const Chat = () => {
 
@@ -11,7 +12,7 @@ const Chat = () => {
 	const [showSetModal, setShowSetModal] = useState(false);
 	// const [membersMdl, showMembersMdl] = useState(false);
 
-	const { showCnv, setShowCnv } = useContext(ChatContext) as ChatContextType;
+	const { showCnv, setShowCnv, lastUsers } = useContext(ChatContext) as ChatContextType;
 
     const router = useRouter();
 	const [login, setLogin] = useState<any>("");
@@ -20,6 +21,9 @@ const Chat = () => {
 		//upon entering execute this
 		if (router.isReady) {
 			const { login } = router.query;
+
+			// get login info first
+			getLoginInfo(login);
 			setLogin(login);
 			setShowCnv(true);
 		}

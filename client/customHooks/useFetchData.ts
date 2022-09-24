@@ -1,3 +1,4 @@
+import { filterCnvs } from "@utils/chat";
 import axios from "axios";
 import { CookieValueTypes, getCookie } from "cookies-next";
 import { NextRouter } from "next/router";
@@ -248,6 +249,59 @@ export const postChannel = async (set: any, router: NextRouter, data: any) => {
 			return false;
 		});
 };
+
+export const leaveChannel = async (convId: any, router: NextRouter, setNewData: any, prevData: any) => {
+
+	// console.log(convId);
+	const token = getCookie("jwt");
+	const json = JSON.stringify({ convId: convId });
+	return await axios({
+		method: "post",
+		url: `${baseUrl}chat/leaveChannel`,
+		headers: {
+			Authorization: `Bearer ${token}`,
+			'Content-Type': 'application/json'
+		},
+		data: json,
+		withCredentials: true,
+	})
+		.then((res) => {
+			console.log(res);
+			console.log(JSON.parse(res.config.data));
+			setNewData(filterCnvs(prevData, res.config.data));
+			router.push("/chat");
+			return true;
+		})
+		.catch((err) => {
+			console.log(err);
+			return false;
+		});
+}
+
+export const getLoginInfo = async (login: any) => {
+
+	console.log(login);
+
+	const token = getCookie("jwt");
+	return await axios({
+		method: "get",
+		url: `${baseUrl}chat/loginInfo/${login}`,
+		headers: {
+			Authorization: `Bearer ${token}`,
+			'Content-Type': 'application/json'
+		},
+		withCredentials: true,
+	})
+		.then((res) => {
+			console.log(res);
+			// router.push("/chat");
+			return true;
+		})
+		.catch((err) => {
+			console.log(err);
+			return false;
+		});
+}
 
 export const check2FA_JWT = async (
 	jwt: CookieValueTypes,

@@ -41,10 +41,6 @@
     font-size: 24px;
 }
 
-.msgsDisplay {
-    position: relative;
-}
-
 .chatInput {
     border: 0;
     background-color: #2C2C2E;
@@ -191,8 +187,7 @@
     margin: 0 auto;
     position: relative;
     margin-right: auto;
-    margin-top: 3px;
-    /* background-color: #D9D9D9; */
+    margin-top: 2rem;
 }
 
 
@@ -200,7 +195,6 @@
     background: #2D2F31;
     width: 5px;
     outline: 3px solid #2D2F31;
-    /* outline: 1px solid red; */
     padding-top: 0.5rem;
     margin-left: 6px;
 }
@@ -713,10 +707,14 @@
 }
 
 .avatarProps {
-    width: 4.75rem;
-    height: 4.75rem;
+    width: 76px;
+    height: 74.3px;
     display: flex;
     align-items: center;
+}
+
+.avatarProps>img {
+    border-radius: 8px !important;
 }
 
 .pointer {
@@ -825,6 +823,7 @@
     .chatUserStatus {
         font-size: 1rem;
     }
+    
     
 }
 

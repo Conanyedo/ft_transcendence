@@ -60,3 +60,10 @@ export function filterChatUsers(e: React.ChangeEvent<HTMLInputElement>, lastUser
 
     setLastUsers(newUsers);
 }
+
+export function filterCnvs(data: any, filterItem: any) {
+
+    console.log(data.length);
+    const newData = data.filter((item: any) => item.convId != filterItem);
+    return (newData);
+}
