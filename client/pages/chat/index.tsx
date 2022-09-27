@@ -1,10 +1,10 @@
 import Styles from "@styles/chat.module.css"
 import { useState, useEffect, useContext } from "react";
 import { ChatContext, ChatContextType, ChatProvider } from "@contexts/chatContext"
-import ContentWrapper from "@components/wrapper/appWrapper";
-import { ChatLeft, ChatRight } from "@components/Chat";
 import { useRouter } from 'next/router';
 import { getLoginInfo } from "@hooks/useFetchData";
+import { ChatRight } from "@components/Chat/chatRight";
+import { ChatLeft } from "@components/Chat/chatLeft";
 
 const Chat = () => {
 
@@ -23,7 +23,7 @@ const Chat = () => {
 			const { login } = router.query;
 
 			// get login info first
-			getLoginInfo(login);
+			// getLoginInfo(login);
 			setLogin(login);
 			setShowCnv(true);
 		}

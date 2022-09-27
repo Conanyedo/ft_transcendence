@@ -12,20 +12,7 @@ import { chatFormValues } from "@Types/dataTypes"
 // Importing formik hooks
 import { useFormik } from "formik";
 import { useOutsideAlerter } from "customHooks/Functions"
-
-const initialUsrState = [{ id: 0, imgSrc: Avatar, firstName: "Youness", lastName: "Santir", status: "Online" },
-{ id: 1, imgSrc: Avatar, firstName: "Youness", lastName: "Crew", status: "In Game" },
-{ id: 2, imgSrc: Avatar, firstName: "Ikram", lastName: "Kharbouch", status: "Offline" },
-{ id: 2, imgSrc: Avatar, firstName: "Ikram", lastName: "Kharbouch", status: "Offline" },
-{ id: 2, imgSrc: Avatar, firstName: "Ikram", lastName: "Kharbouch", status: "Offline" },
-{ id: 2, imgSrc: Avatar, firstName: "Ikram", lastName: "Kharbouch", status: "Offline" },
-{ id: 2, imgSrc: Avatar, firstName: "Ikram", lastName: "Kharbouch", status: "Offline" },
-{ id: 2, imgSrc: Avatar, firstName: "Ikram", lastName: "Kharbouch", status: "Offline" },
-{ id: 2, imgSrc: Avatar, firstName: "Ikram", lastName: "Kharbouch", status: "Offline" },
-{ id: 2, imgSrc: Avatar, firstName: "Ikram", lastName: "Kharbouch", status: "Offline" },
-{ id: 2, imgSrc: Avatar, firstName: "Ikram", lastName: "Kharbouch", status: "Offline" },
-{ id: 2, imgSrc: Avatar, firstName: "Ikram", lastName: "Kharbouch", status: "Offline" },
-{ id: 2, imgSrc: Avatar, firstName: "Ikram", lastName: "Kharbouch", status: "Offline" }];
+import { getFriends } from "@hooks/useFetchData"
 
 
 export const UsersModalInput = (props: { UsersArray: any, setUsersArray: any, removeUser: any, handleChange: any, value: any, inputRef: any }) => {
@@ -44,8 +31,8 @@ export function ModalForm(props: { createChannel: any }) {
     const { protectedChannel, channelMode } = useContext(ChatContext) as ChatContextType;
     const [showDrpdown, setshowDrpdown] = useState(false);
     const [usrTags, setUsrTags] = useState<Array<string>>([]);
-    const [closeUsrs, setCloseUsrs] = useState(initialUsrState);
-
+    const [friends, setFriends] = useState([]);
+    const [closeUsrs, setCloseUsrs] = useState(friends);
 
     const inputRef = useRef("");
     // Set the form validation using Yup && formik
@@ -60,6 +47,25 @@ export function ModalForm(props: { createChannel: any }) {
         },
     });
 
+    useEffect(() => {
+        const setUsrs = async () => {
+            return await getFriends(formik.values.member, setCloseUsrs);
+        }
+
+        setUsrs();
+        if (closeUsrs.length !== 0)
+            setshowDrpdown(true);
+
+        return () => {
+            // Cleanup
+            setCloseUsrs([]);
+        };
+    }, [formik.values.member]);
+
+    useEffect(() => {
+        console.log(closeUsrs)
+    }, [closeUsrs]);
+
     const onSubmit = (values: chatFormValues) => {
         alert(JSON.stringify(values, null, 2));
     };
@@ -68,9 +74,10 @@ export function ModalForm(props: { createChannel: any }) {
         let value = event.target.value;
 
         formik.setFieldValue("member", value);
+        console.log(formik.values.member);
 
         // Filter values here
-        filterUsers(value, setCloseUsrs, setshowDrpdown, initialUsrState, setUsrTags);
+        // filterUsers(value, setCloseUsrs, setshowDrpdown, initialUsrState, setUsrTags);
     };
 
     return (

@@ -250,6 +250,50 @@ export const postChannel = async (set: any, router: NextRouter, data: any) => {
 		});
 };
 
+export const getFriends = async (userValue: any, set: any) => {
+	const token = getCookie("jwt");
+	return await axios({
+		method: "get",
+		url: `${baseUrl}friendship/friends`,
+		headers: {
+			Authorization: `Bearer ${token}`,
+			'Content-Type': 'application/json'
+		},
+		withCredentials: true,
+	})
+		.then((res) => {
+			console.log(res);
+			set(res.data);
+			return true;
+		})
+		.catch((err) => {
+			return false;
+		});
+}
+
+export const getChannelProfile = async (convId: any, set: any) => {
+
+	// POST /chat/channelProfile
+	const token = getCookie("jwt");
+	const json = {convId: convId};
+	return await axios({
+		method: "post",
+		url: `${baseUrl}chat/channelProfile`,
+		headers: {
+			Authorization: `Bearer ${token}`,
+			'Content-Type': 'application/json'
+		},
+		data: json,
+		withCredentials: true,
+	}).then((res) => {
+		console.log(res);
+		return (res);
+	})
+	.catch((err) => {
+		return false;
+	});
+}
+
 export const leaveChannel = async (convId: any, router: NextRouter, setNewData: any, prevData: any) => {
 
 	// console.log(convId);

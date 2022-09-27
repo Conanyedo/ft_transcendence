@@ -56,12 +56,12 @@ export function Option(props: { type: string }) {
     </>)
 }
 
-export function SuggestedUsr(props: { user: chatUser, userStatus: boolean, addUsrToChannel: any, removeUsrFromChannel: any, setUsrTags: any, setshowDropdown: any, usrTags: any, setValue: any, inputRef: any }): JSX.Element {
+export function SuggestedUsr(props: { user: any, userStatus: boolean, addUsrToChannel: any, removeUsrFromChannel: any, setUsrTags: any, setshowDropdown: any, usrTags: any, setValue: any, inputRef: any }): JSX.Element {
     
     return (<div className={Styles.sUsr}>
         <div>
             <div><Image src={Avatar} width={32} height={32} /></div>
-            <span>{props.user.firstName + " " + props.user.lastName}</span>
+            <span>{props.user.fullname}</span>
         </div>
         <button onClick={props.userStatus ? () => props.addUsrToChannel(props.user, props.setUsrTags, props.setshowDropdown, props.usrTags, props.setValue, props.inputRef) : () => props.removeUsrFromChannel()} className={props.userStatus ? Styles.btnAdd : Styles.btnRmv}>{props.userStatus ? "Add" : "Remove"}</button>
     </div>)
@@ -77,9 +77,9 @@ export function UsrTag(props: { fullname: string, removeTag: any, id: number, us
     )
 }
 
-export function addUsrToChannel( user: chatUser, setUsrTags: any, setshowDrpdown: any, usrTags: any, setValue: any, inputRef: any) {
+export function addUsrToChannel( user: any, setUsrTags: any, setshowDrpdown: any, usrTags: any, setValue: any, inputRef: any) {
 
-    let fullname = user.firstName + " " + user.lastName;
+    let fullname = user.fullname;
     setUsrTags([...usrTags, fullname]);
     setValue("member", "", false);
     inputRef.current.focus();

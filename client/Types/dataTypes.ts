@@ -88,7 +88,7 @@ export interface chatUser {
 	name: string;
 	membersNum?: string;
 	status?: string;
-	type: string;
+	type: any;
 	login: string;
 }
 
@@ -96,7 +96,7 @@ export interface chatMsg {
 	convId: any,
 	msgContent: string | JSX.Element, 
 	time: string,
-	type: string,
+	type: any,
 	name: string;
 }
 
