@@ -56,7 +56,7 @@ export class allGames {
         this.RankLobby[1].client,
         'right',
       );
-      const newGame = new Game(player, playertwo, 'Rank', this.server, this);
+      const newGame = new Game(player, playertwo, 'Ranked', this.server, this);
       this.countLiveGames++;
       this.RankGames.push(newGame);
       this.RankLobby.splice(0, 2);
