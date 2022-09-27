@@ -297,6 +297,7 @@ export class ChatService {
 			return null;
 		this.memberRepository
 			.query(`update members set status = '${status}' FROM users where members."userId" = users.id AND members."conversationId" = '${convId}' AND users."login" = '${member}' AND members."leftDate" IS NULL AND members."status" != 'Owner';`);
+		return true;
 	}
 
 	async addMembers(login: string, convId: string, members: string[]) {
