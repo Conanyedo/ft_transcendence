@@ -324,6 +324,20 @@ export class ChatService {
 		return true;
 	}
 
+	async unmuteMember(login: string, convId: string, member: string) {
+		const exist = await this.memberRepository
+			.query(`select from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND users."login" = '${login}' AND (members."status" = 'Owner' OR members."status" = 'Admin');`);
+		if (!exist.length)
+			return null;
+		const memberId = await this.memberRepository
+			.query(`select members.id from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND users."login" = '${member}' AND members."status" = 'Muted';`);
+		if (!memberId.length)
+			return null;
+		this.memberRepository
+			.query(`update members set "leftDate" = null, "status" = 'Member' where members."id" = '${memberId[0].id}';`);
+		return true;
+	}
+
 	async muteMember(login: string, convId: string, member: string, seconds: number) {
 		const exist = await this.memberRepository
 			.query(`select from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND users."login" = '${login}' AND (members."status" = 'Owner' OR members."status" = 'Admin');`);
