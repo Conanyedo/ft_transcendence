@@ -15,6 +15,12 @@ export class FriendshipController {
 		return await this.friendshipService.getFriends(user.login);
 	}
 
+	@Get('/onlineFriends')
+	@UseGuards(JwtAuthGuard)
+	async getOnlineFriends(@User() user: userParitalDto) {
+		return await this.friendshipService.getOnlineFriends(user.login);
+	}
+
 	@Get('/requests')
 	@UseGuards(JwtAuthGuard)
 	async getRequests(@User() user: userParitalDto) {
