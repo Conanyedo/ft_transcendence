@@ -106,7 +106,7 @@ export class Game {
     });
     clearInterval(this._inTerval);
     games.removeGame(this._ID);
-    const gameResult: gameDto = {playerOne: this._PlayerLeft.getlogin(), playerTwo: this._PlayerRight.getlogin(), playerOneScore: this._PlayerLeft.getscore(), playerTwoScore: this._PlayerRight.getscore()}
+    const gameResult: gameDto = {playerOne: this._PlayerLeft.getlogin(), playerTwo: this._PlayerRight.getlogin(), playerOneScore: this._PlayerLeft.getscore(), playerTwoScore: this._PlayerRight.getscore(), gameType: this._matchType}
     games.gameService.insertMatches(gameResult);
   }
 
