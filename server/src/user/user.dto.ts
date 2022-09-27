@@ -1,4 +1,5 @@
 import { IsBoolean, IsEmail, IsNotEmpty, IsString } from "class-validator";
+import { userAchievements } from "./stats.entity";
 
 export class userDto {
 
@@ -31,4 +32,28 @@ export class userParitalDto {
 
 	@IsNotEmpty()
 	login: string;
+}
+
+export class statsDto {
+
+	@IsNotEmpty()
+	id: string;
+
+	@IsNotEmpty()
+	XP: number;
+
+	@IsNotEmpty()
+	GP: number;
+
+	@IsNotEmpty()
+	numGames: number;
+
+	@IsNotEmpty()
+	gamesWon: number;
+
+	@IsNotEmpty()
+	rank: number;
+
+	@IsNotEmpty()
+	achievement: userAchievements[];
 }

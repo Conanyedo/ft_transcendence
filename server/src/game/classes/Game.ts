@@ -28,7 +28,8 @@ export class Game {
   ) {
     games.gameService;
     this.pause = false;
-    this.theme = Math.floor(Math.random() * 4);
+    this.theme = Math.floor(Math.random() * 2) + 1;
+    if (matchType === 'Ranked') this.theme = 0;
     this._matchType = matchType;
     this._PlayerLeft = first;
     this._PlayerRight = second;
@@ -105,7 +106,7 @@ export class Game {
     });
     clearInterval(this._inTerval);
     games.removeGame(this._ID);
-    const gameResult: gameDto = {playerOne: this._PlayerLeft.getlogin(), playerTwo: this._PlayerRight.getlogin(), playerOneScore: this._PlayerLeft.getscore(), playerTwoScore: this._PlayerRight.getscore()}
+    const gameResult: gameDto = {playerOne: this._PlayerLeft.getlogin(), playerTwo: this._PlayerRight.getlogin(), playerOneScore: this._PlayerLeft.getscore(), playerTwoScore: this._PlayerRight.getscore(), gameType: this._matchType}
     games.gameService.insertMatches(gameResult);
   }
 

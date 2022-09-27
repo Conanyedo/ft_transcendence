@@ -192,6 +192,7 @@
     width: 22.222rem;
     height: 11.111rem;
     overflow: hidden;
+    cursor: pointer;
 }
 
 .selected {
@@ -225,7 +226,14 @@
 .select>input {
     border: none;
     background-color: transparent;
-    width: 80%;
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 1.556rem;
+    line-height: 1.889rem;
+    color: #FFFFFF;
+    width: 100%;
+    height: 100%;
 }
 
 .select>input:active,
@@ -331,10 +339,19 @@
         margin-top: 0;
         padding-top: 8rem;
     }
-
+    /* scroll  */
     .listTheme {
-        flex-direction: column;
-        align-items: flex-start;
+        display: flex;
+        width: 30rem;
+        overflow-x: scroll;
+        column-gap: 2rem;
+        scroll-padding: 2rem;
+    }
+
+    .Theme {
+        flex: 0 0 70%;
+        scroll-snap-align: start;
+        margin-bottom: 2rem;
     }
 
     .selectContainer {

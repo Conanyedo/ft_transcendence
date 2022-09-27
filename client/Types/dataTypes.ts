@@ -179,3 +179,10 @@ export class liveGamesType {
 		
 	}
 }
+
+export class FriendOnline {
+	login: string = '';
+	fullname: string = '';
+	avatar: string = '';
+	status: string = '';
+}

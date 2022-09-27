@@ -1,5 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
-import { green, ThemeDarkMode, ThemeSky } from "../../config/gameMap";
+import React, { useEffect, useState } from "react";
 import Cross from "../../public/ArrowLeft.svg";
 import Image from "next/image";
 import socket_game from "../../config/socketGameConfig";

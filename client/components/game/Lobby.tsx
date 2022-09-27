@@ -1,5 +1,5 @@
 import { getCookie } from "cookies-next";
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
+import { DetailedHTMLProps, Dispatch, EventHandler, ImgHTMLAttributes, SetStateAction, useEffect, useRef, useState } from "react";
 import classes from "../../styles/Lobby.module.css";
 
 import down from "../../public/Game/Down.svg";
@@ -9,18 +9,34 @@ import GameLobby from "./GameLobby";
 import Queue from "./Queue";
 import socket_game from "../../config/socketGameConfig";
 import RankStar from "../../public/Game/raking-stars.svg";
+import Theme1 from "../../public/GameThemes/theme1.png";
+import Theme2 from "../../public/GameThemes/theme2.png";
+import Theme3 from "../../public/GameThemes/theme3.png";
 import Classic from "../../public/Game/Classic.svg";
 import MsgSlideUp from "../Settings/slideUpMsg";
+import { fetchDATA } from "@hooks/useFetchData";
+import { useRouter } from "next/router";
+import { FriendOnline } from "@Types/dataTypes";
+import { getImageBySize, useOutsideAlerter } from "@hooks/Functions";
 
-const Friend = () => {
+
+class PropsType extends FriendOnline {
+	select: any;
+}
+
+const Friend: React.FC<PropsType> = (props) => {
+	const selectHandler = () => {
+		props.select(props);
+	}
+	const avatar = getImageBySize(props.avatar, 72);
 	return (
 		<>
 			<div className={classes.Friend}>
 				<div className={classes.avatar}>
-					<img src="#" />
+					<img src={avatar} />
 				</div>
-				<div className={classes.Name}>Azziz Chraibi</div>
-				<div className={classes.btnSelect}>Select</div>
+				<div className={classes.Name}>{props.fullname}</div>
+				<div className={classes.btnSelect} onClick={selectHandler} >Select</div>
 			</div>
 		</>
 	);
@@ -30,18 +46,58 @@ export const FriendGameSetting: React.FC<{
 	Hide: () => void;
 	setGamePage: Dispatch<SetStateAction<boolean>>;
 }> = (props) => {
-	const [friendSelected, setFriendSelected] = useState("");
+	const router = useRouter();
+	const [themeselected, setThemeselected] = useState('0');
+	const [friendSelected, setFriendSelected] = useState<FriendOnline>(new FriendOnline());
+	const [ListFriends, setListFriends] = useState<FriendOnline[]>([]);
 	const [isOpen, setisOpen] = useState(false);
 	const ref_input = useRef(null);
-	const ClickHandler = () => setisOpen((v) => !v);
+	const ref_listSelect = useRef(null);
+	const ref_Select = useRef(null);
+	const ClickHandler = (e: object) => {
+		if (friendSelected.login !== '')
+			ClicktoSerachHandler();
+		else
+			setisOpen((v) => !v);
+	};
 	const SearchHandler = () => {
 		setisOpen(true);
 		setFriendSelected(ref_input.current!.value);
 	};
+	const selectThemehandler = (e: object) =>{
+		setThemeselected(e!.target!.alt as string);
+		
+	}
 	const StartHandler = () => {
-		props.setGamePage(true);
+		console.log(friendSelected.fullname);
+		console.log(themeselected);
+		
+		// TODO go gamePage
+		// props.setGamePage(true);
 		props.Hide();
 	};
+	const ClicktoSerachHandler = () => {
+		ref_input.current!.value = ''
+		const emtyFriend = new FriendOnline();
+		setFriendSelected(emtyFriend);
+		setisOpen(true);
+	}
+	const FriendSelect = (friend: FriendOnline) => {
+		setFriendSelected(friend);
+		setisOpen(false);
+	}
+	const mapToFriends = (fr: FriendOnline) => {
+		const name = ref_input.current!.value;
+		const nameUser = fr.fullname;
+		if (name.length && nameUser.toLocaleLowerCase().includes(name))
+			return <Friend select={FriendSelect} key={fr.login} {...fr}/>
+		else if (!name.length)
+			return <Friend select={FriendSelect} key={fr.login} {...fr}/>
+	}
+	useOutsideAlerter(ref_Select, setisOpen);
+	useEffect(() => {
+		fetchDATA(setListFriends, router, 'friendship/onlineFriends');
+	}, [])
 	return (
 		<div className={classes.BackGround}>
 			<div className={classes.CardSetting}>
@@ -54,33 +110,34 @@ export const FriendGameSetting: React.FC<{
 				<h2>Game Theme</h2>
 				<p>Select a game theme you want to play on</p>
 				<div className={classes.listTheme}>
-					<div className={`${classes.Theme} ${classes.selected}`}>
-						<img src="#" />
+					<div className={`${classes.Theme} ${themeselected === '0' && classes.selected}`}>
+						<img src={Theme1.src} alt='0' onClick={selectThemehandler}/>
 					</div>
-					<div className={classes.Theme}>
-						<img src="#" />
+					<div className={`${classes.Theme} ${themeselected === '1' && classes.selected}`}>
+						<img src={Theme2.src} alt='1' onClick={selectThemehandler}/>
 					</div>
-					<div className={classes.Theme}>
-						<img src="#" />
+					<div className={`${classes.Theme} ${themeselected === '2' && classes.selected}`}>
+						<img src={Theme3.src} alt='2' onClick={selectThemehandler}/>
 					</div>
 				</div>
 				<h2>Invite Friend</h2>
 				<p>Choose a friend you want to play with</p>
 				<div className={classes.selectContainer}>
-					<div className={classes.select}>
+					<div className={classes.select} ref={ref_Select}>
 						<input
+							onClick={ClicktoSerachHandler}
 							ref={ref_input}
-							value={friendSelected}
+							value={friendSelected?.fullname}
 							onChange={SearchHandler}
+							className={classes.selectedFriend}
 						/>
 						<div className={classes.icon} onClick={ClickHandler}>
-							<Image src={down} />
+							<Image src={friendSelected.login === '' ? down : Cross} />
 						</div>
 						{isOpen && (
-							<div className={classes.ListFriend}>
-								<Friend />
-								<Friend />
-								<Friend />
+							<div className={classes.ListFriend} ref={ref_listSelect}>
+								{ListFriends.length !== 0 && ListFriends.map(mapToFriends)
+								}
 							</div>
 						)}
 					</div>
@@ -121,9 +178,9 @@ const Lobby = () => {
 		setQueuePage(true);
 	};
 	useEffect(() => {
-		socket_game.connect();
+		if (socket_game.disconnected)
+			socket_game.connect();
 		return () => {
-			// socket_game.disconnect();
 		};
 	}, []);
 	return (
