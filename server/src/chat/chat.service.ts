@@ -335,6 +335,8 @@ export class ChatService {
 			return null;
 		this.memberRepository
 			.query(`update members set "leftDate" = null, "status" = 'Member' where members."id" = '${memberId[0].id}';`);
+		const sockets = await this.chatGateway.server.fetchSockets();
+		sockets.find((socket) => (socket.data.login === member))?.join(convId);
 		return true;
 	}
 
