@@ -297,6 +297,7 @@ export class ChatService {
 			return null;
 		this.memberRepository
 			.query(`update members set status = '${status}' FROM users where members."userId" = users.id AND members."conversationId" = '${convId}' AND users."login" = '${member}' AND members."leftDate" IS NULL AND members."status" != 'Owner';`);
+		return true;
 	}
 
 	async addMembers(login: string, convId: string, members: string[]) {
@@ -320,6 +321,22 @@ export class ChatService {
 			.query(`update members set "leftDate" = '${currDate}', "status" = 'Banned' FROM users where members."userId" = users.id AND members."conversationId" = '${convId}' AND members."status" != 'Owner' AND users."login" = '${member}';`);
 		const sockets = await this.chatGateway.server.fetchSockets();
 		sockets.find((socket) => (socket.data.login === member))?.leave(convId);
+		return true;
+	}
+
+	async unmuteMember(login: string, convId: string, member: string) {
+		const exist = await this.memberRepository
+			.query(`select from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND users."login" = '${login}' AND (members."status" = 'Owner' OR members."status" = 'Admin');`);
+		if (!exist.length)
+			return null;
+		const memberId = await this.memberRepository
+			.query(`select members.id from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND users."login" = '${member}' AND members."status" = 'Muted';`);
+		if (!memberId.length)
+			return null;
+		this.memberRepository
+			.query(`update members set "leftDate" = null, "status" = 'Member' where members."id" = '${memberId[0].id}';`);
+		const sockets = await this.chatGateway.server.fetchSockets();
+		sockets.find((socket) => (socket.data.login === member))?.join(convId);
 		return true;
 	}
 

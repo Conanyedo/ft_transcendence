@@ -3,6 +3,7 @@ import { Socket, Server } from 'socket.io';
 import { Logger } from '@nestjs/common';
 import { JwtAuthService } from './2fa-jwt/jwt/jwt-auth.service';
 import { UserService } from './user/user.service';
+import { userStatus } from './user/user.entity';
 
 @WebSocketGateway({ cors: { origin: '*' } })
 export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
@@ -28,9 +29,9 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
 			const payload = this.jwtService.verify(token);
 			client.data.login = payload.login;
 			this.userService.setSocketId(payload.id, client.id);
+			this.userService.setStatus(payload.id, userStatus.ONLINE);
 		}
 		catch (e) {
-			// client.emit('onDisconnect', 'jrit 3lik');
 			client.disconnect();
 			console.log('Disconnected due to invalid token!!');
 		}
@@ -38,15 +39,15 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
 
 	async handleDisconnect(client: Socket) {
 		console.log('Disconneted from the server:  ', client.id);
-		// console.log('size: ', (await this.server.fetchSockets()).length);
-		// const token = client.handshake.headers.authorization.split(' ')[1];
-		// try {
-		// 	const payload = this.jwtService.verify(token);
-		// 	this.userService.setSocketId(payload.id, null);
-		// 	client.disconnect();
-		// }
-		// catch (e) {
-		// 	client.disconnect();
-		// }
+		const token = client.handshake.headers.authorization.split(' ')[1];
+		try {
+			const payload = this.jwtService.verify(token);
+			this.userService.setSocketId(payload.id, null);
+			this.userService.setStatus(payload.id, userStatus.OFFLINE);
+			client.disconnect();
+		}
+		catch (e) {
+			client.disconnect();
+		}
 	}
 }

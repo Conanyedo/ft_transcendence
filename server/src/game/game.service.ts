@@ -15,10 +15,6 @@ export class GameService {
 		private readonly friendshipService: FriendshipService
 	) { }
 
-	async getOnlineFriends(login: string) {
-		return await this.friendshipService.getOnlineFriends(login);
-	}
-
 	async insertMatches(gameResult: gameDto) {
 		let game: Game = new Game();
 		game.playerOne = gameResult.playerOne;
@@ -26,6 +22,10 @@ export class GameService {
 		game.playerOneScore = gameResult.playerOneScore;
 		game.playerTwoScore = gameResult.playerTwoScore;
 		game = await this.gameRepository.save(game);
+		const winner: string = (game.playerOneScore > game.playerTwoScore) ? game.playerOne : game.playerTwo;
+		const loser: string = (winner === game.playerOne) ? game.playerTwo : game.playerOne;
+		// this.userService.updateWinnerStats(winner);
+		// this.userService.updateLoserStats(loser);
 		// console.log('Game Result : ', game);
 	}
 

@@ -67,6 +67,12 @@ export class ChatController {
 		return await this.chatService.muteMember(login, convId, member, seconds);
 	}
 
+	@Post('/unmuteMember')
+	@UseGuards(JwtAuthGuard)
+	async unmuteMember(@User('login') login: string, @Body('convId') convId: string, @Body('member') member: string) {
+		return await this.chatService.unmuteMember(login, convId, member);
+	}
+
 	@Post('/updateChannel')
 	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(FileInterceptor('avatar', uploadChannelConfig))
