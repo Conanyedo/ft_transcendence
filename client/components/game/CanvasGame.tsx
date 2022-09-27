@@ -1,9 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import { render } from "../../config/game";
-import { allTheme, green, Theme, ThemeDarkMode } from "../../config/gameMap";
+import { allTheme } from "../../config/gameMap";
 import socket_game from "../../config/socketGameConfig";
 import { gameControleType } from "../../Types/dataTypes";
-import { useRouter } from "next/router";
 
 const CanvasGame: React.FC<{GameID: string}> = (props) => {
 	const gameData: gameControleType = new gameControleType(1500);
