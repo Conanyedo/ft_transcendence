@@ -2,7 +2,6 @@ import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 
 export enum userAchievements {
-	NONE = 0,
 	FIRSTWIN = 6,
 	WON10 = 1,
 	WON20 = 2,
@@ -35,7 +34,7 @@ export class Stats {
 		type: "enum",
 		enum: userAchievements,
 		array: true,
-		default: [userAchievements.NONE]
+		default: []
 	})
 	achievement: userAchievements[];
 }
