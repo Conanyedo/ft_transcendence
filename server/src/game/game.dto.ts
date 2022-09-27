@@ -17,6 +17,9 @@ export class gameDto {
 	@IsNotEmpty()
 	playerTwoScore: number;
 
+	@IsNotEmpty()
+	gameType: string;
+
 	@IsDate()
 	date?: Date;
 }
