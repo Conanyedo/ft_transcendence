@@ -20,9 +20,4 @@ export class GameController {
 		return await this.gameService.getMatches(login);
 	}
 
-	@Get('/onlineFriends')
-	@UseGuards(JwtAuthGuard)
-	async getOnlineFriends(@User() user: userParitalDto) {
-		return await this.gameService.getOnlineFriends(user.login);
-	}
 }
