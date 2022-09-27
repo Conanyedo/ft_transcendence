@@ -24,8 +24,8 @@ export class GameService {
 		game = await this.gameRepository.save(game);
 		const winner: string = (game.playerOneScore > game.playerTwoScore) ? game.playerOne : game.playerTwo;
 		const loser: string = (winner === game.playerOne) ? game.playerTwo : game.playerOne;
-		this.userService.updateWinnerStats(winner);
-		this.userService.updateLoserStats(loser);
+		// this.userService.updateWinnerStats(winner);
+		// this.userService.updateLoserStats(loser);
 		// console.log('Game Result : ', game);
 	}
 
