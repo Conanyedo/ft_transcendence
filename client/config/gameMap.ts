@@ -15,8 +15,9 @@ export class Theme {
     }
 }
 
-export const ThemeDarkMode = new Theme("black", "white", "white", "white", "white", 'white');
 export const ThemeSky = new Theme("#FDF4E3", "#C7B446", "#354D73", "#354D73", "#8E402A", '#C7B446');
-export const green = new Theme("#3c9519", "white", "#c80000", "#0058c8", "white", '#C7B446');
-export const abdo = new Theme("#4C5454", "white", "#FF715B", "#1EA896", "white", '#C7B446');
-export const allTheme = [ThemeDarkMode, ThemeSky, green, abdo];
+
+export const allBlue = new Theme("#22354A", "#E0F0FF", "#63ADF2", "#63ADF2", "#D5E6F5", '#C7B446');
+export const DarkMode = new Theme("black", "white", "white", "white", "white", 'white');
+export const Rank = new Theme("#333333", "white", "#95B8D1", "#EDAFB8", "white", '#C7B446');
+export const allTheme = [Rank, DarkMode, ThemeSky, allBlue];

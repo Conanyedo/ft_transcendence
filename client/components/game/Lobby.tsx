@@ -15,9 +15,9 @@ import Theme3 from "../../public/GameThemes/theme3.png";
 import Classic from "../../public/Game/Classic.svg";
 import MsgSlideUp from "../Settings/slideUpMsg";
 import { fetchDATA } from "@hooks/useFetchData";
-import { Router, useRouter } from "next/router";
+import { useRouter } from "next/router";
 import { FriendOnline } from "@Types/dataTypes";
-import { getImageBySize } from "@hooks/Functions";
+import { getImageBySize, useOutsideAlerter } from "@hooks/Functions";
 
 
 class PropsType extends FriendOnline {
@@ -52,7 +52,14 @@ export const FriendGameSetting: React.FC<{
 	const [ListFriends, setListFriends] = useState<FriendOnline[]>([]);
 	const [isOpen, setisOpen] = useState(false);
 	const ref_input = useRef(null);
-	const ClickHandler = () => setisOpen((v) => !v);
+	const ref_listSelect = useRef(null);
+	const ref_Select = useRef(null);
+	const ClickHandler = (e: object) => {
+		if (friendSelected.login !== '')
+			ClicktoSerachHandler();
+		else
+			setisOpen((v) => !v);
+	};
 	const SearchHandler = () => {
 		setisOpen(true);
 		setFriendSelected(ref_input.current!.value);
@@ -62,11 +69,14 @@ export const FriendGameSetting: React.FC<{
 		
 	}
 	const StartHandler = () => {
+		console.log(friendSelected.fullname);
+		console.log(themeselected);
+		
 		// TODO go gamePage
 		// props.setGamePage(true);
 		props.Hide();
 	};
-	const ClicktoSerachHandler = (e: object) => {
+	const ClicktoSerachHandler = () => {
 		ref_input.current!.value = ''
 		const emtyFriend = new FriendOnline();
 		setFriendSelected(emtyFriend);
@@ -84,8 +94,9 @@ export const FriendGameSetting: React.FC<{
 		else if (!name.length)
 			return <Friend select={FriendSelect} key={fr.login} {...fr}/>
 	}
+	useOutsideAlerter(ref_Select, setisOpen);
 	useEffect(() => {
-		fetchDATA(setListFriends, router, 'game/onlineFriends');
+		fetchDATA(setListFriends, router, 'friendship/onlineFriends');
 	}, [])
 	return (
 		<div className={classes.BackGround}>
@@ -112,7 +123,7 @@ export const FriendGameSetting: React.FC<{
 				<h2>Invite Friend</h2>
 				<p>Choose a friend you want to play with</p>
 				<div className={classes.selectContainer}>
-					<div className={classes.select} >
+					<div className={classes.select} ref={ref_Select}>
 						<input
 							onClick={ClicktoSerachHandler}
 							ref={ref_input}
@@ -121,10 +132,10 @@ export const FriendGameSetting: React.FC<{
 							className={classes.selectedFriend}
 						/>
 						<div className={classes.icon} onClick={ClickHandler}>
-							<Image src={down} />
+							<Image src={friendSelected.login === '' ? down : Cross} />
 						</div>
 						{isOpen && (
-							<div className={classes.ListFriend}>
+							<div className={classes.ListFriend} ref={ref_listSelect}>
 								{ListFriends.length !== 0 && ListFriends.map(mapToFriends)
 								}
 							</div>
@@ -167,9 +178,9 @@ const Lobby = () => {
 		setQueuePage(true);
 	};
 	useEffect(() => {
-		socket_game.connect();
+		if (socket_game.disconnected)
+			socket_game.connect();
 		return () => {
-			// socket_game.disconnect();
 		};
 	}, []);
 	return (
