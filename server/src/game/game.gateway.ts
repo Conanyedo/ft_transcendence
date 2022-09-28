@@ -72,4 +72,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	checkMatchID(client: Socket, gameID: string) {
 		this.allGames.checkMatchID(client, gameID);
 	}
+	@SubscribeMessage('refuseChallenge')
+	refuseChallenge(client: Socket, gameID: string) {
+		this.allGames.refuseChallenge(client, gameID);
+	}
 }

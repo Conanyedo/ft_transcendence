@@ -273,4 +273,16 @@ export class allGames {
         (user) => user.adminSocket.id !== client.id,
       );
   }
+  refuseChallenge(client: Socket, gameID: string) {
+    if (this.FriendsLobby.length) {
+      this.FriendsLobby = this.FriendsLobby.filter(lobby => {
+        if (lobby.idGame !== gameID) {
+          lobby.adminSocket.emit('denied', gameID);
+        }
+        else
+          return lobby;
+      });
+    }
+    // if ()
+  }
 }
