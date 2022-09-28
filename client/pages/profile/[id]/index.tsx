@@ -4,23 +4,31 @@ import ProfileFriendInfo from "../../../components/profile/friendProfile/profile
 import OverViewFriend from "../../../components/profile/friendProfile/overViewFriend";
 import classes from "../../../styles/Profile.module.css";
 import { useEffect, useState } from "react";
-import ContentWrapper from "../../../components/wrapper/appWrapper";
 import LoadingElm from "../../../components/loading/Loading_elm";
 import MatchHistoryFriend from "../../../components/profile/friendProfile/matchHistoryFriend";
+import { userExists } from "@hooks/useFetchData";
+import { useDispatch } from "react-redux";
+import { ShowErrorMsg } from "@store/UI-Slice";
 
 const ProfileFriend = () => {
 	const [userId, setuserId] = useState<string>("");
 	const route = useRouter();
+	const dispatch = useDispatch();
 	const { id } = route.query;
 	const login = id as string;
 	const owner = localStorage.getItem("owner");
 	
 	useEffect(() => {
-		setuserId(login);
+		if (login && userExists(login, route)) {
+			dispatch(ShowErrorMsg());
+			route.back();
+		}
+		else
+			setuserId(login);
 	}, [login]);
 	if (login === owner as string) {
-			route.replace('/profile');
-			return <LoadingElm />
+		route.replace('/profile');
+		return <LoadingElm />
 	}
 	return (
 		<>

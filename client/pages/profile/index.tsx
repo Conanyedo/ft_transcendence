@@ -5,18 +5,26 @@ import MatchHistory from "../../components/profile/MatchHistory";
 
 import classes from "../../styles/Profile.module.css";
 import ContentWrapper from "../../components/wrapper/appWrapper";
+import { getCookie } from "cookies-next";
+import { useDispatch } from "react-redux";
+import { Toggle } from "@store/UI-Slice";
+import { eraseCookie } from "@hooks/Functions";
 
 const Profile = () => {
-	const id = 1001;
-	const login = '';
+	const dispatch = useDispatch();
+	const firstTime = getCookie("isFirst");
+	if (firstTime) {
+		dispatch(Toggle());
+		eraseCookie('isFirst');
+	}
 	return (
-				<div className={classes.profileCtn}>
-					<ProfileInfo />
-					<Achievements id="" />
-					<OverView />
-					<MatchHistory />
-					<div className={classes.buttom}></div>
-				</div>
+		<div className={classes.profileCtn}>
+			<ProfileInfo />
+			<Achievements id="" />
+			<OverView />
+			<MatchHistory />
+			<div className={classes.buttom}></div>
+		</div>
 	);
 };
 export default Profile;
