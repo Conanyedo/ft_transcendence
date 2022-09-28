@@ -1,5 +1,6 @@
-import { forwardRef, Inject, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, forwardRef, Inject, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { stat } from 'fs';
 import { deleteAvatar, deleteOldAvatar, isFileValid, resizeAvatar } from 'src/config/upload.config';
 import { friendDto } from 'src/friendship/friendship.dto';
 import { userRelation } from 'src/friendship/friendship.entity';
@@ -7,7 +8,7 @@ import { FriendshipService } from 'src/friendship/friendship.service';
 import { opponentDto } from 'src/game/game.dto';
 import { Repository, SelectQueryBuilder } from 'typeorm';
 import { Stats, userAchievements } from './stats.entity';
-import { userDto, userParitalDto } from './user.dto';
+import { rankDto, statsDto, userDto, userParitalDto } from './user.dto';
 import { User, userStatus } from './user.entity';
 
 const fs = require('fs');
@@ -30,7 +31,6 @@ export class UserService {
 		stats.rank = await this.userRepository
 			.createQueryBuilder('users')
 			.getCount() + 1;
-		// stats.achievement = [userAchievements.FIRSTPLACE, userAchievements.GOLDTIER, userAchievements.WON20];
 		let user: User = new User();
 		user.login = newUser.login;
 		user.fullname = newUser.fullname;
@@ -40,15 +40,20 @@ export class UserService {
 		user = await this.userRepository.save(user);
 		const getUser: userParitalDto = {
 			id: user.id,
-			login: user.login
+			login: user.login,
+			isFirst: true
 		};
 		return getUser;
 	}
 
 	// Edit Profile
 	async editProfile(id: string, fullname: string, avatar: string, oldPath: string) {
-		if (fullname)
+		if (fullname) {
+			const exist = await this.userRepository.query(`SELECT FROM users where users.fullname = '${fullname}' AND users.id != '${id}';`);
+			if (exist.length)
+				throw new BadRequestException('Nickname already in use');
 			await this.setName(id, fullname);
+		}
 		if (avatar)
 			avatar = await isFileValid('users', avatar);
 		if (avatar && oldPath)
@@ -223,6 +228,46 @@ export class UserService {
 	}
 	// ------------------------------
 
+	async getRank() {
+		const rank: rankDto[] = await this.statsRepository
+			.query(`select stats.id, stats.rank, stats."GP", stats."XP" from stats order by stats."GP" DESC;`)
+		return rank;
+	}
+
+	async getStats(login: string) {
+		const user: User = await this.userRepository
+			.createQueryBuilder('users')
+			.leftJoinAndSelect("users.stats", "stats")
+			.select(['users.id', 'stats.id', 'stats.XP', 'stats.GP', 'stats.numGames', 'stats.gamesWon', 'stats.rank', 'stats.achievement'])
+			.where(`users.login = :login`, { login: login })
+			.getOne()
+		const stats: statsDto = user.stats;
+		return stats;
+	}
+
+	async updateStats(stats: statsDto) {
+		await this.statsRepository
+			.createQueryBuilder('stats')
+			.update({ XP: stats.XP, GP: stats.GP, numGames: stats.numGames, gamesWon: stats.gamesWon, rank: stats.rank, achievement: stats.achievement })
+			.where('id = :id', { id: stats.id })
+			.execute();
+	}
+
+	async updateRank(id: string, rank: number) {
+		await this.statsRepository
+			.createQueryBuilder('stats')
+			.update({ rank })
+			.where('id = :id', { id: id })
+			.execute();
+	}
+
+	async updateAchievements(id: string, achievements: userAchievements[]) {
+		await this.statsRepository
+			.createQueryBuilder('stats')
+			.update({ achievement: achievements })
+			.where('id = :id', { id: id })
+			.execute();
+	}
 
 	// User Setters
 	async setUserAuthenticated(id: string, state: boolean) {
