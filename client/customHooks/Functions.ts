@@ -72,8 +72,8 @@ export function eraseCookie(name: string) {
 export async function validation(name: string, setError: any) {
 	if (!name)
 		setError('NickName is Required');
-	else if (/^\d/.test(name))
-		setError('must be start with charactaire');
+	else if ((/^[A-Za-z]+([A-Za-z0-9]*|[ ._-]?[A-Za-z0-9]+)*$/g).test(name))
+		setError('must be start|end with charactaire');
 	else if (name.length > 20)
 		setError('Too Long!!');
 	else if (name.length < 5)
