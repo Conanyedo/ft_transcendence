@@ -32,6 +32,9 @@ export class userParitalDto {
 
 	@IsNotEmpty()
 	login: string;
+
+	@IsBoolean()
+	isFirst?: boolean = false;
 }
 
 export class statsDto {
@@ -56,4 +59,20 @@ export class statsDto {
 
 	@IsNotEmpty()
 	achievement: userAchievements[];
+}
+
+export class rankDto {
+
+	@IsNotEmpty()
+	id: string;
+
+	@IsNotEmpty()
+	XP: number;
+
+	@IsNotEmpty()
+	GP: number;
+
+	@IsNotEmpty()
+	rank: number;
+
 }

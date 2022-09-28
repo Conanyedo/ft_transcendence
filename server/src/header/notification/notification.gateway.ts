@@ -13,7 +13,7 @@ import { notificationDto } from "./notification.dto";
 		origin: '*'
 	}
 })
-export class NotificationGateway/* implements OnGatewayConnection, OnGatewayDisconnect*/ {
+export class NotificationGateway {
 
 	constructor(
 		private notifService: NotificationService

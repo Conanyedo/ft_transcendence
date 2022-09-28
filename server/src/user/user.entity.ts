@@ -16,7 +16,7 @@ export class User {
 	@Column({ unique: true })
 	login: string;
 
-	@Column()
+	@Column({ unique: true })
 	fullname: string;
 
 	@Column()
