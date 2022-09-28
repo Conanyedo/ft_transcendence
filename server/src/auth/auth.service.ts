@@ -42,14 +42,15 @@ export class AuthService {
 
 	// Authenticate User
 	async authenticateUser(user: userParitalDto, res: Response) {
+		if (user.isFirst)
+			res.cookie('isFirst', true);
+		user = { login: user.login, id: user.id };
 		const is2faEnabled = await this.userService.get2faEnabled(user.id);
 		if (is2faEnabled) {
 			this.setJWT2faCookie(user, res);
 			return res.redirect(`http://${this.configService.get('CLIENT_IP')}/?_2fa=true`);
 		}
 		this.setJWTCookie(user, res);
-		if (user.isFirst)
-			res.cookie('isFirst', true);
 		res.redirect(`http://${this.configService.get('CLIENT_IP')}/`);
 		this.userService.setUserAuthenticated(user.id, true);
 	}
