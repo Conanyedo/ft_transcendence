@@ -21,9 +21,11 @@ export class AuthService {
 	// Check if User exist or add it to database
 	async checkUserExist(user: userDto): Promise<userParitalDto> {
 		let getUser: userParitalDto = await this.userService.getPartialUser(user.login);
-		if (!getUser)
+		if (!getUser) {
 			getUser = await this.userService.registerUser(user);
-		return getUser;
+			return { ...getUser }
+		}
+		return { ...getUser };
 	}
 
 	// Set Cookies
@@ -40,6 +42,9 @@ export class AuthService {
 
 	// Authenticate User
 	async authenticateUser(user: userParitalDto, res: Response) {
+		if (user.isFirst)
+			res.cookie('isFirst', true);
+		user = { login: user.login, id: user.id };
 		const is2faEnabled = await this.userService.get2faEnabled(user.id);
 		if (is2faEnabled) {
 			this.setJWT2faCookie(user, res);

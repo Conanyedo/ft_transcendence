@@ -2,12 +2,12 @@ import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 
 export enum userAchievements {
-	FIRSTWIN = 6,
-	WON10 = 1,
-	WON20 = 2,
-	FIRSTPLACE = 3,
+	FIRSTWIN = 1,
+	WON10 = 2,
+	WON20 = 3,
 	LEVEL5 = 4,
-	GOLDTIER = 5
+	GOLDTIER = 5,
+	FIRSTPLACE = 6,
 }
 
 @Entity({ name: 'stats' })

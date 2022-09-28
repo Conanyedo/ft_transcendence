@@ -137,6 +137,7 @@
 	z-index: 3;
 	scrollbar-color: #2B2B2D #3A3A3C;
 	max-height: 50rem;
+	margin-right: 1.1rem;
 }
 
 
@@ -434,5 +435,8 @@
 
 	.Tier {
 		width: 10%;
+	}
+	.leaderBoardTable {
+		margin-right: 0;
 	}
 }
