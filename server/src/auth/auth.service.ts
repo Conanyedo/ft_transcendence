@@ -21,9 +21,11 @@ export class AuthService {
 	// Check if User exist or add it to database
 	async checkUserExist(user: userDto): Promise<userParitalDto> {
 		let getUser: userParitalDto = await this.userService.getPartialUser(user.login);
-		if (!getUser)
+		if (!getUser) {
 			getUser = await this.userService.registerUser(user);
-		return getUser;
+			return { ...getUser }
+		}
+		return { ...getUser };
 	}
 
 	// Set Cookies
@@ -46,6 +48,8 @@ export class AuthService {
 			return res.redirect(`http://${this.configService.get('CLIENT_IP')}/?_2fa=true`);
 		}
 		this.setJWTCookie(user, res);
+		if (user.isFirst)
+			res.cookie('isFirst', true);
 		res.redirect(`http://${this.configService.get('CLIENT_IP')}/`);
 		this.userService.setUserAuthenticated(user.id, true);
 	}
