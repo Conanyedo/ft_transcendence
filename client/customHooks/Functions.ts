@@ -7,7 +7,6 @@ import Bronze from '../public/Tiers/Bronze.svg';
 import Silver from '../public/Tiers/Silver.svg';
 import Gold from '../public/Tiers/Gold.svg';
 import { rankObj } from "../Types/dataTypes";
-import socket_notif from "../config/socketNotif";
 
 export function useOutsideAlerter(ref: any, setToggle: (t: boolean) => void) {
 	useEffect(() => {
@@ -68,4 +67,18 @@ export function getImageBySize(path: string, size: number) {
 
 export function eraseCookie(name: string) {
     document.cookie = name+'=; Max-Age=0;';
+}
+
+export async function validation(name: string, setError: any) {
+	if (!name)
+		setError('NickName is Required');
+	else if (/^\d/.test(name))
+		setError('must be start with charactaire');
+	else if (name.length > 20)
+		setError('Too Long!!');
+	else if (name.length < 5)
+		setError('Too short!!');
+	else
+		return false;
+	return true;
 }
