@@ -13,32 +13,8 @@ export class NotificationService {
 	constructor(
 		@InjectRepository(Notification)
 		private notifRepository: Repository<Notification>,
-		private jwtService: JwtAuthService,
 		private userService: UserService
 	) { }
-
-	async connectClient(client: Socket) {
-		const token = client.handshake.headers.authorization.split(' ')[1];
-		try {
-			const payload = this.jwtService.verify(token);
-			this.userService.setSocketId(payload.id, client.id);
-		}
-		catch (e) {
-			client.disconnect();
-		}
-	}
-
-	async disconnectClient(client: Socket) {
-		const token = client.handshake.headers.authorization.split(' ')[1];
-		try {
-			const payload = this.jwtService.verify(token);
-			this.userService.setSocketId(payload.id, null);
-			client.disconnect();
-		}
-		catch (e) {
-			client.disconnect();
-		}
-	}
 
 	async getNotifs(login: string) {
 		const notifs: Notification[] = await this.notifRepository
@@ -48,8 +24,8 @@ export class NotificationService {
 			.getMany()
 		if (!notifs.length)
 			return null;
-		const list = notifs.map((el) => ({ login: el.from, msg: el.msg, read: el.read }));
-		return [...list];
+		const notifList = notifs.map((notif) => ({ login: notif.from, msg: notif.msg, read: notif.read }));
+		return [...notifList];
 	}
 
 	async setRead(login: string) {
