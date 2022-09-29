@@ -18,6 +18,12 @@ export class UserController {
 		return await this.userService.editProfile(user.id, fullname, avatar?.filename, oldPath);
 	}
 
+	@Post('/isExist')
+	@UseGuards(JwtAuthGuard)
+	async userExist(@User() user: userParitalDto, @Body('login') login: string) {
+		return await this.userService.userExist(user.login, login);
+	}
+
 	@Get('/header')
 	@UseGuards(JwtAuthGuard)
 	async getMyHeader(@User() user: userParitalDto) {
