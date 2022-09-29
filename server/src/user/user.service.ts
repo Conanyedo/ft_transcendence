@@ -75,6 +75,19 @@ export class UserService {
 			return user;
 		return user;
 	}
+	async userExist(login: string, friend: string) {
+		const user: User = await this.userRepository
+			.createQueryBuilder('users')
+			.select(['users.login'])
+			.where('users.login = :login', { login: friend })
+			.getOne();
+		if (!user)
+			throw new NotFoundException('User not found');
+		const relation = await this.friendshipService.getRelation(login, friend);
+		if (relation === 'blocked')
+			throw new NotFoundException('Block relationship');
+		return user;
+	}
 
 	async getPartialUser(login: string): Promise<userParitalDto> {
 		const user: User = await this.userRepository
