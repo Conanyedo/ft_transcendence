@@ -53,6 +53,17 @@ export class ChatService {
 		return [...convsList];
 	}
 
+	async getRoomSockets(login: string, room: string) {
+		const sockets = await this.chatGateway.server.in(room).fetchSockets();
+		const newSockets: string[] = [];
+		await Promise.all(sockets.map(async (socket) => {
+			const relation = await this.friendshipService.getRelation(login, socket.data.login);
+			if (relation !== 'blocked')
+				newSockets.push(socket.id);
+		}))
+		return [...newSockets];
+	}
+
 	async joinConversations(client: Socket) {
 		const convs: conversationDto[] = await this.memberRepository
 			.query(`select conversations.id as "convId" from members Join users ON members."userId" = users.id Join conversations ON members."conversationId" = conversations.id where users."login" = '${client.data.login}' AND members."leftDate" IS null;`);
@@ -171,7 +182,7 @@ export class ChatService {
 		return msgs.createDate;
 	}
 
-	async getMessages(id: string, convId: string) {
+	async getMessages(login: string, id: string, convId: string) {
 		const dates = await this.memberRepository
 			.query(`select members."joinDate", members."leftDate" from members where members."conversationId" = '${convId}' AND members."userId" = '${id}';`);
 		if (!dates.length)
@@ -182,7 +193,13 @@ export class ChatService {
 			.query(`SELECT messages."sender", messages."msg", messages."createDate", messages."conversationId" as "convId" FROM messages where messages."conversationId" = '${convId}' AND messages."createDate" >= '${joinDate}' AND messages."createDate" <= '${leftDate}' order by messages."createDate" ASC;`);
 		if (!msgs.length)
 			return null;
-		return [...msgs];
+		const newMsgs: Message[] = [];
+		await Promise.all(msgs.map(async (msg) => {
+			const relation = await this.friendshipService.getRelation(login, msg.sender);
+			if (relation !== 'blocked')
+				newMsgs.push(msg);
+		}))
+		return [...newMsgs];
 	}
 
 	async createNewDm(client: Socket, data: createMsgDto) {
@@ -196,8 +213,11 @@ export class ChatService {
 		client.join(conv.id);
 		const sockets = await this.chatGateway.server.fetchSockets();
 		const friendSocket = sockets.find((socket) => (socket.data.login === data.receiver))
-		if (friendSocket)
+		if (friendSocket) {
+			console.log('client data: ', client.data);
+			console.log('friend: ', friendSocket.data);
 			friendSocket.join(conv.id);
+		}
 		const msg: msgDto = { msg: data.msg, sender: client.data.login, date: date, convId: conv.id };
 		return msg;
 	}
