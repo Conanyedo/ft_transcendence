@@ -22,8 +22,9 @@ const Chat = () => {
 		if (router.isReady) {
 			const { login } = router.query;
 
+			console.log(login);
 			// get login info first
-			// getLoginInfo(login);
+			getLoginInfo(login);
 			setLogin(login);
 			setShowCnv(true);
 		}

@@ -337,7 +337,7 @@ export const getLoginInfo = async (login: any) => {
 		withCredentials: true,
 	})
 		.then((res) => {
-			console.log(res);
+			console.log("res is", res);
 			// router.push("/chat");
 			return true;
 		})

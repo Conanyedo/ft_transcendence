@@ -19,6 +19,48 @@ import sendArrow from "@public/send-arrow.svg";
 import { Profile } from "./Profile";
 
 
+const NegParams = ["Muted", "Left", "Banned"];
+
+const getLastUsers = async (setLastUsers: any, login: any, setCurrentUser: any, setChatMsgs: any, messagesEndRef: any, router: any) => {
+
+    socket_notif.emit("getConversations", [], (response: any) => {
+
+        if (response != undefined)
+            setLastUsers(response);
+
+        // handling the route login received
+        if (login) {
+            // check first if login exists
+            let item: any = response.find((user: any) => user.login == login);
+
+            if (item != undefined) {
+                setCurrentUser(item);
+                // get messages 
+                socket_notif.emit("getMsgs", item?.convId, (response: any) => {
+                    setChatMsgs(response);
+                    console.log(response);
+                    // run on first render only
+                    scrollToBottom(messagesEndRef);
+                })
+
+            } else {
+                // if user doesnt exist start a new converation
+                fetchDATA(setCurrentUser, router, `chat/loginInfo/${login}`);
+                setChatMsgs([]);
+            }
+        }
+    })
+}
+
+const setConvStatus = (currentUser: any, setStopUsr: any) => {
+    if (NegParams.includes(currentUser?.relation)) {
+        console.log(currentUser.relation.toLowerCase());
+        setStopUsr(currentUser.relation.toLowerCase());
+    } else {
+        setStopUsr("");
+    }
+}
+
 export const ChatRight = (props: { setShowSetModal: any, login: number }) => {
 
     const { showCnv, setShowCnv, messagesEndRef, chatMsgs, setChatMsgs } = useContext(ChatContext) as ChatContextType;
@@ -34,7 +76,7 @@ export const ChatRight = (props: { setShowSetModal: any, login: number }) => {
     const [currentUser, setCurrentUser] = useState<any>();
     const [lastUsers, setLastUsers] = useState([]);
     const [convId, setConvId] = useState<any>();
-
+    const [stopUsr, setStopUsr] = useState("");
 
     // functions
     function showUsrMenu() {
@@ -47,46 +89,14 @@ export const ChatRight = (props: { setShowSetModal: any, login: number }) => {
     const msgsDisplayDiv = useRef<any>();
     const token = getCookie("jwt");
 
-    const getLastUsers = async () => {
-
-        socket_notif.emit("getConversations", [], (response: any) => {
-
-            if (response != undefined)
-                setLastUsers(response);
-
-            // handling the route login received
-            if (props.login) {
-                // check first if login exists
-                let item: any = response.find((user: any) => user.login == props.login);
-
-                if (item != undefined) {
-                    setCurrentUser(item);
-
-                    console.log(item.relation);
-                    // get messages 
-                    socket_notif.emit("getMsgs", item?.convId, (response: any) => {
-                        setChatMsgs(response);
-                        console.log(response);
-                        // run on first render only
-                        scrollToBottom(messagesEndRef);
-                    })
-
-                } else {
-                    // if user doesnt exist start a new converation
-                    fetchDATA(setCurrentUser, router, `chat/loginInfo/${props.login}`);
-                    setChatMsgs([]);
-                }
-            }
-        })
-    }
-
     // UseEffect here
     useEffect(() => {
+        getLastUsers(setLastUsers, props.login, setCurrentUser, setChatMsgs, messagesEndRef, router);
         // lets make an asychronous call here
         if (props.login !== undefined) {
-            getLastUsers();
             setShowCnv(true);
             setConvId(currentUser?.convId);
+            setConvStatus(currentUser, setStopUsr);
             if (profile)
                 setShowprofile(false);
         }
@@ -94,6 +104,7 @@ export const ChatRight = (props: { setShowSetModal: any, login: number }) => {
             setCurrentUser(undefined);
             router.push("/chat");
         }
+
         // run on first render only
         scrollToBottom(messagesEndRef);
     }, [props.login])
@@ -103,7 +114,7 @@ export const ChatRight = (props: { setShowSetModal: any, login: number }) => {
         socket_notif.on("newMsg", (response) => {
             setChatMsgs([...chatMsgs, response] as any);
             setEnteredMsg("");
-            // scroll conversation messages to bottom
+            setConvStatus(currentUser, setStopUsr);
             scrollToBottom(messagesEndRef);
         })
 
@@ -112,6 +123,11 @@ export const ChatRight = (props: { setShowSetModal: any, login: number }) => {
         }
 
     }, [chatMsgs]);
+
+    useEffect(() => {
+        setConvStatus(currentUser, setStopUsr);
+        console.log("relation is", currentUser?.relation);
+    }, [currentUser])
 
     const unshowCnv = () => {
         setShowCnv(false);
@@ -166,12 +182,22 @@ export const ChatRight = (props: { setShowSetModal: any, login: number }) => {
                         </div>
                     }
                     <div className={Styles.sendDiv} style={{ gap: enteredMsg != "" ? "1.5rem" : "0" }}>
-                        <div className={Styles.msgInput}>
-                            <input type="text" placeholder="message" value={enteredMsg} onChange={(e) => setEnteredMsg(e.target.value)} onKeyDown={(event) => setMsg(event.keyCode, enteredMsg, setEnteredMsg, currentUser.convId, currentUser.login, setChatMsgs, chatMsgs)} />
+                        {
+                            (stopUsr == "" && currentUser.relation == "Blocker") && <div className={Styles.msgInput}><div className={Styles.newCnv}>You blocked this user</div></div>
+                        }
+                        {(stopUsr == "" && currentUser.relation != "Blocker") && <div className={Styles.msgInput}>
+                            <input type="text" placeholder="message" value={enteredMsg} onChange={(e) => setEnteredMsg(e.target.value)} onKeyDown={(event) => setMsg(event.keyCode, enteredMsg, setEnteredMsg, currentUser.convId, currentUser.login, setStopUsr)} />
                             <div onClick={() => sendInvite} className={Styles.console}><GameIconAsset color="#D9D9D9" /></div>
-                        </div>
-                        <div onClick={(e) => setMsg(13, enteredMsg, setEnteredMsg, currentUser.convId, currentUser.login, setChatMsgs, chatMsgs)} className={Styles.sendCtr}>{enteredMsg && <Image src={sendArrow} width={30} height={30} className={Styles.animatedBtn} />}</div>
+                        </div>}
+                        {
+                            (stopUsr == "left" && currentUser.type != "Dm") && <div className={Styles.msgInput}><div className={Styles.newCnv}>You left this channel</div></div>
+                        }
+                        {
+                            (["banned", "muted"].includes(stopUsr) && currentUser.type != "Dm") && <div className={Styles.msgInput}><div className={Styles.newCnv}>You were {stopUsr} from this channel</div></div>
+                        }
+                        {(stopUsr == "" && currentUser.relation != "Blocker") && <div onClick={(e) => setMsg(13, enteredMsg, setEnteredMsg, currentUser.convId, currentUser.login, setStopUsr)} className={Styles.sendCtr}>{enteredMsg && <Image src={sendArrow} width={30} height={30} className={Styles.animatedBtn} />}</div>}
                     </div>
+
 
                 </div>}
             </>)}

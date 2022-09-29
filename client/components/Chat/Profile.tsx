@@ -5,6 +5,7 @@ import Image from "next/image";
 import { MenuAsset } from "@svg/index";
 import addUser from "@public/add-user.svg"
 import { getChannelProfile } from "@hooks/useFetchData";
+import menu from "@public/menu-asset.svg"
 import Avatar from "@public/profile.jpg"
 
 const Header = (props: { setShowSetModal: any }) => {
@@ -13,7 +14,6 @@ const Header = (props: { setShowSetModal: any }) => {
         <button onClick={() => props.setShowSetModal(true)}><Image src={addUser} width={18} height={18} />Add Members</button>
     </div>)
 }
-
 
 const Members = (props: { role: string, users: Array<Object> }) => {
 
@@ -24,9 +24,18 @@ const Members = (props: { role: string, users: Array<Object> }) => {
         return (<MenuDropdown content={["Dismiss Admin", "Remove Member"]} functions={[() => console.log("test"), () => console.log("test")]} />)
     }
 
+    const showElemDropdown = (e: any) => {
+        const id = e.target.parentElement.parentElement.parentElement;
+        console.log(id);
+
+        console.log(setRefs.current[id])
+    }
+
     useEffect(() => {
         console.log(props.users);
     }, [])
+
+    const imgSrc:any = MenuAsset();
 
     // {dropdwn && menus.map((Element:any, i:any) => <div key={i} ref={element => setRefs.current[i] = element}><Element /></div>)}
 
@@ -37,8 +46,9 @@ const Members = (props: { role: string, users: Array<Object> }) => {
                 <Image src={user.avatar} width={40} height={40} />
                 <span>{user.fullname}</span>
             </div>
-            <div onClick={() => setdropdwn(!dropdwn)}>
-                <MenuAsset />
+            <div id={i.toString()} onClick={showElemDropdown}>
+                {/* <div onClick={showElemDropdown}><MenuAsset /></div> */}
+                <div><Image src={menu} width={6} height={30} /></div>
                 <div style={{ display: dropdwn ? "block" : "none" }} ref={element => setRefs.current[i] = element}><MenuElement /></div>
             </div>
         </div>))}
@@ -54,8 +64,8 @@ export const Profile = (props: { setShowSetModal: any, convId: any }) => {
     useEffect(() => {
         const getData = async () => {
             const value: any = await getChannelProfile(props.convId, setData);
-            console.log(value.data.owner);
-            setData(value.data);
+            console.log(value?.data?.owner);
+            setData(value?.data);
             return;
         }
 
@@ -65,10 +75,6 @@ export const Profile = (props: { setShowSetModal: any, convId: any }) => {
     useEffect(() => {
         console.log(data);
     }, [data])
-
-    const owners = [{ name: "Ikram Kharbouch", avatar: Avatar }];
-    const admins = [{ name: "Youness Bouddou", avatar: Avatar }, { name: "Youness Bouddou", avatar: Avatar }]
-    const members = [{ name: "Youness Bouddou", avatar: Avatar }, { name: "Youness Bouddou", avatar: Avatar }, { name: "choaib abouelwafa", avatar: Avatar }, { name: "nounou lhilwa", avatar: Avatar }];
 
     return (<>
         <Header setShowSetModal={props.setShowSetModal} />

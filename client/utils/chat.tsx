@@ -3,17 +3,20 @@ import Styles from "@styles/chat.module.css"
 import { InviteMsg } from "@components/Chat";
 
 import socket_notif from "config/socketNotif";
-import { useEffect } from "react";
+
+const statuses = ["Banned", "Left", "Muted"];
 
 // Introducing in scope functions here
-export const setMsg = (keycode: any, enteredMessage: string, setEnteredMsg:any, convId: number, login: string, setChatMsgs :any, chatMsgs: any) => {
+export const setMsg = (keycode: any, enteredMessage: string, setEnteredMsg:any, convId: number, login: string, setStopUsr: any) => {
     
     if (enteredMessage !== "" && keycode == 13) {
         const data = { msg: enteredMessage, convId, receiver: login }
         socket_notif.emit("sendMsg", data, (response:any) => {
             // handle msg
-            setChatMsgs([...chatMsgs, response]);
-            setEnteredMsg("");
+            console.log("response in sendMsg is ", response);
+            if (statuses.includes(response)) {
+                setStopUsr(response.toLowerCase());
+            }
         })
         
     }
