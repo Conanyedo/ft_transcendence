@@ -28,9 +28,11 @@ export const getQRcodeOrdisableCode = async (
 			return res.data;
 		})
 		.catch((err) => {
-			eraseCookie("jwt");
-			socket_notif.disconnect();
-			route.replace("/");
+			if (err.response.data.message !== "Wrong authentication code") {
+				eraseCookie("jwt");
+				socket_notif.disconnect();
+				route.replace("/");
+			}
 		});
 };
 
@@ -48,9 +50,11 @@ export const Is2FAEnaled = (set: any, setP: any, route: NextRouter) => {
 			setP(result.data);
 		})
 		.catch((err) => {
-			eraseCookie("jwt");
-			socket_notif.disconnect();
-			route.replace("/");
+			if (err.response.data.message !== "Wrong authentication code") {
+				eraseCookie("jwt");
+				socket_notif.disconnect();
+				route.replace("/");
+			}
 		});
 };
 
@@ -127,7 +131,12 @@ export const updateUserInfo = async (
 			},
 			withCredentials: true,
 		})
-		.catch((err) => console.log(err));
+		.catch((err) => {
+			if (err.response.data.message !== "Wrong authentication code") {
+				eraseCookie("jwt");
+				socket_notif.disconnect();
+			}
+		});
 };
 
 export const fetchUserInfo = async (
@@ -148,10 +157,12 @@ export const fetchUserInfo = async (
 			OldData.image = res.data.avatar;
 			setUserData(res.data);
 		})
-		.catch(() => {
-			eraseCookie("jwt");
-			socket_notif.disconnect();
-			router.replace("/");
+		.catch((err) => {
+			if (err.response.data.message !== "Wrong authentication code") {
+				eraseCookie("jwt");
+				socket_notif.disconnect();
+				router.replace("/");
+			}
 		});
 };
 
@@ -173,10 +184,12 @@ export const fetchAchievements = async (
 		.then((res) => {
 			setAchievementsids(res.data.achievements);
 		})
-		.catch(() => {
-			eraseCookie("jwt");
-			socket_notif.disconnect();
-			router.replace("/");
+		.catch((err) => {
+			if (err.response.data.message !== "Wrong authentication code") {
+				eraseCookie("jwt");
+				socket_notif.disconnect();
+				router.replace("/");
+			}
 		});
 };
 
@@ -194,9 +207,11 @@ export const fetchDATA = async (set: any, router: NextRouter, Path: string) => {
 			console.log(res.data);
 		})
 		.catch((err) => {
-			eraseCookie("jwt");
-			socket_notif.disconnect();
-			router.replace("/");
+			if (err.response.data.message !== "Wrong authentication code") {
+				eraseCookie("jwt");
+				socket_notif.disconnect();
+				router.replace("/");
+			}
 		});
 };
 
@@ -363,10 +378,13 @@ export const check2FA_JWT = async (
 		.then(() => {
 			set(true);
 		})
-		.catch(() => {
-			eraseCookie("jwt-2fa");
-			socket_notif.disconnect();
-			router.replace("/");
+		.catch((err) => {
+			if (err.response.data.message !== "Wrong authentication code") {
+				eraseCookie("jwt");
+				socket_notif.disconnect();
+				router.replace("/");
+				set(false);
+			}
 		});
 };
 
@@ -387,11 +405,13 @@ export const checkJWT = async (
 			router.push("/profile");
 			eraseCookie("jwt-2fa");
 		})
-		.catch((e) => {
-			set(false);
-			eraseCookie("jwt");
-			socket_notif.disconnect();
-			router.push("/");
+		.catch((err) => {
+			if (err.response.data.message !== "Wrong authentication code") {
+				eraseCookie("jwt");
+				socket_notif.disconnect();
+				router.replace("/");
+				set(false);
+			}
 		});
 };
 
@@ -452,5 +472,30 @@ export const requestsChannel = async (
 				router.replace("/");
 			}
 			return false;
+		});
+};
+
+export const userExists  = async (
+	login: string,
+	router: NextRouter
+) => {
+	const token = getCookie("jwt");
+	const params = new URLSearchParams();
+	params.append("login", login);
+	return await axios({
+		method: "post",
+		url: `${baseUrl}user/isExist`,
+		data: params,
+		headers: {
+			Authorization: `Bearer ${token}`,
+		},
+		withCredentials: true,
+	}).catch((err) => {
+			if (err.response.data.message !== "Wrong authentication code") {
+				eraseCookie("jwt");
+				socket_notif.disconnect();
+				router.replace("/");
+			}
+			return true;
 		});
 };

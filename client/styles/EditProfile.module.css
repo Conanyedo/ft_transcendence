@@ -89,6 +89,17 @@
 	outline: none !important;
 }
 
+.popUpCtn>p {
+	align-self: flex-start;
+	margin-bottom: 1rem;
+	font-family: 'Inter';
+	font-style: normal;
+	font-weight: 300;
+	font-size: .8rem;
+	line-height: 1rem;
+	color: #FF6482;
+}
+
 .btnSave {
 	background: #409CFF;
 	border-radius: 5px;

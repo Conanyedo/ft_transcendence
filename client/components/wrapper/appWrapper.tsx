@@ -1,4 +1,4 @@
-import {  getCookie } from "cookies-next";
+import { getCookie } from "cookies-next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import classesNav from "../../styles/sideNav.module.css";
@@ -9,10 +9,16 @@ import Section from "../section";
 import Setting from "../Settings/settings";
 import ProfileInfoEdit from "../Settings/ProfileInfoEdit";
 import { useDispatch, useSelector } from "react-redux";
-import { Settings, Toggle, ToggleValue } from "../../store/UI-Slice";
+import {
+	HideErrorMsg,
+	Settings,
+	Toggle,
+	ToggleErrorValue,
+	ToggleValue,
+} from "../../store/UI-Slice";
 import { fetchDATA } from "../../customHooks/useFetchData";
-import { ChatProvider } from "@contexts/chatContext";
 import socket_notif from "config/socketNotif";
+import MsgSlideUp from "@components/Settings/slideUpMsg";
 
 type PropsType = {
 	children: JSX.Element;
@@ -20,13 +26,26 @@ type PropsType = {
 
 const ContentWrapper: React.FC<PropsType> = ({ children }) => {
 	const [isAuth, setIsAuth] = useState(false);
-	const [socketID, setsocketID] = useState('');
+	const [socketID, setsocketID] = useState("");
 	const displayCard = useSelector(ToggleValue);
 	const displaymsg = useSelector(Settings);
 	const dispatch = useDispatch();
 	const router = useRouter();
 	const jwt = getCookie("jwt");
 	const [posIndicator, setPosIndicator] = useState(classesNav.hide);
+	const ShowError = useSelector(ToggleErrorValue);
+	if (ShowError) {
+		const timer = () => {
+			const id = setTimeout(() => {
+				dispatch(HideErrorMsg());
+				return () => {
+					clearTimeout(id);
+				};
+			}, 3000);
+			return () => clearTimeout(id);
+		};
+		timer();
+	}
 	const navBarHandler = (page: string) => {
 		setPosIndicator(() => {
 			if (page === "/profile") return classesNav.profilePos;
@@ -37,25 +56,31 @@ const ContentWrapper: React.FC<PropsType> = ({ children }) => {
 		});
 	};
 	useEffect(() => {
-		if (jwt)
-			fetchDATA(setIsAuth, router, 'auth/isAuthorized');
+		if (jwt) fetchDATA(setIsAuth, router, "auth/isAuthorized");
 	}, []);
 	useEffect(() => {
 		navBarHandler(router.asPath);
-	}, [router.asPath])
+	}, [router.asPath]);
 	if (!jwt) {
 		router.replace("/");
 		return <LoadingElm />;
-	}
-	else if (!isAuth || !socket_notif.id) {
+	} else if (!isAuth || !socket_notif.id) {
 		socket_notif.on("connect", () => {
 			setsocketID(socket_notif.id);
-	})
-		return <LoadingElm />;}
+		});
+		return <LoadingElm />;
+	}
 	const toggleHandler = () => dispatch(Toggle());
 
 	return (
 		<>
+			{ShowError && (
+				<MsgSlideUp
+					msg="User Not Found"
+					colorCtn="#FF6482"
+					colorMsg="#ECF5FF"
+				/>
+			)}
 			{displaymsg && <Setting />}
 			{displayCard && <ProfileInfoEdit setTagle={toggleHandler} />}
 			<Header setPos={navBarHandler} />
