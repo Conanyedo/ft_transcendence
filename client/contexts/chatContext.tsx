@@ -1,6 +1,7 @@
 import React, { createContext, useState, useEffect, SetStateAction, useRef, useMemo } from "react";
 import { chatMsg, chatUser } from "@Types/dataTypes"
 import socket_notif from "config/socketNotif";
+import { getLastConvs } from "@utils/chat"
 
 interface ChatContextType {
   protectedChannel: boolean;  
@@ -46,7 +47,7 @@ const ChatProvider = ({ children }: any) => {
   const chatUsersRefs: Array<HTMLDivElement> | any = useRef([]);
   const [prevUser, setPrevUser] = useState<number>(0);
 
-  const [chatMsgs, setChatMsgs] = useState<any>([{ msg: "testmsg", sender: "ikrkharb", date: "2022-09-20T17:04:06.792Z", convId: "a3f392e8-c6de-471b-bc71-3105a14b5998" }]);
+  const [chatMsgs, setChatMsgs] = useState<any>([]);
 
   useEffect(() => {
 
@@ -54,10 +55,7 @@ const ChatProvider = ({ children }: any) => {
 			console.log(socket_notif.id);
 		});
 
-    socket_notif.emit("getConversations", (response:any) => {
-      setLastUsers(response);
-      setInitialUsrData(response);
-    })
+    getLastConvs(setLastUsers, setInitialUsrData);
 
     setCurrentUser(lastUsers[0]);
     return () => {

@@ -21,8 +21,6 @@ const Chat = () => {
 		//upon entering execute this
 		if (router.isReady) {
 			const { login } = router.query;
-
-			console.log(login);
 			// get login info first
 			getLoginInfo(login);
 			setLogin(login);

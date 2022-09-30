@@ -13,10 +13,11 @@ export const setMsg = (keycode: any, enteredMessage: string, setEnteredMsg:any, 
         const data = { msg: enteredMessage, convId, receiver: login }
         socket_notif.emit("sendMsg", data, (response:any) => {
             // handle msg
-            console.log("response in sendMsg is ", response);
             if (statuses.includes(response)) {
                 setStopUsr(response.toLowerCase());
             }
+            // Add chat msg here
+            
         })
         
     }
@@ -37,9 +38,6 @@ export function showProfile(profile: boolean, setShowprofile: any) {
 export const setChatUser = (user: chatUser, setShowCnv: any) => {
 
     //Set current state of the user
-    console.log(user);
-
-    console.log("this function is used");
     setShowCnv(true);
 }
 
@@ -65,8 +63,15 @@ export function filterChatUsers(e: React.ChangeEvent<HTMLInputElement>, lastUser
 }
 
 export function filterCnvs(data: any, filterItem: any) {
-
-    console.log(data.length);
     const newData = data.filter((item: any) => item.convId != filterItem);
     return (newData);
+}
+
+export function getLastConvs(setLastUsers: any, setInitialUsrData: any) {
+    
+    socket_notif.emit("getConversations", (response:any) => {
+        setLastUsers(response);
+        // do some logic here
+        setInitialUsrData(response);
+      })
 }

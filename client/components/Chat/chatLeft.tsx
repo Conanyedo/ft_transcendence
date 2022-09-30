@@ -49,14 +49,13 @@ export const ChatLeft = (props: { login: any }) => {
 
     useEffect(() => {
 
-        console.log(props.login)
         if (props.login != undefined)
             setShowCnv(true);
 
     }, [])
 
     useEffect(() => {
-        console.log(lastUsers);
+        // console.log("last users now are", lastUsers);
     }, [lastUsers])
 
     return (<>

@@ -3,7 +3,7 @@ import { SettingsModal } from "@components/SettingsModal";
 import { fetchDATA, leaveChannel } from "@hooks/useFetchData";
 import Styles from "@styles/chat.module.css"
 import { chatUser } from "@Types/dataTypes";
-import { scrollToBottom, sendInvite, setMsg, showProfile } from "@utils/chat";
+import { getLastConvs, scrollToBottom, sendInvite, setMsg, showProfile } from "@utils/chat";
 import socket_notif from "config/socketNotif";
 import { getCookie } from "cookies-next";
 import { useRouter } from "next/router";
@@ -38,7 +38,6 @@ const getLastUsers = async (setLastUsers: any, login: any, setCurrentUser: any, 
                 // get messages 
                 socket_notif.emit("getMsgs", item?.convId, (response: any) => {
                     setChatMsgs(response);
-                    console.log(response);
                     // run on first render only
                     scrollToBottom(messagesEndRef);
                 })
@@ -54,7 +53,6 @@ const getLastUsers = async (setLastUsers: any, login: any, setCurrentUser: any, 
 
 const setConvStatus = (currentUser: any, setStopUsr: any) => {
     if (NegParams.includes(currentUser?.relation)) {
-        console.log(currentUser.relation.toLowerCase());
         setStopUsr(currentUser.relation.toLowerCase());
     } else {
         setStopUsr("");
@@ -63,7 +61,7 @@ const setConvStatus = (currentUser: any, setStopUsr: any) => {
 
 export const ChatRight = (props: { setShowSetModal: any, login: number }) => {
 
-    const { showCnv, setShowCnv, messagesEndRef, chatMsgs, setChatMsgs } = useContext(ChatContext) as ChatContextType;
+    const { showCnv, setShowCnv, messagesEndRef, chatMsgs, setChatMsgs, setLastUsers, lastUsers } = useContext(ChatContext) as ChatContextType;
 
     // Setting some local state
     const [profile, setShowprofile] = useState(false);
@@ -74,7 +72,7 @@ export const ChatRight = (props: { setShowSetModal: any, login: number }) => {
     const [showSetModal, setShowSetModal] = useState(false);
     const [membersMdl, showMembersMdl] = useState(false);
     const [currentUser, setCurrentUser] = useState<any>();
-    const [lastUsers, setLastUsers] = useState([]);
+    // const [lastUsers, setLastUsers] = useState([]);
     const [convId, setConvId] = useState<any>();
     const [stopUsr, setStopUsr] = useState("");
 
@@ -112,11 +110,17 @@ export const ChatRight = (props: { setShowSetModal: any, login: number }) => {
     useEffect(() => {
         // listening for new messages
         socket_notif.on("newMsg", (response) => {
+            console.log(response);
             setChatMsgs([...chatMsgs, response] as any);
             setEnteredMsg("");
             setConvStatus(currentUser, setStopUsr);
+            // reset the conversations
+            getLastConvs(setLastUsers, () => null);
             scrollToBottom(messagesEndRef);
         })
+
+        console.log(chatMsgs);
+        console.log(currentUser);
 
         return () => {
             socket_notif.off('newMsg');
@@ -125,8 +129,13 @@ export const ChatRight = (props: { setShowSetModal: any, login: number }) => {
     }, [chatMsgs]);
 
     useEffect(() => {
+        console.log(lastUsers);
+    }, [lastUsers]);
+
+    useEffect(() => {
+        console.log(currentUser);
         setConvStatus(currentUser, setStopUsr);
-        console.log("relation is", currentUser?.relation);
+        setConvId(currentUser?.convId);
     }, [currentUser])
 
     const unshowCnv = () => {
@@ -152,7 +161,7 @@ export const ChatRight = (props: { setShowSetModal: any, login: number }) => {
                                 <img src={currentUser?.avatar} />
                             </div>
                             <div>
-                                <h1 className={Styles.chatUsername}>{currentUser?.name ? currentUser.name : currentUser?.name}</h1>
+                                <h1 className={Styles.chatUsername}>{currentUser?.name ? currentUser.name : currentUser?.fullname}</h1>
                                 <p className={Styles.chatUserStatus}>{currentUser?.membersNum ? currentUser?.membersNum + " members" : currentUser?.status}</p>
                             </div>
                         </div>
@@ -165,7 +174,7 @@ export const ChatRight = (props: { setShowSetModal: any, login: number }) => {
                 </div>
                 {profile && (<Profile setShowSetModal={showMembersMdl} convId={currentUser.convId} />)}
                 {currentUser && !profile && <div className={Styles.chatSection}>
-                    {chatMsgs.length != 0 && <div className={Styles.msgsDisplay} ref={msgsDisplayDiv}>
+                    <div className={Styles.msgsDisplay} ref={msgsDisplayDiv}>
                         {
                             chatMsgs.map((chatMsg: any, i: any) => <div key={i} className={Styles.chatMsg} style={{ left: chatMsg.sender == currentUser.login ? "0" : "auto", right: chatMsg.sender != currentUser.login ? "0" : "auto" }}>
                                 {(currentUser.convId == chatMsg.convId) && <div className={Styles.msgBox} style={{ justifyContent: chatMsg.sender == currentUser.login ? "flex-start" : "flex-end" }}>
@@ -175,7 +184,7 @@ export const ChatRight = (props: { setShowSetModal: any, login: number }) => {
                                 </div>}
                                 {(currentUser.convId == chatMsg.convId) && <div className={Styles.msgTime} style={{ justifyContent: chatMsg.sender == currentUser.login ? "flex-start" : "flex-end" }}>{chatMsg?.date?.substring(16, 11)}{chatMsg?.createDate?.substring(16, 11)}</div>}
                             </div>)}
-                    </div>}
+                    </div>
                     {
                         chatMsgs.length == 0 && <div className={Styles.newCnv}>
                             <h1>{`Send your friend ${currentUser.name} a new message.`}</h1>
