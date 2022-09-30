@@ -19,12 +19,8 @@ const ProfileFriend = () => {
 	const owner = localStorage.getItem("owner");
 	
 	useEffect(() => {
-		if (login && userExists(login, route)) {
-			dispatch(ShowErrorMsg());
-			route.back();
-		}
-		else
-			setuserId(login);
+		if (login)
+			userExists(setuserId, login, route, dispatch);
 	}, [login]);
 	if (login === owner as string) {
 		route.replace('/profile');
