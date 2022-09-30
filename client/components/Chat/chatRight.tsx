@@ -128,8 +128,18 @@ export const ChatRight = (props: { setShowSetModal: any, login: number }) => {
 
     }, [chatMsgs]);
 
+    const [fconvId, setFConfId] = useState<any>();
+
     useEffect(() => {
         console.log(lastUsers);
+        console.log(currentUser);
+        lastUsers.forEach((user) => {
+            if (user?.login == currentUser?.login) {
+                setCurrentUser(user);
+            }
+                
+            console.log("debug each user after response", user?.login == currentUser?.login);
+        })
     }, [lastUsers]);
 
     useEffect(() => {
@@ -177,12 +187,12 @@ export const ChatRight = (props: { setShowSetModal: any, login: number }) => {
                     <div className={Styles.msgsDisplay} ref={msgsDisplayDiv}>
                         {
                             chatMsgs.map((chatMsg: any, i: any) => <div key={i} className={Styles.chatMsg} style={{ left: chatMsg.sender == currentUser.login ? "0" : "auto", right: chatMsg.sender != currentUser.login ? "0" : "auto" }}>
-                                {(currentUser.convId == chatMsg.convId) && <div className={Styles.msgBox} style={{ justifyContent: chatMsg.sender == currentUser.login ? "flex-start" : "flex-end" }}>
+                                {(currentUser.convId == chatMsg.convId || fconvId == chatMsg.convId) && <div className={Styles.msgBox} style={{ justifyContent: chatMsg.sender == currentUser.login ? "flex-start" : "flex-end" }}>
                                     <div ref={messagesEndRef} className={Styles.msgContent} style={{ backgroundColor: chatMsg.sender == currentUser.login ? "#3A3A3C" : "#409CFF", borderRadius: chatMsg.sender == currentUser.login ? "0 5px 5px 5px" : "5px 5px 0 5px" }}>
                                         {chatMsg.msg}
                                     </div>
                                 </div>}
-                                {(currentUser.convId == chatMsg.convId) && <div className={Styles.msgTime} style={{ justifyContent: chatMsg.sender == currentUser.login ? "flex-start" : "flex-end" }}>{chatMsg?.date?.substring(16, 11)}{chatMsg?.createDate?.substring(16, 11)}</div>}
+                                {(currentUser.convId == chatMsg.convId || fconvId == chatMsg.convId) && <div className={Styles.msgTime} style={{ justifyContent: chatMsg.sender == currentUser.login ? "flex-start" : "flex-end" }}>{chatMsg?.date?.substring(16, 11)}{chatMsg?.createDate?.substring(16, 11)}</div>}
                             </div>)}
                     </div>
                     {

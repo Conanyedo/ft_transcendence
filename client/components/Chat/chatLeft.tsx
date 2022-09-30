@@ -55,7 +55,7 @@ export const ChatLeft = (props: { login: any }) => {
     }, [])
 
     useEffect(() => {
-        // console.log("last users now are", lastUsers);
+        console.log("last users now are", lastUsers);
     }, [lastUsers])
 
     return (<>
