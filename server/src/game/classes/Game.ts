@@ -24,16 +24,18 @@ export class Game {
     second: Player,
     matchType: string,
     socket: Server,
-    games: allGames
+    games: allGames,
+    gameID: string = '',
+    theme: number = 0,
   ) {
     games.gameService;
     this.pause = false;
-    this.theme = Math.floor(Math.random() * 2) + 1;
+    this.theme = theme;
     if (matchType === 'Ranked') this.theme = 0;
     this._matchType = matchType;
     this._PlayerLeft = first;
     this._PlayerRight = second;
-    this._ID = Math.random().toString(16).slice(2);
+    this._ID = (gameID) ? gameID : Math.random().toString(16).slice(2);
     first.getsocket().join(this._ID);
     second.getsocket().join(this._ID);
     socket.to(this._ID).emit('startsoon');
@@ -196,13 +198,14 @@ export class LobbyFriends {
   friend: string;
   friendSocket: Socket;
   idGame: string;
+  theme: string;
 
-  constructor(admin: string, adminSocket: Socket) {
-    this.friend = '';
+  constructor(admin: string, adminSocket: Socket, friend: string, theme: string) {
+    this.theme = theme;
+    this.friend = friend;
     this.admin = admin;
     this.adminSocket = adminSocket;
     this.idGame = Math.random().toString(16).slice(2);
-    adminSocket.emit('idLobby', this.idGame);
   }
 
   startGame(friend: string, friendSocket: Socket) {

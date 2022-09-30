@@ -36,9 +36,17 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	handleEventJoinGame(client: Socket, login: string): void {
         this.allGames.joinRankLobby(client, login);
 	}
+	@SubscribeMessage('newFriendGame')
+	newFriendGame(client: Socket, data: any) {
+		return this.allGames.newFriendGame(client, data);
+	}
+	@SubscribeMessage('FriendGameInfo')
+	FriendGameInfo(client: Socket, gameID: any) {
+		return this.allGames.FriendGameInfo(client, gameID);
+	}
 	@SubscribeMessage('joinGameFriend')
-	handleEventJoinGameFriend(client: Socket, data: any): void {
-		this.allGames.joinFriendGame(client, data.accept, data.login);
+	handleEventJoinGameFriend(client: Socket, data: any): string {
+		return this.allGames.joinFriendGame(client, data.accept, data.login);
 	}
 	@SubscribeMessage('go_Up')
 	handlechangePaddleUp(client: Socket): void {
@@ -75,5 +83,9 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	@SubscribeMessage('refuseChallenge')
 	refuseChallenge(client: Socket, gameID: string) {
 		this.allGames.refuseChallenge(client, gameID);
+	}
+	@SubscribeMessage('removeGameLobby')
+	removeGameLobby(client: Socket, gameID: string) {
+		this.allGames.removeGameLobby(client, gameID);
 	}
 }
