@@ -4,7 +4,6 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import socket_game from "../../config/socketGameConfig";
 import { getImageBySize, getRankUser } from "../../customHooks/Functions";
 import classes from "../../styles/Queue.module.css";
-import { LoadingGame } from "./GameLobby";
 import classesELM from "../../styles/Loading.module.css";
 import { EmtyUser, UserTypeNew } from "../../Types/dataTypes";
 import { fetchDATA } from "../../customHooks/useFetchData";
