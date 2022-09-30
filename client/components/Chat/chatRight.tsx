@@ -133,13 +133,15 @@ export const ChatRight = (props: { setShowSetModal: any, login: number }) => {
     useEffect(() => {
         console.log(lastUsers);
         console.log(currentUser);
-        lastUsers.forEach((user) => {
-            if (user?.login == currentUser?.login) {
-                setCurrentUser(user);
-            }
-                
-            console.log("debug each user after response", user?.login == currentUser?.login);
-        })
+        if (currentUser?.convId == undefined) {
+            lastUsers.forEach((user) => {
+                if (user?.login == currentUser?.login) {
+                    setCurrentUser(user);
+                }
+
+                console.log("debug each user after response", user?.login == currentUser?.login);
+            })
+        }
     }, [lastUsers]);
 
     useEffect(() => {
