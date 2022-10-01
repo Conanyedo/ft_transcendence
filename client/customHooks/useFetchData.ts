@@ -26,7 +26,7 @@ export const getQRcodeOrdisableCode = async (
 		withCredentials: true,
 	})
 		.then((res) => {
-			return res.data;
+			return res.data.data;
 		})
 		.catch((err) => {
 			if (err.response.status === 401) {
@@ -47,8 +47,8 @@ export const Is2FAEnaled = (set: any, setP: any, route: NextRouter) => {
 			withCredentials: true,
 		})
 		.then((result) => {
-			set(result.data);
-			setP(result.data);
+			set(result.data.data);
+			setP(result.data.data);
 		})
 		.catch((err) => {
 			if (err.response.status === 401) {
@@ -154,9 +154,9 @@ export const fetchUserInfo = async (
 			withCredentials: true,
 		})
 		.then((res) => {
-			OldData.name = res.data.fullname;
-			OldData.image = res.data.avatar;
-			setUserData(res.data);
+			OldData.name = res.data.data.fullname;
+			OldData.image = res.data.data.avatar;
+			setUserData(res.data.data);
 		})
 		.catch((err) => {
 			if (err.response.status === 401) {
@@ -183,7 +183,8 @@ export const fetchAchievements = async (
 			withCredentials: true,
 		})
 		.then((res) => {
-			setAchievementsids(res.data.achievements);
+			if (res.data.data)
+				setAchievementsids(res.data.data.achievements);
 		})
 		.catch((err) => {
 			if (err.response.status === 401) {
@@ -204,7 +205,9 @@ export const fetchDATA = async (set: any, router: NextRouter, Path: string) => {
 			withCredentials: true,
 		})
 		.then((res) => {
-			set(res.data);
+			console.log(Path , '|', res.data.data);
+			if (res.data.data)
+				set(res.data.data);
 		})
 		.catch((err) => {
 			if (err.response.status === 401) {
@@ -229,6 +232,7 @@ export const checkCode2FA = async (code: string, router: NextRouter) => {
 		withCredentials: true,
 	})
 		.then((res) => {
+			router.replace("/");
 			return true;
 		})
 		.catch((err) => {
@@ -259,7 +263,7 @@ export const check2FA_JWT = async (
 		})
 		.catch((err) => {
 			if (err.response.status === 401) {
-				eraseCookie("jwt");
+				eraseCookie("jwt-2fa");
 				socket_notif.disconnect();
 				router.replace("/");
 				set(false);
@@ -286,7 +290,7 @@ export const checkJWT = async (
 		})
 		.catch((err) => {
 			if (err.response.status === 401) {
-				eraseCookie("jwt");
+				eraseCookie("jwt-2fa");
 				socket_notif.disconnect();
 				router.replace("/");
 				set(false);
@@ -367,8 +371,9 @@ export const userExists = async (set: any, login: string, router: NextRouter, di
 		},
 		withCredentials: true,
 	})
-		.then((data) => {
-			set(login);
+		.then((res) => {
+			if (res.data.data)
+				set(login);
 		})
 		.catch((err) => {
 			if (err.response.status === 401) {

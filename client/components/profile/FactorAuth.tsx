@@ -26,7 +26,7 @@ const FactorAuth = () => {
 	}, []);
 	if (!isValid) return <LoadingElm />;
 	const CheckHandler = async () => {
-		if (await checkCode2FA(inputValue, router)) router.push("/profile");
+		if (await checkCode2FA(inputValue, router)) setisError(false);
 		else setisError(true);
 	};
 	return (

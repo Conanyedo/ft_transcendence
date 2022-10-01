@@ -12,7 +12,7 @@ function MyApp({ Component, pageProps }: AppProps) {
 	const router = useRouter();
 	const path = router.asPath;
 
-	if (path === '/' || path.includes('game/') && !path.includes('game/lobby')) {
+	if (path === '/' || path.includes('game/') && !path.includes('game/lobby') || path.includes('?_2fa=true')) {
 		return <AnimatePresence exitBeforeEnter>
 			{typeof window === "undefined" ? null : (
 				<>

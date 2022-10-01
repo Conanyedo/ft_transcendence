@@ -26,7 +26,6 @@ type PropsType = {
 
 const ContentWrapper: React.FC<PropsType> = ({ children }) => {
 	const [isAuth, setIsAuth] = useState(false);
-	const [socketID, setsocketID] = useState("");
 	const displayCard = useSelector(ToggleValue);
 	const displaymsg = useSelector(Settings);
 	const dispatch = useDispatch();
@@ -61,13 +60,14 @@ const ContentWrapper: React.FC<PropsType> = ({ children }) => {
 	useEffect(() => {
 		navBarHandler(router.asPath);
 	}, [router.asPath]);
+	if (!socket_notif.id)
+		socket_notif.on("connect", () => {
+		});
 	if (!jwt) {
 		router.replace("/");
 		return <LoadingElm />;
-	} else if (!isAuth || !socket_notif.id) {
-		socket_notif.on("connect", () => {
-			setsocketID(socket_notif.id);
-		});
+	} else if (!isAuth) {
+		console.log('checkkkkk');
 		return <LoadingElm />;
 	}
 	const toggleHandler = () => dispatch(Toggle());
