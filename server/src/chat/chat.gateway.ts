@@ -43,8 +43,8 @@ export class ChatGateway {
 	@SubscribeMessage('sendMsg')
 	async sendMsg(@User('login') login: string, @ConnectedSocket() client: Socket, @MessageBody() data: createMsgDto) {
 		let msg: msgDto;
-		if (!data.convId)
-			msg = await this.chatService.createNewDm(client, data)
+		if (!data.convId && data.receiver)
+			msg = await this.chatService.createNewDm(client, data);
 		else
 			msg = await this.chatService.createNewMessage(login, data);
 		if (typeof msg === "string")
