@@ -24,7 +24,7 @@ export class FriendshipService {
 			.where('(friendships.user = :user AND friendships.friend = :friend) OR (friendships.user = :friend AND friendships.friend = :user)', { user: user, friend: friend })
 			.getOne();
 		if (!friendship)
-			return userRelation.NONE
+			return userRelation.NONE;
 		if (friendship.relation === userRelation.REQUESTED && user === friendship.user)
 			return userRelation.PENDING;
 		return friendship.relation;
@@ -37,7 +37,7 @@ export class FriendshipService {
 			.where('friendships.relation = :relation AND (friendships.user = :login OR friendships.friend = :login)', { relation: userRelation.FRIEND, login: login })
 			.getMany();
 		if (!friends.length)
-			return friends;
+			return { data: friends };
 		const friendList = [];
 		await Promise.all(friends.map(async (friend) => {
 			const friendLogin = (friend.user === login) ? friend.friend : friend.user;
@@ -55,7 +55,7 @@ export class FriendshipService {
 			.where('friendships.relation = :relation AND (friendships.user = :login OR friendships.friend = :login)', { relation: userRelation.FRIEND, login: login })
 			.getMany();
 		if (!friends.length)
-			return friends;
+			return { data: friends };
 		const friendList = await Promise.all(friends.map(async (friend) => {
 			const friendLogin = (friend.user === login) ? friend.friend : friend.user;
 			const friendInfo: friendDto = await this.userService.getFriend(friendLogin);
@@ -71,7 +71,7 @@ export class FriendshipService {
 			.where('friendships.relation = :relation AND friendships.friend = :login', { relation: userRelation.REQUESTED, login: login })
 			.getMany();
 		if (!requests.length)
-			return requests;
+			return { data: requests };
 		const requestsList = await Promise.all(requests.map(async (friend) => {
 			const requestInfo: friendDto = await this.userService.getFriend(friend.user);
 			return requestInfo;
@@ -86,7 +86,7 @@ export class FriendshipService {
 			.where('friendships.relation = :relation AND friendships.user = :login', { relation: userRelation.REQUESTED, login: login })
 			.getMany();
 		if (!pending.length)
-			return pending;
+			return { data: pending };
 		const pendingList = await Promise.all(pending.map(async (friend) => {
 			const pendingInfo: friendDto = await this.userService.getFriend(friend.friend);
 			return pendingInfo;
@@ -101,7 +101,7 @@ export class FriendshipService {
 			.where('friendships.relation = :relation AND friendships.user = :login', { relation: userRelation.BLOCKED, login: login })
 			.getMany();
 		if (!blocked.length)
-			return blocked;
+			return { data: blocked };
 		const blockedList = await Promise.all(blocked.map(async (friend) => {
 			const blockedInfo: friendDto = await this.userService.getFriend(friend.friend);
 			return blockedInfo;
