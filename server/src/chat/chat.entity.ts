@@ -19,6 +19,13 @@ export enum convType {
 	PRIVATE = "Private",
 }
 
+export enum invStatus {
+	SENT = "Sent",
+	CANCELED = "Canceled",
+	ACCEPTED = "Accepted",
+	REFUSED = "Refused",
+}
+
 @Entity({ name: 'conversations' })
 export class Conversation {
 	@PrimaryGeneratedColumn("uuid")
@@ -56,6 +63,12 @@ export class Message {
 
 	@Column({ type: 'text' })
 	msg: string;
+
+	@Column({ default: null })
+	invitation: string;
+
+	@Column({ type: 'enum', enum: invStatus, default: invStatus.SENT })
+	status: invStatus;
 
 	@CreateDateColumn()
 	createDate: Date;
