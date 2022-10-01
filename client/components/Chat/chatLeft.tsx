@@ -14,13 +14,23 @@ import Search from "@public/Icon.svg";
 export const ChatLeft = (props: { login: any }) => {
 
     // Setting some local state
-    const { lastUsers, setShowCnv, showCnv, setLastUsers, chatUsersRefs, initialusrData } = useContext(ChatContext) as ChatContextType;
+    const { lastUsers, setShowCnv, showCnv, setLastUsers, chatUsersRefs, friends } = useContext(ChatContext) as ChatContextType;
     const [show, setShow] = useState<boolean>(false);
     const [displayBlueIcon, setDisplayBlueIcon] = useState(false);
 
     const [channelDetails, setChannelDetails] = useState<any>();
 
     const router = useRouter();
+
+    useEffect(() => {
+        console.log(friends);
+    }, [friends])
+
+    function resetForm(formik: any) {
+        formik.setFieldValue("cName", "");
+        formik.setFieldValue("password", "");
+        formik.setFieldValue("member", "");
+    }
 
     // functions
     async function createChannel(channelName: string, convType: string, password: string, members: Array<string>, setUsrTags: any, formik: any, setError: any) {
@@ -30,23 +40,15 @@ export const ChatLeft = (props: { login: any }) => {
         } else {
             setError("");
             setShow(!show);
-            let loginList = lastUsers.filter((item, i) => item.name == members[i]).map((item) => item.login);
+            let loginList = friends.filter((item: any, i: any) => item.fullname == members[i]).map((item: any) => item.login);
             const data = { name: channelName, type: convType, members: loginList, password: password };
 
             // send data to channel create route here
 
-            postChannel(setChannelDetails, router, data)
-
-            // reset the users here
-            // setLastUsers([channelDetails, ...lastUsers]);
-
-            // select the current chat
-            // setChatUser(lastUsers[0], setShowCnv);
+            postChannel(setChannelDetails, router, data);
 
             // reset the necessary fields
-            formik.setFieldValue("cName", "");
-            formik.setFieldValue("password", "");
-            formik.setFieldValue("member", "");
+            resetForm(formik);
             setUsrTags([]);
         }
     }

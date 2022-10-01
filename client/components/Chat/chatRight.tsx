@@ -184,7 +184,7 @@ export const ChatRight = (props: { setShowSetModal: any, login: number }) => {
                     </div>
 
                 </div>
-                {profile && (<Profile setShowSetModal={showMembersMdl} convId={currentUser.convId} />)}
+                {profile && (<Profile setShowSetModal={showMembersMdl} convId={currentUser.convId} status={currentUser.status} />)}
                 {currentUser && !profile && <div className={Styles.chatSection}>
                     <div className={Styles.msgsDisplay} ref={msgsDisplayDiv}>
                         {

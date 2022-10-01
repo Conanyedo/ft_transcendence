@@ -215,6 +215,30 @@ export const fetchDATA = async (set: any, router: NextRouter, Path: string) => {
 		});
 };
 
+export const banMemberFromChannel = async (data:any) =>  {
+	// /chat/banMember
+	const token = getCookie("jwt");
+	const json = JSON.stringify(data);
+	return await axios({
+		method: "post",
+		url: `${baseUrl}chat/banMember`,
+		headers: {
+			Authorization: `Bearer ${token}`,
+			'Content-Type': 'application/json'
+		},
+		data: json,
+		withCredentials: true,
+	})
+		.then((res) => {
+			console.log(res);
+			// set(res.data);
+			return true;
+		})
+		.catch((err) => {
+			return false;
+		});
+}
+
 export const checkCode2FA = async (code: string, router: NextRouter) => {
 	const token = getCookie("jwt-2fa");
 	const params = new URLSearchParams();

@@ -2,6 +2,7 @@ import React, { createContext, useState, useEffect, SetStateAction, useRef, useM
 import { chatMsg, chatUser } from "@Types/dataTypes"
 import socket_notif from "config/socketNotif";
 import { getLastConvs } from "@utils/chat"
+import { getFriends } from "@hooks/useFetchData";
 
 interface ChatContextType {
   protectedChannel: boolean;  
@@ -21,6 +22,7 @@ interface ChatContextType {
   prevUser: number;
   setPrevUser: React.Dispatch<React.SetStateAction<number>>;
   initialusrData: any;
+  friends: any;
 }
 
 const ChatContext = createContext<ChatContextType | null>(null);
@@ -37,6 +39,8 @@ const ChatProvider = ({ children }: any) => {
 	// const [showSetModal, setShowSetModal] = useState(false);
 
   const [lastUsers, setLastUsers] = useState<Array<chatUser>>([]);
+
+  const [friends, setFriends] = useState([]);
 
   const [currentUser, setCurrentUser] = useState<chatUser>(lastUsers[0]);
   const [showCnv, setShowCnv] = useState<boolean>(false);
@@ -56,6 +60,7 @@ const ChatProvider = ({ children }: any) => {
 		});
 
     getLastConvs(setLastUsers, setInitialUsrData);
+    getFriends(() => null, setFriends);
 
     setCurrentUser(lastUsers[0]);
     return () => {
@@ -64,7 +69,7 @@ const ChatProvider = ({ children }: any) => {
   }, [])
 
   return (
-    <ChatContext.Provider value={{ protectedChannel, setProtectedChannel, channelMode, setChannelMode, lastUsers, setLastUsers, currentUser, setCurrentUser, showCnv, setShowCnv, messagesEndRef, chatUsersRefs, prevUser, setPrevUser, initialusrData, chatMsgs, setChatMsgs }}>
+    <ChatContext.Provider value={{ protectedChannel, setProtectedChannel, channelMode, setChannelMode, lastUsers, setLastUsers, currentUser, setCurrentUser, showCnv, setShowCnv, messagesEndRef, chatUsersRefs, prevUser, setPrevUser, initialusrData, chatMsgs, setChatMsgs, friends }}>
       {children}
     </ChatContext.Provider>
   );
