@@ -14,12 +14,17 @@
     border-radius: 10px;
 }
 
+.fullPage {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
 .BackGround {
     z-index: 100;
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
+    left: 7rem; 
+    right: 0;
     height: 100%;
     background: #1e1e20cc;
     display: flex;
@@ -33,10 +38,20 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    margin-left: 7rem;
+    position: relative;
+    width: max-content;
+    height: max-content;
+}
+
+.Waiting>div {
+    top: 0;
 }
 
 .Waiting>span {
+    position: absolute;
+    top: 25%;
+    text-align: center;
+    width: max-content;
     margin-top: 4rem;
     font-family: 'Inter';
     font-style: normal;
@@ -47,7 +62,7 @@
 }
 
 .cancelbtn {
-    margin-top: 15rem;
+    margin-top: 25rem;
     border: 3px solid #758293;
     border-radius: 5px;
     font-family: 'Inter';
@@ -65,47 +80,17 @@
     color: #409CFF;
 }
 
-
-/* Loading */
-
-.Loading {
-    display: inline-block;
-    position: relative;
-    width: 80px;
-    height: 80px;
+.Waiting>div>span {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 5rem;
+    line-height: 3rem;
+    color: #A0CEFF;
 }
 
-.Loading div {
-    box-sizing: border-box;
-    display: block;
-    position: absolute;
-    width: 64px;
-    height: 64px;
-    margin: 8px;
-    border: 8px solid #409CFF;
-    border-radius: 50%;
-    animation: Loading 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
-    border-color: #409CFF transparent transparent transparent;
-}
-
-.Loading div:nth-child(1) {
-    animation-delay: -0.45s;
-}
-
-.Loading div:nth-child(2) {
-    animation-delay: -0.3s;
-}
-
-.Loading div:nth-child(3) {
-    animation-delay: -0.15s;
-}
-
-@keyframes Loading {
-    0% {
-        transform: rotate(0deg);
-    }
-
-    100% {
-        transform: rotate(360deg);
+@media only screen and (max-width: 600px) {
+	.BackGround {
+        left: 0;
     }
 }

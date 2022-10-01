@@ -72,7 +72,7 @@ export function eraseCookie(name: string) {
 export async function validation(name: string, setError: any) {
 	if (!name)
 		setError('NickName is Required');
-	else if ((/^[A-Za-z]+([A-Za-z0-9]*|[ ._-]?[A-Za-z0-9]+)*$/g).test(name))
+	else if (!(/^[a-zA-Z]+(?:[\s.]+[a-zA-Z]+)*$/g).test(name))
 		setError('must be start|end with charactaire');
 	else if (name.length > 20)
 		setError('Too Long!!');
@@ -81,4 +81,16 @@ export async function validation(name: string, setError: any) {
 	else
 		return false;
 	return true;
+}
+
+export function runTimer(ref_elm: any) {
+	let start = 4;
+	const rep = setInterval(() => {
+		if (start === 0)
+		return () => {
+			clearInterval(rep);
+		}
+		start -= 1;
+		ref_elm.innerText = start.toString();
+	}, 1000)
 }

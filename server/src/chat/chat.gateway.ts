@@ -6,6 +6,7 @@ import { WsJwtGuard } from "src/2fa-jwt/jwt/jwt-ws.guard";
 import { ChatService } from "./chat.service";
 import { Conversation } from "./chat.entity";
 import { createMsgDto, msgDto } from "./chat.dto";
+import { userParitalDto } from "src/user/user.dto";
 
 @WebSocketGateway({
 	cors: {
@@ -34,21 +35,23 @@ export class ChatGateway {
 
 	@UseGuards(WsJwtGuard)
 	@SubscribeMessage('getMsgs')
-	async getMsgs(@User('id') id: string, @ConnectedSocket() client: Socket, @MessageBody() convId: string) {
-		return await this.chatService.getMessages(id, convId);
+	async getMsgs(@User() user: userParitalDto, @ConnectedSocket() client: Socket, @MessageBody() convId: string) {
+		return await this.chatService.getMessages(user.login, user.id, convId);
 	}
 
 	@UseGuards(WsJwtGuard)
 	@SubscribeMessage('sendMsg')
 	async sendMsg(@User('login') login: string, @ConnectedSocket() client: Socket, @MessageBody() data: createMsgDto) {
 		let msg: msgDto;
-		if (!data.convId)
-			msg = await this.chatService.createNewDm(client, data)
+		if (!data.convId && data.receiver)
+			msg = await this.chatService.createNewDm(client, data);
 		else
 			msg = await this.chatService.createNewMessage(login, data);
 		if (typeof msg === "string")
 			return msg;
-		this.server.to(msg.convId).emit('newMsg', msg);
+		const sockets: string[] = await this.chatService.getRoomSockets(login, msg.convId);
+		sockets.forEach((socket) => (this.server.to(socket).emit('newMsg', msg)))
+		// this.server.to(msg.convId).emit('newMsg', msg);
 	}
 
 }

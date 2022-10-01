@@ -12,8 +12,7 @@ export class allGames {
   countLiveGames: number;
   server: Server;
 
-  constructor(server: Server,
-    public readonly gameService: GameService) {
+  constructor(server: Server, public readonly gameService: GameService) {
     this.server = server;
     this.RankGames = [];
     this.FriendGames = [];
@@ -62,6 +61,28 @@ export class allGames {
       this.RankLobby.splice(0, 2);
     }
   }
+  newFriendGame(client: Socket, data: any) {
+    const newLobby = new LobbyFriends(
+      data.login,
+      client,
+      data.friend,
+      data.Theme,
+    );
+    this.FriendsLobby.push(newLobby);
+    return newLobby.idGame;
+  }
+  FriendGameInfo(client: Socket, idGame: string) {
+    if (!idGame && !this.FriendsLobby.length) return;
+    let game: LobbyFriends;
+    if (idGame) game = this.FriendsLobby.find((game) => game.idGame == idGame);
+    if (game)
+      return {
+        gameID: game.idGame,
+        admin: game.admin,
+        friend: game.friend,
+        Theme: game.theme,
+      };
+  }
   joinFriendGame(client: Socket, GameID: string, login: string) {
     const isfriend = this.FriendsLobby.find(
       (game) => GameID && game.idGame === GameID,
@@ -69,13 +90,16 @@ export class allGames {
     if (GameID && isfriend && isfriend.idGame) {
       const player = new Player(isfriend.admin, isfriend.adminSocket, 'left');
       const playertwo = new Player(login, client, 'right');
-      const newGame = new Game(player, playertwo, 'Classic', this.server, this);
+      const newGame = new Game(player, playertwo, 'Classic', this.server, this, isfriend.idGame, Number(isfriend.theme));
       this.countLiveGames++;
       this.FriendGames.push(newGame);
-    } else if (!GameID) {
-      const newLobby = new LobbyFriends(login, client);
-      this.FriendsLobby.push(newLobby);
-      client.emit('getCode', newLobby.idGame);
+      const time = setTimeout(() => {
+        this.server.to(newGame._ID).emit('gameStarted', true);
+        return () => {
+          clearTimeout(time);
+        }
+      }, 300);
+      return GameID;
     }
   }
   movePaddleUP(client: Socket) {
@@ -274,15 +298,19 @@ export class allGames {
       );
   }
   refuseChallenge(client: Socket, gameID: string) {
-    if (this.FriendsLobby.length) {
-      this.FriendsLobby = this.FriendsLobby.filter(lobby => {
-        if (lobby.idGame !== gameID) {
-          lobby.adminSocket.emit('denied', gameID);
-        }
-        else
+    if (this.FriendsLobby.length && gameID) {
+      this.FriendsLobby = this.FriendsLobby.filter((lobby) => {
+        if (lobby.idGame === gameID) {
+          lobby.adminSocket.emit('gameStarted', false);
+        } else {
           return lobby;
+        }
       });
     }
     // if ()
+  }
+  removeGameLobby(client: Socket, gameID: string) {
+    if (this.FriendsLobby.length && gameID)
+      this.FriendsLobby = this.FriendsLobby.filter((lobby) => (lobby.idGame !== gameID));
   }
 }

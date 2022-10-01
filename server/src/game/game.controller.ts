@@ -2,6 +2,7 @@ import { Body, Controller, Get, Param, Post, Request, UseGuards, UsePipes, Valid
 import { JwtAuthGuard } from 'src/2fa-jwt/jwt/jwt-auth.guard';
 import { User } from 'src/user/user.decorator';
 import { userParitalDto } from 'src/user/user.dto';
+import { gameDto } from './game.dto';
 import { GameService } from './game.service';
 
 @Controller('game')
@@ -18,6 +19,12 @@ export class GameController {
 	@UseGuards(JwtAuthGuard)
 	async getUserMatches(@Param('login') login: string) {
 		return await this.gameService.getMatches(login);
+	}
+
+	@Post('/insertMatch')
+	@UseGuards(JwtAuthGuard)
+	async insertMatch(@Param('login') login: string, @Body() gameResult) {
+		return await this.gameService.insertMatches(gameResult);
 	}
 
 }

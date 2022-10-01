@@ -51,7 +51,7 @@ export class UserService {
 		if (fullname) {
 			const exist = await this.userRepository.query(`SELECT FROM users where users.fullname = '${fullname}' AND users.id != '${id}';`);
 			if (exist.length)
-				throw new BadRequestException('Nickname already in use');
+				return { err: 'Nickname already in use' };
 			await this.setName(id, fullname);
 		}
 		if (avatar)
@@ -62,6 +62,7 @@ export class UserService {
 			await this.setAvatar(id, `/uploads/users/${avatar}`);
 			resizeAvatar('users', avatar);
 		}
+		return { data: true }
 	}
 
 	// User Getters
@@ -74,6 +75,19 @@ export class UserService {
 		if (!user)
 			return user;
 		return user;
+	}
+	async userExist(login: string, friend: string) {
+		const user: User = await this.userRepository
+			.createQueryBuilder('users')
+			.select(['users.login'])
+			.where('users.login = :login', { login: friend })
+			.getOne();
+		if (!user)
+			return { err: 'User not found' };
+		const relation = await this.friendshipService.getRelation(login, friend);
+		if (relation === 'blocked')
+			return { err: 'Unauthorized' };
+		return { data: true };
 	}
 
 	async getPartialUser(login: string): Promise<userParitalDto> {
@@ -134,8 +148,8 @@ export class UserService {
 			.where('users.id = :id', { id: id })
 			.getOne();
 		if (!user)
-			throw new NotFoundException('User not found');
-		return { ...user };
+			return { err: 'User not found' };
+		return { data: { ...user } };
 	}
 
 	async getUserInfo(login: string, id: string) {
@@ -147,18 +161,18 @@ export class UserService {
 			.where(`users.login = :id`, { id: id })
 			.getOne();
 		if (!user)
-			throw new NotFoundException('User not found');
+			return { err: 'User not found' };
 		if (login !== id)
 			relation = await this.friendshipService.getRelation(login, id);
-		return { ...user, relation };
+		return { data: { ...user, relation } };
 	}
 
 	async getUserStats(id: string, by: string) {
 		const stats: Stats[] = await this.userRepository.query(`SELECT stats."numGames", stats."gamesWon" FROM users
 		JOIN stats ON users."statsId" = stats.id where users.${by} = '${id}';`);
 		if (!stats.length)
-			throw new NotFoundException('User not found');
-		return { numGames: stats[0].numGames, gamesWon: stats[0].gamesWon };
+			return { err: 'User not found' };
+		return { data: { numGames: stats[0].numGames, gamesWon: stats[0].gamesWon } };
 	}
 
 	async getAchievements(id: string, by: string) {
@@ -169,8 +183,8 @@ export class UserService {
 			.where(`users.${by} = :id`, { id: id })
 			.getOne()
 		if (!user)
-			throw new NotFoundException('User not found');
-		return { achievements: user.stats.achievement };
+			return { err: 'User not found' };
+		return { data: { achievements: user.stats.achievement } };
 	}
 
 	async getLeaderBoard(login: string) {
@@ -184,7 +198,7 @@ export class UserService {
 			const relation = await this.friendshipService.getRelation(login, user.login);
 			return { ...user, relation }
 		}))
-		return [...leaderBoard];
+		return { data: [...leaderBoard] };
 	}
 
 	async searchUsers(login: string, search: string) {
@@ -200,7 +214,7 @@ export class UserService {
 			if (relation !== 'blocked')
 				usersList.push({ ...user, relation });
 		}))
-		return [...usersList];
+		return { data: [...usersList] };
 	}
 
 	async getOpponent(login: string) {
@@ -210,7 +224,7 @@ export class UserService {
 			.where('users.login = :login', { login: login })
 			.getOne();
 		if (!user)
-			throw new NotFoundException('User not found');
+			return user;
 		const opponent: opponentDto = { fullname: user.fullname, avatar: user.avatar };
 		return { ...opponent };
 	}
@@ -222,7 +236,7 @@ export class UserService {
 			.where('users.login = :login', { login: login })
 			.getOne();
 		if (!user)
-			throw new NotFoundException('User not found');
+			return user;
 		const friend: friendDto = { login: user.login, fullname: user.fullname, avatar: user.avatar, status: user.status };
 		return { ...friend };
 	}

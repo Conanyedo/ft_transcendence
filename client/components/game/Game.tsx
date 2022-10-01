@@ -51,7 +51,7 @@ const Game: React.FC<{ GameID: string }> = (props) => {
 					{props.GameID !== "" && (
 						<LiveGame gameId={props.GameID} click={false} />
 					)}
-					<CanvasGame GameID={props.GameID} />
+					{props.GameID !== '' && <CanvasGame GameID={props.GameID} />}
 				</div>
 			</div>
 		</>

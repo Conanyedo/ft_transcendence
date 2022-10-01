@@ -1,3 +1,5 @@
+import { AnyAction } from "@reduxjs/toolkit";
+import { ShowErrorMsg } from "@store/UI-Slice";
 import { filterCnvs } from "@utils/chat";
 import axios from "axios";
 import { CookieValueTypes, getCookie } from "cookies-next";
@@ -28,7 +30,7 @@ export const getQRcodeOrdisableCode = async (
 			return res.data;
 		})
 		.catch((err) => {
-			if (err.response.data.message !== "Wrong authentication code") {
+			if (err.response.status === 401) {
 				eraseCookie("jwt");
 				socket_notif.disconnect();
 				route.replace("/");
@@ -50,7 +52,7 @@ export const Is2FAEnaled = (set: any, setP: any, route: NextRouter) => {
 			setP(result.data);
 		})
 		.catch((err) => {
-			if (err.response.data.message !== "Wrong authentication code") {
+			if (err.response.status === 401) {
 				eraseCookie("jwt");
 				socket_notif.disconnect();
 				route.replace("/");
@@ -78,7 +80,7 @@ export const check2FACode = async (
 			return true;
 		})
 		.catch((err) => {
-			if (err.response.data.message !== "Wrong authentication code") {
+			if (err.response.status === 401) {
 				eraseCookie("jwt");
 				socket_notif.disconnect();
 				route.replace("/");
@@ -132,7 +134,7 @@ export const updateUserInfo = async (
 			withCredentials: true,
 		})
 		.catch((err) => {
-			if (err.response.data.message !== "Wrong authentication code") {
+			if (err.response.status === 401) {
 				eraseCookie("jwt");
 				socket_notif.disconnect();
 			}
@@ -158,7 +160,7 @@ export const fetchUserInfo = async (
 			setUserData(res.data);
 		})
 		.catch((err) => {
-			if (err.response.data.message !== "Wrong authentication code") {
+			if (err.response.status === 401) {
 				eraseCookie("jwt");
 				socket_notif.disconnect();
 				router.replace("/");
@@ -185,7 +187,7 @@ export const fetchAchievements = async (
 			setAchievementsids(res.data.achievements);
 		})
 		.catch((err) => {
-			if (err.response.data.message !== "Wrong authentication code") {
+			if (err.response.status === 401) {
 				eraseCookie("jwt");
 				socket_notif.disconnect();
 				router.replace("/");
@@ -207,7 +209,7 @@ export const fetchDATA = async (set: any, router: NextRouter, Path: string) => {
 			console.log(res.data);
 		})
 		.catch((err) => {
-			if (err.response.data.message !== "Wrong authentication code") {
+			if (err.response.status === 401) {
 				eraseCookie("jwt");
 				socket_notif.disconnect();
 				router.replace("/");
@@ -280,7 +282,7 @@ export const checkCode2FA = async (code: string, router: NextRouter) => {
 			return true;
 		})
 		.catch((err) => {
-			if (err.response.data.message !== "Wrong authentication code") {
+			if (err.response.status === 401) {
 				eraseCookie("jwt-2fa");
 				socket_notif.disconnect();
 				router.replace("/");
@@ -454,7 +456,7 @@ export const check2FA_JWT = async (
 			set(true);
 		})
 		.catch((err) => {
-			if (err.response.data.message !== "Wrong authentication code") {
+			if (err.response.status === 401) {
 				eraseCookie("jwt");
 				socket_notif.disconnect();
 				router.replace("/");
@@ -481,7 +483,7 @@ export const checkJWT = async (
 			eraseCookie("jwt-2fa");
 		})
 		.catch((err) => {
-			if (err.response.data.message !== "Wrong authentication code") {
+			if (err.response.status === 401) {
 				eraseCookie("jwt");
 				socket_notif.disconnect();
 				router.replace("/");
@@ -511,7 +513,7 @@ export const requests = async (
 			return true;
 		})
 		.catch((err) => {
-			if (err.response.data.message !== "Wrong authentication code") {
+			if (err.response.status === 401) {
 				eraseCookie("jwt");
 				socket_notif.disconnect();
 				router.replace("/");
@@ -541,7 +543,7 @@ export const requestsChannel = async (
 			return true;
 		})
 		.catch((err) => {
-			if (err.response.data.message !== "Wrong authentication code") {
+			if (err.response.status === 401) {
 				eraseCookie("jwt");
 				socket_notif.disconnect();
 				router.replace("/");
@@ -550,14 +552,11 @@ export const requestsChannel = async (
 		});
 };
 
-export const userExists  = async (
-	login: string,
-	router: NextRouter
-) => {
+export const userExists = async (set: any, login: string, router: NextRouter, dispatch: Dispatch<AnyAction>) => {
 	const token = getCookie("jwt");
 	const params = new URLSearchParams();
 	params.append("login", login);
-	return await axios({
+	const res = await axios({
 		method: "post",
 		url: `${baseUrl}user/isExist`,
 		data: params,
@@ -565,12 +564,18 @@ export const userExists  = async (
 			Authorization: `Bearer ${token}`,
 		},
 		withCredentials: true,
-	}).catch((err) => {
-			if (err.response.data.message !== "Wrong authentication code") {
+	})
+		.then((data) => {
+			set(login);
+		})
+		.catch((err) => {
+			if (err.response.status === 401) {
 				eraseCookie("jwt");
 				socket_notif.disconnect();
 				router.replace("/");
 			}
-			return true;
+			dispatch(ShowErrorMsg());
+			router.push('/profile');
 		});
+	return res;
 };

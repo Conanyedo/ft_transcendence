@@ -1,11 +1,9 @@
-import { getCookie } from "cookies-next";
-import { DetailedHTMLProps, Dispatch, EventHandler, ImgHTMLAttributes, SetStateAction, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import classes from "../../styles/Lobby.module.css";
 
 import down from "../../public/Game/Down.svg";
 import Cross from "../../public/FriendIcons/Cross.svg";
 import Image from "next/image";
-import GameLobby from "./GameLobby";
 import Queue from "./Queue";
 import socket_game from "../../config/socketGameConfig";
 import RankStar from "../../public/Game/raking-stars.svg";
@@ -19,7 +17,6 @@ import { useRouter } from "next/router";
 import { FriendOnline } from "@Types/dataTypes";
 import { getImageBySize, useOutsideAlerter } from "@hooks/Functions";
 
-
 class PropsType extends FriendOnline {
 	select: any;
 }
@@ -27,8 +24,8 @@ class PropsType extends FriendOnline {
 const Friend: React.FC<PropsType> = (props) => {
 	const selectHandler = () => {
 		props.select(props);
-	}
-	const avatar = getImageBySize(props.avatar, 72);
+	};
+	const avatar = getImageBySize(props.avatar, 70);
 	return (
 		<>
 			<div className={classes.Friend}>
@@ -36,7 +33,9 @@ const Friend: React.FC<PropsType> = (props) => {
 					<img src={avatar} />
 				</div>
 				<div className={classes.Name}>{props.fullname}</div>
-				<div className={classes.btnSelect} onClick={selectHandler} >Select</div>
+				<div className={classes.btnSelect} onClick={selectHandler}>
+					Select
+				</div>
 			</div>
 		</>
 	);
@@ -44,60 +43,65 @@ const Friend: React.FC<PropsType> = (props) => {
 
 export const FriendGameSetting: React.FC<{
 	Hide: () => void;
-	setGamePage: Dispatch<SetStateAction<boolean>>;
 }> = (props) => {
 	const router = useRouter();
-	const [themeselected, setThemeselected] = useState('0');
-	const [friendSelected, setFriendSelected] = useState<FriendOnline>(new FriendOnline());
+	const owner = localStorage.getItem("owner");
+	const [themeselected, setThemeselected] = useState("1");
+	const [friendSelected, setFriendSelected] = useState<FriendOnline>(
+		new FriendOnline()
+	);
 	const [ListFriends, setListFriends] = useState<FriendOnline[]>([]);
 	const [isOpen, setisOpen] = useState(false);
 	const ref_input = useRef(null);
 	const ref_listSelect = useRef(null);
 	const ref_Select = useRef(null);
 	const ClickHandler = (e: object) => {
-		if (friendSelected.login !== '')
-			ClicktoSerachHandler();
-		else
-			setisOpen((v) => !v);
+		if (friendSelected.login !== "") ClicktoSerachHandler();
+		else setisOpen((v) => !v);
 	};
 	const SearchHandler = () => {
 		setisOpen(true);
 		setFriendSelected(ref_input.current!.value);
 	};
-	const selectThemehandler = (e: object) =>{
+	const selectThemehandler = (e: object) => {
 		setThemeselected(e!.target!.alt as string);
-		
-	}
+	};
 	const StartHandler = () => {
-		console.log(friendSelected.fullname);
-		console.log(themeselected);
-		
-		// TODO go gamePage
-		// props.setGamePage(true);
-		props.Hide();
+		if (friendSelected.login)
+			socket_game.emit(
+				"newFriendGame",
+				{
+					Theme: themeselected,
+					friend: friendSelected.login,
+					login: owner,
+				},
+				(id: any) => {
+					router.push("game/lobby?gameID=" + id);
+				}
+			);
 	};
 	const ClicktoSerachHandler = () => {
-		ref_input.current!.value = ''
+		ref_input.current!.value = "";
 		const emtyFriend = new FriendOnline();
 		setFriendSelected(emtyFriend);
 		setisOpen(true);
-	}
+	};
 	const FriendSelect = (friend: FriendOnline) => {
 		setFriendSelected(friend);
 		setisOpen(false);
-	}
+	};
 	const mapToFriends = (fr: FriendOnline) => {
 		const name = ref_input.current!.value;
 		const nameUser = fr.fullname;
 		if (name.length && nameUser.toLocaleLowerCase().includes(name))
-			return <Friend select={FriendSelect} key={fr.login} {...fr}/>
+			return <Friend select={FriendSelect} key={fr.login} {...fr} />;
 		else if (!name.length)
-			return <Friend select={FriendSelect} key={fr.login} {...fr}/>
-	}
+			return <Friend select={FriendSelect} key={fr.login} {...fr} />;
+	};
 	useOutsideAlerter(ref_Select, setisOpen);
 	useEffect(() => {
-		fetchDATA(setListFriends, router, 'friendship/onlineFriends');
-	}, [])
+		fetchDATA(setListFriends, router, "friendship/onlineFriends");
+	}, []);
 	return (
 		<div className={classes.BackGround}>
 			<div className={classes.CardSetting}>
@@ -110,14 +114,38 @@ export const FriendGameSetting: React.FC<{
 				<h2>Game Theme</h2>
 				<p>Select a game theme you want to play on</p>
 				<div className={classes.listTheme}>
-					<div className={`${classes.Theme} ${themeselected === '0' && classes.selected}`}>
-						<img src={Theme1.src} alt='0' onClick={selectThemehandler}/>
+					<div
+						className={`${classes.Theme} ${
+							themeselected === "1" && classes.selected
+						}`}
+					>
+						<img
+							src={Theme1.src}
+							alt="1"
+							onClick={selectThemehandler}
+						/>
 					</div>
-					<div className={`${classes.Theme} ${themeselected === '1' && classes.selected}`}>
-						<img src={Theme2.src} alt='1' onClick={selectThemehandler}/>
+					<div
+						className={`${classes.Theme} ${
+							themeselected === "2" && classes.selected
+						}`}
+					>
+						<img
+							src={Theme2.src}
+							alt="2"
+							onClick={selectThemehandler}
+						/>
 					</div>
-					<div className={`${classes.Theme} ${themeselected === '2' && classes.selected}`}>
-						<img src={Theme3.src} alt='2' onClick={selectThemehandler}/>
+					<div
+						className={`${classes.Theme} ${
+							themeselected === "3" && classes.selected
+						}`}
+					>
+						<img
+							src={Theme3.src}
+							alt="3"
+							onClick={selectThemehandler}
+						/>
 					</div>
 				</div>
 				<h2>Invite Friend</h2>
@@ -132,12 +160,17 @@ export const FriendGameSetting: React.FC<{
 							className={classes.selectedFriend}
 						/>
 						<div className={classes.icon} onClick={ClickHandler}>
-							<Image src={friendSelected.login === '' ? down : Cross} />
+							<Image
+								src={friendSelected.login === "" ? down : Cross}
+							/>
 						</div>
 						{isOpen && (
-							<div className={classes.ListFriend} ref={ref_listSelect}>
-								{ListFriends.length !== 0 && ListFriends.map(mapToFriends)
-								}
+							<div
+								className={classes.ListFriend}
+								ref={ref_listSelect}
+							>
+								{ListFriends.length !== 0 &&
+									ListFriends.map(mapToFriends)}
 							</div>
 						)}
 					</div>
@@ -151,13 +184,10 @@ export const FriendGameSetting: React.FC<{
 };
 
 const Lobby = () => {
+	const router = useRouter();
 	const [cardisOpen, setCardisOpen] = useState(false);
-	const [GamePage, setGamePage] = useState(false);
 	const [QueuePage, setQueuePage] = useState(false);
 	const [ErrorMsg, setErrorMsg] = useState(false);
-	const closeHandler = () => {
-		setGamePage(false);
-	};
 	const ShowCardHandler = () => {
 		setCardisOpen(true);
 	};
@@ -169,7 +199,7 @@ const Lobby = () => {
 				setErrorMsg(false);
 				return () => {
 					clearTimeout(id);
-				}
+				};
 			}, 3000);
 		}
 		setQueuePage(false);
@@ -177,12 +207,22 @@ const Lobby = () => {
 	const joinRankHandler = () => {
 		setQueuePage(true);
 	};
-	useEffect(() => {
-		if (socket_game.disconnected)
-			socket_game.connect();
-		return () => {
-		};
-	}, []);
+	/*
+	const owner = localStorage.getItem("owner");
+	const acceptChallenge = () => {
+		socket_game.emit(
+			"joinGameFriend",
+			{ login: owner, accept: "e8390db5a91a" },
+			(data: string) => {
+				if (data.length > 4) {
+					router.push("game/lobby?gameID=" + data);
+				}
+			}
+		);
+	};
+	const refuseChallenge = () => {
+		socket_game.emit("refuseChallenge", "e8390db5a91a");
+	};*/
 	return (
 		<>
 			{ErrorMsg && (
@@ -193,15 +233,9 @@ const Lobby = () => {
 				/>
 			)}
 			{QueuePage && <Queue cancel={cancelHandler} />}
-			{GamePage && !QueuePage && <GameLobby close={closeHandler} />}
-			{!GamePage && !QueuePage && (
+			{!QueuePage && (
 				<>
-					{cardisOpen && (
-						<FriendGameSetting
-							Hide={HideCardHandler}
-							setGamePage={setGamePage}
-						/>
-					)}
+					{cardisOpen && <FriendGameSetting Hide={HideCardHandler} />}
 					<div className={classes.LobbyContainer}>
 						<span>Game Lobby</span>
 						<div className={classes.pingPongContainer}>
@@ -255,6 +289,8 @@ const Lobby = () => {
 									Invite Friend
 								</div>
 							</div>
+							{/* <button onClick={acceptChallenge}>play</button>
+							<button onClick={refuseChallenge}>Not play</button> */}
 						</div>
 					</div>
 				</>

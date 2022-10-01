@@ -43,48 +43,48 @@ export class FriendshipController {
 	@UseGuards(JwtAuthGuard)
 	addFriend(@User() user: userParitalDto, @Body('login') friend: string) {
 		this.friendshipService.addFriend(user.login, friend);
-		return true;
+		return { data: true };
 	}
 
 	@Post('/unfriend')
 	@UseGuards(JwtAuthGuard)
 	unfriend(@User() user: userParitalDto, @Body('login') friend: string) {
 		this.friendshipService.unfriend(user.login, friend);
-		return true;
+		return { data: true };
 	}
 
 	@Post('/acceptRequest')
 	@UseGuards(JwtAuthGuard)
 	acceptRequest(@User() user: userParitalDto, @Body('login') friend: string) {
 		this.friendshipService.acceptRequest(user.login, friend);
-		return true;
+		return { data: true };
 	}
 
 	@Post('/refuseRequest')
 	@UseGuards(JwtAuthGuard)
 	refuseRequest(@User() user: userParitalDto, @Body('login') friend: string) {
 		this.friendshipService.refuseRequest(user.login, friend);
-		return true;
+		return { data: true };
 	}
 
 	@Post('/cancelRequest')
 	@UseGuards(JwtAuthGuard)
 	cancelRequest(@User() user: userParitalDto, @Body('login') friend: string) {
 		this.friendshipService.cancelRequest(user.login, friend);
-		return true;
+		return { data: true };
 	}
 
 	@Post('/blockUser')
 	@UseGuards(JwtAuthGuard)
 	blockUser(@User() user: userParitalDto, @Body('login') friend: string) {
 		this.friendshipService.blockUser(user.login, friend);
-		return true;
+		return { data: true };
 	}
 
 	@Post('/unblock')
 	@UseGuards(JwtAuthGuard)
 	unblock(@User() user: userParitalDto, @Body('login') friend: string) {
 		this.friendshipService.unblock(user.login, friend);
-		return true;
+		return { data: true };
 	}
 }
