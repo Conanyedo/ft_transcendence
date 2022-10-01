@@ -10,12 +10,12 @@ import { chatValidationSchema } from "validation/chatSchemas"
 import { chatFormValues } from "@Types/dataTypes"
 
 // Importing formik hooks
-import { useFormik } from "formik";
+import { setIn, useFormik } from "formik";
 import { useOutsideAlerter } from "customHooks/Functions"
 import { getFriends } from "@hooks/useFetchData"
 
 
-export const UsersModalInput = (props: { UsersArray: any, setUsersArray: any, removeUser: any, handleChange: any, value: any, inputRef: any }) => {
+export const UsersModalInput = (props: { UsersArray: any, setUsersArray: any, removeUser: any, handleChange: any, value: any, inputRef: any}) => {
 
     const userTagsItems = props.UsersArray;
 
@@ -33,6 +33,9 @@ export function ModalForm(props: { createChannel: any }) {
     const [usrTags, setUsrTags] = useState<Array<string>>([]);
     const [friends, setFriends] = useState([]);
     const [closeUsrs, setCloseUsrs] = useState(friends);
+    const [initialUsrState, setInitialUsrState] = useState([]);
+
+    const [errorMsg, setErrorMsg] = useState("");
 
     const inputRef = useRef("");
     // Set the form validation using Yup && formik
@@ -48,23 +51,20 @@ export function ModalForm(props: { createChannel: any }) {
     });
 
     useEffect(() => {
+
+        console.log("it keeps re rendering");
+        // get list of friends on the first render
         const setUsrs = async () => {
-            return await getFriends(formik.values.member, setCloseUsrs);
+            return await getFriends(setCloseUsrs, setInitialUsrState);
         }
-
         setUsrs();
-        if (closeUsrs.length !== 0)
-            setshowDrpdown(true);
+    }, []);
 
-        return () => {
-            // Cleanup
-            setCloseUsrs([]);
-        };
-    }, [formik.values.member]);
-
-    useEffect(() => {
-        console.log(closeUsrs)
-    }, [closeUsrs]);
+    // useEffect(() => {
+    //     console.log("close usrs", closeUsrs);
+    //     if (closeUsrs.length !== 0)
+    //         setshowDrpdown(true);
+    // }, [closeUsrs]);
 
     const onSubmit = (values: chatFormValues) => {
         alert(JSON.stringify(values, null, 2));
@@ -77,10 +77,11 @@ export function ModalForm(props: { createChannel: any }) {
         console.log(formik.values.member);
 
         // Filter values here
-        // filterUsers(value, setCloseUsrs, setshowDrpdown, initialUsrState, setUsrTags);
+        filterUsers(value, setCloseUsrs, setshowDrpdown, initialUsrState, setUsrTags);
     };
 
-    return (
+    return (<>
+        {errorMsg !== "" && <span className={Styles.error}>{errorMsg}</span>}
         <form className={Styles.form} onSubmit={formik.handleSubmit}>
             <div className={Styles.inputContainer}>
                 <span>Channel name</span>
@@ -105,11 +106,12 @@ export function ModalForm(props: { createChannel: any }) {
                 <span>Add Members</span>
                 <UsersModalInput UsersArray={usrTags} setUsersArray={setUsrTags} removeUser={removeTag} handleChange={handleOnChange} value={formik.values.member} inputRef={inputRef} />
                 {showDrpdown && <div className={Styles.dropMembers}>
-                    {closeUsrs.map((usr, i) => <SuggestedUsr key={i} user={usr} userStatus={true} addUsrToChannel={addUsrToChannel} removeUsrFromChannel={removeUsrFromChannel} setUsrTags={setUsrTags} setshowDropdown={setshowDrpdown} usrTags={usrTags} setValue={formik.setFieldValue} inputRef={inputRef} />)}
+                    {closeUsrs.map((usr, i) => <SuggestedUsr key={i} user={usr} userStatus={true} addUsrToChannel={addUsrToChannel} removeUsrFromChannel={removeUsrFromChannel} setUsrTags={setUsrTags} setshowDropdown={setshowDrpdown} usrTags={usrTags} setValue={formik.setFieldValue} inputRef={inputRef} initialUsrState={initialUsrState} setInitialUsrState={setInitialUsrState} />)}
                 </div>}
             </div>
-            <button type="button" onClick={(e) => props.createChannel(formik.values.cName, channelMode, formik.values.password, usrTags, setUsrTags, formik)}>Create</button>
+            <button type="button" onClick={(e) => props.createChannel(formik.values.cName, channelMode, formik.values.password, usrTags, setUsrTags, formik, setErrorMsg)}>Create</button>
         </form>
+        </>
     )
 }
 

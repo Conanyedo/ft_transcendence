@@ -23,28 +23,32 @@ export const ChatLeft = (props: { login: any }) => {
     const router = useRouter();
 
     // functions
-    async function createChannel(channelName: string, convType: string, password: string, members: Array<string>, setUsrTags: any, formik: any) {
+    async function createChannel(channelName: string, convType: string, password: string, members: Array<string>, setUsrTags: any, formik: any, setError: any) {
 
-        setShow(!show);
+        if (channelName.length == 0 || convType.length == 0 || members.length == 0) {
+            setError("Please enter the required credentials**");
+        } else {
+            setError("");
+            setShow(!show);
+            let loginList = lastUsers.filter((item, i) => item.name == members[i]).map((item) => item.login);
+            const data = { name: channelName, type: convType, members: loginList, password: password };
 
-        let loginList = lastUsers.filter((item, i) => item.name == members[i]).map((item) => item.login);
-        const data = { name: channelName, type: convType, members: loginList, password: password };
+            // send data to channel create route here
 
-        // send data to channel create route here
+            postChannel(setChannelDetails, router, data)
 
-        postChannel(setChannelDetails, router, data)
+            // reset the users here
+            // setLastUsers([channelDetails, ...lastUsers]);
 
-        // reset the users here
-        // setLastUsers([channelDetails, ...lastUsers]);
+            // select the current chat
+            // setChatUser(lastUsers[0], setShowCnv);
 
-        // select the current chat
-        // setChatUser(lastUsers[0], setShowCnv);
-
-        // reset the necessary fields
-        formik.setFieldValue("cName", "");
-        formik.setFieldValue("password", "");
-        formik.setFieldValue("member", "");
-        setUsrTags([]);
+            // reset the necessary fields
+            formik.setFieldValue("cName", "");
+            formik.setFieldValue("password", "");
+            formik.setFieldValue("member", "");
+            setUsrTags([]);
+        }
     }
 
     useEffect(() => {

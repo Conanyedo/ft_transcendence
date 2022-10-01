@@ -4,7 +4,7 @@ import Image from "next/image"
 import Cross from "@public/Cross.svg"
 import { useFormik } from "formik"
 import { UsersModalInput } from "@components/Modal/index"
-import { useState } from "react"
+import { useRef, useState } from "react"
 import Avatar from "@public/profile.jpg"
 import { filterUsers, SuggestedUsr, addUsrToChannel, removeUsrFromChannel, } from "@components/Modal/utils"
 
@@ -24,6 +24,8 @@ export const MembersModal = (props: { setShowSetModal: any, showSetModal: any })
     const [users, setUsers] = useState(initialUsrState);
     const [showDrpdown, setshowDrpdown] = useState(false);
     const [usrTags, setUsrTags] = useState<Array<string>>([]);
+
+    const inputRef= useRef("");
 
     const formik = useFormik({
         initialValues: {
@@ -67,9 +69,9 @@ export const MembersModal = (props: { setShowSetModal: any, showSetModal: any })
 
                     {/* <Input title="Select Members" name="members" handleChange={formik.handleChange} value={formik.values.members} /> */}
 
-                    <UsersModalInput UsersArray={usrTags} setUsersArray={setUsrTags} removeUser={removeUser} handleChange={handleOnChange} value={formik.values.member} />
+                    <UsersModalInput UsersArray={usrTags} setUsersArray={setUsrTags} removeUser={removeUser} handleChange={handleOnChange} value={formik.values.member} inputRef={inputRef} />
                     {showDrpdown && <div className={Styles.dropMembers}>
-                        {users.map((usr, i) => <SuggestedUsr key={i} user={usr} userStatus={true} addUsrToChannel={addUsrToChannel} removeUsrFromChannel={removeUsrFromChannel} setUsrTags={setUsrTags} setshowDropdown={setshowDrpdown} usrTags={usrTags} setValue={formik.setFieldValue} />)}
+                        {users.map((usr, i) => <SuggestedUsr key={i} user={usr} userStatus={true} addUsrToChannel={addUsrToChannel} removeUsrFromChannel={removeUsrFromChannel} setUsrTags={setUsrTags} setshowDropdown={setshowDrpdown} usrTags={usrTags} setValue={formik.setFieldValue} inputRef={inputRef} />)}
                     </div>}
                     <button type="button" onClick={addMember}>Create</button>
                 </form>

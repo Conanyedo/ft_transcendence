@@ -265,7 +265,34 @@ export const postChannel = async (set: any, router: NextRouter, data: any) => {
 		});
 };
 
-export const getFriends = async (userValue: any, set: any) => {
+export const changeMemberRole = async (data: any, set: any) => {
+	// POST /chat/setMemberStatus
+
+	// const currdata = {convId, member, status};
+	const token = getCookie("jwt");
+	const json = JSON.stringify(data);
+	return await axios({
+		method: "post",
+		url: `${baseUrl}chat/setMemberStatus`,
+		headers: {
+			Authorization: `Bearer ${token}`,
+			'Content-Type': 'application/json'
+		},
+		data: json,
+		withCredentials: true,
+	})
+		.then((res) => {
+			console.log(res);
+			// set(res.data);
+			// router.push("/chat?login=" + res.data.login);
+			return true;
+		})
+		.catch((err) => {
+			return false;
+		});
+}
+
+export const getFriends = async (set: any, setInitialState: any) => {
 	const token = getCookie("jwt");
 	return await axios({
 		method: "get",
@@ -278,7 +305,7 @@ export const getFriends = async (userValue: any, set: any) => {
 	})
 		.then((res) => {
 			console.log(res);
-			set(res.data);
+			setInitialState(res.data);
 			return true;
 		})
 		.catch((err) => {
