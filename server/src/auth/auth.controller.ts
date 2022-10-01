@@ -34,7 +34,7 @@ export class AuthController {
 	@UseGuards(JwtAuthGuard)
 	logout(@User() user: userParitalDto, @Res({ passthrough: true }) res: Response) {
 		this.authService.logout(user, res);
-		return true;
+		return { data: true };
 	}
 	// +++++++++++++++++++++++++++++++++++
 
@@ -50,7 +50,7 @@ export class AuthController {
 	@Get('/is2faAuthorized')
 	@UseGuards(Jwt2faAuthGuard)
 	is2faAuthorized() {
-		return true;
+		return { data: true };
 	}
 	// +++++++++++++++++++++++++++++++++++
 
@@ -69,24 +69,28 @@ export class AuthController {
 		if (is2faEnabled === 'true')
 			return await this.authService.generate2fa(user);
 		this.authService.set2faEnabled(user, false);
-		return true;
+		return { data: true };
 	}
 
 	@Post('/2faValidate')
 	@UseGuards(JwtAuthGuard)
 	async validate2faCode(@User() user: userParitalDto, @Body("code") code: string) {
-		await this.authService.is2faCodeValid(user, code);
+		const isValid = await this.authService.is2faCodeValid(user, code);
+		if (isValid.err)
+			return isValid;
 		this.authService.set2faEnabled(user, true);
-		return true;
+		return { data: true };
 	}
 
 	@Post('/2faLogin')
 	@UseGuards(Jwt2faAuthGuard)
 	async login2faCode(@User() user: userParitalDto, @Body("code") code: string, @Res({ passthrough: true }) res: Response) {
-		await this.authService.is2faCodeValid(user, code);
+		const isValid = await this.authService.is2faCodeValid(user, code);
+		if (isValid.err)
+			return isValid;
 		this.authService.setJWTCookie(user, res);
 		this.authService.setUserAuthenticated(user);
-		return true;
+		return { data: true };
 	}
 	// +++++++++++++++++++++++++++++++++++
 }

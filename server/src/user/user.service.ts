@@ -62,7 +62,7 @@ export class UserService {
 			await this.setAvatar(id, `/uploads/users/${avatar}`);
 			resizeAvatar('users', avatar);
 		}
-		return { data: 'Updated' }
+		return { data: true }
 	}
 
 	// User Getters
@@ -198,7 +198,7 @@ export class UserService {
 			const relation = await this.friendshipService.getRelation(login, user.login);
 			return { ...user, relation }
 		}))
-		return [...leaderBoard];
+		return { data: [...leaderBoard] };
 	}
 
 	async searchUsers(login: string, search: string) {
@@ -214,7 +214,7 @@ export class UserService {
 			if (relation !== 'blocked')
 				usersList.push({ ...user, relation });
 		}))
-		return [...usersList];
+		return { data: [...usersList] };
 	}
 
 	async getOpponent(login: string) {
