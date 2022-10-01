@@ -45,7 +45,7 @@ export class FriendshipService {
 			if (friendInfo.status === 'Online')
 				friendList.push(friendInfo);
 		}))
-		return [...friendList];
+		return { data: [...friendList] };
 	}
 
 	async getFriends(login: string) {
@@ -61,7 +61,7 @@ export class FriendshipService {
 			const friendInfo: friendDto = await this.userService.getFriend(friendLogin);
 			return friendInfo;
 		}))
-		return [...friendList];
+		return { data: [...friendList] };
 	}
 
 	async getRequests(login: string) {
@@ -76,7 +76,7 @@ export class FriendshipService {
 			const requestInfo: friendDto = await this.userService.getFriend(friend.user);
 			return requestInfo;
 		}))
-		return [...requestsList];
+		return { data: [...requestsList] };
 	}
 
 	async getPending(login: string) {
@@ -91,7 +91,7 @@ export class FriendshipService {
 			const pendingInfo: friendDto = await this.userService.getFriend(friend.friend);
 			return pendingInfo;
 		}))
-		return [...pendingList];
+		return { data: [...pendingList] };
 	}
 
 	async getBlocked(login: string) {
@@ -106,7 +106,7 @@ export class FriendshipService {
 			const blockedInfo: friendDto = await this.userService.getFriend(friend.friend);
 			return blockedInfo;
 		}))
-		return [...blockedList];
+		return { data: [...blockedList] };
 	}
 
 	async addFriend(user: string, friend: string) {
@@ -161,7 +161,6 @@ export class FriendshipService {
 		friendship.friend = friend;
 		friendship.relation = userRelation.BLOCKED;
 		this.friendshipRepository.save(friendship);
-
 		this.chatService.blockUser(user, friend);
 	}
 
