@@ -40,7 +40,7 @@ export class ChatService {
 			.where(`(conversations.type = 'Public' OR conversations.type = 'Protected') AND LOWER(conversations.name) LIKE '%${search}%'`)
 			.getMany()
 		if (!convs.length)
-			return convs;
+			return { data: convs };
 		const convsList = [];
 		await Promise.all(convs.map(async (conv) => {
 			const exist = await this.memberRepository
@@ -50,7 +50,7 @@ export class ChatService {
 			else if (exist[0].status !== 'Banned' && exist[0].status !== 'Muted')
 				convsList.push({ convId: conv.id, Avatar: conv.avatar, title: conv.name, type: conv.type, member: true });
 		}))
-		return [...convsList];
+		return { data: [...convsList] };
 	}
 
 	async getRoomSockets(login: string, room: string) {
