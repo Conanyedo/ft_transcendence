@@ -37,6 +37,7 @@ export class GameService {
 
 	async updateStats(player: string, gameType: string, winner: boolean) {
 		const stats: statsDto = await this.userService.getStats(player);
+		console.log(' | winner: ', winner, ' | Playes: ', player, ' | Stats: ', stats);
 		stats.numGames++;
 		stats.gamesWon += (winner) ? 1 : 0;
 		if (gameType === 'Ranked')
@@ -68,6 +69,7 @@ export class GameService {
 		stats.rank = toBeUpdated.find((rank) => (rank.id === stats.id))?.rank;
 		if (stats.rank === 1 && !stats.achievement.includes(userAchievements.FIRSTPLACE) && winner)
 			stats.achievement.push(userAchievements.FIRSTPLACE);
+		console.log('New Stats: ', stats);
 		await this.userService.updateAchievements(stats.id, stats.achievement);
 	}
 
@@ -92,7 +94,7 @@ export class GameService {
 			.orderBy("games.date", "DESC")
 			.getMany();
 		if (!history.length)
-			return history;
+			return { data: history };
 		const matches = await Promise.all(history.map(async (match) => {
 			const opponentLogin: string = (match.playerOne === login) ? match.playerTwo : match.playerOne;
 			const opponent: opponentDto = await this.userService.getOpponent(opponentLogin);
@@ -106,6 +108,6 @@ export class GameService {
 			}
 			return result;
 		}))
-		return matches;
+		return { data: matches };
 	}
 }
