@@ -14,6 +14,13 @@ const ProfileInfo: React.FC = () => {
 	const router = useRouter();
 	const dispatch = useAppDispatch();
 	useEffect(() => {
+
+		// debugging the user info
+		console.log("user is", user);
+
+		fetch(user.avatar, {
+			credentials: 'same-origin'
+		}).then((res) => console.log("status is", res.status));
 		fetchDATA(setUser, router, 'user/info');
 		return () => {
 			setUser(EmtyUser);
@@ -51,7 +58,7 @@ const ProfileInfo: React.FC = () => {
 					<div className={classes.rank}>Rank: {user?.stats.rank}</div>
 					<div className={classes.tier}>
 						Tier: <span className={classes.gold} style={{
-							color:`${tier.color}`
+							color: `${tier.color}`
 						}}>{tier.rank}</span>
 					</div>
 				</div>

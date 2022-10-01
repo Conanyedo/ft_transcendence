@@ -1,6 +1,8 @@
 import React, { createContext, useState, useEffect, SetStateAction, useRef, useMemo } from "react";
 import { chatMsg, chatUser } from "@Types/dataTypes"
 import socket_notif from "config/socketNotif";
+import { getLastConvs } from "@utils/chat"
+import { getFriends } from "@hooks/useFetchData";
 
 interface ChatContextType {
   protectedChannel: boolean;  
@@ -20,6 +22,7 @@ interface ChatContextType {
   prevUser: number;
   setPrevUser: React.Dispatch<React.SetStateAction<number>>;
   initialusrData: any;
+  friends: any;
 }
 
 const ChatContext = createContext<ChatContextType | null>(null);
@@ -37,6 +40,8 @@ const ChatProvider = ({ children }: any) => {
 
   const [lastUsers, setLastUsers] = useState<Array<chatUser>>([]);
 
+  const [friends, setFriends] = useState([]);
+
   const [currentUser, setCurrentUser] = useState<chatUser>(lastUsers[0]);
   const [showCnv, setShowCnv] = useState<boolean>(false);
   const [initialusrData, setInitialUsrData] = useState<Array<chatUser>>([]);
@@ -46,16 +51,16 @@ const ChatProvider = ({ children }: any) => {
   const chatUsersRefs: Array<HTMLDivElement> | any = useRef([]);
   const [prevUser, setPrevUser] = useState<number>(0);
 
+  const [chatMsgs, setChatMsgs] = useState<any>([]);
+
   useEffect(() => {
 
     socket_notif.on("connect", () => {
 			console.log(socket_notif.id);
 		});
 
-    socket_notif.emit("getConversations", (response:any) => {
-      setLastUsers(response);
-      setInitialUsrData(response);
-    })
+    getLastConvs(setLastUsers, setInitialUsrData);
+    getFriends(() => null, setFriends);
 
     setCurrentUser(lastUsers[0]);
     return () => {
@@ -64,7 +69,7 @@ const ChatProvider = ({ children }: any) => {
   }, [])
 
   return (
-    <ChatContext.Provider value={{ protectedChannel, setProtectedChannel, channelMode, setChannelMode, lastUsers, setLastUsers, currentUser, setCurrentUser, showCnv, setShowCnv, messagesEndRef, chatUsersRefs, prevUser, setPrevUser, initialusrData }}>
+    <ChatContext.Provider value={{ protectedChannel, setProtectedChannel, channelMode, setChannelMode, lastUsers, setLastUsers, currentUser, setCurrentUser, showCnv, setShowCnv, messagesEndRef, chatUsersRefs, prevUser, setPrevUser, initialusrData, chatMsgs, setChatMsgs, friends }}>
       {children}
     </ChatContext.Provider>
   );

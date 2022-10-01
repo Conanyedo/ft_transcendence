@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { ChatContext, ChatContextType } from "@contexts/chatContext";
 import { chatUser } from "@Types/dataTypes";
 import Styles from "@styles/chat.module.css"
@@ -56,13 +56,14 @@ export function Option(props: { type: string }) {
     </>)
 }
 
-export function SuggestedUsr(props: { user: chatUser, userStatus: boolean, addUsrToChannel: any, removeUsrFromChannel: any, setUsrTags: any, setshowDropdown: any, usrTags: any, setValue: any }): JSX.Element {
+export function SuggestedUsr(props: { user: any, userStatus: boolean, addUsrToChannel: any, removeUsrFromChannel: any, setUsrTags: any, setshowDropdown: any, usrTags: any, setValue: any, inputRef: any, initialUsrState: any, setInitialUsrState: any }): JSX.Element {
+    
     return (<div className={Styles.sUsr}>
         <div>
             <div><Image src={Avatar} width={32} height={32} /></div>
-            <span>{props.user.firstName + " " + props.user.lastName}</span>
+            <span>{props.user.fullname}</span>
         </div>
-        <button onClick={props.userStatus ? () => props.addUsrToChannel(props.user, props.setUsrTags, props.setshowDropdown, props.usrTags, props.setValue) : () => props.removeUsrFromChannel()} className={props.userStatus ? Styles.btnAdd : Styles.btnRmv}>{props.userStatus ? "Add" : "Remove"}</button>
+        <button onClick={props.userStatus ? () => props.addUsrToChannel(props.user, props.setUsrTags, props.setshowDropdown, props.usrTags, props.setValue, props.inputRef, props.setInitialUsrState, props.initialUsrState) : () => props.removeUsrFromChannel()} className={props.userStatus ? Styles.btnAdd : Styles.btnRmv}>{props.userStatus ? "Add" : "Remove"}</button>
     </div>)
 }
 
@@ -76,11 +77,19 @@ export function UsrTag(props: { fullname: string, removeTag: any, id: number, us
     )
 }
 
-export function addUsrToChannel( user: chatUser, setUsrTags: any, setshowDrpdown: any, usrTags: any, setValue: any) {
-    let fullname = user.firstName + " " + user.lastName;
+export function addUsrToChannel( user: any, setUsrTags: any, setshowDrpdown: any, usrTags: any, setValue: any, inputRef: any, setInitialUsrState: any, initialUsrState: any) {
+
+    let fullname = user.fullname;
     setUsrTags([...usrTags, fullname]);
     setValue("member", "", false);
+    inputRef.current.focus();
     setshowDrpdown(false);
+
+    // filter out the value that was added
+    let tmp = initialUsrState.filter((item:any) => item?.fullname != user?.fullname);
+
+    console.log("---------------tmp--------------", tmp);
+    setInitialUsrState(tmp);
 }
 
 export function removeUsrFromChannel() {
@@ -90,16 +99,17 @@ export function removeUsrFromChannel() {
 export function filterUsers(value: string, setCloseUsrs:any, setshowDrpdown: any, initialUsrState: any, setUsrTags: any ) {
 
     let upvalue = value.toUpperCase();
-
     // Return to initial state 
     if (upvalue == "") {
-        setCloseUsrs(initialUsrState);
+        setCloseUsrs([]);
         setshowDrpdown(false);
         return;
     }
-
+    
     // Filter out results
-    let newUsrs = initialUsrState.filter((usr: any) => usr.firstName.toUpperCase().startsWith(upvalue) || usr.lastName.toUpperCase().startsWith(upvalue))
+    let newUsrs = initialUsrState.filter((usr: any) => usr.fullname.toUpperCase().includes(upvalue));
+
+    console.log("new usrs", newUsrs);
 
     setCloseUsrs(newUsrs);
     // Show the dropdown
