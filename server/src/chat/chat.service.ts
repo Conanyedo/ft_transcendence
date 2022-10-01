@@ -44,10 +44,10 @@ export class ChatService {
 		const convsList = [];
 		await Promise.all(convs.map(async (conv) => {
 			const exist = await this.memberRepository
-				.query(`select members.id, members."status" from members Join users ON members."userId" = users.id where members."conversationId" = '${conv.id}' AND users."login" = '${login}';`);
+				.query(`select members.id, members."status" from members Join users ON members."userId" = users.id where members."conversationId" = '${conv.id}' AND users."login" = '${login}' AND members."leftDate" is null;`);
 			if (!exist.length)
 				convsList.push({ convId: conv.id, Avatar: conv.avatar, title: conv.name, type: conv.type, member: false });
-			else if (exist[0].status !== 'Banned' && exist[0].status !== 'Muted')
+			else
 				convsList.push({ convId: conv.id, Avatar: conv.avatar, title: conv.name, type: conv.type, member: true });
 		}))
 		return { data: [...convsList] };
