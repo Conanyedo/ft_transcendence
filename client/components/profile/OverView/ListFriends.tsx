@@ -28,7 +28,7 @@ const Friend: React.FC<types> = (props) => {
 		await requests(props.login, "friendship/blockUser", Router);
 		props.refresh();
 	}
-	const goToChat = () => Router.push("/chat/" + props.login);
+	const goToChat = () => Router.push("/chat?login=" + props.login);
 	useOutsideAlerter(wrapperRef, setoptionTaggle);
 	const pathImage = getImageBySize(props.avatar, 70);
 	return (

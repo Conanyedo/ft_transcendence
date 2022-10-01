@@ -356,8 +356,8 @@ export const getFriends = async (set: any, setInitialState: any) => {
 		withCredentials: true,
 	})
 		.then((res) => {
-			console.log(res);
-			setInitialState(res.data);
+			console.log('get friend', res.data.data);
+			setInitialState(res.data.data);
 			return true;
 		})
 		.catch((err) => {

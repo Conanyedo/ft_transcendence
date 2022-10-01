@@ -33,7 +33,7 @@ const OptionOfFriend: React.FC<{
 	}
 	const unfriendhandler = () =>
 		requests(props.login, "friendship/unfriend", router);
-	const goToChat = () => router.push(`/chat/${props.login}`);
+	const goToChat = () => router.push(`/chat?login=${props.login}`);
 	return (
 		<div className={classes.optionBtnFriend}>
 			<span>User Profile</span>
