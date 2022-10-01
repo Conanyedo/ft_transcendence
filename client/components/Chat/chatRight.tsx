@@ -1,9 +1,8 @@
 import { MembersModal } from "@components/MembersModal";
 import { SettingsModal } from "@components/SettingsModal";
-import { fetchDATA, leaveChannel } from "@hooks/useFetchData";
+import { leaveChannel } from "@hooks/useFetchData";
 import Styles from "@styles/chat.module.css"
-import { chatUser } from "@Types/dataTypes";
-import { getLastConvs, scrollToBottom, sendInvite, setMsg, showProfile } from "@utils/chat";
+import { getLastConvs, getLastUsers, scrollToBottom, sendInvite, setConvStatus, setMsg, showProfile } from "@utils/chat";
 import socket_notif from "config/socketNotif";
 import { getCookie } from "cookies-next";
 import { useRouter } from "next/router";
@@ -18,47 +17,6 @@ import { GameIconAsset } from "@svg/index";
 import sendArrow from "@public/send-arrow.svg";
 import { Profile } from "./Profile";
 
-
-const NegParams = ["Muted", "Left", "Banned"];
-
-const getLastUsers = async (setLastUsers: any, login: any, setCurrentUser: any, setChatMsgs: any, messagesEndRef: any, router: any) => {
-
-    socket_notif.emit("getConversations", [], (response: any) => {
-
-        if (response != undefined)
-            setLastUsers(response);
-
-        // handling the route login received
-        if (login) {
-            // check first if login exists
-            let item: any = response.find((user: any) => user.login == login);
-
-            if (item != undefined) {
-                setCurrentUser(item);
-                // get messages 
-                socket_notif.emit("getMsgs", item?.convId, (response: any) => {
-                    setChatMsgs(response);
-                    // run on first render only
-                    scrollToBottom(messagesEndRef);
-                })
-
-            } else {
-                // if user doesnt exist start a new converation
-                fetchDATA(setCurrentUser, router, `chat/loginInfo/${login}`);
-                setChatMsgs([]);
-            }
-        }
-    })
-}
-
-const setConvStatus = (currentUser: any, setStopUsr: any) => {
-    if (NegParams.includes(currentUser?.relation)) {
-        setStopUsr(currentUser.relation.toLowerCase());
-    } else {
-        setStopUsr("");
-    }
-}
-
 export const ChatRight = (props: { setShowSetModal: any, login: number }) => {
 
     const { showCnv, setShowCnv, messagesEndRef, chatMsgs, setChatMsgs, setLastUsers, lastUsers } = useContext(ChatContext) as ChatContextType;
@@ -72,7 +30,6 @@ export const ChatRight = (props: { setShowSetModal: any, login: number }) => {
     const [showSetModal, setShowSetModal] = useState(false);
     const [membersMdl, showMembersMdl] = useState(false);
     const [currentUser, setCurrentUser] = useState<any>();
-    // const [lastUsers, setLastUsers] = useState([]);
     const [convId, setConvId] = useState<any>();
     const [stopUsr, setStopUsr] = useState("");
 
@@ -110,7 +67,6 @@ export const ChatRight = (props: { setShowSetModal: any, login: number }) => {
     useEffect(() => {
         // listening for new messages
         socket_notif.on("newMsg", (response) => {
-            console.log(response);
             setChatMsgs([...chatMsgs, response] as any);
             setEnteredMsg("");
             setConvStatus(currentUser, setStopUsr);
@@ -118,9 +74,6 @@ export const ChatRight = (props: { setShowSetModal: any, login: number }) => {
             getLastConvs(setLastUsers, () => null);
             scrollToBottom(messagesEndRef);
         })
-
-        console.log(chatMsgs);
-        console.log(currentUser);
 
         return () => {
             socket_notif.off('newMsg');
@@ -156,7 +109,7 @@ export const ChatRight = (props: { setShowSetModal: any, login: number }) => {
     }
 
     return (<div className={`${Styles.chatRight} ${showCnv ? Styles.displayChat : ""}`}>
-        <MembersModal showSetModal={membersMdl} setShowSetModal={showMembersMdl} />
+        <MembersModal showSetModal={membersMdl} setShowSetModal={showMembersMdl} convId={currentUser?.convId} />
         <SettingsModal showSetModal={showSetModal} setShowSetModal={setShowSetModal} />
         {currentUser && <div className={`${Styles.rightContent}`} >
             {currentUser && (<>

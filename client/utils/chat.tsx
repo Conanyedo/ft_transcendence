@@ -1,8 +1,7 @@
 import { chatUser } from "@Types/dataTypes";
-import Styles from "@styles/chat.module.css"
-import { InviteMsg } from "@components/Chat";
-
 import socket_notif from "config/socketNotif";
+import { fetchDATA } from "@hooks/useFetchData";
+import { InviteMsg } from "@components/Chat/inviteMsg";
 
 const statuses = ["Banned", "Left", "Muted"];
 
@@ -74,4 +73,43 @@ export function getLastConvs(setLastUsers: any, setInitialUsrData: any) {
         // do some logic here
         setInitialUsrData(response);
       })
+}
+
+export const getLastUsers = async (setLastUsers: any, login: any, setCurrentUser: any, setChatMsgs: any, messagesEndRef: any, router: any) => {
+
+    socket_notif.emit("getConversations", [], (response: any) => {
+
+        if (response != undefined)
+            setLastUsers(response);
+
+        // handling the route login received
+        if (login) {
+            // check first if login exists
+            let item: any = response.find((user: any) => user.login == login);
+
+            if (item != undefined) {
+                setCurrentUser(item);
+                // get messages 
+                socket_notif.emit("getMsgs", item?.convId, (response: any) => {
+                    setChatMsgs(response);
+                    // run on first render only
+                    scrollToBottom(messagesEndRef);
+                })
+
+            } else {
+                // if user doesnt exist start a new converation
+                fetchDATA(setCurrentUser, router, `chat/loginInfo/${login}`);
+                setChatMsgs([]);
+            }
+        }
+    })
+}
+
+export const setConvStatus = (currentUser: any, setStopUsr: any) => {
+
+    if (["Muted", "Left", "Banned"].includes(currentUser?.relation)) {
+        setStopUsr(currentUser.relation.toLowerCase());
+    } else {
+        setStopUsr("");
+    }
 }

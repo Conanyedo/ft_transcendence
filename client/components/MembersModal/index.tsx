@@ -4,9 +4,10 @@ import Image from "next/image"
 import Cross from "@public/Cross.svg"
 import { useFormik } from "formik"
 import { UsersModalInput } from "@components/Modal/index"
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import Avatar from "@public/profile.jpg"
 import { filterUsers, SuggestedUsr, addUsrToChannel, removeUsrFromChannel, } from "@components/Modal/utils"
+import { addMembers, getFriends } from "@hooks/useFetchData"
 
 const Input = (props: { title: string, handleChange: any, value: any, name: string }) => {
     return (<div className={`${Styles.inputContainer}`}>
@@ -15,15 +16,13 @@ const Input = (props: { title: string, handleChange: any, value: any, name: stri
     </div>)
 }
 
-const initialUsrState = [{ id: 0, imgSrc: Avatar, firstName: "Youness", lastName: "Santir", status: "Online" },
-{ id: 1, imgSrc: Avatar, firstName: "Youness", lastName: "Crew", status: "In Game" },
-{ id: 2, imgSrc: Avatar, firstName: "Ikram", lastName: "Kharbouch", status: "Offline" },]
+export const MembersModal = (props: { setShowSetModal: any, showSetModal: any, convId: any }) => {
 
-export const MembersModal = (props: { setShowSetModal: any, showSetModal: any }) => {
-
+    const [initialUsrState, setInitialUsrState] = useState([]);
     const [users, setUsers] = useState(initialUsrState);
     const [showDrpdown, setshowDrpdown] = useState(false);
     const [usrTags, setUsrTags] = useState<Array<string>>([]);
+    const [logins, setUsrLogins] = useState<Array<string>>([]);
 
     const inputRef= useRef("");
 
@@ -42,13 +41,18 @@ export const MembersModal = (props: { setShowSetModal: any, showSetModal: any })
 
     const handleOnChange = (event: any) => {
         let value = event.target.value;
-
         formik.setFieldValue("member", value);
-
         // Filter values here
         filterUsers(value, setUsers, setshowDrpdown, initialUsrState, setUsrTags);
-
     };
+
+    useEffect(() => {
+        // get list of friends on the first render
+        const setUsrs = async () => {
+            return await getFriends(setUsers, setInitialUsrState);
+        }
+        setUsrs();
+    }, []);
 
     const addMember = () => {
         props.setShowSetModal(false);
@@ -56,6 +60,10 @@ export const MembersModal = (props: { setShowSetModal: any, showSetModal: any })
 
         formik.setFieldValue("member", "");
         setUsrTags([]);
+        let logins = users.map((item: any) => item?.login);
+        const data = { convId: props.convId, members: logins};
+        // call the route to add the user here
+        addMembers(data);
     }
 
     return (<>
@@ -67,13 +75,11 @@ export const MembersModal = (props: { setShowSetModal: any, showSetModal: any })
                 </div>
                 <form className={Styles.form} onSubmit={formik.handleSubmit}>
 
-                    {/* <Input title="Select Members" name="members" handleChange={formik.handleChange} value={formik.values.members} /> */}
-
                     <UsersModalInput UsersArray={usrTags} setUsersArray={setUsrTags} removeUser={removeUser} handleChange={handleOnChange} value={formik.values.member} inputRef={inputRef} />
                     {showDrpdown && <div className={Styles.dropMembers}>
-                        {users.map((usr, i) => <SuggestedUsr key={i} user={usr} userStatus={true} addUsrToChannel={addUsrToChannel} removeUsrFromChannel={removeUsrFromChannel} setUsrTags={setUsrTags} setshowDropdown={setshowDrpdown} usrTags={usrTags} setValue={formik.setFieldValue} inputRef={inputRef} />)}
+                        {users.map((usr, i) => <SuggestedUsr key={i} user={usr} userStatus={true} addUsrToChannel={addUsrToChannel} removeUsrFromChannel={removeUsrFromChannel} setUsrTags={setUsrTags} setshowDropdown={setshowDrpdown} usrTags={usrTags} setValue={formik.setFieldValue} inputRef={inputRef} initialUsrState={initialUsrState} setInitialUsrState={setInitialUsrState} />)}
                     </div>}
-                    <button type="button" onClick={addMember}>Create</button>
+                    <button type="button" onClick={addMember}>Add</button>
                 </form>
             </motion.div></>}
 

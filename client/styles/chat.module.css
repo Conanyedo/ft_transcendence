@@ -593,7 +593,7 @@
 }
 
 .dropMembers {
-    width: 100%;
+    width: 32.6rem;
     background-color: #3A3A3C;
     margin-top: 8px;
     border-radius: 5px;
@@ -611,7 +611,7 @@
     align-items: center;
     padding: 14px 10px;
     align-items: center;
-    
+    max-width: 100%;
 }
 
 .sUsr>div {
@@ -687,8 +687,7 @@
 .usrsInpt>input {
     background-color: inherit;
     color: #fff;
-    max-width: fit-content;
-    min-width: fit-content;
+    width: 100%;
 }
 
 .usrsInpt>input:focus, .modalbox>div>input:focus {
@@ -918,3 +917,4 @@
 .error {
     color: #EF4664;
 }
+

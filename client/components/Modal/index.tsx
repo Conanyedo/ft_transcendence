@@ -51,20 +51,12 @@ export function ModalForm(props: { createChannel: any }) {
     });
 
     useEffect(() => {
-
-        console.log("it keeps re rendering");
         // get list of friends on the first render
         const setUsrs = async () => {
             return await getFriends(setCloseUsrs, setInitialUsrState);
         }
         setUsrs();
     }, []);
-
-    // useEffect(() => {
-    //     console.log("close usrs", closeUsrs);
-    //     if (closeUsrs.length !== 0)
-    //         setshowDrpdown(true);
-    // }, [closeUsrs]);
 
     const onSubmit = (values: chatFormValues) => {
         alert(JSON.stringify(values, null, 2));

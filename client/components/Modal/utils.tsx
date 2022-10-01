@@ -105,7 +105,7 @@ export function filterUsers(value: string, setCloseUsrs:any, setshowDrpdown: any
         setshowDrpdown(false);
         return;
     }
-
+    
     // Filter out results
     let newUsrs = initialUsrState.filter((usr: any) => usr.fullname.toUpperCase().includes(upvalue));
 
