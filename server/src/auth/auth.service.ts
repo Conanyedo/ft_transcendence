@@ -71,7 +71,7 @@ export class AuthService {
 		const isAuthorized = await this.userService.getIsAuthenticated(user.id);
 		if (!isAuthorized)
 			throw new UnauthorizedException('Unauthorized');
-		return isAuthorized;
+		return { data: isAuthorized };
 	}
 	// ---------------------
 
@@ -81,7 +81,7 @@ export class AuthService {
 		this.userService.set2faSecret(user.id, secret);
 		const otpAuthUrl = authenticator.keyuri(user.login, 'Transcendence', secret);
 		const qrCode = await toDataURL(otpAuthUrl);
-		return qrCode;
+		return { data: qrCode };
 	}
 
 	set2faEnabled(user: userParitalDto, status: boolean) {
@@ -94,12 +94,13 @@ export class AuthService {
 		const secret = await this.userService.getSecret(user.id);
 		const isValid = authenticator.verify({ token: code, secret: secret });
 		if (!isValid)
-			throw new UnauthorizedException('Wrong authentication code');
-		return true;
+			return { err: 'Wrong authentication code' };
+		return { data: true };
 	}
 	// ---------------------
 
 	async is2faEnabled(user: userParitalDto) {
-		return await this.userService.get2faEnabled(user.id);
+		const is2faEnabled: boolean = await this.userService.get2faEnabled(user.id);
+		return { data: is2faEnabled };
 	}
 }

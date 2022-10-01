@@ -173,13 +173,14 @@ export class ChatService {
 		return conv;
 	}
 
-	async storeMsg(msg: string, sender: string, convId: Conversation) {
+	async storeMsg(msg: string, sender: string, invitation: string, convId: Conversation) {
 		let msgs: Message = new Message();
 		msgs.msg = msg;
 		msgs.sender = sender;
+		msgs.invitation = invitation;
 		msgs.conversation = convId;
 		msgs = await this.messageRepository.save(msgs);
-		return msgs.createDate;
+		return msgs;
 	}
 
 	async getMessages(login: string, id: string, convId: string) {
@@ -190,35 +191,43 @@ export class ChatService {
 		const joinDate: string = new Date(dates[0].joinDate).toISOString();
 		const leftDate: string = (!dates[0].leftDate) ? new Date().toISOString() : new Date(dates[0].leftDate).toISOString();
 		const msgs: Message[] = await this.messageRepository
-			.query(`SELECT messages."sender", messages."msg", messages."createDate", messages."conversationId" as "convId" FROM messages where messages."conversationId" = '${convId}' AND messages."createDate" >= '${joinDate}' AND messages."createDate" <= '${leftDate}' order by messages."createDate" ASC;`);
+			.query(`SELECT messages."sender", messages."msg", messages."createDate", messages."conversationId" as "convId", messages."invitation", messages."status" FROM messages where messages."conversationId" = '${convId}' AND messages."createDate" >= '${joinDate}' AND messages."createDate" <= '${leftDate}' order by messages."createDate" ASC;`);
 		if (!msgs.length)
 			return null;
+		const conv: Conversation = await this.getConvById(convId);
 		const newMsgs: Message[] = [];
 		await Promise.all(msgs.map(async (msg) => {
-			const relation = await this.friendshipService.getRelation(login, msg.sender);
-			if (relation !== 'blocked')
+			if (conv.type === convType.DM)
 				newMsgs.push(msg);
+			else {
+				const relation = await this.friendshipService.getRelation(login, msg.sender);
+				if (relation !== 'blocked')
+					newMsgs.push(msg);
+			}
 		}))
 		return [...newMsgs];
 	}
 
 	async createNewDm(client: Socket, data: createMsgDto) {
+		const exist = await this.memberRepository
+			.query(`select conversations.id, count(*) from members join users on members."userId" = users.id join conversations on members."conversationId" = conversations.id where (users.login = '${client.data.login}' or users.login = '${data.receiver}') and conversations.type = 'Dm' group by conversations.id having count(*) = 2;`);
+		if (exist.length) {
+			data.convId = exist[0].id;
+			return await this.createNewMessage(client.data.login, data);
+		}
 		const newConv: createConvDto = { type: convType.DM };
 		const newMembers: createMemberDto[] = [
 			{ status: memberStatus.MEMBER, login: client.data.login },
 			{ status: memberStatus.MEMBER, login: data.receiver }
 		];
 		const conv: Conversation = await this.createConv(newConv, newMembers);
-		const date = await this.storeMsg(data.msg, client.data.login, conv);
+		const newMsg: Message = await this.storeMsg(data.msg, client.data.login, data.invitation, conv);
 		client.join(conv.id);
 		const sockets = await this.chatGateway.server.fetchSockets();
 		const friendSocket = sockets.find((socket) => (socket.data.login === data.receiver))
-		if (friendSocket) {
-			console.log('client data: ', client.data);
-			console.log('friend: ', friendSocket.data);
+		if (friendSocket)
 			friendSocket.join(conv.id);
-		}
-		const msg: msgDto = { msg: data.msg, sender: client.data.login, date: date, convId: conv.id };
+		const msg: msgDto = { msg: data.msg, sender: client.data.login, invitation: newMsg.invitation, status: newMsg.status, date: newMsg.createDate, convId: conv.id };
 		return msg;
 	}
 
@@ -229,9 +238,9 @@ export class ChatService {
 		const status = exist[0].status;
 		if (status === 'Muted' || status === 'Left' || status === 'Banned' || status === 'Blocker')
 			return status;
-		const date = await this.storeMsg(data.msg, login, conv);
-		this.updateConvDate(conv.id, date);
-		const msg: msgDto = { msg: data.msg, sender: login, date: date, convId: conv.id };
+		const newMsg: Message = await this.storeMsg(data.msg, login, data.invitation, conv);
+		this.updateConvDate(conv.id, newMsg.createDate);
+		const msg: msgDto = { msg: data.msg, sender: login, invitation: newMsg.invitation, status: newMsg.status, date: newMsg.createDate, convId: conv.id };
 		return msg;
 	}
 
