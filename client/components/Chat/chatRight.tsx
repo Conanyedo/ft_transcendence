@@ -16,6 +16,7 @@ import { MenuDropdown } from "./MenuDropdown";
 import { GameIconAsset } from "@svg/index";
 import sendArrow from "@public/send-arrow.svg";
 import { Profile } from "./Profile";
+import { getImageBySize } from "@hooks/Functions";
 
 export const ChatRight = (props: { setShowSetModal: any, login: number }) => {
 
@@ -122,11 +123,11 @@ export const ChatRight = (props: { setShowSetModal: any, login: number }) => {
                             <Image src={arrowBack} width={16} height={16} onClick={unshowCnv} />
                         </div>
 
-                        {profile && <div onClick={() => setShowprofile(false)}><BackArrow /></div>}
+                        {profile && <div className={Styles.backArrowProfile} onClick={() => setShowprofile(false)}><BackArrow /></div>}
 
                         <div onClick={currentUser?.membersNum ? () => showProfile(profile, setShowprofile) : () => goToUserProfile(currentUser?.login)} className={Styles.flex}>
                             <div className={Styles.avatarProps}>
-                                <img src={currentUser?.avatar} />
+                                <img src={getImageBySize(currentUser?.avatar, 70)} />
                             </div>
                             <div>
                                 <h1 className={Styles.chatUsername}>{currentUser?.name ? currentUser.name : currentUser?.fullname}</h1>

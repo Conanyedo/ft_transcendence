@@ -3,64 +3,62 @@ import { motion } from "framer-motion"
 import Image from "next/image"
 import Cross from "@public/Cross.svg"
 import { useFormik } from "formik"
-import { ModalForm, UsersModalInput } from "@components/Modal"
-import { EmtyUser, UserTypeNew } from "@Types/dataTypes";
 import classes from "@styles/EditProfile.module.css";
 import { useState, useRef, useEffect, useContext } from "react"
 import UploadIcon from "@public/FriendIcons/UploadIcon.svg";
-import { updateUserInfo } from "../../customHooks/useFetchData";
-import { Toggle } from "@store/UI-Slice";
+import { getFriends, updateChnlInfo, updateUserInfo } from "../../customHooks/useFetchData";
 import { useAppDispatch } from "@store/hooks";
 import { getCookie } from "cookies-next";
 import { useRouter } from "next/router"
 import { ChatContext, ChatContextType } from "@contexts/chatContext"
-import { removeTag, SuggestedUsr, addUsrToChannel, removeUsrFromChannel, filterUsers } from "@components/Modal/utils"
 import { Option } from "@components/Modal/utils"
+import { getImageBySize } from "@hooks/Functions"
 
-function errorHandler(formData: any) {
-    console.log(formData);
+function errorHandler(values: any, data: any) {
+    console.log("cName is", values.cName.length);
+    return (values.cName.length == 0 || data.oldPath == "" || !data.avatar)
 }
 
-function updateChannel(values: any, usrTags: Array<string>, setUsrTags: any, setErrorMsg: any, data: any) {
-    let formData = {...values , ...data};
-    console.log(data);
-    errorHandler(formData);
+function updateChannel(values: any, data: any, currUser: any, router: any, setshowModal: any, setErrorMsg: any) {
+
+    if (!errorHandler(values, data)) {
+        const formData = new FormData();
+        formData.append('convId', currUser.convId);
+        formData.append('name', values.cName);
+        formData.append('type', values.type);
+        formData.append('password', values.password);
+        formData.append('avatar', data.avatar);
+        formData.append('oldPath', data.oldPath);
+        updateChnlInfo(formData, router, values.cName);
+        setshowModal(false);
+    } else {
+        setErrorMsg("Please provide the necessary input values.");
+    }
+    
 }
 
-const Form = ({data}: any) => {
+const Form = ({ data, currUser, setShowSetModal }: any) => {
     const { protectedChannel, channelMode } = useContext(ChatContext) as ChatContextType;
-    const [showDrpdown, setshowDrpdown] = useState(false);
-    const [usrTags, setUsrTags] = useState<Array<string>>([]);
-    const [friends, setFriends] = useState([]);
-    const [closeUsrs, setCloseUsrs] = useState(friends);
-    const [initialUsrState, setInitialUsrState] = useState([]);
 
     // Set the form validation using Yup && formik
     const formik = useFormik({
         initialValues: {
             cName: "",
+            type: channelMode,
             password: "",
-            member: ""
         },
         onSubmit: values => {
             console.log(values);
         },
     });
 
-    const inputRef = useRef("");
+    const router = useRouter();
+
+    useEffect(() => {
+        formik.setFieldValue("type", channelMode);
+    }, [channelMode])
 
     const [errorMsg, setErrorMsg] = useState("");
-
-    const handleOnChange = (event: any) => {
-        let value = event.target.value;
-
-        formik.setFieldValue("member", value);
-        console.log(formik.values.member);
-
-        // Filter values here
-        filterUsers(value, setCloseUsrs, setshowDrpdown, initialUsrState, setUsrTags);
-    };
-
     return (<>
         {errorMsg !== "" && <span className={Styles.error}>{errorMsg}</span>}
         <form className={Styles.form} onSubmit={formik.handleSubmit}>
@@ -81,16 +79,8 @@ const Form = ({data}: any) => {
             {(protectedChannel && channelMode === "Protected") && <div className={Styles.inputContainer}>
                 <span>Password</span>
                 <input name="password" type="password" className={Styles.usrsInpt} onChange={formik.handleChange} value={formik.values.password} />
-                {/* <ErrorMessage name="password" render={() => renderError("Passwords should contain between 8 & 15 characters.")} /> */}
             </div>}
-            <div className={Styles.inputContainer + " " + Styles.mTop}>
-                <span>Add Members</span>
-                <UsersModalInput UsersArray={usrTags} setUsersArray={setUsrTags} removeUser={removeTag} handleChange={handleOnChange} value={formik.values.member} inputRef={inputRef} />
-                {showDrpdown && <div className={Styles.dropMembers}>
-                    {closeUsrs.map((usr, i) => <SuggestedUsr key={i} user={usr} userStatus={true} addUsrToChannel={addUsrToChannel} removeUsrFromChannel={removeUsrFromChannel} setUsrTags={setUsrTags} setshowDropdown={setshowDrpdown} usrTags={usrTags} setValue={formik.setFieldValue} inputRef={inputRef} initialUsrState={initialUsrState} setInitialUsrState={setInitialUsrState} />)}
-                </div>}
-            </div>
-            <button type="button" onClick={(e) => updateChannel(formik.values, usrTags, setUsrTags, setErrorMsg, data)}>Update</button>
+            <button type="button" onClick={(e) => updateChannel(formik.values, data, currUser, router, setShowSetModal, setErrorMsg)}>Update</button>
         </form></>)
 }
 
@@ -105,13 +95,12 @@ const ImageUploader = (props: { setImgSrc: any, ImageRef: any, avatar: any, setA
     const toggleHandler = async (e: any) => {
         var file = e.target.files[0];
         var reader = new FileReader();
+        props.setImgSrc(file);
+        reader.readAsDataURL(file);
         reader.onload = function () {
             props.ImageRef.current.src = reader.result;
             props.setAvatar(reader.result);
-            props.setImgSrc(reader.result)
         };
-
-        reader.readAsDataURL(file);
     };
 
     return (<div className={classes.avatar}>
@@ -136,24 +125,19 @@ export const SettingsModal = (props: { setShowSetModal: any, showSetModal: any, 
     const [avatar, setAvatar] = useState<any>();
     const [updateData, setUpdateData] = useState({});
 
-    const formik = useFormik({
-        initialValues: {
-            cName: "",
-            roles: [],
-        },
-        onSubmit: values => {
-            console.log(values);
-        },
-    });
-
     // setting image ref here
     const ImageRef = useRef<any>(null);
 
     useEffect(() => {
         console.log("previous old path is", oldPath);
         console.log("imgsrc is", imgSrc);
-        setAvatar(props.data?.avatar);
-        setOldPath(props.data?.avatar);
+        setAvatar(getImageBySize(props.data?.avatar, 70));
+        setOldPath(getImageBySize(props.data?.avatar, 70));
+
+        console.log(avatar);
+
+
+        console.log("channel data", props.data)
 
         // the data should be as follows {name, type, password, avatar, oldPath}
         setUpdateData({ avatar: imgSrc, oldPath: oldPath });
@@ -169,11 +153,7 @@ export const SettingsModal = (props: { setShowSetModal: any, showSetModal: any, 
                 <div className={Styles.flexCenter}>
                     <ImageUploader setImgSrc={setImgSrc} ImageRef={ImageRef} avatar={avatar} setAvatar={setAvatar} />
                 </div>
-                <Form data={updateData} />
+                <Form data={updateData} currUser={props.data} setShowSetModal={props.setShowSetModal} />
             </motion.div>)} </>
     </>)
-}
-
-function dispatch(arg0: { payload: undefined; type: string }) {
-    throw new Error("Function not implemented.")
 }
