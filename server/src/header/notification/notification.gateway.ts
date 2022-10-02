@@ -28,6 +28,7 @@ export class NotificationGateway {
 	async sendRequest(@User('login') login: string, @MessageBody() friend: string) {
 		const notif = await this.notifService.saveNofit({ from: login, to: friend, type: notifType.INVITATION });
 		await this.notifService.sendNotif(notif, friend);
+		return true;
 	}
 
 	@UseGuards(WsJwtGuard)
