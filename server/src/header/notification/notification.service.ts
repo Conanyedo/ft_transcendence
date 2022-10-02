@@ -24,7 +24,7 @@ export class NotificationService {
 		const notif: Notification = await this.notifRepository
 			.createQueryBuilder('notifications')
 			.select(['notifications.id'])
-			.where(`notifications.form = '${from}' AND notifications.to = '${to}'`)
+			.where(`notifications.from = '${from}' AND notifications.to = '${to}'`)
 			.getOne();
 		return notif;
 	}
@@ -32,7 +32,7 @@ export class NotificationService {
 	async getNotifs(login: string) {
 		const notifs: Notification[] = await this.notifRepository
 			.createQueryBuilder('notifications')
-			.select(['notifications.from', 'notifications.status', 'notifications.gameId', 'notifications.msg'])
+			.select(['notifications.from', 'notifications.status', 'notifications.gameId', 'notifications.type'])
 			.where('notifications.to = :login', { login: login })
 			.getMany()
 		if (!notifs.length)
@@ -68,8 +68,8 @@ export class NotificationService {
 		const client = sockets.find((socket) => (socket.data.login === friend));
 		if (!client)
 			return;
-		const notifs: Notification[] = [];
-		notifs.push(notif);
-		this.notifGateway.server.to(client.id).emit('Notif', { data: [...notifs] });
+		const userInfo: opponentDto = await this.userService.getOpponent(notif.from);
+		const newNotif = { fullname: userInfo.fullname, avatar: userInfo.avatar, login: notif.from, type: notif.type, status: notif.status, gameId: notif.gameId }
+		this.notifGateway.server.to(client.id).emit('Notif', { data: [newNotif] });
 	}
 }
