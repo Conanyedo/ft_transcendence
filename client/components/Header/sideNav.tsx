@@ -58,25 +58,6 @@ const ItemsNav: React.FC<N_ITEMS> = (props) => {
 	);
 };
 
-function useOutside(ref: any, setToggle: (t: boolean) => void) {
-	useEffect(() => {
-		let width = 0;
-		window.addEventListener("click", () => {
-			width = window.innerWidth;
-		});
-		function handleClickOutside(event: any) {
-			if (ref.current && !ref.current.contains(event.target))
-				if (width < 600 && width !== 0) {
-					setToggle(false);
-				}
-		}
-		document.addEventListener("mousedown", handleClickOutside);
-		return () => {
-			document.removeEventListener("mousedown", handleClickOutside);
-		};
-	}, [ref]);
-}
-
 const SideNav: React.FC<{
 	onNav: (page: string) => void;
 	currentPos: string;
