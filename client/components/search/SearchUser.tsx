@@ -90,21 +90,18 @@ const User: React.FC<types> = (props) => {
 	);
 };
 
-const SearchUserList: React.FC<{value: string}> = (props) => {
+const SearchUserList: React.FC<{ value: string }> = (props) => {
 	const router = useRouter();
 	const [searchData, setSearchData] = useState<UserTypeNew[]>([]);
 	const refresh = () =>
-		fetchDATA(
-			setSearchData,
-			router,
-			`search/users/?search=${props.value}`
-		);
+		fetchDATA(setSearchData, router, `search/users/?search=${props.value}`);
 	useEffect(() => {
-		fetchDATA(
-			setSearchData,
-			router,
-			`search/users/?search=${props.value}`
-		);
+		if (props.value)
+			fetchDATA(
+				setSearchData,
+				router,
+				`search/users/?search=${props.value}`
+			);
 		return () => {
 			setSearchData([]);
 		};
@@ -123,8 +120,11 @@ const SearchUserList: React.FC<{value: string}> = (props) => {
 								/>
 							);
 					})}
-					{!searchData.length && <div className={classes.userNotFound}>couldn't find anyone with '{props.value}'</div>}
-					
+				{!searchData.length && (
+					<div className={classes.userNotFound}>
+						couldn't find anyone with '{props.value}'
+					</div>
+				)}
 			</motion.div>
 		</>
 	);
