@@ -42,16 +42,23 @@ export class GameService {
 		stats.gamesWon += (winner) ? 1 : 0;
 		if (gameType === 'Ranked')
 			stats.GP += (winner) ? 50 : (stats.GP >= 25) ? -25 : 0;
-		stats.XP += (1000) / (Math.floor(stats.XP / 1000) ^ 2);
+		const matches = Math.round( 0.04 * ((stats.XP / 1000) ^ 3) + 0.8 * ((stats.XP / 1000) ^ 2) + 2 * (stats.XP / 1000));
+		stats.XP += (1000) / matches;
+		stats.XP = Math.round(stats.XP);
 		await this.userService.updateStats(stats);
 		const rankList: rankDto[] = await this.userService.getRank();
-		const toBeUpdated: rankDto[] = rankList.filter((rank, index) => {
-			if (rank.rank !== index + 1) {
-				rank.rank = index + 1;
-				return rank;
+		const toBeUpdated: rankDto[] = [];
+		rankList.forEach((player, index) => {
+			if (player.rank !== index + 1) {
+				player.rank = index + 1;
+				toBeUpdated.push(player);
 			}
 		});
-		toBeUpdated.forEach((rank) => (this.userService.updateRank(rank.id, rank.rank)))
+		toBeUpdated.forEach((rank) => {
+			if (rank.id === stats.id)
+				stats.rank = rank.rank;
+			this.userService.updateRank(rank.id, rank.rank)
+		})
 
 		if (!stats.achievement.includes(userAchievements.FIRSTWIN) && winner && (gameType === 'Ranked'))
 			stats.achievement.push(userAchievements.FIRSTWIN);
@@ -66,13 +73,11 @@ export class GameService {
 			stats.achievement.push(userAchievements.LEVEL5);
 		if (stats.GP >= 1600 && !stats.achievement.includes(userAchievements.GOLDTIER) && winner)
 			stats.achievement.push(userAchievements.GOLDTIER);
-		if (toBeUpdated.length)
-			stats.rank = toBeUpdated.find((rank) => (rank.id === stats.id))?.rank;
 		if (stats.rank === 1 && !stats.achievement.includes(userAchievements.FIRSTPLACE) && winner)
 			stats.achievement.push(userAchievements.FIRSTPLACE);
 		await this.userService.updateAchievements(stats.id, stats.achievement);
 		const newStats: Stats = await this.userService.getStats(player);
-		console.log('New Stats: ', stats);
+		console.log('New Stats: ', newStats);
 	}
 
 	async insertMatches(gameResult: gameDto) {

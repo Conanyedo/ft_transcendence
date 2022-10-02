@@ -1,6 +1,9 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ChatService } from 'src/chat/chat.service';
+import { notifStatus, notifType } from 'src/header/notification/notification.entity';
+import { NotificationGateway } from 'src/header/notification/notification.gateway';
+import { NotificationService } from 'src/header/notification/notification.service';
 import { UserService } from 'src/user/user.service';
 import { Repository } from 'typeorm';
 import { friendDto } from './friendship.dto';
@@ -14,7 +17,9 @@ export class FriendshipService {
 		@Inject(forwardRef(() => UserService))
 		private readonly userService: UserService,
 		@Inject(forwardRef(() => ChatService))
-		private readonly chatService: ChatService
+		private readonly chatService: ChatService,
+		@Inject(forwardRef(() => NotificationService))
+		private readonly notifService: NotificationService
 	) { }
 
 	async getRelation(user: string, friend: string) {
@@ -110,11 +115,18 @@ export class FriendshipService {
 	}
 
 	async addFriend(user: string, friend: string) {
+		const exist: Friendship = await this.friendshipRepository
+			.createQueryBuilder('friendships')
+			.where(`((friendships.user = '${user}' AND friendships.friend = '${friend}') OR (friendships.user = '${friend}' AND friendships.friend = '${user}')) AND friendships.relation = '${userRelation.FRIEND}'`)
+			.getOne();
+		if (exist)
+			return { err: 'Friendship already exist' };
 		const friendship: Friendship = new Friendship();
 		friendship.user = user;
 		friendship.friend = friend;
 		friendship.relation = userRelation.REQUESTED;
-		this.friendshipRepository.save(friendship);
+		await this.friendshipRepository.save(friendship);
+		return { data: true };
 	}
 
 	async unfriend(user: string, friend: string) {
@@ -131,6 +143,7 @@ export class FriendshipService {
 			.update({ relation: userRelation.FRIEND })
 			.where('friendships.user = :friend AND friendships.friend = :user AND friendships.relation = :relation', { user: user, friend: friend, relation: userRelation.REQUESTED })
 			.execute();
+		await this.notifService.updateNotif(friend, user, notifType.INVITATION, notifStatus.ACCEPTED);
 	}
 
 	async refuseRequest(user: string, friend: string) {
@@ -139,6 +152,7 @@ export class FriendshipService {
 			.delete()
 			.where('friendships.user = :friend AND friendships.friend = :user AND friendships.relation = :relation', { user: user, friend: friend, relation: userRelation.REQUESTED })
 			.execute();
+		await this.notifService.updateNotif(friend, user, notifType.INVITATION, notifStatus.REFUSED);
 	}
 
 	async cancelRequest(user: string, friend: string) {
@@ -160,8 +174,8 @@ export class FriendshipService {
 		friendship.user = user;
 		friendship.friend = friend;
 		friendship.relation = userRelation.BLOCKED;
-		this.friendshipRepository.save(friendship);
-		this.chatService.blockUser(user, friend);
+		await this.friendshipRepository.save(friendship);
+		await this.chatService.blockUser(user, friend);
 	}
 
 	async unblock(user: string, friend: string) {
@@ -170,6 +184,6 @@ export class FriendshipService {
 			.delete()
 			.where('friendships.user = :user AND friendships.friend = :friend AND friendships.relation = :relation', { user: user, friend: friend, relation: userRelation.BLOCKED })
 			.execute();
-		this.chatService.unBlockUser(user, friend);
+		await this.chatService.unBlockUser(user, friend);
 	}
 }

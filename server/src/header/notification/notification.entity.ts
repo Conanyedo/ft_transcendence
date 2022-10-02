@@ -1,8 +1,14 @@
 import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm";
 
-export enum notifMsg {
+export enum notifType {
 	INVITATION = 'Request',
 	GAME = 'Game',
+}
+
+export enum notifStatus {
+	SENT = "Sent",
+	ACCEPTED = "Accepted",
+	REFUSED = "Refused",
 }
 
 @Entity({ name: 'notifications' })
@@ -16,9 +22,12 @@ export class Notification {
 	@Column()
 	to: string;
 
-	@Column({ default: false })
-	read: boolean;
+	@Column({ type: 'enum', enum: notifStatus, default: notifStatus.SENT })
+	status: notifStatus;
 
-	@Column({ type: 'enum', enum: notifMsg })
-	msg: notifMsg;
+	@Column({ default: null })
+	gameId: string;
+
+	@Column({ type: 'enum', enum: notifType })
+	type: notifType;
 }

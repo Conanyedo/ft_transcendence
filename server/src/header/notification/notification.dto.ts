@@ -1,5 +1,5 @@
 import { IsBoolean, IsEmail, IsNotEmpty, IsString } from "class-validator";
-import { notifMsg } from "./notification.entity";
+import { notifStatus, notifType } from "./notification.entity";
 
 export class notificationCreateDto {
 
@@ -10,10 +10,10 @@ export class notificationCreateDto {
 	to: string;
 
 	@IsNotEmpty()
-	read: boolean;
+	gameId?: string;
 
 	@IsNotEmpty()
-	msg: notifMsg;
+	type: notifType;
 }
 
 export class notificationDto {
@@ -22,8 +22,17 @@ export class notificationDto {
 	login: string;
 
 	@IsNotEmpty()
-	read: boolean;
+	fullname: string;
 
 	@IsNotEmpty()
-	msg: notifMsg;
+	avatar: string;
+
+	@IsNotEmpty()
+	status: notifStatus;
+
+	@IsNotEmpty()
+	gameId: string;
+
+	@IsNotEmpty()
+	type: notifType;
 }
