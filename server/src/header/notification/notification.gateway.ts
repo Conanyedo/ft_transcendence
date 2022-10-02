@@ -1,8 +1,8 @@
-import { UseGuards } from "@nestjs/common";
+import { forwardRef, Inject, UseGuards } from "@nestjs/common";
 import { ConnectedSocket, MessageBody, OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, SubscribeMessage, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
 import { Server, Socket } from 'socket.io'
 import { NotificationService } from "./notification.service";
-import { notifMsg } from './notification.entity';
+import { notifType } from './notification.entity';
 import { User } from "src/user/user.decorator";
 import { WsJwtGuard } from "src/2fa-jwt/jwt/jwt-ws.guard";
 import { UserService } from "src/user/user.service";
@@ -16,6 +16,7 @@ import { notificationDto } from "./notification.dto";
 export class NotificationGateway {
 
 	constructor(
+		@Inject(forwardRef(() => NotificationService))
 		private notifService: NotificationService
 	) { }
 
@@ -23,24 +24,24 @@ export class NotificationGateway {
 	server: Server;
 
 	@UseGuards(WsJwtGuard)
-	@SubscribeMessage('addFriend')
-	async sendNotif(@User('login') login: string, @MessageBody() friend: string) {
-		await this.notifService.saveNofit({ from: login, to: friend, read: false, msg: notifMsg.INVITATION });
-		await this.notifService.sendNotif(this.server, friend);
+	@SubscribeMessage('sendRequest')
+	async sendRequest(@User('login') login: string, @MessageBody() friend: string) {
+		const notif = await this.notifService.saveNofit({ from: login, to: friend, type: notifType.INVITATION });
+		await this.notifService.sendNotif(notif, friend);
+	}
+
+	@UseGuards(WsJwtGuard)
+	@SubscribeMessage('sendGame')
+	async sendGame(@User('login') login: string, @MessageBody('player') player: string, @MessageBody('gameId') gameId: string) {
+		const notif = await this.notifService.saveNofit({ from: login, to: player, gameId: gameId, type: notifType.GAME });
+		await this.notifService.sendNotif(notif, player);
 	}
 
 	@UseGuards(WsJwtGuard)
 	@SubscribeMessage('getNotif')
 	async getNotifs(@User('login') login: string, @ConnectedSocket() client: Socket) {
 		const notifs: notificationDto[] = await this.notifService.getNotifs(login);
-		this.server.to(client.id).emit('Notif', notifs);
+		this.server.to(client.id).emit('Notif', { data: notifs });
 	}
 
-	@UseGuards(WsJwtGuard)
-	@SubscribeMessage('allRead')
-	async setRead(@User('login') login: string, @ConnectedSocket() client: Socket) {
-		await this.notifService.setRead(login);
-		const notifs: notificationDto[] = await this.notifService.getNotifs(login);
-		this.server.to(client.id).emit('Notif', notifs);
-	}
 }
