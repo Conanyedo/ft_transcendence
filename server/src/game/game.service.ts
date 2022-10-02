@@ -42,7 +42,8 @@ export class GameService {
 		stats.gamesWon += (winner) ? 1 : 0;
 		if (gameType === 'Ranked')
 			stats.GP += (winner) ? 50 : (stats.GP >= 25) ? -25 : 0;
-		stats.XP += (1000) / (Math.floor(stats.XP / 1000) ^ 2);
+		const matches = Math.round( 0.04 * ((stats.XP / 1000) ^ 3) + 0.8 * ((stats.XP / 1000) ^ 2) + 2 * (stats.XP / 1000));
+		stats.XP += (1000) / matches;
 		stats.XP = Math.round(stats.XP);
 		await this.userService.updateStats(stats);
 		const rankList: rankDto[] = await this.userService.getRank();
