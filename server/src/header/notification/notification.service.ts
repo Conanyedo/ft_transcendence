@@ -32,7 +32,7 @@ export class NotificationService {
 	async getNotifs(login: string) {
 		const notifs: Notification[] = await this.notifRepository
 			.createQueryBuilder('notifications')
-			.select(['notifications.from', 'notifications.status', 'notifications.gameId', 'notifications.msg'])
+			.select(['notifications.from', 'notifications.status', 'notifications.gameId', 'notifications.type'])
 			.where('notifications.to = :login', { login: login })
 			.getMany()
 		if (!notifs.length)
