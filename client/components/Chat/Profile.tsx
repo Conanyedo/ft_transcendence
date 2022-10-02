@@ -97,7 +97,7 @@ const Members = (props: { role: string, users: Array<Object>, category: string, 
         {props.category}
         {props?.users?.map((user: any, i: number) => (<div key={i}>
             <div className={Styles.membersAvtr}>
-                <Image src={getImageBySize(user?.avatar, 70)} width={40} height={40} />
+                <Image src={user?.avatar.startsWith("https") ? user?.avatar : getImageBySize(user?.avatar, 70)} width={40} height={40} />
                 <span>{user.fullname}</span>
             </div>
             <div id={i.toString()} onClick={(e: any) => showElemDropdown(e, user)} style={{ display: permit ? "block" : "none", cursor: "pointer" }}>

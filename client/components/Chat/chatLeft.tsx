@@ -11,7 +11,6 @@ import Link from "next/link";
 import Search from "@public/Icon.svg";
 import { getImageBySize } from "@hooks/Functions";
 
-
 export const ChatLeft = (props: { login: any }) => {
 
     // Setting some local state
@@ -19,6 +18,7 @@ export const ChatLeft = (props: { login: any }) => {
     const [show, setShow] = useState<boolean>(false);
     const [displayBlueIcon, setDisplayBlueIcon] = useState(false);
     const [channelDetails, setChannelDetails] = useState<any>();
+    
 
     const router = useRouter();
 
@@ -82,7 +82,7 @@ export const ChatLeft = (props: { login: any }) => {
                 <div className={Styles.bottomSection}>
                     {lastUsers.map((user: any, i: any) => <Link href={"/chat?login=" + user.login} key={i}><div key={i} ref={(element) => { chatUsersRefs.current[parseInt(i)] = element }} className={Styles.chatUser}>
                         <div className={Styles.avatarName}>
-                            <div className={Styles.avatar}><img src={getImageBySize(user?.avatar, 70)} /></div>
+                            <div className={Styles.avatar}><img src={user?.avatar.startsWith("https") ? user?.avatar : getImageBySize(user?.avatar, 70)} /></div>
                             <div className={Styles.username}>{user?.name} {user?.channelname}</div>
                         </div>
                         <p className={Styles.status}>{user?.membersNum ? user?.membersNum + " members" : user.status}</p>

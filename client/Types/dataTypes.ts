@@ -89,6 +89,7 @@ export interface chatUser {
 	status?: string;
 	type: any;
 	login: string;
+	relation: string;
 }
 
 export interface chatMsg {
