@@ -24,17 +24,11 @@ const Chat = () => {
 			const { login } = router.query;
 			// get login info first
 			getLoginInfo(login);
-			console.log("last users in chat page are", lastUsers);
 			setLogin(login);
 			setShowCnv(true);
 		}
 		
 	}, [router])
-
-	useEffect(() => {
-		getLastConvs(setLastUsers, setInitialUsrData);
-		console.log(lastUsers);
-	}, []);
 
 	return (
 			<ChatProvider>

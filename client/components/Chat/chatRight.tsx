@@ -70,6 +70,9 @@ export const ChatRight = (props: { setShowSetModal: any, login: number }) => {
         // listening for new messages
         socket_notif.on("newMsg", (response) => {
             setChatMsgs([...chatMsgs, response] as any);
+
+            setFConfId(response?.convId);
+
             setEnteredMsg("");
             setConvStatus(currentUser, setStopUsr);
             // reset the conversations
@@ -91,14 +94,11 @@ export const ChatRight = (props: { setShowSetModal: any, login: number }) => {
                 if (user?.login == currentUser?.login && user?.login !== null && currentUser?.login == undefined) {
                     setCurrentUser(user);
                 }
-
-                console.log("debug each user after response", user?.login == currentUser?.login);
             })
         }
     }, [lastUsers]);
 
     useEffect(() => {
-        console.log("current user is", currentUser);
         setConvStatus(currentUser, setStopUsr);
         setConvId(currentUser?.convId);
     }, [currentUser])
@@ -165,7 +165,7 @@ export const ChatRight = (props: { setShowSetModal: any, login: number }) => {
                         }
                         {(stopUsr == "" && currentUser.relation != "Blocker") && <div className={Styles.msgInput}>
                             <input type="text" placeholder="message" value={enteredMsg} onChange={(e) => setEnteredMsg(e.target.value)} onKeyDown={(event) => setMsg(event.keyCode, enteredMsg, setEnteredMsg, currentUser.convId, currentUser.login, setStopUsr)} />
-                            { currentUser?.type == "Dm" && <div onClick={() => sendInvite} className={Styles.console}><GameIconAsset color="#D9D9D9" /></div>}
+                            { (currentUser?.type == "Dm" || currentUser?.relation == "friend") && <div onClick={() => sendInvite} className={Styles.console}><GameIconAsset color="#D9D9D9" /></div>}
                         </div>}
                         {
                             (stopUsr == "left" && currentUser.type != "Dm") && <div className={Styles.msgInput}><div className={Styles.newCnv}>You left this channel</div></div>
