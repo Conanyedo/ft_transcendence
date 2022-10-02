@@ -41,8 +41,9 @@ export const ADDButton: React.FC<{
 }> = (props) => {
 	const handler = async () => {
 		await requests(props.login, "friendship/addFriend", props.router);
-		socket_notif.emit('addFriend', props.login);
-		props.refresh();
+		socket_notif.emit('sendRequest', props.login, () => {
+			props.refresh();
+		});
 	};
 	return (
 		<div className={classes.btnFriendADD} onClick={handler}>

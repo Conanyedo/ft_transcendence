@@ -100,28 +100,15 @@
 	justify-content: flex-start;
 	align-items: center;
 	flex-direction: column;
-	gap: .5rem;
-	padding: .5rem;
-	background-color: #3A3A3C;
+	padding: 1.111rem;
+	background-color: #242426;
 	box-shadow: 5px 5px 25px rgba(28, 28, 30, 0.8);
 	width: max-content;
 	border-radius: 5px;
 	overflow-y: auto;
+	overflow-x: hidden;
 	height: max-content;
-	max-height: 20rem;
-}
-
-.notif {
-	font-family: 'Inter';
-	font-style: normal;
-	font-weight: 500;
-	font-size: .8rem;
-	line-height: 17px;
-	color: #FAFAFA;
-	background-color: #2B2B2D;
-	border-radius: 10px;
-	padding: .7rem 1.5rem;
-	width: 100%;
+	max-height: 47.556rem;
 }
 
 .notifTitle {
@@ -130,6 +117,99 @@
 	color: #C6E1FF;
 	margin-bottom: .1rem;
 }
+
+.notif {
+	padding: 1.111rem;
+	border-radius: 5px;
+	width: max-content;
+	display: flex;
+	flex-direction: column;
+	gap: 1.111rem;
+}
+
+.notif:hover {
+	background-color: #3A3A3C;
+}
+
+.notifContent {
+	display: flex;
+	align-items: center;
+}
+
+.avatar_notif {
+	overflow: hidden;
+	width: 5.333rem;
+	height: 5.333rem;
+	border-radius: 5px;
+}
+
+.nameAndcontent {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: flex-start;
+	padding-left: 1.333rem;
+}
+
+.nameAndcontent>h1 {
+	font-family: 'Inter';
+	font-style: normal;
+	font-weight: 500;
+	font-size: 1.556rem;
+	line-height: 1.8rem;
+	color: #FFFFFF;
+}
+
+.nameAndcontent>p {
+	font-family: 'Inter';
+	font-style: normal;
+	font-weight: 300;
+	font-size: 1.556rem;
+	line-height: 1.8rem;
+	color: #FFFFFF;
+}
+
+.read {
+	color: #bfbfbf !important;
+}
+
+.btnContainer {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 2.667rem;
+
+}
+
+.btnContainer>span {
+	border: 2px solid #409CFF;
+	border-radius: 4px;
+	padding: 0.778rem;
+	width: 10rem;
+	font-family: 'Inter';
+	font-style: normal;
+	font-weight: 500;
+	font-size: 1.778rem;
+	line-height: 2.111rem;
+	color: #409CFF;
+	text-align: center;
+}
+
+.btnContainer>span:last-child {
+	border-color: #758293;
+	color: #758293;
+}
+
+.btnContainer>span:hover {
+	background-color: #409CFF;
+	color: #fff;
+}
+
+.btnContainer>span:last-child:hover {
+	background-color: transparent;
+	color: #758293;
+}
+/* end_Notif */
 
 .avatarContainer {
 	cursor: pointer;
@@ -203,6 +283,45 @@
 	border-radius: 5px;
 }
 
+@media only screen and (max-width: 1000px) {
+	.ctnNotif {
+		padding: .9rem;
+		max-height: 30rem;
+	}
+	.notif {
+		padding: .9rem;
+	}
+	.btnContainer {
+		gap: 1.5rem;
+	}
+
+	.avatar_notif {
+		width: 3.5rem;
+		height: 3.5rem;
+	}
+
+	.nameAndcontent {
+		padding-left: 1rem;
+	}
+
+	.nameAndcontent>h1 {
+		font-size: 1.2rem;
+		line-height: 1.4rem;
+	}
+
+	.nameAndcontent>p {
+		font-size: 1.2rem;
+		line-height: 1.4rem;
+	}
+
+	.btnContainer>span {
+		padding: .4rem;
+		font-size: 1rem;
+		line-height: 1.5rem;
+		color: #409CFF;
+	}
+}
+
 @media only screen and (max-width: 880px) {
 	.DropDown {
 		top: 4.5rem;
@@ -228,6 +347,9 @@
 }
 
 @media only screen and (max-width: 600px) {
+	.ctnNotif {
+		right: 0;
+	}
 	.topBar {
 		margin-left: 0;
 		padding-top: 2rem;
