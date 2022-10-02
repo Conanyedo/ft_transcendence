@@ -31,7 +31,7 @@ interface N_ITEMS {
 }
 
 const ItemsNav: React.FC<N_ITEMS> = (props) => {
-	const [newMsg, setNewMsg] = useState(true);
+	const [newMsg, setNewMsg] = useState(false);
 	const rout = useRouter();
 	const ref = useRef(null);
 	const moveHndler = () => {
