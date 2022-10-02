@@ -7,6 +7,7 @@ import addUser from "@public/add-user.svg"
 import { banMemberFromChannel, getChannelProfile } from "@hooks/useFetchData";
 import menu from "@public/menu-asset.svg"
 import Avatar from "@public/profile.jpg"
+import { getImageBySize } from "@hooks/Functions";
 
 const Header = (props: { setShowSetModal: any, status: string }) => {
 
@@ -29,39 +30,30 @@ const MenuElement = (props: { role: any, category: any, content: any, functions:
 }
 
 function banMember(user: any, convId: any) {
-    console.log(user);
-
-    let data = { convId:convId , member: user.login };
+    let data = { convId: convId, member: user.login };
     banMemberFromChannel(data);
-    return(0);
+    return (0);
 }
 
 function space() {
-    return(0);
+    return (0);
 }
 
 function upgradeMember(user: any, convId: any) {
 
-    // upgrade the rights of a member here
-    console.log(user, convId);
     // return(0);
 }
 
 const changeContent = (role: any, category: any, setContent: any, setFunctions: any, setPermit: any, user: any, convId: string) => {
 
     const me = localStorage.getItem("owner");
-
-    console.log(user, role, category);
-    if (role == category && me == user?.login)
-    {
-        setContent([,"leave Channel"]);
+    if (role == category && me == user?.login) {
+        setContent([, "leave Channel"]);
         setFunctions([() => space(), () => banMember(user, convId)]);
     } else if (role == category && me != user?.login) {
-        console.log("I am similar");
         setContent([, "Remove Member"]);
         setFunctions([space(), banMember(user, convId)]);
     } else if (role != category && setRights(role, user.role) && role !== "Member") {
-        console.log("I am higher");
         setContent(["Upgrade Role", "Remove Member"]);
         setFunctions([() => upgradeMember(user, convId), () => banMember(user, convId)]);
     }
@@ -90,28 +82,30 @@ const Members = (props: { role: string, users: Array<Object>, category: string, 
     }
 
     useEffect(() => {
-        console.log(props.category);
         setPermit(setRights(props.role, props.category));
     }, [props.role, props.category]);
 
     useEffect(() => {
-        console.log(functions);
-    }, [functions])
+        console.log(props.users);
+    }, [props.users]);
 
-    return (<>{(props.users?.length !== 0) && <div className={Styles.members}>
+    useEffect(() => {
+        // console.log(functions);
+    }, [functions]);
+
+    return (<>{(props?.users?.length !== 0) && <div className={Styles.members}>
         {props.category}
-        {props.users?.map((user: any, i: number) => (<div key={i}>
+        {props?.users?.map((user: any, i: number) => (<div key={i}>
             <div className={Styles.membersAvtr}>
-                <Image src={user?.avatar} width={40} height={40} />
+                <Image src={getImageBySize(user?.avatar, 70)} width={40} height={40} />
                 <span>{user.fullname}</span>
             </div>
-            <div id={i.toString()} onClick={(e:any) => showElemDropdown(e, user)} style={{ display: permit ? "block" : "none", cursor: "pointer" }}>
+            <div id={i.toString()} onClick={(e: any) => showElemDropdown(e, user)} style={{ display: permit ? "block" : "none", cursor: "pointer" }}>
                 <div><Image src={menu} width={6} height={30} /></div>
                 <div style={{ display: "none" }} ref={element => setRefs.current[i] = element}><MenuElement role={props.role} category={props.category} content={content} functions={functions} /></div>
             </div>
         </div>))}
     </div>}</>
-
     )
 }
 
@@ -150,7 +144,6 @@ export const Profile = (props: { setShowSetModal: any, convId: string, status: s
     useEffect(() => {
         const getData = async () => {
             const value: any = await getChannelProfile(props.convId, setData);
-            console.log(value?.data?.owner);
             setData(value?.data);
             return;
         }
@@ -158,14 +151,13 @@ export const Profile = (props: { setShowSetModal: any, convId: string, status: s
     }, []);
 
     useEffect(() => {
-        console.log("data on update is", data);
         checkRole(data, setRole);
     }, [data, role]);
 
     return (<>
         <Header setShowSetModal={props.setShowSetModal} status={props.status} />
-        <Members role={role} users={data.owner} key="Owner" category="Owner" convId={props.convId} />
-        <Members role={role} users={data.admins} key="Admins" category="Admin" convId={props.convId}/>
-        <Members role={role} users={data.members} key="Members" category="Member" convId={props.convId}/>
+        {data.length !== 0 && (<><Members role={role} users={data.owner} key="Owner" category="Owner" convId={props.convId} />
+            <Members role={role} users={data.admins} key="Admins" category="Admin" convId={props.convId} />
+            <Members role={role} users={data.members} key="Members" category="Member" convId={props.convId} /></>)}
     </>)
 }

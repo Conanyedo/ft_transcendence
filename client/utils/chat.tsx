@@ -1,6 +1,6 @@
 import { chatUser } from "@Types/dataTypes";
 import socket_notif from "config/socketNotif";
-import { fetchDATA } from "@hooks/useFetchData";
+import { fetchDATA, fetchUserLogin } from "@hooks/useFetchData";
 import { InviteMsg } from "@components/Chat/inviteMsg";
 
 const statuses = ["Banned", "Left", "Muted"];
@@ -79,6 +79,8 @@ export const getLastUsers = async (setLastUsers: any, login: any, setCurrentUser
 
     socket_notif.emit("getConversations", [], (response: any) => {
 
+        console.log("response is", response);
+
         if (response != undefined)
             setLastUsers(response);
 
@@ -98,7 +100,7 @@ export const getLastUsers = async (setLastUsers: any, login: any, setCurrentUser
 
             } else {
                 // if user doesnt exist start a new converation
-                fetchDATA(setCurrentUser, router, `chat/loginInfo/${login}`);
+                fetchUserLogin(setCurrentUser, router, login);
                 setChatMsgs([]);
             }
         }
