@@ -4,43 +4,124 @@ import Image from "next/image";
 import Search from "../../public/SearchIcon.svg";
 import Notification from "../../public/Notification.svg";
 import DownArrow from "../../public/Caret down.svg";
-import Router, { useRouter } from "next/router";
+import { useRouter } from "next/router";
 import { getImageBySize, useOutsideAlerter } from "../../customHooks/Functions";
-import { motion } from "framer-motion";
-import { fetchDATA, LogOut } from "../../customHooks/useFetchData";
+import { motion, Variants } from "framer-motion";
+import { fetchDATA, LogOut, requests } from "../../customHooks/useFetchData";
 import { EmtyUser, NotificationType, UserTypeNew } from "../../Types/dataTypes";
 import { getCookie } from "cookies-next";
 import socket_notif from "../../config/socketNotif";
 import { useAppDispatch } from "@store/hooks";
 import { ShowSettings, Toggle } from "@store/UI-Slice";
 
-let len = 0;
+const Notif_item: React.FC<NotificationType> = (props) => {
+	const [isOpen, setIsOpen] = useState(false);
+	const router = useRouter();
+	const clickHandler = () => {
+		if (props.status === 'Sent')
+			setIsOpen((prev1) => !prev1);
+	}
+	const acceptHandler = async () => {
+		if (props.type.includes('Request')) {
+			await requests(props.login, "friendship/acceptRequest", router);
+			props.refresh();
+		} else if (props.type.includes('Game')) {
+			// emit game
+		}
+	}
+	const refuseHandler = async () => {
+		if (props.type.includes('Request')) {
+			await requests(props.login, "friendship/refuseRequest", router);
+			props.refresh();
+		} else if (props.type.includes('Game')) {
+			// emit game
+		}
+	}
+	const avatarPath = getImageBySize(props.avatar, 70);
+	const itemVariants: Variants = {
+		open: {
+		  height: '100%',
+		  opacity: 1,
+		},
+		closed: {
+			height: '0px',
+			opacity: 0,
+		}
+	  };
+	return <>
+		<div className={classes.notif}>
+			<div className={classes.notifContent} onClick={clickHandler}>
+				<div className={classes.avatar_notif}>
+					<img src={avatarPath} alt={props.fullname} />
+				</div>
+				<div className={classes.nameAndcontent}>
+					<h1>{props.fullname}</h1>
+					<p className={props.status !== 'Sent' ? classes.read: ''}>{props.type === 'Request' ? 'Send you a friend request': 'invites you for a pong game'}</p>
+				</div>
+			</div>
+			{isOpen &&
+			<>
+				<motion.div className={classes.btnContainer}
+				variants={itemVariants}
+				animate={isOpen ? "open" : "closed"}
+				>
+					<motion.span
+						initial={{ scale: 0 }}
+						animate={{ scale: 1 }}
+						exit={{scale: 0}}
+						onClick={acceptHandler}>Accept</motion.span>
+					<motion.span
+						initial={{ scale: 0 }}
+						animate={{ scale: 1 }}
+						exit={{scale: 0}}
+						onClick={refuseHandler}>Refuse</motion.span>
+				</motion.div>
+			</>}
+		</div>
+	</>
+}
+
 const Notif: React.FC = () => {
-	const [notification, setnotification] = useState<NotificationType[] | null>(
-		null
-	);
+	const [notification, setnotification] = useState<NotificationType[]>([]);
 	const [isOpen, setisOpen] = useState(false);
 	const [isMounted, setisMounted] = useState(false);
 	const [isNew, setisNew] = useState(false);
 	const notifMenu = useRef(null);
+	const ref_icon = useRef(null);
 	const token = getCookie("jwt");
-	const clicknotifHandler = () => {
-		socket_notif.emit("allRead");
-		setisOpen((value) => !value);
+	const clicknotifHandler = (e: any) => {
+		if (ref_icon.current && ref_icon.current == e.target) {
+			setisOpen((value) => !value);
+			socket_notif.emit("allRead");
+		}
 	};
+	const refresh = () => {
+		socket_notif.emit("getNotif", (data: any) => {
+			const isfresh = data.data.find(
+				(notif: NotificationType) => notif.status === 'Sent'
+			);
+			if (isfresh) setisNew(true);
+			else setisNew(false);
+			if (data.data.length)
+				setnotification(data.data);
+		});
+	}
 	useOutsideAlerter(notifMenu, setisOpen);
 	useEffect(() => {
 		setisMounted(true);
-		socket_notif.emit("getNotif");
+		refresh();
 		socket_notif.on("Notif", (data) => {
 			if (data) {
-				const isfresh = data.find(
-					(notif: NotificationType) => notif.read === false
+				const isfresh = data.data.find(
+					(notif: NotificationType) => notif.status === 'Sent'
 				);
 				if (isfresh) setisNew(true);
 				else setisNew(false);
-				data = data.reverse();
-				setnotification(data);
+				setnotification((old) => {
+					if (!old.length)
+						return [...data.data];
+					return [...old, ...data.data];
+				});
 			}
 		});
 		return (() => {
@@ -53,10 +134,9 @@ const Notif: React.FC = () => {
 				<div
 					className={classes.NotifIcon}
 					ref={notifMenu}
-					onClick={clicknotifHandler}
-				>
-					{isNew && <div className={classes.dot} />}
-					<Image src={Notification} />
+					onClick={clicknotifHandler} >
+					{isNew && <div className={classes.dot}/>}
+					<img src={Notification.src} ref={ref_icon}/>
 					{isOpen && (
 						<motion.div
 							id="notifmenu"
@@ -64,30 +144,10 @@ const Notif: React.FC = () => {
 							animate={{ scale: 1 }}
 							className={classes.ctnNotif}
 						>
-							{(notification &&
+							{(notification.length &&
 								notification?.map((notif) => {
 									return (
-										<span
-											className={classes.notif}
-											key={Math.random()}
-											onClick={() =>
-												Router.push(
-													"/profile/" + notif?.login
-												)
-											}
-										>
-											<span
-												className={classes.notifTitle}
-											>
-												{notif?.msg === "Request"
-													? "Friend Request"
-													: "Game Challenge"}
-											</span>
-											{notif?.login}
-											{notif?.msg === "Request"
-												? " want to be your friend"
-												: " invited you to play pong game"}
-										</span>
+										<Notif_item {...notif} key={Math.random()} refresh={refresh}/>
 									);
 								})) || (
 								<span

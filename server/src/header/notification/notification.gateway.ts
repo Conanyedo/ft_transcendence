@@ -42,7 +42,8 @@ export class NotificationGateway {
 	@SubscribeMessage('getNotif')
 	async getNotifs(@User('login') login: string, @ConnectedSocket() client: Socket) {
 		const notifs: notificationDto[] = await this.notifService.getNotifs(login);
-		this.server.to(client.id).emit('Notif', { data: notifs });
+		return { data: notifs };
+		// this.server.to(client.id).emit('Notif', { data: notifs });
 	}
 
 }

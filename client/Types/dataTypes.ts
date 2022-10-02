@@ -1,4 +1,3 @@
-import { StaticImageData } from "next/image"
 import { allRanks } from "../config/baseURL";
 import unranked from '../public/Tiers/Unranked.svg';
 
@@ -122,8 +121,12 @@ export interface chatFormValues {
 
 export interface NotificationType {
 	login: string,
-	msg: string,
-	read: boolean
+	fullname: string,
+    avatar: string,
+    status: string,
+    gameId: string,
+	type: string,
+	refresh: any
 }
 
 
@@ -177,6 +180,62 @@ export class liveGamesType {
 		this.secondScore = 0;
 		this.gameId = '';
 		
+	}
+}
+export class gameControleType {
+	ball: { ballX: number; ballY: number };
+	paddleLeft: { paddleY: number };
+	paddleRight: { paddleY: number };
+	canvasWidth: number;
+	canvasHieght: number;
+	HieghtPaddle: number;
+	widthPaddle: number;
+	ballRadius: number;
+	themeMap: number;
+	constructor(width: number) {
+		this.themeMap = 0;
+		this.canvasWidth = width;
+		this.canvasHieght = width / 2;
+		this.ballRadius = 10;
+		this.HieghtPaddle = this.canvasHieght / 8;
+		this.widthPaddle = 20.1;
+		this.ball = { ballX: width / 2, ballY: this.canvasHieght / 2 };
+		this.paddleLeft = {
+			paddleY: this.canvasHieght / 2 - this.HieghtPaddle / 2,
+		};
+		this.paddleRight = {
+			paddleY: this.canvasHieght / 2 - this.HieghtPaddle / 2,
+		};
+	}
+}
+
+export class headerGameType {
+	gameId: string;
+	click: boolean;
+	constructor() {
+		this.gameId = "";
+		this.click = false;
+	}
+}
+
+export class headerDataType {
+	firstPlayer: string;
+	firstScore: number;
+	gameType: string;
+	secondPlayer: string;
+	secondScore: number;
+	gameId: string;
+	click: boolean;
+	themeMap: number;
+	constructor() {
+		this.firstPlayer = "";
+		this.firstScore = 0;
+		this.gameType = "";
+		this.secondPlayer = "";
+		this.secondScore = 0;
+		this.gameId = "";
+		this.click = false;
+		this.themeMap = 0;
 	}
 }
 
