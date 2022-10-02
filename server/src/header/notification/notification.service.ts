@@ -1,11 +1,12 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Notification } from './notification.entity';
+import { Notification, notifStatus, notifType } from './notification.entity';
 import { Server, Socket } from 'socket.io'
-import { JwtAuthService } from 'src/2fa-jwt/jwt/jwt-auth.service';
 import { UserService } from 'src/user/user.service';
 import { notificationCreateDto, notificationDto } from './notification.dto';
+import { opponentDto } from 'src/game/game.dto';
+import { NotificationGateway } from './notification.gateway';
 
 @Injectable()
 export class NotificationService {
@@ -13,42 +14,62 @@ export class NotificationService {
 	constructor(
 		@InjectRepository(Notification)
 		private notifRepository: Repository<Notification>,
-		private userService: UserService
+		@Inject(forwardRef(() => UserService))
+		private readonly userService: UserService,
+		@Inject(forwardRef(() => NotificationGateway))
+		private notifGateway: NotificationGateway,
 	) { }
+
+	async getNotifId(from: string, to: string) {
+		const notif: Notification = await this.notifRepository
+			.createQueryBuilder('notifications')
+			.select(['notifications.id'])
+			.where(`notifications.form = '${from}' AND notifications.to = '${to}'`)
+			.getOne();
+		return notif;
+	}
 
 	async getNotifs(login: string) {
 		const notifs: Notification[] = await this.notifRepository
 			.createQueryBuilder('notifications')
-			.select(['notifications.from', 'notifications.read', 'notifications.msg'])
+			.select(['notifications.from', 'notifications.status', 'notifications.gameId', 'notifications.msg'])
 			.where('notifications.to = :login', { login: login })
 			.getMany()
 		if (!notifs.length)
-			return null;
-		const notifList = notifs.map((notif) => ({ login: notif.from, msg: notif.msg, read: notif.read }));
+			return [];
+		const notifList = await Promise.all(notifs.map(async (notif) => {
+			const userInfo: opponentDto = await this.userService.getOpponent(notif.from);
+			return { fullname: userInfo.fullname, avatar: userInfo.avatar, login: notif.from, type: notif.type, status: notif.status, gameId: notif.gameId }
+		}));
 		return [...notifList];
 	}
 
-	async setRead(login: string) {
+	async updateNotif(from: string, to: string, type: notifType, status: notifStatus) {
+		const notif: Notification = await this.getNotifId(from, to);
 		await this.notifRepository
-			.createQueryBuilder('notifications')
-			.update({ read: true })
-			.where('to = :login', { login: login })
+			.createQueryBuilder()
+			.update({ status: status })
+			.where(`notifications.id = '${notif.id}'`)
 			.execute();
 	}
 
 	async saveNofit(data: notificationCreateDto) {
-		const notif: Notification = new Notification();
+		let notif: Notification = new Notification();
 		notif.from = data.from;
 		notif.to = data.to;
-		notif.msg = data.msg;
-		await this.notifRepository.save(notif);
+		notif.type = data.type;
+		notif.gameId = data.gameId;
+		notif = await this.notifRepository.save(notif);
+		return notif;
 	}
 
-	async sendNotif(server: Server, friend: string) {
-		const client = await this.userService.getSocketId(friend);
+	async sendNotif(notif: Notification, friend: string) {
+		const sockets = await this.notifGateway.server.fetchSockets();
+		const client = sockets.find((socket) => (socket.data.login === friend));
 		if (!client)
 			return;
-		const notifs: notificationDto[] = await this.getNotifs(friend);
-		server.to(client).emit('Notif', notifs);
+		const notifs: Notification[] = [];
+		notifs.push(notif);
+		this.notifGateway.server.to(client.id).emit('Notif', { data: [...notifs] });
 	}
 }
