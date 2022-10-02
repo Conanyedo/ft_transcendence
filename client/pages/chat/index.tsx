@@ -5,6 +5,7 @@ import { useRouter } from 'next/router';
 import { getLoginInfo } from "@hooks/useFetchData";
 import { ChatRight } from "@components/Chat/chatRight";
 import { ChatLeft } from "@components/Chat/chatLeft";
+import { getLastConvs } from "@utils/chat";
 
 const Chat = () => {
 
@@ -12,7 +13,7 @@ const Chat = () => {
 	const [showSetModal, setShowSetModal] = useState(false);
 	// const [membersMdl, showMembersMdl] = useState(false);
 
-	const { showCnv, setShowCnv, lastUsers } = useContext(ChatContext) as ChatContextType;
+	const { showCnv, setShowCnv, lastUsers, setLastUsers, setInitialUsrData } = useContext(ChatContext) as ChatContextType;
 
     const router = useRouter();
 	const [login, setLogin] = useState<any>("");
@@ -39,3 +40,4 @@ const Chat = () => {
 	);
 };
 export default Chat;
+

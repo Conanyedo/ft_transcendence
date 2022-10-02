@@ -22,6 +22,7 @@ interface ChatContextType {
   prevUser: number;
   setPrevUser: React.Dispatch<React.SetStateAction<number>>;
   initialusrData: any;
+  setInitialUsrData: any;
   friends: any;
 }
 
@@ -69,7 +70,7 @@ const ChatProvider = ({ children }: any) => {
   }, [])
 
   return (
-    <ChatContext.Provider value={{ protectedChannel, setProtectedChannel, channelMode, setChannelMode, lastUsers, setLastUsers, currentUser, setCurrentUser, showCnv, setShowCnv, messagesEndRef, chatUsersRefs, prevUser, setPrevUser, initialusrData, chatMsgs, setChatMsgs, friends }}>
+    <ChatContext.Provider value={{ protectedChannel, setProtectedChannel, channelMode, setChannelMode, lastUsers, setLastUsers, currentUser, setCurrentUser, showCnv, setShowCnv, messagesEndRef, chatUsersRefs, prevUser, setPrevUser, initialusrData, chatMsgs, setChatMsgs, friends, setInitialUsrData }}>
       {children}
     </ChatContext.Provider>
   );

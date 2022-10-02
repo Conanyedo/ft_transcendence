@@ -735,9 +735,18 @@
     font-weight: 500;
     margin-top: 2px;
     font-size: 1rem;
-}   
+}
 
-@media only screen and (max-width: 1024px) {
+@media only screen and (max-width: 1420px) {
+    .chatUser>p {
+        font-size: 1rem;
+    }
+    .chatUser>div>div{
+        font-size: 1.2rem;
+    }
+}
+
+@media only screen and (max-width: 1274px) {
 
     .chatContainer {
         height: 92%;

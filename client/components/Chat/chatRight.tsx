@@ -16,6 +16,7 @@ import { MenuDropdown } from "./MenuDropdown";
 import { GameIconAsset } from "@svg/index";
 import sendArrow from "@public/send-arrow.svg";
 import { Profile } from "./Profile";
+import { getImageBySize } from "@hooks/Functions";
 
 export const ChatRight = (props: { setShowSetModal: any, login: number }) => {
 
@@ -69,6 +70,9 @@ export const ChatRight = (props: { setShowSetModal: any, login: number }) => {
         // listening for new messages
         socket_notif.on("newMsg", (response) => {
             setChatMsgs([...chatMsgs, response] as any);
+
+            setFConfId(response?.convId);
+
             setEnteredMsg("");
             setConvStatus(currentUser, setStopUsr);
             // reset the conversations
@@ -90,14 +94,11 @@ export const ChatRight = (props: { setShowSetModal: any, login: number }) => {
                 if (user?.login == currentUser?.login && user?.login !== null && currentUser?.login == undefined) {
                     setCurrentUser(user);
                 }
-
-                console.log("debug each user after response", user?.login == currentUser?.login);
             })
         }
     }, [lastUsers]);
 
     useEffect(() => {
-        console.log("current user is", currentUser);
         setConvStatus(currentUser, setStopUsr);
         setConvId(currentUser?.convId);
     }, [currentUser])
@@ -122,11 +123,11 @@ export const ChatRight = (props: { setShowSetModal: any, login: number }) => {
                             <Image src={arrowBack} width={16} height={16} onClick={unshowCnv} />
                         </div>
 
-                        {profile && <div onClick={() => setShowprofile(false)}><BackArrow /></div>}
+                        {profile && <div className={Styles.backArrowProfile} onClick={() => setShowprofile(false)}><BackArrow /></div>}
 
                         <div onClick={currentUser?.membersNum ? () => showProfile(profile, setShowprofile) : () => goToUserProfile(currentUser?.login)} className={Styles.flex}>
                             <div className={Styles.avatarProps}>
-                                <img src={currentUser?.avatar} />
+                                <img src={getImageBySize(currentUser?.avatar, 70)} />
                             </div>
                             <div>
                                 <h1 className={Styles.chatUsername}>{currentUser?.name ? currentUser.name : currentUser?.fullname}</h1>
@@ -164,7 +165,7 @@ export const ChatRight = (props: { setShowSetModal: any, login: number }) => {
                         }
                         {(stopUsr == "" && currentUser.relation != "Blocker") && <div className={Styles.msgInput}>
                             <input type="text" placeholder="message" value={enteredMsg} onChange={(e) => setEnteredMsg(e.target.value)} onKeyDown={(event) => setMsg(event.keyCode, enteredMsg, setEnteredMsg, currentUser.convId, currentUser.login, setStopUsr)} />
-                            { currentUser?.type == "Dm" && <div onClick={() => sendInvite} className={Styles.console}><GameIconAsset color="#D9D9D9" /></div>}
+                            { (currentUser?.type == "Dm" || currentUser?.relation == "friend") && <div onClick={() => sendInvite} className={Styles.console}><GameIconAsset color="#D9D9D9" /></div>}
                         </div>}
                         {
                             (stopUsr == "left" && currentUser.type != "Dm") && <div className={Styles.msgInput}><div className={Styles.newCnv}>You left this channel</div></div>
