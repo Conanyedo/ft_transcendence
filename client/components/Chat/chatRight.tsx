@@ -25,6 +25,7 @@ export const ChatRight = (props: { setShowSetModal: any, login: number }) => {
     const [profile, setShowprofile] = useState(false);
     const [showMenuDropdown, setShowMenuDropdown] = useState(false);
     const [enteredMsg, setEnteredMsg] = useState("");
+    const [me, setMe] = useState(localStorage.getItem("owner"));
 
     // Settings and members modal show state
     const [showSetModal, setShowSetModal] = useState(false);
@@ -84,11 +85,9 @@ export const ChatRight = (props: { setShowSetModal: any, login: number }) => {
     const [fconvId, setFConfId] = useState<any>();
 
     useEffect(() => {
-        console.log(lastUsers);
-        console.log(currentUser);
         if (currentUser?.convId == undefined) {
             lastUsers.forEach((user) => {
-                if (user?.login == currentUser?.login) {
+                if (user?.login == currentUser?.login && user?.login !== null && currentUser?.login == undefined) {
                     setCurrentUser(user);
                 }
 
@@ -98,7 +97,7 @@ export const ChatRight = (props: { setShowSetModal: any, login: number }) => {
     }, [lastUsers]);
 
     useEffect(() => {
-        console.log(currentUser);
+        console.log("current user is", currentUser);
         setConvStatus(currentUser, setStopUsr);
         setConvId(currentUser?.convId);
     }, [currentUser])
@@ -108,9 +107,13 @@ export const ChatRight = (props: { setShowSetModal: any, login: number }) => {
         router.push("/chat");
     }
 
+    const goToUserProfile = (login: string) => {
+        router.push(`/profile/${login}`);
+    }
+
     return (<div className={`${Styles.chatRight} ${showCnv ? Styles.displayChat : ""}`}>
         <MembersModal showSetModal={membersMdl} setShowSetModal={showMembersMdl} convId={currentUser?.convId} />
-        <SettingsModal showSetModal={showSetModal} setShowSetModal={setShowSetModal} />
+        <SettingsModal showSetModal={showSetModal} setShowSetModal={setShowSetModal} data={currentUser} />
         {currentUser && <div className={`${Styles.rightContent}`} >
             {currentUser && (<>
                 <div className={Styles.topDetails}>
@@ -121,7 +124,7 @@ export const ChatRight = (props: { setShowSetModal: any, login: number }) => {
 
                         {profile && <div onClick={() => setShowprofile(false)}><BackArrow /></div>}
 
-                        <div onClick={currentUser?.membersNum ? () => showProfile(profile, setShowprofile) : () => null} className={Styles.flex}>
+                        <div onClick={currentUser?.membersNum ? () => showProfile(profile, setShowprofile) : () => goToUserProfile(currentUser?.login)} className={Styles.flex}>
                             <div className={Styles.avatarProps}>
                                 <img src={currentUser?.avatar} />
                             </div>
@@ -141,13 +144,13 @@ export const ChatRight = (props: { setShowSetModal: any, login: number }) => {
                 {currentUser && !profile && <div className={Styles.chatSection}>
                     <div className={Styles.msgsDisplay} ref={msgsDisplayDiv}>
                         {
-                            chatMsgs.map((chatMsg: any, i: any) => <div key={i} className={Styles.chatMsg} style={{ left: chatMsg.sender == currentUser.login ? "0" : "auto", right: chatMsg.sender != currentUser.login ? "0" : "auto" }}>
-                                {(currentUser.convId == chatMsg.convId || fconvId == chatMsg.convId) && <div className={Styles.msgBox} style={{ justifyContent: chatMsg.sender == currentUser.login ? "flex-start" : "flex-end" }}>
-                                    <div ref={messagesEndRef} className={Styles.msgContent} style={{ backgroundColor: chatMsg.sender == currentUser.login ? "#3A3A3C" : "#409CFF", borderRadius: chatMsg.sender == currentUser.login ? "0 5px 5px 5px" : "5px 5px 0 5px" }}>
+                            chatMsgs.map((chatMsg: any, i: any) => <div key={i} className={Styles.chatMsg} style={{ left: chatMsg.sender == me ? "auto" : "0", right: chatMsg.sender != me ? "auto" : "0" }}>
+                                {(currentUser.convId == chatMsg.convId || fconvId == chatMsg.convId) && <div className={Styles.msgBox} style={{ justifyContent: chatMsg.sender == me ? "flex-end" : "flex-start" }}>
+                                    <div ref={messagesEndRef} className={Styles.msgContent} style={{ backgroundColor: chatMsg.sender == me ? "#409CFF" : "#3A3A3C", borderRadius: chatMsg.sender == me? "5px 5px 0 5px" : "0 5px 5px 5px" }}>
                                         {chatMsg.msg}
                                     </div>
                                 </div>}
-                                {(currentUser.convId == chatMsg.convId || fconvId == chatMsg.convId) && <div className={Styles.msgTime} style={{ justifyContent: chatMsg.sender == currentUser.login ? "flex-start" : "flex-end" }}>{chatMsg?.date?.substring(16, 11)}{chatMsg?.createDate?.substring(16, 11)}</div>}
+                                {(currentUser.convId == chatMsg.convId || fconvId == chatMsg.convId) && <div className={Styles.msgTime} style={{ justifyContent: chatMsg.sender == me ? "flex-end" : "flex-start" }}>{chatMsg?.date?.substring(16, 11)}{chatMsg?.createDate?.substring(16, 11)}</div>}
                             </div>)}
                     </div>
                     {
@@ -161,7 +164,7 @@ export const ChatRight = (props: { setShowSetModal: any, login: number }) => {
                         }
                         {(stopUsr == "" && currentUser.relation != "Blocker") && <div className={Styles.msgInput}>
                             <input type="text" placeholder="message" value={enteredMsg} onChange={(e) => setEnteredMsg(e.target.value)} onKeyDown={(event) => setMsg(event.keyCode, enteredMsg, setEnteredMsg, currentUser.convId, currentUser.login, setStopUsr)} />
-                            <div onClick={() => sendInvite} className={Styles.console}><GameIconAsset color="#D9D9D9" /></div>
+                            { currentUser?.type == "Dm" && <div onClick={() => sendInvite} className={Styles.console}><GameIconAsset color="#D9D9D9" /></div>}
                         </div>}
                         {
                             (stopUsr == "left" && currentUser.type != "Dm") && <div className={Styles.msgInput}><div className={Styles.newCnv}>You left this channel</div></div>

@@ -23,7 +23,7 @@ export const ChatLeft = (props: { login: any }) => {
     const router = useRouter();
 
     useEffect(() => {
-        console.log(friends);
+        // console.log(friends);
     }, [friends])
 
     function resetForm(formik: any) {
@@ -40,11 +40,15 @@ export const ChatLeft = (props: { login: any }) => {
         } else {
             setError("");
             setShow(!show);
-            let loginList = friends.filter((item: any, i: any) => item.fullname == members[i]).map((item: any) => item.login);
+            var loginList: string[] = [];
+
+            members.forEach((member: any, i: any) => {
+                friends.forEach((friend: any) => {
+                    if (friend.fullname == member) loginList.push(friend.login);
+                })
+            })
+
             const data = { name: channelName, type: convType, members: loginList, password: password };
-
-            // send data to channel create route here
-
             postChannel(setChannelDetails, router, data);
 
             // reset the necessary fields
@@ -54,14 +58,12 @@ export const ChatLeft = (props: { login: any }) => {
     }
 
     useEffect(() => {
-
         if (props.login != undefined)
             setShowCnv(true);
-
     }, [])
 
     useEffect(() => {
-        console.log("last users now are", lastUsers);
+        // console.log("last users now are", lastUsers);
     }, [lastUsers])
 
     return (<>

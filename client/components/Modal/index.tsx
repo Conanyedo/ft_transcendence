@@ -34,6 +34,7 @@ export function ModalForm(props: { createChannel: any }) {
     const [friends, setFriends] = useState([]);
     const [closeUsrs, setCloseUsrs] = useState(friends);
     const [initialUsrState, setInitialUsrState] = useState([]);
+    const [textBtn, setTextBtn] = useState("");
 
     const [errorMsg, setErrorMsg] = useState("");
 
