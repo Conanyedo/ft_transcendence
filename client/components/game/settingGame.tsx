@@ -1,4 +1,3 @@
-import { FriendOnline } from "@Types/dataTypes";
 import socket_game from "config/socketGameConfig";
 import Image from "next/image";
 import { useRouter } from "next/router";
@@ -9,7 +8,7 @@ import Theme1 from "../../public/GameThemes/theme1.png";
 import Theme2 from "../../public/GameThemes/theme2.png";
 import Theme3 from "../../public/GameThemes/theme3.png";
 
-const SettingGame: React.FC<{Hide: () => void, login: string}> = (props) => {
+const SettingGame: React.FC<{ Hide: () => void; login: string }> = (props) => {
 	const router = useRouter();
 	const owner = localStorage.getItem("owner");
 	const [themeselected, setThemeselected] = useState("1");
@@ -76,8 +75,10 @@ const SettingGame: React.FC<{Hide: () => void, login: string}> = (props) => {
 						/>
 					</div>
 				</div>
-				<div className={classes.Create} onClick={StartHandler}>
-					Create
+				<div className={classes.btnContainer}>
+					<div className={classes.Create} onClick={StartHandler}>
+						Create
+					</div>
 				</div>
 			</div>
 		</div>

@@ -259,6 +259,13 @@
     cursor: pointer;
 }
 
+.btnContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 1.5rem;
+}
+
 .icon {
     position: absolute;
     top: 0.889rem;
