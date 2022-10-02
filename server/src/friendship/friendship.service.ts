@@ -110,11 +110,18 @@ export class FriendshipService {
 	}
 
 	async addFriend(user: string, friend: string) {
+		const exist: Friendship = await this.friendshipRepository
+			.createQueryBuilder('friendships')
+			.where(`((friendships.user = '${user}' AND friendships.friend = '${friend}') OR (friendships.user = '${friend}' AND friendships.friend = '${user}')) AND friendships.relation = '${userRelation.FRIEND}'`)
+			.getOne();
+		if (exist)
+			return { err: 'Friendship already exist' };
 		const friendship: Friendship = new Friendship();
 		friendship.user = user;
 		friendship.friend = friend;
 		friendship.relation = userRelation.REQUESTED;
-		this.friendshipRepository.save(friendship);
+		await this.friendshipRepository.save(friendship);
+		return { data: true };
 	}
 
 	async unfriend(user: string, friend: string) {
@@ -160,8 +167,8 @@ export class FriendshipService {
 		friendship.user = user;
 		friendship.friend = friend;
 		friendship.relation = userRelation.BLOCKED;
-		this.friendshipRepository.save(friendship);
-		this.chatService.blockUser(user, friend);
+		await this.friendshipRepository.save(friendship);
+		await this.chatService.blockUser(user, friend);
 	}
 
 	async unblock(user: string, friend: string) {
@@ -170,6 +177,6 @@ export class FriendshipService {
 			.delete()
 			.where('friendships.user = :user AND friendships.friend = :friend AND friendships.relation = :relation', { user: user, friend: friend, relation: userRelation.BLOCKED })
 			.execute();
-		this.chatService.unBlockUser(user, friend);
+		await this.chatService.unBlockUser(user, friend);
 	}
 }

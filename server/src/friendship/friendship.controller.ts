@@ -41,9 +41,8 @@ export class FriendshipController {
 
 	@Post('/addFriend')
 	@UseGuards(JwtAuthGuard)
-	addFriend(@User() user: userParitalDto, @Body('login') friend: string) {
-		this.friendshipService.addFriend(user.login, friend);
-		return { data: true };
+	async addFriend(@User() user: userParitalDto, @Body('login') friend: string) {
+		return await this.friendshipService.addFriend(user.login, friend);
 	}
 
 	@Post('/unfriend')
