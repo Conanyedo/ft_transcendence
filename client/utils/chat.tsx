@@ -79,7 +79,7 @@ export const getLastUsers = async (setLastUsers: any, login: any, setCurrentUser
 
     socket_notif.emit("getConversations", [], (response: any) => {
 
-        console.log("response is", response);
+        console.log("response in chat getLastUsers is", response);
 
         if (response != undefined)
             setLastUsers(response);

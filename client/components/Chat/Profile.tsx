@@ -9,13 +9,13 @@ import menu from "@public/menu-asset.svg"
 import Avatar from "@public/profile.jpg"
 import { getImageBySize } from "@hooks/Functions";
 
-const Header = (props: { setShowSetModal: any, status: string }) => {
+const Header = (props: { setShowSetModal: any, status: string, role: string }) => {
 
     const statuses = ["Banned", "Muted", "Left"];
 
     return (<div className={Styles.profileHeader}>
         <h1>Channel Profile</h1>
-        {!statuses.includes(props.status) && <button onClick={() => props.setShowSetModal(true)}><Image src={addUser} width={18} height={18} />Add Members</button>}
+        {["Owner", "Admin"].includes(props.role) && <>{!statuses.includes(props.status) && <button onClick={() => props.setShowSetModal(true)}><Image src={addUser} width={18} height={18} />Add Members</button>}</>}
     </div>)
 }
 
@@ -155,9 +155,9 @@ export const Profile = (props: { setShowSetModal: any, convId: string, status: s
     }, [data, role]);
 
     return (<>
-        <Header setShowSetModal={props.setShowSetModal} status={props.status} />
-        {data.length !== 0 && (<><Members role={role} users={data.owner} key="Owner" category="Owner" convId={props.convId} />
-            <Members role={role} users={data.admins} key="Admins" category="Admin" convId={props.convId} />
-            <Members role={role} users={data.members} key="Members" category="Member" convId={props.convId} /></>)}
+        <Header setShowSetModal={props.setShowSetModal} status={props.status} role={role} />
+        {data?.length !== 0 && (<><Members role={role} users={data?.owner} key="Owner" category="Owner" convId={props.convId} />
+            <Members role={role} users={data?.admins} key="Admins" category="Admin" convId={props.convId} />
+            <Members role={role} users={data?.members} key="Members" category="Member" convId={props.convId} /></>)}
     </>)
 }

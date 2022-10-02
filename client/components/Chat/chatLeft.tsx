@@ -9,6 +9,7 @@ import Image from "next/image";
 import { filterChatUsers } from "@utils/chat";
 import Link from "next/link";
 import Search from "@public/Icon.svg";
+import { getImageBySize } from "@hooks/Functions";
 
 
 export const ChatLeft = (props: { login: any }) => {
@@ -17,7 +18,6 @@ export const ChatLeft = (props: { login: any }) => {
     const { lastUsers, setShowCnv, showCnv, setLastUsers, chatUsersRefs, friends } = useContext(ChatContext) as ChatContextType;
     const [show, setShow] = useState<boolean>(false);
     const [displayBlueIcon, setDisplayBlueIcon] = useState(false);
-
     const [channelDetails, setChannelDetails] = useState<any>();
 
     const router = useRouter();
@@ -63,7 +63,7 @@ export const ChatLeft = (props: { login: any }) => {
     }, [])
 
     useEffect(() => {
-        // console.log("last users now are", lastUsers);
+        // setLastUsers(props.login);
     }, [lastUsers])
 
     return (<>
@@ -82,8 +82,8 @@ export const ChatLeft = (props: { login: any }) => {
                 <div className={Styles.bottomSection}>
                     {lastUsers.map((user: any, i: any) => <Link href={"/chat?login=" + user.login} key={i}><div key={i} ref={(element) => { chatUsersRefs.current[parseInt(i)] = element }} className={Styles.chatUser}>
                         <div className={Styles.avatarName}>
-                            <div className={Styles.avatar}><img src={user?.avatar} /></div>
-                            <div className={Styles.username}>{user.name} {user.channelname}</div>
+                            <div className={Styles.avatar}><img src={getImageBySize(user?.avatar, 70)} /></div>
+                            <div className={Styles.username}>{user?.name} {user?.channelname}</div>
                         </div>
                         <p className={Styles.status}>{user?.membersNum ? user?.membersNum + " members" : user.status}</p>
                     </div></Link>)}

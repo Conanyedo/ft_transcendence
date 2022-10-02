@@ -109,23 +109,28 @@ export const LogOut = (route: NextRouter) => {
 		});
 };
 
-export const updateChnlInfo = async (data: any) => {
+export const updateChnlInfo = async (formData: any, router: any, login: any) => {
 	// /chat/updateChannel 
 	// the data should be as follows {name, type, password, avatar, oldPath}
 	const token = getCookie("jwt");
-	const json = JSON.stringify(data);
+	// const json = JSON.stringify(data);
 	return await axios({
 		method: "post",
-		url: `${baseUrl}chat/banMember`,
+		url: `${baseUrl}chat/updateChannel`,
 		headers: {
 			Authorization: `Bearer ${token}`,
 			'Content-Type': 'application/json'
 		},
-		data: json,
+		data: formData,
 		withCredentials: true,
 	})
 		.then((res) => {
-			console.log(res);
+			if (res.data == true) {
+				console.log("SUCCESS");
+				// router.push("/chat");
+				console.log(login);
+				router.push(`/chat?login=${login}`);
+			}
 			// set(res.data);
 			return true;
 		})
@@ -477,7 +482,7 @@ export const getLoginInfo = async (login: any) => {
 		withCredentials: true,
 	})
 		.then((res) => {
-			console.log("res is", res);
+			console.log("getting the login info is", res);
 			// router.push("/chat");
 			return true;
 		})
