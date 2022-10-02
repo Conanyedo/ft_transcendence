@@ -121,8 +121,12 @@ export interface chatFormValues {
 
 export interface NotificationType {
 	login: string,
-	msg: string,
-	read: boolean
+	fullname: string,
+    avatar: string,
+    status: string,
+    gameId: string,
+	type: string,
+	refresh: any
 }
 
 
