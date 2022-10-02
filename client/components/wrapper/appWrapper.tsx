@@ -47,10 +47,10 @@ const ContentWrapper: React.FC<PropsType> = ({ children }) => {
 	}
 	const navBarHandler = (page: string) => {
 		setPosIndicator(() => {
-			if (page === "/profile") return classesNav.profilePos;
-			if (page === "/live-games") return classesNav.liveGamePos;
-			if (page === "/game") return classesNav.gamePos;
-			if (page === "/chat") return classesNav.chatPos;
+			if (page.includes("/profile")) return classesNav.profilePos;
+			if (page.includes("/live-games")) return classesNav.liveGamePos;
+			if (page.includes("/game")) return classesNav.gamePos;
+			if (page.includes("/chat")) return classesNav.chatPos;
 			return classesNav.hide;
 		});
 	};
