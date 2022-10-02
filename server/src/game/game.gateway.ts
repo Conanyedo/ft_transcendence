@@ -17,9 +17,10 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	server: Server;
 	allGames: allGames;
 
-	handleConnection(client: Socket, ...args: any[]) {
-		console.log('game connection: ', client.id);
-		// client.disconnect();
+	handleConnection(client: Socket) {
+		const token = client.handshake.headers.authorization;
+		if (!token)
+			client.disconnect();
 		if (this.allGames?.server !== this.server) {
 			this.allGames = new allGames(this.server, this.gameService)
 		}
