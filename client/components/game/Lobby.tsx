@@ -16,6 +16,7 @@ import { fetchDATA } from "@hooks/useFetchData";
 import { useRouter } from "next/router";
 import { FriendOnline } from "@Types/dataTypes";
 import { getImageBySize, useOutsideAlerter } from "@hooks/Functions";
+import socket_notif from "config/socketNotif";
 
 class PropsType extends FriendOnline {
 	select: any;
@@ -67,7 +68,7 @@ export const FriendGameSetting: React.FC<{
 		setThemeselected(e!.target!.alt as string);
 	};
 	const StartHandler = () => {
-		if (friendSelected.login)
+		if (friendSelected.login) {
 			socket_game.emit(
 				"newFriendGame",
 				{
@@ -76,9 +77,11 @@ export const FriendGameSetting: React.FC<{
 					login: owner,
 				},
 				(id: any) => {
+					socket_notif.emit('sendGame', {player: friendSelected.login, gameId: id});
 					router.push("game/lobby?gameID=" + id);
 				}
 			);
+		}
 	};
 	const ClicktoSerachHandler = () => {
 		ref_input.current!.value = "";
@@ -207,22 +210,6 @@ const Lobby = () => {
 	const joinRankHandler = () => {
 		setQueuePage(true);
 	};
-	/*
-	const owner = localStorage.getItem("owner");
-	const acceptChallenge = () => {
-		socket_game.emit(
-			"joinGameFriend",
-			{ login: owner, accept: "e8390db5a91a" },
-			(data: string) => {
-				if (data.length > 4) {
-					router.push("game/lobby?gameID=" + data);
-				}
-			}
-		);
-	};
-	const refuseChallenge = () => {
-		socket_game.emit("refuseChallenge", "e8390db5a91a");
-	};*/
 	return (
 		<>
 			{ErrorMsg && (
@@ -289,8 +276,6 @@ const Lobby = () => {
 									Invite Friend
 								</div>
 							</div>
-							{/* <button onClick={acceptChallenge}>play</button>
-							<button onClick={refuseChallenge}>Not play</button> */}
 						</div>
 					</div>
 				</>
