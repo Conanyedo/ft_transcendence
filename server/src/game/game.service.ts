@@ -4,6 +4,7 @@ import { stat } from 'fs';
 import { FriendshipService } from 'src/friendship/friendship.service';
 import { Stats, userAchievements } from 'src/user/stats.entity';
 import { rankDto, statsDto } from 'src/user/user.dto';
+import { userStatus } from 'src/user/user.entity';
 import { UserService } from 'src/user/user.service';
 import { Repository } from 'typeorm';
 import { gameDto, historyDto, opponentDto } from './game.dto';
@@ -91,6 +92,13 @@ export class GameService {
 		const loser: string = (winner === game.playerOne) ? game.playerTwo : game.playerOne;
 		await this.updateStats(winner, gameResult.gameType, true);
 		await this.updateStats(loser, gameResult.gameType, false);
+		await this.userService.setStatus(game.playerOne, userStatus.ONLINE);
+		await this.userService.setStatus(game.playerTwo, userStatus.ONLINE);
+	}
+	
+	async startMatch(playerOne: string, playerTwo: string) {
+		await this.userService.setStatus(playerOne, userStatus.INGAME);
+		await this.userService.setStatus(playerTwo, userStatus.INGAME);
 	}
 
 	async getMatches(login: string) {
