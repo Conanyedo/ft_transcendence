@@ -927,3 +927,8 @@
     color: #EF4664;
 }
 
+.selectedChatUsr {
+    border-radius: 8px;
+    background-color: #242426;
+}
+

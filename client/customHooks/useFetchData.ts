@@ -130,9 +130,6 @@ export const updateChnlInfo = async (
 	})
 		.then((res) => {
 			if (res.data == true) {
-				console.log("SUCCESS");
-				// router.push("/chat");
-				console.log(login);
 				router.push(`/chat?login=${login}`);
 			}
 			// set(res.data);
@@ -290,7 +287,7 @@ export const addMembers = async (data: any) => {
 		withCredentials: true,
 	})
 		.then((res) => {
-			console.log(res);
+			// console.log(res);
 			// set(res.data);
 			return true;
 		})
@@ -314,7 +311,7 @@ export const banMemberFromChannel = async (data: any) => {
 		withCredentials: true,
 	})
 		.then((res) => {
-			console.log(res);
+			// console.log(res);
 			// set(res.data);
 			return true;
 		})
@@ -364,7 +361,7 @@ export const postChannel = async (set: any, router: NextRouter, data: any) => {
 		withCredentials: true,
 	})
 		.then((res) => {
-			console.log("create channel response", res);
+			// console.log("create channel response", res);
 			set(res.data);
 			router.push("/chat?login=" + res.data.login);
 			return true;
@@ -391,7 +388,7 @@ export const changeMemberRole = async (data: any, set: any) => {
 		withCredentials: true,
 	})
 		.then((res) => {
-			console.log(res);
+			// console.log(res);
 			// set(res.data);
 			// router.push("/chat?login=" + res.data.login);
 			return true;
@@ -413,7 +410,7 @@ export const getFriends = async (set: any, setInitialState: any) => {
 		withCredentials: true,
 	})
 		.then((res) => {
-			console.log("get friend", res.data.data);
+			// console.log('get friend', res.data.data);
 			setInitialState(res.data.data);
 			return true;
 		})
@@ -435,8 +432,7 @@ export const getChannelProfile = async (convId: any, set: any) => {
 		},
 		data: json,
 		withCredentials: true,
-	})
-		.then((res) => {
+	}).then((res) => {
 			console.log(res);
 			return res;
 		})
@@ -465,8 +461,8 @@ export const leaveChannel = async (
 		withCredentials: true,
 	})
 		.then((res) => {
-			console.log(res);
-			console.log(JSON.parse(res.config.data));
+			// console.log(res);
+			// console.log(JSON.parse(res.config.data));
 			setNewData(filterCnvs(prevData, res.config.data));
 			router.push("/chat");
 			return true;
@@ -478,7 +474,8 @@ export const leaveChannel = async (
 };
 
 export const getLoginInfo = async (login: any) => {
-	console.log(login);
+
+	// console.log(login);
 
 	const token = getCookie("jwt");
 	return await axios({
@@ -491,7 +488,7 @@ export const getLoginInfo = async (login: any) => {
 		withCredentials: true,
 	})
 		.then((res) => {
-			console.log("getting the login info is", res);
+			// console.log("getting the login info is", res);
 			// router.push("/chat");
 			return true;
 		})
