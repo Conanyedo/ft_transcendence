@@ -21,6 +21,7 @@ const SettingGame: React.FC<{ Hide: () => void; login: string; setId: Dispatch<S
 				{ Theme: themeselected, friend: props.login, login: owner },
 				(id: string) => {
 					props.setId(id)
+					props.Hide();
 				}
 			)
 	}
