@@ -75,7 +75,7 @@ export class ChatService {
 	async getUserInfo(login: string, user: string) {
 		const relation = await this.friendshipService.getRelation(login, user);
 		const userInfo = await this.userService.getFriend(user);
-		return { ...userInfo, relation };
+		return { data: { ...userInfo, relation } };
 	}
 
 	async blockUser(login: string, user: string) {
@@ -87,7 +87,8 @@ export class ChatService {
 		this.memberRepository
 			.query(`update members set status = 'Blocker', "leftDate" = '${currDate}' FROM users where members."userId" = users.id AND members."conversationId" = '${conv[0].id}' AND users."login" = '${login}';`);
 		const sockets = await this.chatGateway.server.fetchSockets();
-		sockets.find((socket) => (socket.data.login === login))?.leave(conv[0].id);
+		const clients = sockets.filter((socket) => (socket.data.login === login));
+		clients.forEach((client) => (client.leave(conv[0].id)))
 	}
 
 	async unBlockUser(login: string, user: string) {
@@ -98,7 +99,8 @@ export class ChatService {
 		this.memberRepository
 			.query(`update members set status = 'Member', "leftDate" = null FROM users where members."userId" = users.id AND members."conversationId" = '${conv[0].id}' AND users."login" = '${login}';`);
 		const sockets = await this.chatGateway.server.fetchSockets();
-		sockets.find((socket) => (socket.data.login === login))?.join(conv[0].id);
+		const clients = sockets.filter((socket) => (socket.data.login === login));
+		clients.forEach((client) => (client.join(conv[0].id)))
 	}
 
 	async encryptPassword(password: string) {
@@ -158,7 +160,7 @@ export class ChatService {
 	}
 
 	async updateConvDate(convId: string, date: Date) {
-		await this.conversationRepository
+		return await this.conversationRepository
 			.createQueryBuilder('conversations')
 			.update({ lastUpdate: date })
 			.where('id = :convId', { convId: convId })
@@ -224,9 +226,10 @@ export class ChatService {
 		const newMsg: Message = await this.storeMsg(data.msg, client.data.login, data.invitation, conv);
 		client.join(conv.id);
 		const sockets = await this.chatGateway.server.fetchSockets();
-		const friendSocket = sockets.find((socket) => (socket.data.login === data.receiver))
-		if (friendSocket)
-			friendSocket.join(conv.id);
+		const clients = sockets.filter((socket) => (socket.data.login === client.data.login));
+		clients.forEach((client) => (client.join(conv.id)));
+		const friendSockets = sockets.filter((socket) => (socket.data.login === data.receiver))
+		friendSockets.forEach((friendSocket) => (friendSocket.join(conv.id)));
 		const msg: msgDto = { msg: data.msg, sender: client.data.login, invitation: newMsg.invitation, status: newMsg.status, date: newMsg.createDate, convId: conv.id };
 		return msg;
 	}
@@ -239,14 +242,14 @@ export class ChatService {
 		if (status === 'Muted' || status === 'Left' || status === 'Banned' || status === 'Blocker')
 			return status;
 		const newMsg: Message = await this.storeMsg(data.msg, login, data.invitation, conv);
-		this.updateConvDate(conv.id, newMsg.createDate);
+		await this.updateConvDate(conv.id, newMsg.createDate);
 		const msg: msgDto = { msg: data.msg, sender: login, invitation: newMsg.invitation, status: newMsg.status, date: newMsg.createDate, convId: conv.id };
 		return msg;
 	}
 
 	async createChannel(owner: string, data: createChannelDto) {
 		if (data.type === convType.PROTECTED && !data.password.length)
-			return 'Please provide password';
+			return { err: 'Please provide password' };
 		if (data.type !== convType.PROTECTED) data.password = undefined;
 		const avatar: string = `https://ui-avatars.com/api/?name=${data.name}&size=220&background=2C2C2E&color=409CFF&length=1`;
 		const newConv: createConvDto = { type: data.type, name: data.name, avatar: avatar, password: data.password };
@@ -258,19 +261,22 @@ export class ChatService {
 		});
 		const conv: Conversation = await this.createConv(newConv, newMembers);
 		const sockets = await this.chatGateway.server.fetchSockets();
-		data.members.forEach((member) => (sockets.find((socket) => (socket.data.login === member))?.join(conv.id)));
-		return { convId: conv.id, name: conv.name, login: conv.name, type: conv.type, membersNum: data.members.length, avatar: conv.avatar };
+		data.members.forEach((member) => {
+			const membersSockets = sockets.filter((socket) => (socket.data.login === member));
+			membersSockets.forEach((memberSocket) => (memberSocket.join(conv.id)));
+		});
+		return { data: { convId: conv.id, name: conv.name, login: conv.name, type: conv.type, membersNum: data.members.length, avatar: conv.avatar } };
 	}
 
 	async joinChannel(login: string, convId: string, password: string, owner: boolean) {
 		const exist = await this.conversationRepository
 			.query(`select id, type, password from conversations where conversations.id = '${convId}';`);
 		if (!exist.length)
-			return null;
+			return { err: 'Invalid data' };
 		if (exist[0].type === 'Protected' && !owner) {
-			if (!password) return 'Please provide password';
+			if (!password) return { err: 'Please provide a correct password' };
 			const match: boolean = await this.checkPassword(exist[0].password, password);
-			if (!match) return 'Invalid password';
+			if (!match) return { err: 'Invalid password' };
 		}
 		const memberExist = await this.memberRepository
 			.query(`select members.id, members."leftDate" from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND users."login" = '${login}';`);
@@ -286,28 +292,30 @@ export class ChatService {
 				.query(`update members set "leftDate" = null, "status" = 'Member' FROM users where members."userId" = users.id AND members."conversationId" = '${convId}' AND users."login" = '${login}';`);
 		}
 		const sockets = await this.chatGateway.server.fetchSockets();
-		sockets.find((socket) => (socket.data.login === login))?.join(convId);
-		return { convId };
+		const clients = sockets.filter((socket) => (socket.data.login === login));
+		clients.forEach((client) => (client.join(convId)));
+		return { data: { convId } };
 	}
 
 	async leaveChannel(login: string, convId: string) {
 		const exist = await this.memberRepository
 			.query(`select from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND users."login" = '${login}' AND members."status" != 'Owner' AND members."leftDate" is null;`);
 		if (!exist.length)
-			return null;
+			return { err: 'Invalid data' };
 		const currDate = new Date().toISOString();
 		this.memberRepository
 			.query(`update members set "leftDate" = '${currDate}', "status" = 'Left' FROM users where members."userId" = users.id AND members."conversationId" = '${convId}' AND users."login" = '${login}';`);
 		const sockets = await this.chatGateway.server.fetchSockets();
-		sockets.find((socket) => (socket.data.login === login))?.leave(convId);
-		return { convId };
+		const clients = sockets.filter((socket) => (socket.data.login === login));
+		clients.forEach((client) => (client.leave(convId)));
+		return { data: { convId } };
 	}
 
 	async channelProfile(login: string, convId: string) {
 		const exist = await this.memberRepository
 			.query(`select from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND users."login" = '${login}';`);
 		if (!exist.length)
-			return null;
+			return { err: 'Invalid data' };
 		const owner: Member[] = await this.memberRepository
 			.query(`select users."login", users."fullname", users."avatar", members."status" from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND members."status" = 'Owner';`);
 		const admins: Member[] = await this.memberRepository
@@ -316,91 +324,87 @@ export class ChatService {
 			.query(`select users."login", users."fullname", users."avatar", members."status" from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND members."status" = 'Member';`);
 		const muted: Member[] = await this.memberRepository
 			.query(`select users."login", users."fullname", users."avatar", members."status" from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND members."status" = 'Muted';`);
-		return { owner, admins, members, muted };
+		return { data: { owner, admins, members, muted } };
 	}
 
 	async setMemberStatus(login: string, convId: string, member: string, status: memberStatus) {
 		const exist = await this.memberRepository
 			.query(`select from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND users."login" = '${login}' AND (members."status" = 'Owner' OR members."status" = 'Admin');`);
 		if (!exist.length)
-			return null;
+			return { err: 'Invalid data' };
 		this.memberRepository
 			.query(`update members set status = '${status}' FROM users where members."userId" = users.id AND members."conversationId" = '${convId}' AND users."login" = '${member}' AND members."leftDate" IS NULL AND members."status" != 'Owner';`);
-		return true;
+		return { data: true };
 	}
 
 	async addMembers(login: string, convId: string, members: string[]) {
 		const exist = await this.memberRepository
 			.query(`select from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND users."login" = '${login}' AND (members."status" = 'Owner' OR members."status" = 'Admin');`);
 		if (!exist.length)
-			return null;
+			return { err: 'Invalid data' };
 		members.forEach(async (mem) => {
 			await this.joinChannel(mem, convId, undefined, true);
 		})
-		return true;
+		return { data: true };
 	}
 
 	async banMember(login: string, convId: string, member: string) {
 		const exist = await this.memberRepository
 			.query(`select from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND users."login" = '${login}' AND (members."status" = 'Owner' OR members."status" = 'Admin');`);
 		if (!exist.length)
-			return null;
+			return { err: 'Invalid data' };
 		const currDate = new Date().toISOString();
 		this.memberRepository
 			.query(`update members set "leftDate" = '${currDate}', "status" = 'Banned' FROM users where members."userId" = users.id AND members."conversationId" = '${convId}' AND members."status" != 'Owner' AND users."login" = '${member}';`);
 		const sockets = await this.chatGateway.server.fetchSockets();
-		sockets.find((socket) => (socket.data.login === member))?.leave(convId);
-		return true;
+		const clients = sockets.filter((socket) => (socket.data.login === member));
+		clients.forEach((client) => (client.leave(convId)));
+		return { data: true };
 	}
 
 	async unmuteMember(login: string, convId: string, member: string) {
 		const exist = await this.memberRepository
 			.query(`select from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND users."login" = '${login}' AND (members."status" = 'Owner' OR members."status" = 'Admin');`);
 		if (!exist.length)
-			return null;
+			return { err: 'Invalid data' };
 		const memberId = await this.memberRepository
 			.query(`select members.id from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND users."login" = '${member}' AND members."status" = 'Muted';`);
 		if (!memberId.length)
-			return null;
+			return { err: 'Invalid data' };
 		this.memberRepository
 			.query(`update members set "leftDate" = null, "status" = 'Member' where members."id" = '${memberId[0].id}';`);
-		const sockets = await this.chatGateway.server.fetchSockets();
-		sockets.find((socket) => (socket.data.login === member))?.join(convId);
-		return true;
+		return { data: true };
 	}
 
 	async muteMember(login: string, convId: string, member: string, seconds: number) {
 		const exist = await this.memberRepository
 			.query(`select from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND users."login" = '${login}' AND (members."status" = 'Owner' OR members."status" = 'Admin');`);
 		if (!exist.length)
-			return null;
+			return { err: 'Invalid data' };
 		const memberId = await this.memberRepository
 			.query(`select members.id from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND users."login" = '${member}' AND (members."status" = 'Member' OR members."status" = 'Admin');`);
 		if (!memberId.length)
-			return null;
-		const currDate = new Date().toISOString();
+			return { err: 'Invalid data' };
 		this.memberRepository
-			.query(`update members set "leftDate" = '${currDate}', "status" = 'Muted' where members."id" = '${memberId[0].id}';`);
+			.query(`update members set "status" = 'Muted' where members."id" = '${memberId[0].id}';`);
 		const name: string = memberId[0].id;
 		const job = new CronJob(new Date(Date.now() + seconds * 1000), async () => {
 			this.memberRepository
 				.query(`update members set "leftDate" = null, "status" = 'Member' where members."id" = '${name}';`);
-			const sockets = await this.chatGateway.server.fetchSockets();
-			sockets.find((socket) => (socket.data.login === member))?.join(convId);
 			this.schedulerRegistry.deleteCronJob(name);
 		});
 		this.schedulerRegistry.addCronJob(name, job);
 		job.start();
-		const sockets = await this.chatGateway.server.fetchSockets();
-		sockets.find((socket) => (socket.data.login === member))?.leave(convId);
-		return true;
+		return { data: true };
 	}
 
 	async updateChannel(login: string, convId: string, data: updateChannelDto) {
 		const exist = await this.memberRepository
 			.query(`select from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND users."login" = '${login}' AND (members."status" = 'Owner' OR members."status" = 'Admin');`);
-		if (!exist.length)
-			return deleteAvatar('channels', data.avatar);
+		if (!exist.length) {
+			deleteAvatar('channels', data.avatar);
+			return { err: 'Invalid data' };
+		}
 		if (data.name)
 			await this.setChannelName(convId, data.name);
 
@@ -416,7 +420,7 @@ export class ChatService {
 			await this.setChannelType(convId, data.type);
 		if (data.password)
 			await this.setChannelPassword(convId, data.password);
-		return true;
+		return { data: true };
 	}
 
 	async setChannelName(convId: string, name: string) {

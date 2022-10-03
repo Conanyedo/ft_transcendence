@@ -7,6 +7,7 @@ import { authenticator } from 'otplib';
 import { toDataURL } from 'qrcode';
 import { Jwt2faAuthService } from 'src/2fa-jwt/2fa/2fa-auth.service';
 import { ConfigService } from '@nestjs/config';
+import { userStatus } from 'src/user/user.entity';
 
 @Injectable()
 export class AuthService {
