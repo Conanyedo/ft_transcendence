@@ -2,6 +2,7 @@ import { AnyAction } from "@reduxjs/toolkit";
 import { ShowErrorMsg } from "@store/UI-Slice";
 import { filterCnvs } from "@utils/chat";
 import axios from "axios";
+import socket_game from "config/socketGameConfig";
 import { CookieValueTypes, getCookie } from "cookies-next";
 import { NextRouter } from "next/router";
 import { Dispatch, SetStateAction } from "react";
@@ -100,11 +101,13 @@ export const LogOut = (route: NextRouter) => {
 		})
 		.then(() => {
 			socket_notif.disconnect();
+			socket_game.disconnect();
 			route.replace("/");
 		})
 		.catch((err) => {
 			eraseCookie("jwt");
 			socket_notif.disconnect();
+			socket_game.disconnect();
 			route.replace("/");
 		});
 };
@@ -493,7 +496,7 @@ export const getLoginInfo = async (login: any) => {
 			return true;
 		})
 		.catch((err) => {
-			console.log(err);
+			// console.log(err);
 			return false;
 		});
 };
