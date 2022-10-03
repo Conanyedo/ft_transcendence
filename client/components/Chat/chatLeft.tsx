@@ -1,7 +1,7 @@
 import { ChatContext, ChatContextType } from "@contexts/chatContext";
 import { postChannel } from "@hooks/useFetchData";
 import { useRouter } from "next/router";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import Styles from "@styles/chat.module.css";
 import { ModalBox } from "@components/Modal";
 import { ChannelAsset, BlueChannelAsset } from "@svg/index";
@@ -10,6 +10,7 @@ import { filterChatUsers } from "@utils/chat";
 import Link from "next/link";
 import Search from "@public/Icon.svg";
 import { getImageBySize } from "@hooks/Functions";
+import socket_notif from "config/socketNotif";
 
 export const ChatLeft = (props: { login: any }) => {
   // Setting some local state
@@ -20,6 +21,8 @@ export const ChatLeft = (props: { login: any }) => {
     setLastUsers,
     chatUsersRefs,
     friends,
+    convId,
+    setConvId
   } = useContext(ChatContext) as ChatContextType;
   const [show, setShow] = useState<boolean>(false);
   const [displayBlueIcon, setDisplayBlueIcon] = useState(false);
@@ -27,6 +30,7 @@ export const ChatLeft = (props: { login: any }) => {
   const [previousElem, setPreviousElem] = useState<any>();
 
   const router = useRouter();
+  const dotRefs: Array<HTMLDivElement> | any = useRef([]);
 
   useEffect(() => {
     // console.log(friends);
@@ -88,10 +92,34 @@ export const ChatLeft = (props: { login: any }) => {
   }, [lastUsers]);
 
   function selectUser(element: any) {
-    if (previousElem?.classList.value.includes("selected")) previousElem.classList.remove(Styles.selectedChatUsr);
+    if (previousElem?.classList.value.includes("selected"))
+      previousElem.classList.remove(Styles.selectedChatUsr);
+    if (element.children[1].children[1]?.classList.value.includes("displayDot"))
+      element.children[1].children[1].classList.remove(Styles.displayDot);
     element.classList.add(Styles.selectedChatUsr);
     setPreviousElem(element);
   }
+
+  // listen on msgs
+  socket_notif.on("newMsg", (response) => {
+    console.log(response);
+    console.log(lastUsers);
+
+    setConvId(response?.convId);
+    // console.log(convId);
+
+    lastUsers.forEach((user, i) => {
+      if (user.login == response.sender) {
+        console.log("here");
+        dotRefs.current[i].classList.add(Styles.displayDot);
+      }
+    });
+    
+  });
+
+  useEffect(() => {
+    console.log(convId);
+  }, [convId])
 
   return (
     <>
@@ -159,11 +187,21 @@ export const ChatLeft = (props: { login: any }) => {
                       {user?.name} {user?.channelname}
                     </div>
                   </div>
-                  <p className={Styles.status}>
-                    {user?.membersNum
-                      ? user?.membersNum + " members"
-                      : user.status}
-                  </p>
+                  <div className={Styles.statusDiv}>
+                    <p className={Styles.status}>
+                      {user?.membersNum
+                        ? user?.membersNum + " members"
+                        : user.status}
+                    </p>
+                    <div
+                      className={Styles.redDot}
+                      ref={(element) => {
+                        dotRefs.current[parseInt(i)] = element;
+                      }}
+                    >
+                      &nbsp;
+                    </div>
+                  </div>
                 </div>
               </Link>
             ))}

@@ -137,6 +137,8 @@ const ChatSection: React.FC<{
   msgsDisplayDiv: any;
   chatMsgs: any;
   fconvId: string;
+  setFConfId: any
+  convId: string,
   me: string;
   messagesEndRef: any;
 }> = ({
@@ -146,9 +148,25 @@ const ChatSection: React.FC<{
   msgsDisplayDiv,
   chatMsgs,
   fconvId,
+  setFConfId,
+  convId,
   me,
   messagesEndRef,
 }) => {
+
+    useEffect(() => {
+        console.log("convId here", convId);
+        console.log(currentUser);
+        console.log(chatMsgs);
+        setFConfId(convId);
+    }, [convId])
+
+    useEffect(() => {
+      console.log(fconvId);
+    }, [fconvId])
+    
+
+    
   return (
     <>
       {currentUser && !profile && (
@@ -163,7 +181,7 @@ const ChatSection: React.FC<{
                   right: chatMsg.sender != me ? "auto" : "0",
                 }}
               >
-                {(currentUser.convId == chatMsg.convId ||
+                {(chatMsg.convId == convId ||
                   fconvId == chatMsg.convId) && (
                   <div
                     className={Styles.msgBox}
@@ -188,7 +206,7 @@ const ChatSection: React.FC<{
                     </div>
                   </div>
                 )}
-                {(currentUser.convId == chatMsg.convId ||
+                {(convId == chatMsg.convId ||
                   fconvId == chatMsg.convId) && (
                   <div
                     className={Styles.msgTime}
@@ -353,6 +371,7 @@ export const ChatRight = (props: { setShowSetModal: any; login: number }) => {
     setLastUsers,
     lastUsers,
     setInitialUsrData,
+    convId, setConvId
   } = useContext(ChatContext) as ChatContextType;
 
   // Setting some local state
@@ -363,7 +382,6 @@ export const ChatRight = (props: { setShowSetModal: any; login: number }) => {
   const [showSetModal, setShowSetModal] = useState(false);
   const [membersMdl, showMembersMdl] = useState(false);
   const [currentUser, setCurrentUser] = useState<any>();
-  const [convId, setConvId] = useState<any>();
   const [stopUsr, setStopUsr] = useState("");
 
   const [enteredMsg, setEnteredMsg] = useState("");
@@ -488,6 +506,8 @@ export const ChatRight = (props: { setShowSetModal: any; login: number }) => {
                 msgsDisplayDiv={msgsDisplayDiv}
                 chatMsgs={chatMsgs}
                 fconvId={fconvId}
+                setFConfId={setFConfId}
+                convId={convId}
                 me={me as string}
                 messagesEndRef={messagesEndRef}
               />

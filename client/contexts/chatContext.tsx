@@ -1,15 +1,22 @@
-import React, { createContext, useState, useEffect, SetStateAction, useRef, useMemo } from "react";
-import { chatMsg, chatUser } from "@Types/dataTypes"
+import React, {
+  createContext,
+  useState,
+  useEffect,
+  SetStateAction,
+  useRef,
+  useMemo,
+} from "react";
+import { chatMsg, chatUser } from "@Types/dataTypes";
 import socket_notif from "config/socketNotif";
-import { getLastConvs } from "@utils/chat"
+import { getLastConvs } from "@utils/chat";
 import { getFriends } from "@hooks/useFetchData";
 
 interface ChatContextType {
-  protectedChannel: boolean;  
+  protectedChannel: boolean;
   setProtectedChannel: React.Dispatch<React.SetStateAction<boolean>>;
   channelMode: string;
   setChannelMode: React.Dispatch<React.SetStateAction<string>>;
-  lastUsers:chatUser[];
+  lastUsers: chatUser[];
   setLastUsers: React.Dispatch<SetStateAction<chatUser[]>>;
   currentUser: chatUser | undefined;
   setCurrentUser: any;
@@ -24,20 +31,21 @@ interface ChatContextType {
   initialusrData: any;
   setInitialUsrData: any;
   friends: any;
+  convId: string;
+  setConvId: any;
 }
 
 const ChatContext = createContext<ChatContextType | null>(null);
 
 const ChatProvider = ({ children }: any) => {
-  
   const [protectedChannel, setProtectedChannel] = useState(false);
   const [channelMode, setChannelMode] = useState<string>("Public");
 
   // Setting all the chat state here
 
   // const [showCnv, setShowCnv] = useState<boolean>(false);
-	// const [profile, setShowprofile] = useState(false);
-	// const [showSetModal, setShowSetModal] = useState(false);
+  // const [profile, setShowprofile] = useState(false);
+  // const [showSetModal, setShowSetModal] = useState(false);
 
   const [lastUsers, setLastUsers] = useState<Array<chatUser>>([]);
 
@@ -48,6 +56,8 @@ const ChatProvider = ({ children }: any) => {
   const [initialusrData, setInitialUsrData] = useState<Array<chatUser>>([]);
   const messagesEndRef: any = useRef(null);
 
+  const [convId, setConvId] = useState("");
+
   // setting the chat users refs
   const chatUsersRefs: Array<HTMLDivElement> | any = useRef([]);
   const [prevUser, setPrevUser] = useState<number>(0);
@@ -55,33 +65,57 @@ const ChatProvider = ({ children }: any) => {
   const [chatMsgs, setChatMsgs] = useState<any>([]);
 
   useEffect(() => {
-
     socket_notif.on("connect", () => {
-			// console.log(socket_notif.id);
-		});
+      // console.log(socket_notif.id);
+    });
 
     getLastConvs(setLastUsers, setInitialUsrData);
     getFriends(() => null, setFriends);
 
     setCurrentUser(lastUsers[0]);
     return () => {
-      socket_notif.off('connect');
-    }
-  }, [])
+      socket_notif.off("connect");
+    };
+  }, []);
 
   return (
-    <ChatContext.Provider value={{ protectedChannel, setProtectedChannel, channelMode, setChannelMode, lastUsers, setLastUsers, currentUser, setCurrentUser, showCnv, setShowCnv, messagesEndRef, chatUsersRefs, prevUser, setPrevUser, initialusrData, chatMsgs, setChatMsgs, friends, setInitialUsrData }}>
+    <ChatContext.Provider
+      value={{
+        protectedChannel,
+        setProtectedChannel,
+        channelMode,
+        setChannelMode,
+        lastUsers,
+        setLastUsers,
+        currentUser,
+        setCurrentUser,
+        showCnv,
+        setShowCnv,
+        messagesEndRef,
+        chatUsersRefs,
+        prevUser,
+        setPrevUser,
+        initialusrData,
+        chatMsgs,
+        setChatMsgs,
+        friends,
+        setInitialUsrData,
+        convId,
+        setConvId,
+      }}
+    >
       {children}
     </ChatContext.Provider>
   );
 };
 
-const withChat = (Child: any) => (props: any) => (
-  <ChatContext.Consumer>
-    {(context) => <Child {...props} {...context} />}
-    {/* Another option is:  {context => <Child {...props} context={context}/>}*/}
-  </ChatContext.Consumer>
-);
+const withChat = (Child: any) => (props: any) =>
+  (
+    <ChatContext.Consumer>
+      {(context) => <Child {...props} {...context} />}
+      {/* Another option is:  {context => <Child {...props} context={context}/>}*/}
+    </ChatContext.Consumer>
+  );
 
 export { ChatProvider, withChat, ChatContext };
 export type { ChatContextType };

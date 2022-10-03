@@ -932,3 +932,21 @@
     background-color: #242426;
 }
 
+.redDot {
+    width: 8px;
+    height: 8px;
+    background-color: #EF4664;
+    border-radius: 50%;
+    display: none;
+}
+
+.statusDiv {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+}
+
+.displayDot {
+    display: block;
+}
+
