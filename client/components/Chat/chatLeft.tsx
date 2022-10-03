@@ -2,7 +2,7 @@ import { ChatContext, ChatContextType } from "@contexts/chatContext";
 import { postChannel } from "@hooks/useFetchData";
 import { useRouter } from "next/router";
 import { useContext, useEffect, useState } from "react";
-import Styles from "@styles/chat.module.css"
+import Styles from "@styles/chat.module.css";
 import { ModalBox } from "@components/Modal";
 import { ChannelAsset, BlueChannelAsset } from "@svg/index";
 import Image from "next/image";
@@ -12,84 +12,167 @@ import Search from "@public/Icon.svg";
 import { getImageBySize } from "@hooks/Functions";
 
 export const ChatLeft = (props: { login: any }) => {
+  // Setting some local state
+  const {
+    lastUsers,
+    setShowCnv,
+    showCnv,
+    setLastUsers,
+    chatUsersRefs,
+    friends,
+  } = useContext(ChatContext) as ChatContextType;
+  const [show, setShow] = useState<boolean>(false);
+  const [displayBlueIcon, setDisplayBlueIcon] = useState(false);
+  const [channelDetails, setChannelDetails] = useState<any>();
+  const [previousElem, setPreviousElem] = useState<any>();
 
-    // Setting some local state
-    const { lastUsers, setShowCnv, showCnv, setLastUsers, chatUsersRefs, friends } = useContext(ChatContext) as ChatContextType;
-    const [show, setShow] = useState<boolean>(false);
-    const [displayBlueIcon, setDisplayBlueIcon] = useState(false);
-    const [channelDetails, setChannelDetails] = useState<any>();
-    
+  const router = useRouter();
 
-    const router = useRouter();
+  useEffect(() => {
+    // console.log(friends);
+  }, [friends]);
 
-    useEffect(() => {
-        // console.log(friends);
-    }, [friends])
+  function resetForm(formik: any) {
+    formik.setFieldValue("cName", "");
+    formik.setFieldValue("password", "");
+    formik.setFieldValue("member", "");
+  }
 
-    function resetForm(formik: any) {
-        formik.setFieldValue("cName", "");
-        formik.setFieldValue("password", "");
-        formik.setFieldValue("member", "");
+  // functions
+  async function createChannel(
+    channelName: string,
+    convType: string,
+    password: string,
+    members: Array<string>,
+    setUsrTags: any,
+    formik: any,
+    setError: any
+  ) {
+    if (
+      channelName.length == 0 ||
+      convType.length == 0 ||
+      members.length == 0
+    ) {
+      setError("Please enter the required credentials**");
+    } else {
+      setError("");
+      setShow(!show);
+      var loginList: string[] = [];
+
+      members.forEach((member: any, i: any) => {
+        friends.forEach((friend: any) => {
+          if (friend.fullname == member) loginList.push(friend.login);
+        });
+      });
+
+      const data = {
+        name: channelName,
+        type: convType,
+        members: loginList,
+        password: password,
+      };
+      postChannel(setChannelDetails, router, data);
+
+      // reset the necessary fields
+      resetForm(formik);
+      setUsrTags([]);
     }
+  }
 
-    // functions
-    async function createChannel(channelName: string, convType: string, password: string, members: Array<string>, setUsrTags: any, formik: any, setError: any) {
+  useEffect(() => {
+    if (props.login != undefined) setShowCnv(true);
+  }, []);
 
-        if (channelName.length == 0 || convType.length == 0 || members.length == 0) {
-            setError("Please enter the required credentials**");
-        } else {
-            setError("");
-            setShow(!show);
-            var loginList: string[] = [];
+  useEffect(() => {
+    // setLastUsers(props.login);
+  }, [lastUsers]);
 
-            members.forEach((member: any, i: any) => {
-                friends.forEach((friend: any) => {
-                    if (friend.fullname == member) loginList.push(friend.login);
-                })
-            })
+  function selectUser(element: any) {
+    if (previousElem?.classList.value.includes("selected")) previousElem.classList.remove(Styles.selectedChatUsr);
+    element.classList.add(Styles.selectedChatUsr);
+    setPreviousElem(element);
+  }
 
-            const data = { name: channelName, type: convType, members: loginList, password: password };
-            postChannel(setChannelDetails, router, data);
-
-            // reset the necessary fields
-            resetForm(formik);
-            setUsrTags([]);
-        }
-    }
-
-    useEffect(() => {
-        if (props.login != undefined)
-            setShowCnv(true);
-    }, [])
-
-    useEffect(() => {
-        // setLastUsers(props.login);
-    }, [lastUsers])
-
-    return (<>
-        <div className={`${Styles.chatLeft} ${showCnv ? Styles.hideUsers : ""}`}>
-            <div className={Styles.leftContent}>
-                <div className={Styles.topSection}>
-                    <div className={Styles.msg}>Message</div>
-                    {!displayBlueIcon && <div onClick={() => setShow(!show)} className={Styles.channel} onMouseOver={() => setDisplayBlueIcon(true)}><ChannelAsset color="#758293" /></div>}
-                    {displayBlueIcon && <div onMouseLeave={() => setDisplayBlueIcon(false)} className={Styles.channel} onClick={() => setShow(!show)}><BlueChannelAsset /></div>}
-                    <ModalBox show={show} setShow={setShow} createChannel={createChannel} />
+  return (
+    <>
+      <div className={`${Styles.chatLeft} ${showCnv ? Styles.hideUsers : ""}`}>
+        <div className={Styles.leftContent}>
+          <div className={Styles.topSection}>
+            <div className={Styles.msg}>Message</div>
+            {!displayBlueIcon && (
+              <div
+                onClick={() => setShow(!show)}
+                className={Styles.channel}
+                onMouseOver={() => setDisplayBlueIcon(true)}
+              >
+                <ChannelAsset color="#758293" />
+              </div>
+            )}
+            {displayBlueIcon && (
+              <div
+                onMouseLeave={() => setDisplayBlueIcon(false)}
+                className={Styles.channel}
+                onClick={() => setShow(!show)}
+              >
+                <BlueChannelAsset />
+              </div>
+            )}
+            <ModalBox
+              show={show}
+              setShow={setShow}
+              createChannel={createChannel}
+            />
+          </div>
+          <div className={Styles.chatSearch}>
+            <Image src={Search} width={20} height={20} />
+            <input
+              type="Text"
+              className={Styles.chatInput}
+              placeholder="Search"
+              onChange={(e) =>
+                filterChatUsers(e, lastUsers, setLastUsers, initialusrData)
+              }
+            />
+          </div>
+          <div className={Styles.bottomSection}>
+            {lastUsers.map((user: any, i: any) => (
+              <Link href={"/chat?login=" + user.login} key={i}>
+                <div
+                  key={i}
+                  ref={(element) => {
+                    chatUsersRefs.current[parseInt(i)] = element;
+                  }}
+                  onClick={() => selectUser(chatUsersRefs.current[parseInt(i)])}
+                  className={Styles.chatUser}
+                >
+                  <div className={Styles.avatarName}>
+                    <div className={Styles.avatar}>
+                      <img
+                        src={
+                          user?.avatar.startsWith("https")
+                            ? user?.avatar
+                            : getImageBySize(user?.avatar, 70)
+                        }
+                      />
+                    </div>
+                    <div className={Styles.username}>
+                      {user?.name} {user?.channelname}
+                    </div>
+                  </div>
+                  <p className={Styles.status}>
+                    {user?.membersNum
+                      ? user?.membersNum + " members"
+                      : user.status}
+                  </p>
                 </div>
-                <div className={Styles.chatSearch}>
-                    <Image src={Search} width={20} height={20} />
-                    <input type="Text" className={Styles.chatInput} placeholder="Search" onChange={(e) => filterChatUsers(e, lastUsers, setLastUsers, initialusrData)} />
-                </div>
-                <div className={Styles.bottomSection}>
-                    {lastUsers.map((user: any, i: any) => <Link href={"/chat?login=" + user.login} key={i}><div key={i} ref={(element) => { chatUsersRefs.current[parseInt(i)] = element }} className={Styles.chatUser}>
-                        <div className={Styles.avatarName}>
-                            <div className={Styles.avatar}><img src={user?.avatar.startsWith("https") ? user?.avatar : getImageBySize(user?.avatar, 70)} /></div>
-                            <div className={Styles.username}>{user?.name} {user?.channelname}</div>
-                        </div>
-                        <p className={Styles.status}>{user?.membersNum ? user?.membersNum + " members" : user.status}</p>
-                    </div></Link>)}
-                    {(lastUsers.length == 0) && <div className={Styles.newCnv}>No conversations yet</div>}
-                </div>
-            </div>
+              </Link>
+            ))}
+            {lastUsers.length == 0 && (
+              <div className={Styles.newCnv}>No conversations yet</div>
+            )}
+          </div>
         </div>
-    </>)
-}
+      </div>
+    </>
+  );
+};

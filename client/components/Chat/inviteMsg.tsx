@@ -1,29 +1,43 @@
 import { chatUser } from "@Types/dataTypes";
-import Styles from "@styles/chat.module.css"
+import Styles from "@styles/chat.module.css";
 import Image from "next/image";
 
 export function InviteMsg(invitedUser: chatUser) {
-    return (<div className={Styles.inviteMsg}>
+  return (
+    <div className={Styles.inviteMsg}>
+      <div>
+        <Image
+          src={invitedUser?.avatar}
+          width={38}
+          height={38}
+          className={Styles.inviteAvatar}
+        />
         <div>
-            <Image src={invitedUser?.avatar} width={38} height={38} className={Styles.inviteAvatar} />
-            <div>
-                {invitedUser.name}
-                <p>You invite them to play pong game</p>
-            </div>
+          {invitedUser.name}
+          <p>You invite them to play pong game</p>
         </div>
-        <button className={Styles.inviteBtn}>Cancel Invitation</button>
-    </div>)
+      </div>
+      <button className={Styles.inviteBtn}>Cancel Invitation</button>
+    </div>
+  );
 }
 
 export function receivedInvite(invitedUser: chatUser) {
-    return (<div className={Styles.inviteMsg}>
+  return (
+    <div className={Styles.inviteMsg}>
+      <div>
+        <Image
+          src={invitedUser?.avatar}
+          width={38}
+          height={38}
+          className={Styles.inviteAvatar}
+        />
         <div>
-            <Image src={invitedUser?.avatar} width={38} height={38} className={Styles.inviteAvatar} />
-            <div>
-                {invitedUser.name}
-                <p>You invite them to play pong game</p>
-            </div>
+          {invitedUser.name}
+          <p>You invite them to play pong game</p>
         </div>
-        <button className={Styles.inviteBtn}>Cancel Invitation</button>
-    </div>)
+      </div>
+      <button className={Styles.inviteBtn}>Cancel Invitation</button>
+    </div>
+  );
 }
