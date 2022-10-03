@@ -36,7 +36,7 @@ export const MembersModal = (props: { setShowSetModal: any, showSetModal: any, c
     });
 
     const removeUser = () => {
-        console.log("remove user here");
+        // console.log("remove user here");
     }
 
     const handleOnChange = (event: any) => {
@@ -56,7 +56,7 @@ export const MembersModal = (props: { setShowSetModal: any, showSetModal: any, c
 
     const addMember = () => {
         props.setShowSetModal(false);
-        console.log("Member added");
+        // console.log("Member added");
 
         formik.setFieldValue("member", "");
         setUsrTags([]);

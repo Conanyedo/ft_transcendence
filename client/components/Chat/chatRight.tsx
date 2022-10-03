@@ -19,6 +19,40 @@ import { Profile } from "./Profile";
 import { getImageBySize } from "@hooks/Functions";
 import SettingGame from "@components/game/settingGame";
 
+// Splitting components
+
+const SendMsg: React.FunctionComponent<{ currentUser: any, relation: string, stopUsr: string, setStopUsr: any, enteredMsg: string, setEnteredMsg: any }> = ({ currentUser, relation, stopUsr, setStopUsr, enteredMsg, setEnteredMsg }) => {
+
+    const [settingGames, ShowSettingGames] = useState(false);
+
+    function hideSettingGame() {
+        ShowSettingGames(!settingGames);
+    }
+
+    return (
+        <>
+        {settingGames && <SettingGame Hide={hideSettingGame} login={currentUser?.login} />}
+        <div className={Styles.sendDiv} style={{ gap: enteredMsg != "" ? "1.5rem" : "0" }}>
+            {
+                (stopUsr == "" && relation == "Blocker") && <div className={Styles.msgInput}><div className={Styles.newCnv}>You blocked this user</div></div>
+            }
+            {(stopUsr == "" && relation != "Blocker") && <div className={Styles.msgInput}>
+                <input type="text" placeholder="message" value={enteredMsg} onChange={(e) => setEnteredMsg(e.target.value)} onKeyDown={(event) => setMsg(event.keyCode, enteredMsg, setEnteredMsg, currentUser.convId, currentUser.login, setStopUsr)} />
+                {(currentUser?.type == "Dm" || relation == "friend") && <div onClick={hideSettingGame} className={Styles.console}><GameIconAsset color="#D9D9D9" /></div>}
+            </div>}
+            {
+                (stopUsr == "left" && currentUser.type != "Dm") && <div className={Styles.msgInput}><div className={Styles.newCnv}>You left this channel</div></div>
+            }
+            {
+                (["banned", "muted"].includes(stopUsr) && currentUser.type != "Dm") && <div className={Styles.msgInput}><div className={Styles.newCnv}>You were {stopUsr} from this channel</div></div>
+            }
+            {(stopUsr == "" && relation != "Blocker") && <div onClick={(e) => setMsg(13, enteredMsg, setEnteredMsg, currentUser.convId, currentUser.login, setStopUsr)} className={Styles.sendCtr}>{enteredMsg && <Image src={sendArrow} width={30} height={30} className={Styles.animatedBtn} />}</div>}
+        </div></>
+    )
+}
+
+
+
 export const ChatRight = (props: { setShowSetModal: any, login: number }) => {
 
     const { showCnv, setShowCnv, messagesEndRef, chatMsgs, setChatMsgs, setLastUsers, lastUsers, setInitialUsrData } = useContext(ChatContext) as ChatContextType;
@@ -26,7 +60,6 @@ export const ChatRight = (props: { setShowSetModal: any, login: number }) => {
     // Setting some local state
     const [profile, setShowprofile] = useState(false);
     const [showMenuDropdown, setShowMenuDropdown] = useState(false);
-    const [enteredMsg, setEnteredMsg] = useState("");
     const [me, setMe] = useState(localStorage.getItem("owner"));
 
     // Settings and members modal show state
@@ -36,6 +69,7 @@ export const ChatRight = (props: { setShowSetModal: any, login: number }) => {
     const [convId, setConvId] = useState<any>();
     const [stopUsr, setStopUsr] = useState("");
 
+    const [enteredMsg, setEnteredMsg] = useState("");
     const [relation, setRelation] = useState("");
 
     // functions
@@ -104,6 +138,7 @@ export const ChatRight = (props: { setShowSetModal: any, login: number }) => {
     useEffect(() => {
         setConvStatus(currentUser, setStopUsr);
         setConvId(currentUser?.convId);
+        setRelation(currentUser?.relation);
     }, [currentUser])
 
     const unshowCnv = () => {
@@ -114,12 +149,6 @@ export const ChatRight = (props: { setShowSetModal: any, login: number }) => {
     const goToUserProfile = (login: string) => {
         router.push(`/profile/${login}`);
     }
-
-    const [settingGames, ShowSettingGames] = useState(false);
-    function hideSettingGame() {
-        ShowSettingGames(!settingGames);
-    }
-
     async function BlockFriend() {
         let result = await requests(currentUser?.login, "friendship/blockUser", router);
 
@@ -137,14 +166,13 @@ export const ChatRight = (props: { setShowSetModal: any, login: number }) => {
             setRelation("Friend");
             router.push(`/chat?login=${currentUser?.login}`);
         }
-            
+
     }
-    
+
 
     return (<div className={`${Styles.chatRight} ${showCnv ? Styles.displayChat : ""}`}>
         <MembersModal showSetModal={membersMdl} setShowSetModal={showMembersMdl} convId={currentUser?.convId} />
         <SettingsModal showSetModal={showSetModal} setShowSetModal={setShowSetModal} data={currentUser} />
-        { settingGames && <SettingGame Hide={hideSettingGame} login={currentUser?.login}/>}
         {currentUser && <div className={`${Styles.rightContent}`} >
             {currentUser && (<>
                 <div className={Styles.topDetails}>
@@ -167,7 +195,7 @@ export const ChatRight = (props: { setShowSetModal: any, login: number }) => {
 
                     </div>
                     <div className={Styles.menu} onClick={showUsrMenu}><MenuAsset />
-                        {showMenuDropdown && <MenuDropdown content={currentUser?.type == "Dm" ? relation != "Blocker" ?[, "Block User"] : [, "Unblock User"] : ["Settings", "Leave Channel"]} functions={[() => setShowSetModal(true), relation != "Blocker" ? () => BlockFriend() : () => UnblockFriend()]} />}
+                        {showMenuDropdown && <MenuDropdown content={currentUser?.type == "Dm" ? relation != "Blocker" ? [, "Block User"] : [, "Unblock User"] : ["Settings", "Leave Channel"]} functions={[() => setShowSetModal(true), relation != "Blocker" ? () => BlockFriend() : () => UnblockFriend()]} />}
                     </div>
 
                 </div>
@@ -177,34 +205,14 @@ export const ChatRight = (props: { setShowSetModal: any, login: number }) => {
                         {
                             chatMsgs.map((chatMsg: any, i: any) => <div key={i} className={Styles.chatMsg} style={{ left: chatMsg.sender == me ? "auto" : "0", right: chatMsg.sender != me ? "auto" : "0" }}>
                                 {(currentUser.convId == chatMsg.convId || fconvId == chatMsg.convId) && <div className={Styles.msgBox} style={{ justifyContent: chatMsg.sender == me ? "flex-end" : "flex-start" }}>
-                                    <div ref={messagesEndRef} className={Styles.msgContent} style={{ backgroundColor: chatMsg.sender == me ? "#409CFF" : "#3A3A3C", borderRadius: chatMsg.sender == me? "5px 5px 0 5px" : "0 5px 5px 5px" }}>
-                                 {chatMsg.msg}
+                                    <div ref={messagesEndRef} className={Styles.msgContent} style={{ backgroundColor: chatMsg.sender == me ? "#409CFF" : "#3A3A3C", borderRadius: chatMsg.sender == me ? "5px 5px 0 5px" : "0 5px 5px 5px" }}>
+                                        {chatMsg.msg}
                                     </div>
                                 </div>}
                                 {(currentUser.convId == chatMsg.convId || fconvId == chatMsg.convId) && <div className={Styles.msgTime} style={{ justifyContent: chatMsg.sender == me ? "flex-end" : "flex-start" }}>{chatMsg?.date?.substring(16, 11)}{chatMsg?.createDate?.substring(16, 11)}</div>}
                             </div>)}
                     </div>
-                    {/* {
-                        chatMsgs.length == 0 && <div className={Styles.newCnv}>
-                            <h1>{`Send your friend ${currentUser.name} a new message.`}</h1>
-                        </div>
-                    } */}
-                    <div className={Styles.sendDiv} style={{ gap: enteredMsg != "" ? "1.5rem" : "0" }}>
-                        {
-                            (stopUsr == "" && relation == "Blocker") && <div className={Styles.msgInput}><div className={Styles.newCnv}>You blocked this user</div></div>
-                        }
-                        {(stopUsr == "" && relation != "Blocker") && <div className={Styles.msgInput}>
-                            <input type="text" placeholder="message" value={enteredMsg} onChange={(e) => setEnteredMsg(e.target.value)} onKeyDown={(event) => setMsg(event.keyCode, enteredMsg, setEnteredMsg, currentUser.convId, currentUser.login, setStopUsr)} />
-                            { (currentUser?.type == "Dm" || relation == "friend") && <div onClick={hideSettingGame} className={Styles.console}><GameIconAsset color="#D9D9D9" /></div>}
-                        </div>}
-                        {
-                            (stopUsr == "left" && currentUser.type != "Dm") && <div className={Styles.msgInput}><div className={Styles.newCnv}>You left this channel</div></div>
-                        }
-                        {
-                            (["banned", "muted"].includes(stopUsr) && currentUser.type != "Dm") && <div className={Styles.msgInput}><div className={Styles.newCnv}>You were {stopUsr} from this channel</div></div>
-                        }
-                        {(stopUsr == "" && relation != "Blocker") && <div onClick={(e) => setMsg(13, enteredMsg, setEnteredMsg, currentUser.convId, currentUser.login, setStopUsr)} className={Styles.sendCtr}>{enteredMsg && <Image src={sendArrow} width={30} height={30} className={Styles.animatedBtn} />}</div>}
-                    </div>
+                    <SendMsg currentUser={currentUser} relation={relation} stopUsr={stopUsr} setStopUsr={setStopUsr} enteredMsg={enteredMsg} setEnteredMsg={setEnteredMsg} />
 
                 </div>}
             </>)}

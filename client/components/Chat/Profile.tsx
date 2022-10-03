@@ -86,7 +86,7 @@ const Members = (props: { role: string, users: Array<Object>, category: string, 
     }, [props.role, props.category]);
 
     useEffect(() => {
-        console.log(props.users);
+        // console.log(props.users);
     }, [props.users]);
 
     useEffect(() => {
