@@ -24,7 +24,7 @@ export class NotificationService {
 		const notif: Notification = await this.notifRepository
 			.createQueryBuilder('notifications')
 			.select(['notifications.id'])
-			.where(`notifications.from = '${from}' AND notifications.to = '${to}'`)
+			.where(`notifications.from = '${from}' AND notifications.to = '${to}' AND notifications.status = '${notifStatus.SENT}'`)
 			.getOne();
 		return notif;
 	}
@@ -34,6 +34,7 @@ export class NotificationService {
 			.createQueryBuilder('notifications')
 			.select(['notifications.from', 'notifications.status', 'notifications.gameId', 'notifications.type'])
 			.where('notifications.to = :login', { login: login })
+			.orderBy('notifications.date', 'DESC')
 			.getMany()
 		if (!notifs.length)
 			return [];
@@ -46,11 +47,14 @@ export class NotificationService {
 
 	async updateNotif(from: string, to: string, type: notifType, status: notifStatus) {
 		const notif: Notification = await this.getNotifId(from, to);
+		if (!notif)
+			return false;
 		await this.notifRepository
 			.createQueryBuilder()
 			.update({ status: status })
 			.where(`notifications.id = '${notif.id}'`)
 			.execute();
+		return true;
 	}
 
 	async saveNofit(data: notificationCreateDto) {
