@@ -2,7 +2,7 @@ import { forwardRef, Inject, UseGuards } from "@nestjs/common";
 import { ConnectedSocket, MessageBody, OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, SubscribeMessage, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
 import { Server, Socket } from 'socket.io'
 import { NotificationService } from "./notification.service";
-import { notifType } from './notification.entity';
+import { notifStatus, notifType } from './notification.entity';
 import { User } from "src/user/user.decorator";
 import { WsJwtGuard } from "src/2fa-jwt/jwt/jwt-ws.guard";
 import { UserService } from "src/user/user.service";
@@ -28,7 +28,7 @@ export class NotificationGateway {
 	async sendRequest(@User('login') login: string, @MessageBody() friend: string) {
 		const notif = await this.notifService.saveNofit({ from: login, to: friend, type: notifType.INVITATION });
 		await this.notifService.sendNotif(notif, friend);
-		return true;
+		return { data: true };
 	}
 
 	@UseGuards(WsJwtGuard)
@@ -36,6 +36,14 @@ export class NotificationGateway {
 	async sendGame(@User('login') login: string, @MessageBody('player') player: string, @MessageBody('gameId') gameId: string) {
 		const notif = await this.notifService.saveNofit({ from: login, to: player, gameId: gameId, type: notifType.GAME });
 		await this.notifService.sendNotif(notif, player);
+		return { data: true };
+	}
+
+	@UseGuards(WsJwtGuard)
+	@SubscribeMessage('updateGame')
+	async updateGame(@User('login') login: string, @MessageBody('notifId') notifId: string, @MessageBody('status') status: notifStatus) {
+		await this.notifService.updateGameNotif(notifId, status);
+		return { data: true };
 	}
 
 	@UseGuards(WsJwtGuard)
