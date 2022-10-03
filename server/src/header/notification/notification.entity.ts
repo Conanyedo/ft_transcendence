@@ -30,4 +30,7 @@ export class Notification {
 
 	@Column({ type: 'enum', enum: notifType })
 	type: notifType;
+
+	@CreateDateColumn()
+	date: Date;
 }
