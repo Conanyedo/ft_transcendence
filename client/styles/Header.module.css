@@ -108,7 +108,7 @@
 	overflow-y: auto;
 	overflow-x: hidden;
 	height: max-content;
-	max-height: 47.556rem;
+	max-height: 36rem; 
 }
 
 .notifTitle {
@@ -163,7 +163,7 @@
 .nameAndcontent>p {
 	font-family: 'Inter';
 	font-style: normal;
-	font-weight: 300;
+	font-weight: 200;
 	font-size: 1.556rem;
 	line-height: 1.8rem;
 	color: #FFFFFF;
@@ -178,36 +178,35 @@
 	justify-content: center;
 	align-items: center;
 	gap: 2.667rem;
-
 }
 
 .btnContainer>span {
-	border: 2px solid #409CFF;
+	border: 2px solid #758293;
 	border-radius: 4px;
-	padding: 0.778rem;
+	padding: 0.7rem;
 	width: 10rem;
 	font-family: 'Inter';
 	font-style: normal;
 	font-weight: 500;
-	font-size: 1.778rem;
-	line-height: 2.111rem;
-	color: #409CFF;
+	font-size: 1.5rem;
+	line-height: 2rem;
+	color: #758293;
 	text-align: center;
 }
 
 .btnContainer>span:last-child {
-	border-color: #758293;
-	color: #758293;
+	border-color: #409CFF;
+	color: #409CFF;
 }
 
 .btnContainer>span:hover {
-	background-color: #409CFF;
-	color: #fff;
+	background-color: transparent;
+	color: #758293;
 }
 
 .btnContainer>span:last-child:hover {
-	background-color: transparent;
-	color: #758293;
+	background-color: #409CFF;
+	color: #fff;
 }
 /* end_Notif */
 
