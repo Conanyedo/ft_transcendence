@@ -32,7 +32,7 @@ export class NotificationService {
 	async getNotifs(login: string) {
 		const notifs: Notification[] = await this.notifRepository
 			.createQueryBuilder('notifications')
-			.select(['notifications.from', 'notifications.status', 'notifications.gameId', 'notifications.type'])
+			.select(['notifications.id', 'notifications.from', 'notifications.status', 'notifications.gameId', 'notifications.type'])
 			.where('notifications.to = :login', { login: login })
 			.orderBy('notifications.date', 'DESC')
 			.getMany()
@@ -40,12 +40,12 @@ export class NotificationService {
 			return [];
 		const notifList = await Promise.all(notifs.map(async (notif) => {
 			const userInfo: opponentDto = await this.userService.getOpponent(notif.from);
-			return { fullname: userInfo.fullname, avatar: userInfo.avatar, login: notif.from, type: notif.type, status: notif.status, gameId: notif.gameId }
+			return { notifId: notif.id, fullname: userInfo.fullname, avatar: userInfo.avatar, login: notif.from, type: notif.type, status: notif.status, gameId: notif.gameId }
 		}));
 		return [...notifList];
 	}
 
-	async updateNotif(from: string, to: string, type: notifType, status: notifStatus) {
+	async updateNotif(from: string, to: string, status: notifStatus) {
 		const notif: Notification = await this.getNotifId(from, to);
 		if (!notif)
 			return false;
@@ -53,6 +53,15 @@ export class NotificationService {
 			.createQueryBuilder()
 			.update({ status: status })
 			.where(`notifications.id = '${notif.id}'`)
+			.execute();
+		return true;
+	}
+
+	async updateGameNotif(notifId: string, status: notifStatus) {
+		await this.notifRepository
+			.createQueryBuilder()
+			.update({ status: status })
+			.where(`notifications.id = '${notifId}'`)
 			.execute();
 		return true;
 	}
@@ -73,7 +82,7 @@ export class NotificationService {
 		if (!client)
 			return;
 		const userInfo: opponentDto = await this.userService.getOpponent(notif.from);
-		const newNotif = { fullname: userInfo.fullname, avatar: userInfo.avatar, login: notif.from, type: notif.type, status: notif.status, gameId: notif.gameId }
+		const newNotif = { notifId: notif.id, fullname: userInfo.fullname, avatar: userInfo.avatar, login: notif.from, type: notif.type, status: notif.status, gameId: notif.gameId }
 		this.notifGateway.server.to(client.id).emit('Notif', { data: [newNotif] });
 	}
 }
