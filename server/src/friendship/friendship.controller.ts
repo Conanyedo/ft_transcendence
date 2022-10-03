@@ -54,16 +54,16 @@ export class FriendshipController {
 
 	@Post('/acceptRequest')
 	@UseGuards(JwtAuthGuard)
-	acceptRequest(@User() user: userParitalDto, @Body('login') friend: string) {
-		this.friendshipService.acceptRequest(user.login, friend);
-		return { data: true };
+	async acceptRequest(@User() user: userParitalDto, @Body('login') friend: string) {
+		const result = this.friendshipService.acceptRequest(user.login, friend);
+		return { data: result };
 	}
 
 	@Post('/refuseRequest')
 	@UseGuards(JwtAuthGuard)
-	refuseRequest(@User() user: userParitalDto, @Body('login') friend: string) {
-		this.friendshipService.refuseRequest(user.login, friend);
-		return { data: true };
+	async refuseRequest(@User() user: userParitalDto, @Body('login') friend: string) {
+		const result = this.friendshipService.refuseRequest(user.login, friend);
+		return { data: result };
 	}
 
 	@Post('/cancelRequest')
@@ -75,15 +75,15 @@ export class FriendshipController {
 
 	@Post('/blockUser')
 	@UseGuards(JwtAuthGuard)
-	blockUser(@User() user: userParitalDto, @Body('login') friend: string) {
-		this.friendshipService.blockUser(user.login, friend);
-		return { data: true };
+	async blockUser(@User() user: userParitalDto, @Body('login') friend: string) {
+		const result = this.friendshipService.blockUser(user.login, friend);
+		return { data: result };
 	}
 
 	@Post('/unblock')
 	@UseGuards(JwtAuthGuard)
-	unblock(@User() user: userParitalDto, @Body('login') friend: string) {
-		this.friendshipService.unblock(user.login, friend);
-		return { data: true };
+	async unblock(@User() user: userParitalDto, @Body('login') friend: string) {
+		const result = this.friendshipService.unblock(user.login, friend);
+		return { data: result };
 	}
 }
