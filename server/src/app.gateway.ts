@@ -28,7 +28,6 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
 		try {
 			const payload = this.jwtService.verify(token);
 			client.data.login = payload.login;
-			this.userService.setSocketId(payload.id, client.id);
 			this.userService.setStatus(payload.login, userStatus.ONLINE);
 		}
 		catch (e) {
@@ -42,7 +41,6 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
 		const token = client.handshake.headers.authorization.split(' ')[1];
 		try {
 			const payload = this.jwtService.verify(token);
-			this.userService.setSocketId(payload.id, null);
 			this.userService.setStatus(payload.login, userStatus.OFFLINE);
 			client.disconnect();
 		}
