@@ -325,11 +325,11 @@ export class UserService {
 			.execute();
 	}
 
-	async setStatus(id: string, status: userStatus) {
+	async setStatus(login: string, status: userStatus) {
 		return await this.userRepository
 			.createQueryBuilder('users')
 			.update({ status: status })
-			.where('id = :id', { id: id })
+			.where('login = :login', { login: login })
 			.execute();
 	}
 
