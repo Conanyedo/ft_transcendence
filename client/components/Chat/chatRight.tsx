@@ -45,6 +45,14 @@ const SendMsg: React.FunctionComponent<{
   setEnteredMsg,
 }) => {
   const [settingGames, ShowSettingGames] = useState(false);
+  const [GameID, SetGameID] = useState('');
+
+  useEffect(() => {
+    if (GameID !== '') {
+      // TODO send invit Card
+      console.log('Id game: ', GameID);
+    }
+  }, [GameID])
 
   function hideSettingGame() {
     ShowSettingGames(!settingGames);
@@ -53,7 +61,7 @@ const SendMsg: React.FunctionComponent<{
   return (
     <>
       {settingGames && (
-        <SettingGame Hide={hideSettingGame} login={currentUser?.login} />
+        <SettingGame Hide={hideSettingGame} login={currentUser?.login} setId={SetGameID} />
       )}
       <div
         className={Styles.sendDiv}
@@ -300,7 +308,7 @@ const THeader: React.FunctionComponent<{
           <div className={Styles.avatarProps}>
             <img
               src={
-                currentUser?.avatar.startsWith("https")
+                currentUser?.avatar?.startsWith("https")
                   ? currentUser?.avatar
                   : getImageBySize(currentUser?.avatar, 70)
               }

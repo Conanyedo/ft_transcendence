@@ -149,7 +149,7 @@ export const ChatLeft = (props: { login: any }) => {
                     <div className={Styles.avatar}>
                       <img
                         src={
-                          user?.avatar.startsWith("https")
+                          user?.avatar?.startsWith("https")
                             ? user?.avatar
                             : getImageBySize(user?.avatar, 70)
                         }
