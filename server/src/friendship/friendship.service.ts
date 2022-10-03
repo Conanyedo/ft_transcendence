@@ -143,7 +143,7 @@ export class FriendshipService {
 			.update({ relation: userRelation.FRIEND })
 			.where('friendships.user = :friend AND friendships.friend = :user AND friendships.relation = :relation', { user: user, friend: friend, relation: userRelation.REQUESTED })
 			.execute();
-		await this.notifService.updateNotif(friend, user, notifType.INVITATION, notifStatus.ACCEPTED);
+		await this.notifService.updateNotif(friend, user, notifStatus.ACCEPTED);
 		return true;
 	}
 
@@ -153,7 +153,7 @@ export class FriendshipService {
 			.delete()
 			.where('friendships.user = :friend AND friendships.friend = :user AND friendships.relation = :relation', { user: user, friend: friend, relation: userRelation.REQUESTED })
 			.execute();
-		await this.notifService.updateNotif(friend, user, notifType.INVITATION, notifStatus.REFUSED);
+		await this.notifService.updateNotif(friend, user, notifStatus.REFUSED);
 		return true;
 	}
 
