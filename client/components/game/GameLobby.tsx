@@ -33,8 +33,8 @@ const GameHeader: React.FC<{
 	const rank2 = getRankUser(userInfo2.stats.GP);
 	const pathImage1 = getImageBySize(userInfo1?.avatar, 70);
 	const pathImage2 = getImageBySize(userInfo2?.avatar, 70);
-	const goToFirstProfile = () => router.push("profile/" + userInfo1.login);
-	const goToSecondProfile = () => router.push("profile/" + userInfo2.login);
+	const goToFirstProfile = () => router.push("/profile/" + userInfo1.login);
+	const goToSecondProfile = () => router.push("/profile/" + userInfo2.login);
 	return (
 		<>
 			<div className={classesGameHeader.liveGameContainer}>
@@ -129,13 +129,13 @@ const GameLobby: React.FC<{ GameID: string }> = (props) => {
 	}, []);
 	const cancelHandler = () => {
 		socket_game.emit("removeGameLobby", props.GameID);
-		router.push("game");
+		router.push("/game");
 	};
 
 	if (ErrorMsg) {
 		const time = setTimeout(() => {
 			setErrorMsg(false);
-			router.push("game");
+			router.push("/game");
 		  return () => {
 				clearTimeout(time);
 		  }

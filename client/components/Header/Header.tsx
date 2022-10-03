@@ -254,7 +254,7 @@ const Header: React.FC<{ setPos: (page: string) => void }> = (props) => {
 		socket_game.connect();
 		socket_game.on("gameStartedSoon", (props) => {
 			if (props.check === true) {
-				if (!router.asPath.includes("game/lobby?gameID=")) router.push("game/lobby?gameID=" + props.id)
+				if (!router.asPath.includes("game/lobby?gameID=")) router.push("/game/lobby?gameID=" + props.id)
 			}
 		})
 		return () => {

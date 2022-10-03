@@ -78,7 +78,7 @@ export const FriendGameSetting: React.FC<{
 				},
 				(id: any) => {
 					socket_notif.emit('sendGame', {player: friendSelected.login, gameId: id});
-					router.push("game/lobby?gameID=" + id);
+					router.push("/game/lobby?gameID=" + id);
 				}
 			);
 		}
