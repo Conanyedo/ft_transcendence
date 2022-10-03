@@ -104,15 +104,6 @@ export class UserService {
 		};
 	}
 
-	async getSocketId(login: string) {
-		const user: User = await this.userRepository
-			.createQueryBuilder('users')
-			.select(['users.socketId'])
-			.where('users.login = :login', { login: login })
-			.getOne();
-		return user?.socketId;
-	}
-
 	async getSecret(id: string) {
 		const user: User = await this.userRepository
 			.createQueryBuilder('users')
@@ -333,11 +324,4 @@ export class UserService {
 			.execute();
 	}
 
-	async setSocketId(id: string, value: string | null) {
-		return await this.userRepository
-			.createQueryBuilder('users')
-			.update({ socketId: value })
-			.where('id = :id', { id: id })
-			.execute();
-	}
 }
