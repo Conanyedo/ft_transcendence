@@ -12,10 +12,16 @@ import { ChatService } from './chat.service';
 export class ChatController {
 	constructor(private readonly chatService: ChatService) { }
 
-	@Get('/loginInfo/:user')
+	@Get('/loginInfo/:name')
 	@UseGuards(JwtAuthGuard)
-	async getUserInfo(@User('login') login: string, @Param('user') user: string) {
-		return await this.chatService.getUserInfo(login, user);
+	async getUserInfo(@User('login') login: string, @Param('name') name: string) {
+		return await this.chatService.getUserInfo(login, name);
+	}
+
+	@Get('/channelInfo/:name')
+	@UseGuards(JwtAuthGuard)
+	async getChannelInfo(@User('login') login: string, @Param('name') name: string) {
+		return await this.chatService.getChannelInfo(login, name);
 	}
 
 	@Post('/createChannel')
