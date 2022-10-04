@@ -84,7 +84,7 @@ export class ChatService {
 		if (!conv.length)
 			return null;
 		const currDate = new Date().toISOString();
-		this.memberRepository
+		await this.memberRepository
 			.query(`update members set status = 'Blocker', "leftDate" = '${currDate}' FROM users where members."userId" = users.id AND members."conversationId" = '${conv[0].id}' AND users."login" = '${login}';`);
 		const sockets = await this.chatGateway.server.fetchSockets();
 		const clients = sockets.filter((socket) => (socket.data.login === login));
@@ -96,7 +96,7 @@ export class ChatService {
 			.query(`select conversations.id, count(*) from members join users on members."userId" = users.id join conversations on members."conversationId" = conversations.id where (users.login = '${login}' or users.login = '${user}') and conversations.type = 'Dm' group by conversations.id having count(*) = 2;`);
 		if (!conv.length)
 			return null;
-		this.memberRepository
+		await this.memberRepository
 			.query(`update members set status = 'Member', "leftDate" = null FROM users where members."userId" = users.id AND members."conversationId" = '${conv[0].id}' AND users."login" = '${login}';`);
 		const sockets = await this.chatGateway.server.fetchSockets();
 		const clients = sockets.filter((socket) => (socket.data.login === login));
@@ -154,7 +154,7 @@ export class ChatService {
 			member.status = mem.status;
 			member.conversation = conv;
 			member.user = await this.userService.getUser(mem.login);
-			this.memberRepository.save(member);
+			await this.memberRepository.save(member);
 		});
 		return conv;
 	}
@@ -288,7 +288,7 @@ export class ChatService {
 			await this.memberRepository.save(member);
 		}
 		else if (memberExist[0].leftDate) {
-			this.memberRepository
+			await this.memberRepository
 				.query(`update members set "leftDate" = null, "status" = 'Member' FROM users where members."userId" = users.id AND members."conversationId" = '${convId}' AND users."login" = '${login}';`);
 		}
 		const sockets = await this.chatGateway.server.fetchSockets();
@@ -303,7 +303,7 @@ export class ChatService {
 		if (!exist.length)
 			return { err: 'Invalid data' };
 		const currDate = new Date().toISOString();
-		this.memberRepository
+		await this.memberRepository
 			.query(`update members set "leftDate" = '${currDate}', "status" = 'Left' FROM users where members."userId" = users.id AND members."conversationId" = '${convId}' AND users."login" = '${login}';`);
 		const sockets = await this.chatGateway.server.fetchSockets();
 		const clients = sockets.filter((socket) => (socket.data.login === login));
@@ -332,7 +332,7 @@ export class ChatService {
 			.query(`select from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND users."login" = '${login}' AND (members."status" = 'Owner' OR members."status" = 'Admin');`);
 		if (!exist.length)
 			return { err: 'Invalid data' };
-		this.memberRepository
+		await this.memberRepository
 			.query(`update members set status = '${status}' FROM users where members."userId" = users.id AND members."conversationId" = '${convId}' AND users."login" = '${member}' AND members."leftDate" IS NULL AND members."status" != 'Owner';`);
 		return { data: true };
 	}
@@ -354,7 +354,7 @@ export class ChatService {
 		if (!exist.length)
 			return { err: 'Invalid data' };
 		const currDate = new Date().toISOString();
-		this.memberRepository
+		await this.memberRepository
 			.query(`update members set "leftDate" = '${currDate}', "status" = 'Banned' FROM users where members."userId" = users.id AND members."conversationId" = '${convId}' AND members."status" != 'Owner' AND users."login" = '${member}';`);
 		const sockets = await this.chatGateway.server.fetchSockets();
 		const clients = sockets.filter((socket) => (socket.data.login === member));
@@ -371,8 +371,11 @@ export class ChatService {
 			.query(`select members.id from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND users."login" = '${member}' AND members."status" = 'Muted';`);
 		if (!memberId.length)
 			return { err: 'Invalid data' };
-		this.memberRepository
+		await this.memberRepository
 			.query(`update members set "leftDate" = null, "status" = 'Member' where members."id" = '${memberId[0].id}';`);
+		const name: string = memberId[0].id;
+		if (this.schedulerRegistry.doesExist("cron", name))
+			this.schedulerRegistry.deleteCronJob(name);
 		return { data: true };
 	}
 
@@ -385,16 +388,18 @@ export class ChatService {
 			.query(`select members.id from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND users."login" = '${member}' AND (members."status" = 'Member' OR members."status" = 'Admin');`);
 		if (!memberId.length)
 			return { err: 'Invalid data' };
-		this.memberRepository
+		await this.memberRepository
 			.query(`update members set "status" = 'Muted' where members."id" = '${memberId[0].id}';`);
 		const name: string = memberId[0].id;
-		const job = new CronJob(new Date(Date.now() + seconds * 1000), async () => {
-			this.memberRepository
-				.query(`update members set "leftDate" = null, "status" = 'Member' where members."id" = '${name}';`);
-			this.schedulerRegistry.deleteCronJob(name);
-		});
-		this.schedulerRegistry.addCronJob(name, job);
-		job.start();
+		if (!this.schedulerRegistry.doesExist("cron", name)) {
+			const job = new CronJob(new Date(Date.now() + seconds * 1000), async () => {
+				await this.memberRepository
+					.query(`update members set "leftDate" = null, "status" = 'Member' where members."id" = '${name}';`);
+				this.schedulerRegistry.deleteCronJob(name);
+			});
+			this.schedulerRegistry.addCronJob(name, job);
+			job.start();
+		}
 		return { data: true };
 	}
 
