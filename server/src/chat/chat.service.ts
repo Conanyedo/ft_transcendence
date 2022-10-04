@@ -72,10 +72,26 @@ export class ChatService {
 		convs.forEach((conv) => (client.join(conv.convId)));
 	}
 
-	async getUserInfo(login: string, user: string) {
-		const relation = await this.friendshipService.getRelation(login, user);
-		const userInfo = await this.userService.getFriend(user);
+	async getUserInfo(login: string, name: string) {
+		const userInfo = await this.userService.getFriend(name);
+		if (!userInfo)
+			return { err: 'User not found' };
+		const relation = await this.friendshipService.getRelation(login, name);
 		return { data: { ...userInfo, relation } };
+	}
+
+	async getChannelInfo(login: string, name: string) {
+		const conv = await this.conversationRepository
+			.query(`select conversations.id as "convId", conversations.type, conversations.avatar, conversations.name from conversations where conversations.type != 'Dm' AND conversations.name = '${name}';`);
+		if (!conv.length)
+			return { err: 'Channel not found' };
+		const member = await this.memberRepository
+			.query(`select members.id from members Join users ON members."userId" = users.id Join conversations ON members."conversationId" = conversations.id where users."login" = '${login}' AND conversations.name = '${name}';`);
+		if (member.length)
+			return { data: true };
+		if (conv[0].type === 'Private')
+			return { err: 'Channel not found' };
+		return { data: { convId: conv.convId, type: conv.type } }
 	}
 
 	async blockUser(login: string, user: string) {
