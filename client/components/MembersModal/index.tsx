@@ -31,7 +31,7 @@ export const MembersModal = (props: { setShowSetModal: any, showSetModal: any, c
             member: "",
         },
         onSubmit: values => {
-            console.log(values);
+            // console.log(values);
         },
     });
 

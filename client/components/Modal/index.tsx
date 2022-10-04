@@ -47,7 +47,6 @@ export function ModalForm(props: { createChannel: any }) {
             member: ""
         },
         onSubmit: values => {
-            // console.log(values);
         },
     });
 
@@ -102,10 +101,17 @@ export function ModalForm(props: { createChannel: any }) {
                     {closeUsrs.map((usr, i) => <SuggestedUsr key={i} user={usr} userStatus={true} addUsrToChannel={addUsrToChannel} removeUsrFromChannel={removeUsrFromChannel} setUsrTags={setUsrTags} setshowDropdown={setshowDrpdown} usrTags={usrTags} setValue={formik.setFieldValue} inputRef={inputRef} initialUsrState={initialUsrState} setInitialUsrState={setInitialUsrState} />)}
                 </div>}
             </div>
-            <button type="button" onClick={(e) => props.createChannel(formik.values.cName, channelMode, formik.values.password, usrTags, setUsrTags, formik, setErrorMsg)}>Create</button>
+            <Button clickHandler={(e: any) => props.createChannel(formik.values.cName, channelMode, formik.values.password, usrTags, setUsrTags, formik, setErrorMsg)} text="Create"/>
         </form>
         </>
     )
+}
+
+export const Button: React.FC<{clickHandler: any, text: string}> = ({clickHandler, text}) => {
+
+    return (<>
+        <button type="button" onClick={(e) => clickHandler()} className={Styles.modalBtn}>{text}</button>
+    </>)
 }
 
 export function ModalBox(props: { show: boolean, setShow: (Dispatch<SetStateAction<boolean>>), createChannel: any }): JSX.Element {

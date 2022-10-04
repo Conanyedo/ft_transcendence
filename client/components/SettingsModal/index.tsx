@@ -15,7 +15,6 @@ import { Option } from "@components/Modal/utils"
 import { getImageBySize } from "@hooks/Functions"
 
 function errorHandler(values: any, data: any) {
-    // console.log("cName is", values.cName.length);
     return (values.cName.length == 0 || data.oldPath == "" || !data.avatar)
 }
 
@@ -48,7 +47,7 @@ const Form = ({ data, currUser, setShowSetModal }: any) => {
             password: "",
         },
         onSubmit: values => {
-            console.log(values);
+            // console.log(values);
         },
     });
 

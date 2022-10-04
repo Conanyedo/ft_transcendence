@@ -88,7 +88,6 @@ export function addUsrToChannel( user: any, setUsrTags: any, setshowDrpdown: any
     // filter out the value that was added
     let tmp = initialUsrState.filter((item:any) => item?.fullname != user?.fullname);
 
-    console.log("---------------tmp--------------", tmp);
     setInitialUsrState(tmp);
 }
 
@@ -108,8 +107,6 @@ export function filterUsers(value: string, setCloseUsrs:any, setshowDrpdown: any
     
     // Filter out results
     let newUsrs = initialUsrState.filter((usr: any) => usr.fullname.toUpperCase().includes(upvalue));
-
-    // console.log("new usrs", newUsrs);
 
     setCloseUsrs(newUsrs);
     // Show the dropdown

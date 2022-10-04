@@ -323,6 +323,50 @@ export const banMemberFromChannel = async (data: any) => {
 		});
 };
 
+export const muteMemberFromChnl = async (data: any) => {
+	// /chat/banMember
+	const token = getCookie("jwt");
+	const json = JSON.stringify(data);
+	return await axios({
+		method: "post",
+		url: `${baseUrl}chat/muteMember`,
+		headers: {
+			Authorization: `Bearer ${token}`,
+			"Content-Type": "application/json",
+		},
+		data: json,
+		withCredentials: true,
+	})
+		.then((res) => {
+			return true;
+		})
+		.catch((err) => {
+			return false;
+		});
+};
+
+export const UnmuteMemberFromChnl = async (data: any) => {
+	// /chat/banMember
+	const token = getCookie("jwt");
+	const json = JSON.stringify(data);
+	return await axios({
+		method: "post",
+		url: `${baseUrl}chat/unmuteMember`,
+		headers: {
+			Authorization: `Bearer ${token}`,
+			"Content-Type": "application/json",
+		},
+		data: json,
+		withCredentials: true,
+	})
+		.then((res) => {
+			return true;
+		})
+		.catch((err) => {
+			return false;
+		});
+};
+
 export const checkCode2FA = async (code: string, router: NextRouter) => {
 	const token = getCookie("jwt-2fa");
 	const params = new URLSearchParams();
@@ -376,8 +420,6 @@ export const postChannel = async (set: any, router: NextRouter, data: any) => {
 
 export const changeMemberRole = async (data: any, set: any) => {
 	// POST /chat/setMemberStatus
-
-	// const currdata = {convId, member, status};
 	const token = getCookie("jwt");
 	const json = JSON.stringify(data);
 	return await axios({
@@ -391,9 +433,6 @@ export const changeMemberRole = async (data: any, set: any) => {
 		withCredentials: true,
 	})
 		.then((res) => {
-			// console.log(res);
-			// set(res.data);
-			// router.push("/chat?login=" + res.data.login);
 			return true;
 		})
 		.catch((err) => {
