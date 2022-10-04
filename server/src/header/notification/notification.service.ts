@@ -78,11 +78,12 @@ export class NotificationService {
 
 	async sendNotif(notif: Notification, friend: string) {
 		const sockets = await this.notifGateway.server.fetchSockets();
-		const client = sockets.find((socket) => (socket.data.login === friend));
-		if (!client)
+		const clients = sockets.filter((socket) => (socket.data.login === friend));
+		if (!clients.length)
 			return;
 		const userInfo: opponentDto = await this.userService.getOpponent(notif.from);
 		const newNotif = { notifId: notif.id, fullname: userInfo.fullname, avatar: userInfo.avatar, login: notif.from, type: notif.type, status: notif.status, gameId: notif.gameId }
-		this.notifGateway.server.to(client.id).emit('Notif', { data: [newNotif] });
+		clients.forEach((client) => (this.notifGateway.server.to(client.id).emit('Notif', { data: [newNotif] })))
+		;
 	}
 }

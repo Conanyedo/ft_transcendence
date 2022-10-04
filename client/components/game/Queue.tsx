@@ -1,5 +1,5 @@
 import Image from "next/image";
-import Router, { useRouter } from "next/router";
+import { useRouter } from "next/router";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import socket_game from "../../config/socketGameConfig";
 import { getImageBySize, getRankUser } from "../../customHooks/Functions";
@@ -56,6 +56,7 @@ const CardPlayer: React.FC<{ Loading: boolean, login: string }> = ({ Loading, lo
 const Queue: React.FC<{ cancel: (t: string) => void }> = ({
 	cancel,
 }) => {
+	const router = useRouter();
 	const [waiting, setWaiting] = useState('');
 	const owner = localStorage.getItem("owner") as string;
 	useEffect(() => {
@@ -67,7 +68,7 @@ const Queue: React.FC<{ cancel: (t: string) => void }> = ({
 		socket_game.on("getCode", (data) => {
 			setWaiting(data.login);
 			const time = setTimeout(() => {
-				Router.push("/game/" + data.id);
+				router.push("/game/" + data.id);
 			}, 5000);
 			return () => {
 				clearTimeout(time);

@@ -127,7 +127,8 @@ export interface NotificationType {
     status: string,
     gameId: string,
 	type: string,
-	refresh: any
+	refresh: any,
+	notifId: string,
 }
 
 

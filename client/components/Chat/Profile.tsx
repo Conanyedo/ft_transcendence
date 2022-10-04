@@ -9,6 +9,7 @@ import {
   getChannelProfile,
   leaveChannel,
   muteMemberFromChnl,
+  UnmuteMemberFromChnl,
 } from "@hooks/useFetchData";
 import menu from "@public/menu-asset.svg";
 import { getImageBySize } from "@hooks/Functions";
@@ -73,30 +74,22 @@ const MenuElement = (props: {
 
 // functions to set the user statuses
 
-async function banMember(user: any, convId: string, login: any, router: any) {
+async function banMember(user: any, convId: string, setData: any) {
   let data = { convId: convId, member: user.login };
 
-  if (await banMemberFromChannel(data)) router.reload();
-  else console.log("There seems to be something wrong!");
+  if (await banMemberFromChannel(data)) {
+    getData(convId, setData);
+  } else console.log("There seems to be something wrong!");
 }
 
-async function upgradeMember(
-  user: any,
-  convId: string,
-  login: any,
-  router: any
-) {
+async function upgradeMember(user: any, convId: string, setData: any) {
   const data = { convId: convId, member: user.login, status: "Admin" };
-  if (await changeMemberRole(data, () => null)) router.reload();
-  else console.error("There seems to be something wrong!");
+  if (await changeMemberRole(data, () => null)) {
+    getData(convId, setData);
+  } else console.error("There seems to be something wrong!");
 }
 
-async function downgradeMember(
-  user: any,
-  convId: string,
-  login: AnyMessageParams,
-  router: any
-) {
+async function downgradeMember(user: any, convId: string) {
   const data = { convId: convId, member: user.login, status: "Member" };
   if (await changeMemberRole(data, () => null)) {
     console.log("changed successfully");
@@ -105,95 +98,166 @@ async function downgradeMember(
   }
 }
 
-// POST /chat/muteMember
-async function muteMember(user: any, convId: string, login: any, router: any) {
-  // muteMemberFromChnl
-  if (
-    await muteMemberFromChnl({
-      convId: convId,
-      member: user.login,
-      seconds: 30,
-    })
-  )
-    router.reload();
-  else console.log("There seems to be something wrong!");
-  // console.log(user, convId);
+async function UnmuteMember(convId: string, user: any, setData: any) {
+  // POST /chat/unmuteMember
+
+  // takes {
+  //   convId: string,
+  //   member: string,
+  // }
+
+  let data = { convId: convId, member: user.login };
+
+  if (await UnmuteMemberFromChnl(data)) {
+    console.log("Member unmuted successfully");
+    getData(convId, setData);
+  } else {
+    console.error("There seems to be something wrong!");
+  }
 }
 
-const showElemDropdown = (
-  e: any,
-  user: any,
-  dropdwn: any,
-  setdropdwn: any,
-  setRefs: any,
-  role: any,
-  setContent: any,
-  setFunctions: any,
-  convId: any,
-  login: any,
-  router: any,
-  previousId: any,
-  setPreviousId: any
-) => {
-  console.log(setRefs);
+const MemberMenu: React.FC<{
+  setRefs: any;
+  i: number;
+  content: Array<string>;
+  functions: any;
+}> = ({ setRefs, i, content, functions }) => {
+  return (
+    <>
+      <div
+        className={Styles.menuDropdown}
+        id={i.toString()}
+        ref={(element: any) => (setRefs.current[i] = element)}
+        style={{ display: "none" }}
+      >
+        {content.map((element, i) => (
+          <div
+            key={i}
+            onClick={functions[i]}
+            className={[1, 2].includes(i) ? Styles.redText : ""}
+          >
+            {element}
+          </div>
+        ))}
+      </div>
+    </>
+  );
+};
+
+function setMemberActions(data: any, methods: any) {
+  methods.setContent(["Upgrade Member", "Ban Member", "Mute Member"]);
+  methods.setFunctions([
+    () => upgradeMember(data.user, data.convId, methods.setData),
+    () => banMember(data.user, data.convId, methods.setData),
+    () => methods.setmuteShow(true),
+  ]);
+}
+
+function setAdminActions(data: any, methods: any) {
+  methods.setContent(["Downgrade Member", "Ban Member", "Mute Member"]);
+
+  // update muteMember to a handler to show popup
+  methods.setFunctions([
+    () => downgradeMember(data.user, data.convId),
+    () => banMember(data.user, data.convId, methods.setData),
+    () => methods.setmuteShow(true),
+  ]);
+}
+
+function setMutedActions(data: any, methods: any) {
+  methods.setContent([, "Unmute Member"]);
+  methods.setFunctions([
+    () => null,
+    () => UnmuteMember(data.convId, data.user, methods.setData),
+  ]);
+}
+
+const showElemDropdown = (e: any, data: any, propMethods: any) => {
+  const methods = {
+    setContent: propMethods.setContent,
+    setFunctions: propMethods.setFunctions,
+    setmuteShow: propMethods.setmuteShow,
+    setData: propMethods.setData,
+  };
+
+  propMethods.setSelectedUsr(data.user);
 
   // resetting at first
-  console.log(previousId, dropdwn);
-  if (previousId !== undefined) {
-    setdropdwn(false);
-    console.log(previousId);
-    previousId.style = "display: none !important";
-  }
 
   const id = e.target.parentElement.parentElement.parentElement.id;
   console.log(id);
   // setdropdwn(true);
   // Condition if the clicked user is me
-  if (role == "Owner") {
-    console.log(setRefs.current[id].style);
-    setdropdwn(true);
-    setRefs.current[id].style = "display: block !important";
+  if (data.role == "Owner") {
+    propMethods.setRefs.current[id].style = "display: block !important";
 
-    // setdropdwn(true);
-    // setdropdwn(!dropdwn);
-    if (user.status == "Admin") {
-      setContent(["Downgrade Member", "Ban Member", "Mute Member"]);
-      setFunctions([
-        () => downgradeMember(user, convId, login, router),
-        () => banMember(user, convId, login, router),
-        () => muteMember(user, convId, login, router),
-      ]);
-    } else if (user.status == "Member") {
-      setContent(["Upgrade Member", "Ban Member", "Mute Member"]);
-      setFunctions([
-        () => upgradeMember(user, convId, login, router),
-        () => banMember(user, convId, login, router),
-        () => muteMember(user, convId, login, router),
-      ]);
-    }
-    setPreviousId(setRefs.current[id]);
-  } else if (role == "Admin") {
-    console.log(setRefs.current[id]);
-    setdropdwn(true);
-    // console.log(id);
-    setRefs.current[id].style = "display: block !important";
-    if (user.status == "Admin") {
-      setContent(["Downgrade Member", "Ban Member", "Mute Member"]);
-      setFunctions([
-        () => downgradeMember(user, convId, login, router),
-        () => banMember(user, convId, login, router),
-        () => muteMember(user, convId, login, router),
-      ]);
-    } else if (user.status == "Member") {
-      setContent(["Upgrade Member", "Ban Member", "Mute Member"]);
-      setFunctions([
-        () => upgradeMember(user, convId, login, router),
-        () => banMember(user, convId, login, router),
-        () => muteMember(user, convId, login, router),
-      ]);
-    }
-    setPreviousId(setRefs.current[id]);
+    if (data.user.status == "Admin") setAdminActions(data, methods);
+    else if (data.user.status == "Member") setMemberActions(data, methods);
+  } else if (data.role == "Admin") {
+    propMethods.setRefs.current[id].style = "display: block !important";
+    if (data.user.status == "Admin") setAdminActions(data, methods);
+    else if (data.user.status == "Member") setMemberActions(data, methods);
+    else if (data.user.status == "Muted") setMutedActions(data, methods);
   }
+};
+
+const Member = (props: {
+  data: any;
+  setRefs: any;
+  setContent: any;
+  setFunctions: any;
+  setSelectedUsr: any;
+  setmuteShow: any;
+  setData: any;
+  i: number;
+  permit: any;
+}) => {
+  // data = { user, role, i, convId, login}
+
+  const methods = {
+    setRefs: props.setRefs,
+    setContent: props.setContent,
+    setFunctions: props.setFunctions,
+    setSelectedUsr: props.setSelectedUsr,
+    setmuteShow: props.setmuteShow,
+    setData: props.setData,
+  };
+
+  return (
+    <>
+      <div
+        id={props.i.toString()}
+        onClick={(e: any) => showElemDropdown(e, props.data, methods)}
+        style={{
+          display: props.permit ? "block" : "none",
+          cursor: "pointer",
+        }}
+      >
+        <div>
+          <Image src={menu} width={6} height={30} />
+        </div>
+        <div
+          id={props.i.toString()}
+          // ref={(element) => (setRefs.current[i] = element)}
+        >
+          <MemberMenu
+            setRefs={props.setRefs}
+            i={props.i}
+            content={props.data.content}
+            functions={props.data.functions}
+          />
+          {/* <MenuElement
+                      role={props.role}
+                      category={props.category}
+                      content={content}
+                      functions={functions}
+                      dropdwn={dropdwn}
+                      setDropdown={setDropdown} */}
+          {/* /> */}
+        </div>
+      </div>
+    </>
+  );
 };
 
 const Members = (props: {
@@ -202,6 +266,7 @@ const Members = (props: {
   category: string;
   convId: string;
   login: string;
+  setData: any;
 }) => {
   const [dropdwn, setDropdown] = useState(false);
   const setRefs: any = useRef([]);
@@ -210,6 +275,9 @@ const Members = (props: {
   const [functions, setFunctions] = useState<any>([]);
   const [previousDrop, setPreviousDrop] = useState();
   const [muteShow, setmuteShow] = useState(false);
+  const [selectedUsr, setSelectedUsr] = useState();
+
+  let data = {};
 
   const me = localStorage.getItem("owner");
 
@@ -225,10 +293,21 @@ const Members = (props: {
   }, [functions, content]);
 
   const router = useRouter();
+
+  const reloadHandler = () => {
+    getData(props.convId, props.setData);
+    setmuteShow(false);
+  };
   // useOutsideAlerter(props.menuRef, props.setDropdown);
   return (
     <>
-    <MuteModal show={muteShow} setShow={setmuteShow}/>
+      {muteShow && (
+        <MuteModal
+          setShow={reloadHandler}
+          user={selectedUsr}
+          convId={props.convId}
+        />
+      )}
       {props?.users?.length !== 0 && (
         <div className={Styles.members}>
           {props.category}
@@ -247,63 +326,24 @@ const Members = (props: {
                 <span>{user.fullname}</span>
               </div>
               {me != user.login && (
-                <div
-                  id={i.toString()}
-                  onClick={(e: any) =>
-                    showElemDropdown(
-                      e,
-                      user,
-                      dropdwn,
-                      setDropdown,
-                      setRefs,
-                      props.role,
-                      setContent,
-                      setFunctions,
-                      props.convId,
-                      props.login,
-                      router,
-                      previousDrop,
-                      setPreviousDrop
-                    )
-                  }
-                  style={{
-                    display: permit ? "block" : "none",
-                    cursor: "pointer",
+                <Member
+                  data={{
+                    user: user,
+                    role: user,
+                    i,
+                    convId: props.convId,
+                    functions: functions,
+                    content: content,
                   }}
-                >
-                  <div>
-                    <Image src={menu} width={6} height={30} />
-                  </div>
-                  <div
-                    id={i.toString()}
-                    // ref={(element) => (setRefs.current[i] = element)}
-                  >
-                      <div
-                        className={Styles.menuDropdown}
-                        id={i.toString()}
-                        ref={(element: any) => (setRefs.current[i] = element)}
-                        style={{ display: "none" }}
-                      >
-                        {content.map((element, i) => (
-                          <div
-                            key={i}
-                            onClick={functions[i]}
-                            className={[1, 2].includes(i) ? Styles.redText : ""}
-                          >
-                            {element}
-                          </div>
-                        ))}
-                      </div>
-                    {/* <MenuElement
-                      role={props.role}
-                      category={props.category}
-                      content={content}
-                      functions={functions}
-                      dropdwn={dropdwn}
-                      setDropdown={setDropdown} */}
-                    {/* /> */}
-                  </div>
-                </div>
+                  setRefs={setRefs}
+                  setContent={setContent}
+                  setFunctions={setFunctions}
+                  setSelectedUsr={setSelectedUsr}
+                  setmuteShow={setmuteShow}
+                  setData={props.setData}
+                  i={i}
+                  permit={permit}
+                />
               )}
             </div>
           ))}
@@ -332,7 +372,7 @@ function checkRole(data: any, setRole: any) {
   dataArr.forEach((arr) => {
     let result: any;
     if (arr.length !== 0) {
-      result = arr.filter(callback);
+      result = arr?.filter(callback);
       if (result.length !== 0) {
         setRole(result[0]?.status);
         return;
@@ -340,6 +380,12 @@ function checkRole(data: any, setRole: any) {
     }
   });
 }
+
+const getData = async (convId: any, setData: any) => {
+  const value: any = await getChannelProfile(convId, setData);
+  setData(value?.data?.data);
+  return;
+};
 
 export const Profile = (props: {
   login: any;
@@ -351,15 +397,11 @@ export const Profile = (props: {
   const [role, setRole] = useState("");
 
   useEffect(() => {
-    const getData = async () => {
-      const value: any = await getChannelProfile(props.convId, setData);
-      setData(value?.data);
-      return;
-    };
-    getData();
+    getData(props.convId, setData);
   }, []);
 
   useEffect(() => {
+    console.log(data);
     checkRole(data, setRole);
   }, [data, role]);
 
@@ -379,6 +421,7 @@ export const Profile = (props: {
             category="Owner"
             convId={props.convId}
             login={props.login}
+            setData={setData}
           />
           <Members
             role={role}
@@ -387,6 +430,7 @@ export const Profile = (props: {
             category="Admin"
             convId={props.convId}
             login={props.login}
+            setData={setData}
           />
           <Members
             role={role}
@@ -395,6 +439,7 @@ export const Profile = (props: {
             category="Member"
             convId={props.convId}
             login={props.login}
+            setData={setData}
           />
           <Members
             role={role}
@@ -403,6 +448,7 @@ export const Profile = (props: {
             category="Muted"
             convId={props.convId}
             login={props.login}
+            setData={setData}
           />
         </>
       )}

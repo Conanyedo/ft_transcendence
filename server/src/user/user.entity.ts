@@ -25,9 +25,6 @@ export class User {
 	@Column({ type: 'enum', enum: userStatus, default: userStatus.ONLINE })
 	status: userStatus;
 
-	@Column({ default: null, nullable: true })
-	socketId: string;
-
 	@Column({ default: false })
 	isAuthenticated: boolean;
 

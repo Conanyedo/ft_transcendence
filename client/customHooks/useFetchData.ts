@@ -2,6 +2,7 @@ import { AnyAction } from "@reduxjs/toolkit";
 import { ShowErrorMsg } from "@store/UI-Slice";
 import { filterCnvs } from "@utils/chat";
 import axios from "axios";
+import socket_game from "config/socketGameConfig";
 import { CookieValueTypes, getCookie } from "cookies-next";
 import { NextRouter } from "next/router";
 import { Dispatch, SetStateAction } from "react";
@@ -100,11 +101,13 @@ export const LogOut = (route: NextRouter) => {
 		})
 		.then(() => {
 			socket_notif.disconnect();
+			socket_game.disconnect();
 			route.replace("/");
 		})
 		.catch((err) => {
 			eraseCookie("jwt");
 			socket_notif.disconnect();
+			socket_game.disconnect();
 			route.replace("/");
 		});
 };
@@ -342,6 +345,28 @@ export const muteMemberFromChnl = async (data: any) => {
 		});
 };
 
+export const UnmuteMemberFromChnl = async (data: any) => {
+	// /chat/banMember
+	const token = getCookie("jwt");
+	const json = JSON.stringify(data);
+	return await axios({
+		method: "post",
+		url: `${baseUrl}chat/unmuteMember`,
+		headers: {
+			Authorization: `Bearer ${token}`,
+			"Content-Type": "application/json",
+		},
+		data: json,
+		withCredentials: true,
+	})
+		.then((res) => {
+			return true;
+		})
+		.catch((err) => {
+			return false;
+		});
+};
+
 export const checkCode2FA = async (code: string, router: NextRouter) => {
 	const token = getCookie("jwt-2fa");
 	const params = new URLSearchParams();
@@ -427,7 +452,7 @@ export const getFriends = async (set: any, setInitialState: any) => {
 		withCredentials: true,
 	})
 		.then((res) => {
-			console.log("get friend", res.data.data);
+			// console.log('get friend', res.data.data);
 			setInitialState(res.data.data);
 			return true;
 		})
@@ -449,8 +474,7 @@ export const getChannelProfile = async (convId: any, set: any) => {
 		},
 		data: json,
 		withCredentials: true,
-	})
-		.then((res) => {
+	}).then((res) => {
 			console.log(res);
 			return res;
 		})
@@ -511,7 +535,7 @@ export const getLoginInfo = async (login: any) => {
 			return true;
 		})
 		.catch((err) => {
-			console.log(err);
+			// console.log(err);
 			return false;
 		});
 };

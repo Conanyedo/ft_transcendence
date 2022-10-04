@@ -42,8 +42,9 @@ const ItemsNav: React.FC<N_ITEMS> = (props) => {
 
 	useEffect(() => {
 		if (props.alt === '/chat') {
-			socket_notif.on('newMsg', () => { // TODO
-				setNewMsg(true);
+			socket_notif.on('newMsg', () => { // TODO new route
+				if (!rout.asPath.includes('/chat'))
+					setNewMsg(true);
 			})
 		}
 	}, [])
