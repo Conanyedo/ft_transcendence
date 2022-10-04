@@ -128,7 +128,7 @@ export class ChatService {
 			}
 			else {
 				const membersNum = await this.memberRepository
-					.query(`select COUNT(*) from members where members."conversationId" = '${convInfo.convId}';`);
+					.query(`select COUNT(*) from members where members."conversationId" = '${convInfo.convId}' AND members."leftDate" is null;`);
 				convInfo.login = convInfo.name;
 				convInfo.membersNum = membersNum[0].count;
 				convInfo.relation = conv.status;
@@ -280,16 +280,21 @@ export class ChatService {
 		}
 		const memberExist = await this.memberRepository
 			.query(`select members.id, members."leftDate" from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND users."login" = '${login}';`);
+		const ownerExist = await this.memberRepository
+			.query(`select members.id from members where members."conversationId" = '${convId}' AND members.status = 'Owner';`);
+		let status: memberStatus = memberStatus.MEMBER;
+		if (!ownerExist.length)
+			status = memberStatus.OWNER;
 		if (!memberExist.length) {
 			const member = new Member();
-			member.status = memberStatus.MEMBER;
+			member.status = status;
 			member.conversation = await this.getConvById(convId);;
 			member.user = await this.userService.getUser(login);
 			await this.memberRepository.save(member);
 		}
 		else if (memberExist[0].leftDate) {
 			await this.memberRepository
-				.query(`update members set "leftDate" = null, "status" = 'Member' FROM users where members."userId" = users.id AND members."conversationId" = '${convId}' AND users."login" = '${login}';`);
+				.query(`update members set "leftDate" = null, "status" = '${status}' FROM users where members."userId" = users.id AND members."conversationId" = '${convId}' AND users."login" = '${login}';`);
 		}
 		const sockets = await this.chatGateway.server.fetchSockets();
 		const clients = sockets.filter((socket) => (socket.data.login === login));
@@ -299,12 +304,34 @@ export class ChatService {
 
 	async leaveChannel(login: string, convId: string) {
 		const exist = await this.memberRepository
-			.query(`select from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND users."login" = '${login}' AND members."status" != 'Owner' AND members."leftDate" is null;`);
+			.query(`select members.status, members.id from members Join users ON members."userId" = users.id Join conversations ON members."conversationId" = conversations.id where members."conversationId" = '${convId}' AND users."login" = '${login}' AND conversations."type" != 'Dm' AND members."leftDate" is null;`);
 		if (!exist.length)
 			return { err: 'Invalid data' };
+		if (exist[0].status === 'Owner') {
+			const admins = await this.memberRepository
+				.query(`select members.id from members where members."conversationId" = '${convId}' AND members.status = 'Admin';`);
+			if (admins.length) {
+				await this.memberRepository
+					.query(`update members set "status" = 'Owner' where members.id = '${admins[0].id}';`);
+			} else {
+				const members = await this.memberRepository
+					.query(`select members.id from members where members."conversationId" = '${convId}' AND members.status = 'Member';`);
+				if (members.length) {
+					await this.memberRepository
+						.query(`update members set "status" = 'Owner' where members.id = '${members[0].id}';`);
+				} else {
+					const muted = await this.memberRepository
+						.query(`select members.id from members where members."conversationId" = '${convId}' AND members.status = 'Muted';`);
+					if (muted.length) {
+						await this.memberRepository
+							.query(`update members set "status" = 'Owner' where members.id = '${muted[0].id}';`);
+					}
+				}
+			}
+		}
 		const currDate = new Date().toISOString();
 		await this.memberRepository
-			.query(`update members set "leftDate" = '${currDate}', "status" = 'Left' FROM users where members."userId" = users.id AND members."conversationId" = '${convId}' AND users."login" = '${login}';`);
+			.query(`update members set "leftDate" = '${currDate}', "status" = 'Left' where members.id = '${exist[0].id}';`);
 		const sockets = await this.chatGateway.server.fetchSockets();
 		const clients = sockets.filter((socket) => (socket.data.login === login));
 		clients.forEach((client) => (client.leave(convId)));
