@@ -91,7 +91,7 @@ export class ChatService {
 			return { data: true };
 		if (conv[0].type === 'Private')
 			return { err: 'Channel not found' };
-		return { data: { convId: conv.convId, type: conv.type } }
+		return { data: { convId: conv[0].convId, type: conv[0].type } };
 	}
 
 	async blockUser(login: string, user: string) {
