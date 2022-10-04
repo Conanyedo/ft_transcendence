@@ -76,7 +76,13 @@ export class ChatService {
 		const userInfo = await this.userService.getFriend(name);
 		if (!userInfo)
 			return { err: 'User not found' };
+		const conv = await this.memberRepository
+			.query(`select conversations.id, count(*) from members join users on members."userId" = users.id join conversations on members."conversationId" = conversations.id where (users.login = '${login}' or users.login = '${name}') and conversations.type = 'Dm' group by conversations.id having count(*) = 2;`);
+		if (conv.length)
+			return { data: true };
 		const relation = await this.friendshipService.getRelation(login, name);
+		if (relation === 'blocked')
+			return { err: 'User not found' };
 		return { data: { ...userInfo, relation } };
 	}
 
