@@ -274,6 +274,35 @@ export const fetchUserLogin = async (
     });
 };
 
+export const JoinChannel = async (
+  set: any,
+  router: NextRouter,
+  data: any
+) => {
+  const token = getCookie("jwt");
+  await axios
+    .post(`${baseUrl}chat/joinChannel`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      data: data,
+      withCredentials: true,
+    })
+    .then((res) => {
+      console.log(res.data);
+      return (true);
+      // set(res.data.data);
+    })
+    .catch((err) => {
+      if (err.response.status === 401) {
+        router.replace("/");
+        return (false);
+      }
+    });
+};
+
+
+
 export const addMembers = async (data: any) => {
   // POST /chat/addMembers
   const token = getCookie("jwt");
@@ -524,9 +553,7 @@ export const getLoginInfo = async (
 
   return await axios({
     method: "get",
-    url: user
-      ? `${baseUrl}chat/loginInfo/${login}`
-      : `${baseUrl}chat/channelInfo/${login}`,
+    url:`${baseUrl}chat/channelInfo/${login}`,
     headers: {
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
@@ -534,14 +561,16 @@ export const getLoginInfo = async (
     withCredentials: true,
   })
     .then((res) => {
-      if (res.data.data?.type) {
-        if (!user) {
-          if (res.data.data.type == "Private")
-            Router.push("/chat");
-          else setChnlData(res.data.data);
+      if (res.data.err) {
+        Router.push('/chat');
+      } else {
+        if (res.data?.data === true) {
+          setChnlData({type: 'Public',convId: ''});
         }
-        return true;
-      } else return false;
+        else {
+          setChnlData(res.data.data);
+        }
+      }
     })
     .catch((err) => {
       return false;

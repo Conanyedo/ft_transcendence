@@ -152,7 +152,7 @@ export const ChatLeft = (props: { login: any }) => {
           </div>
           <div className={Styles.bottomSection}>
             {lastUsers.map((user: any, i: any) => (
-              <Link href={"/chat?login=" + user.login} key={i}>
+              <Link href={`/chat?${user.type == "Dm" ? "login" : "channel"}=` + user.login} key={i}>
                 <div
                   key={i}
                   ref={(element) => {

@@ -33,32 +33,34 @@ const Chat = () => {
     useContext(ChatContext) as ChatContextType;
 
   const router = useRouter();
-  const [login, setLogin] = useState<any>("");
-  const { loginPath, channelPath } = router.query;
+  const [name, setName] = useState<any>("");
+  const { login, channel } = router.query;
 
   useEffect(() => {
     //upon entering execute this
     if (router.isReady) {
       // get login info first
-      if (loginPath != undefined) getLoginInfo(loginPath, true, setChannelData);
-      else if (channelPath != undefined)
-        getLoginInfo(channelPath, false, setChannelData);
+      if (channel != undefined)
+        getLoginInfo(channel, false, setChannelData);
 
-      setLogin(login || channelPath);
+      setName(login || channel);
       setShowCnv(true);
     }
-  }, [router]);
+  }, [login, channel]);
 
-  if (channelData.type == "" && channelPath)
-  	return <LoadingElm />
-
+  // if (channelData.type == "" && channel){
+    
+  // 	return <LoadingElm />
+  // }
+  
+    console.log('channelData :' , name);
 
     return (
       <ChatProvider>
         <div className={Styles.chatContainer}>
-          <ChatLeft login={login} />
-          {channelData.type === '' && <ChatRight setShowSetModal={setShowSetModal} login={login} />}
-          {channelData.type !== '' && <ProtectedFormMdl convId={channelData.convId} />}
+          <ChatLeft login={name} />
+          {<ChatRight setShowSetModal={setShowSetModal} login={channelData.type !== '' && channelData.type !== 'Public'  ? undefined : name} />}
+          {channelData.type !== '' && channelData.type !== 'Public' && <ProtectedFormMdl convId={channelData.convId} />}
         </div>
       </ChatProvider>
     );

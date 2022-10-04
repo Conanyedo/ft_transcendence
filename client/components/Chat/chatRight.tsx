@@ -414,6 +414,7 @@ export const ChatRight = (props: { setShowSetModal: any; login: number }) => {
     );
     // lets make an asychronous call here
     if (props.login !== undefined) {
+      
       setShowCnv(true);
       setConvId(currentUser?.convId);
       setRelation(currentUser?.relation);
@@ -465,7 +466,7 @@ export const ChatRight = (props: { setShowSetModal: any; login: number }) => {
   }, [lastUsers]);
 
   useEffect(() => {
-    console.log(currentUser);
+    console.log("current user is", currentUser);
     setConvStatus(currentUser, setStopUsr);
     setConvId(currentUser?.convId);
     setRelation(currentUser?.relation);
