@@ -72,10 +72,26 @@ export class ChatService {
 		convs.forEach((conv) => (client.join(conv.convId)));
 	}
 
-	async getUserInfo(login: string, user: string) {
-		const relation = await this.friendshipService.getRelation(login, user);
-		const userInfo = await this.userService.getFriend(user);
+	async getUserInfo(login: string, name: string) {
+		const userInfo = await this.userService.getFriend(name);
+		if (!userInfo)
+			return { err: 'User not found' };
+		const relation = await this.friendshipService.getRelation(login, name);
 		return { data: { ...userInfo, relation } };
+	}
+
+	async getChannelInfo(login: string, name: string) {
+		const conv = await this.conversationRepository
+			.query(`select conversations.id as "convId", conversations.type, conversations.avatar, conversations.name from conversations where conversations.type != 'Dm' AND conversations.name = '${name}';`);
+		if (!conv.length)
+			return { err: 'Channel not found' };
+		const member = await this.memberRepository
+			.query(`select members.id from members Join users ON members."userId" = users.id Join conversations ON members."conversationId" = conversations.id where users."login" = '${login}' AND conversations.name = '${name}';`);
+		if (member.length)
+			return { data: true };
+		if (conv[0].type === 'Private')
+			return { err: 'Channel not found' };
+		return { data: { convId: conv[0].convId, type: conv[0].type } };
 	}
 
 	async blockUser(login: string, user: string) {
@@ -128,7 +144,7 @@ export class ChatService {
 			}
 			else {
 				const membersNum = await this.memberRepository
-					.query(`select COUNT(*) from members where members."conversationId" = '${convInfo.convId}';`);
+					.query(`select COUNT(*) from members where members."conversationId" = '${convInfo.convId}' AND members."leftDate" is null;`);
 				convInfo.login = convInfo.name;
 				convInfo.membersNum = membersNum[0].count;
 				convInfo.relation = conv.status;
@@ -280,16 +296,21 @@ export class ChatService {
 		}
 		const memberExist = await this.memberRepository
 			.query(`select members.id, members."leftDate" from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND users."login" = '${login}';`);
+		const ownerExist = await this.memberRepository
+			.query(`select members.id from members where members."conversationId" = '${convId}' AND members.status = 'Owner';`);
+		let status: memberStatus = memberStatus.MEMBER;
+		if (!ownerExist.length)
+			status = memberStatus.OWNER;
 		if (!memberExist.length) {
 			const member = new Member();
-			member.status = memberStatus.MEMBER;
+			member.status = status;
 			member.conversation = await this.getConvById(convId);;
 			member.user = await this.userService.getUser(login);
 			await this.memberRepository.save(member);
 		}
 		else if (memberExist[0].leftDate) {
 			await this.memberRepository
-				.query(`update members set "leftDate" = null, "status" = 'Member' FROM users where members."userId" = users.id AND members."conversationId" = '${convId}' AND users."login" = '${login}';`);
+				.query(`update members set "leftDate" = null, "status" = '${status}' FROM users where members."userId" = users.id AND members."conversationId" = '${convId}' AND users."login" = '${login}';`);
 		}
 		const sockets = await this.chatGateway.server.fetchSockets();
 		const clients = sockets.filter((socket) => (socket.data.login === login));
@@ -299,12 +320,34 @@ export class ChatService {
 
 	async leaveChannel(login: string, convId: string) {
 		const exist = await this.memberRepository
-			.query(`select from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND users."login" = '${login}' AND members."status" != 'Owner' AND members."leftDate" is null;`);
+			.query(`select members.status, members.id from members Join users ON members."userId" = users.id Join conversations ON members."conversationId" = conversations.id where members."conversationId" = '${convId}' AND users."login" = '${login}' AND conversations."type" != 'Dm' AND members."leftDate" is null;`);
 		if (!exist.length)
 			return { err: 'Invalid data' };
+		if (exist[0].status === 'Owner') {
+			const admins = await this.memberRepository
+				.query(`select members.id from members where members."conversationId" = '${convId}' AND members.status = 'Admin';`);
+			if (admins.length) {
+				await this.memberRepository
+					.query(`update members set "status" = 'Owner' where members.id = '${admins[0].id}';`);
+			} else {
+				const members = await this.memberRepository
+					.query(`select members.id from members where members."conversationId" = '${convId}' AND members.status = 'Member';`);
+				if (members.length) {
+					await this.memberRepository
+						.query(`update members set "status" = 'Owner' where members.id = '${members[0].id}';`);
+				} else {
+					const muted = await this.memberRepository
+						.query(`select members.id from members where members."conversationId" = '${convId}' AND members.status = 'Muted';`);
+					if (muted.length) {
+						await this.memberRepository
+							.query(`update members set "status" = 'Owner' where members.id = '${muted[0].id}';`);
+					}
+				}
+			}
+		}
 		const currDate = new Date().toISOString();
 		await this.memberRepository
-			.query(`update members set "leftDate" = '${currDate}', "status" = 'Left' FROM users where members."userId" = users.id AND members."conversationId" = '${convId}' AND users."login" = '${login}';`);
+			.query(`update members set "leftDate" = '${currDate}', "status" = 'Left' where members.id = '${exist[0].id}';`);
 		const sockets = await this.chatGateway.server.fetchSockets();
 		const clients = sockets.filter((socket) => (socket.data.login === login));
 		clients.forEach((client) => (client.leave(convId)));
@@ -410,8 +453,15 @@ export class ChatService {
 			deleteAvatar('channels', data.avatar);
 			return { err: 'Invalid data' };
 		}
-		if (data.name)
+		if (data.name) {
+			const exist = await this.conversationRepository
+				.query(`SELECT FROM conversations where conversations.name = '${data.name}' AND conversations.id != '${convId}';`);
+			if (exist.length) {
+				deleteAvatar('channels', data.avatar);
+				return { err: 'Name already in use' };
+			}
 			await this.setChannelName(convId, data.name);
+		}
 
 		if (data.avatar)
 			data.avatar = await isFileValid('channels', data.avatar);
