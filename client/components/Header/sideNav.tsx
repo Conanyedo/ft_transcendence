@@ -19,53 +19,44 @@ import Logout from "../../public/Logout.svg";
 import classes from "../../styles/sideNav.module.css";
 import { useRouter } from "next/router";
 import { MutableRefObject, useEffect, useRef, useState } from "react";
-import { useInSideAlerter } from "../../customHooks/Functions";
 import { getCookie } from "cookies-next";
 import { LogOut } from "../../customHooks/useFetchData";
+import socket_notif from "config/socketNotif";
 
 interface N_ITEMS {
 	alt: string;
 	src: any;
 	move: any;
 	ref_ctn: MutableRefObject<null> | any;
-	Toggle: (t: boolean) => void;
 }
 
 const ItemsNav: React.FC<N_ITEMS> = (props) => {
+	const [newMsg, setNewMsg] = useState(false);
 	const rout = useRouter();
 	const ref = useRef(null);
 	const moveHndler = () => {
 		props.move(props.alt);
 		rout.push(props.alt);
+		setNewMsg(false);
 	};
-	useInSideAlerter(ref, props.Toggle, moveHndler);
+
+	useEffect(() => {
+		if (props.alt === '/chat') {
+			socket_notif.on('newMsg', () => { // TODO
+				setNewMsg(true);
+			})
+		}
+	}, [])
+
 	return (
 		<div className={classes.backIcons} onClick={moveHndler}>
 			<div className={classes.IconsNav} ref={ref}>
 				<Image alt={props.alt} src={props.src} width={79} height={79} />
+				{props.alt === '/chat' && newMsg && <div/>}
 			</div>
 		</div>
 	);
 };
-
-function useOutside(ref: any, setToggle: (t: boolean) => void) {
-	useEffect(() => {
-		let width = 0;
-		window.addEventListener("click", () => {
-			width = window.innerWidth;
-		});
-		function handleClickOutside(event: any) {
-			if (ref.current && !ref.current.contains(event.target))
-				if (width < 600 && width !== 0) {
-					setToggle(false);
-				}
-		}
-		document.addEventListener("mousedown", handleClickOutside);
-		return () => {
-			document.removeEventListener("mousedown", handleClickOutside);
-		};
-	}, [ref]);
-}
 
 const SideNav: React.FC<{
 	onNav: (page: string) => void;
@@ -77,41 +68,31 @@ const SideNav: React.FC<{
 	const NamePage = "/" + router.pathname.split("/")[1];
 
 	const handlerLogOut = () =>  LogOut(router);
-	const [isOpen, setIsOpen] = useState(false);
 
-	const ToggleAll = (value: boolean) => {
-		setIsOpen(value);
-	};
-
-	useOutside(ref_nav, ToggleAll);
 	const NAVITEMS: N_ITEMS[] = [
 		{
 			alt: "/profile",
 			src: NamePage !== "/profile" ? User : UserSelected,
 			move: props.onNav,
 			ref_ctn: ref_nav,
-			Toggle: ToggleAll,
 		},
 		{
 			alt: "/live-games",
 			src: NamePage !== "/live-games" ? LiveGame : LiveGameSelected,
 			move: props.onNav,
 			ref_ctn: ref_nav,
-			Toggle: ToggleAll,
 		},
 		{
 			alt: "/game",
 			src: NamePage !== "/game" ? Game : GameSelected,
 			move: props.onNav,
 			ref_ctn: ref_nav,
-			Toggle: ToggleAll,
 		},
 		{
 			alt: "/chat",
 			src: NamePage !== "/chat" ? Chat : ChatSelected,
 			move: props.onNav,
 			ref_ctn: ref_nav,
-			Toggle: ToggleAll,
 		},
 	];
 	return (
@@ -125,7 +106,6 @@ const SideNav: React.FC<{
 							alt={item.alt}
 							src={item.src}
 							ref_ctn={item.ref_ctn}
-							Toggle={item.Toggle}
 						/>
 					))}
 				</div>

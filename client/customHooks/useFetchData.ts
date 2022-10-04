@@ -109,8 +109,12 @@ export const LogOut = (route: NextRouter) => {
 		});
 };
 
-export const updateChnlInfo = async (formData: any, router: any, login: any) => {
-	// /chat/updateChannel 
+export const updateChnlInfo = async (
+	formData: any,
+	router: any,
+	login: any
+) => {
+	// /chat/updateChannel
 	// the data should be as follows {name, type, password, avatar, oldPath}
 	const token = getCookie("jwt");
 	// const json = JSON.stringify(data);
@@ -119,7 +123,7 @@ export const updateChnlInfo = async (formData: any, router: any, login: any) => 
 		url: `${baseUrl}chat/updateChannel`,
 		headers: {
 			Authorization: `Bearer ${token}`,
-			'Content-Type': 'application/json'
+			"Content-Type": "application/json",
 		},
 		data: formData,
 		withCredentials: true,
@@ -134,7 +138,7 @@ export const updateChnlInfo = async (formData: any, router: any, login: any) => 
 		.catch((err) => {
 			return false;
 		});
-}
+};
 
 export const updateUserInfo = async (
 	nameRef: React.MutableRefObject<any>,
@@ -211,8 +215,7 @@ export const fetchAchievements = async (
 			withCredentials: true,
 		})
 		.then((res) => {
-			if (res.data.data)
-				setAchievementsids(res.data.data.achievements);
+			if (res.data.data) setAchievementsids(res.data.data.achievements);
 		})
 		.catch((err) => {
 			if (err.response.status === 401) {
@@ -233,8 +236,7 @@ export const fetchDATA = async (set: any, router: NextRouter, Path: string) => {
 			withCredentials: true,
 		})
 		.then((res) => {
-			if (res.data.data)
-				set(res.data.data);
+			if (res.data.data) set(res.data.data);
 		})
 		.catch((err) => {
 			if (err.response.status === 401) {
@@ -245,7 +247,11 @@ export const fetchDATA = async (set: any, router: NextRouter, Path: string) => {
 		});
 };
 
-export const fetchUserLogin = async (set: any, router: NextRouter, login: string) => {
+export const fetchUserLogin = async (
+	set: any,
+	router: NextRouter,
+	login: string
+) => {
 	const token = getCookie("jwt");
 	await axios
 		.get(`${baseUrl}chat/loginInfo/${login}`, {
@@ -275,7 +281,7 @@ export const addMembers = async (data: any) => {
 		url: `${baseUrl}chat/addMembers`,
 		headers: {
 			Authorization: `Bearer ${token}`,
-			'Content-Type': 'application/json'
+			"Content-Type": "application/json",
 		},
 		data: json,
 		withCredentials: true,
@@ -288,9 +294,9 @@ export const addMembers = async (data: any) => {
 		.catch((err) => {
 			return false;
 		});
-}
+};
 
-export const banMemberFromChannel = async (data:any) =>  {
+export const banMemberFromChannel = async (data: any) => {
 	// /chat/banMember
 	const token = getCookie("jwt");
 	const json = JSON.stringify(data);
@@ -299,7 +305,7 @@ export const banMemberFromChannel = async (data:any) =>  {
 		url: `${baseUrl}chat/banMember`,
 		headers: {
 			Authorization: `Bearer ${token}`,
-			'Content-Type': 'application/json'
+			"Content-Type": "application/json",
 		},
 		data: json,
 		withCredentials: true,
@@ -312,7 +318,29 @@ export const banMemberFromChannel = async (data:any) =>  {
 		.catch((err) => {
 			return false;
 		});
-}
+};
+
+export const muteMemberFromChnl = async (data: any) => {
+	// /chat/banMember
+	const token = getCookie("jwt");
+	const json = JSON.stringify(data);
+	return await axios({
+		method: "post",
+		url: `${baseUrl}chat/muteMember`,
+		headers: {
+			Authorization: `Bearer ${token}`,
+			"Content-Type": "application/json",
+		},
+		data: json,
+		withCredentials: true,
+	})
+		.then((res) => {
+			return true;
+		})
+		.catch((err) => {
+			return false;
+		});
+};
 
 export const checkCode2FA = async (code: string, router: NextRouter) => {
 	const token = getCookie("jwt-2fa");
@@ -349,7 +377,7 @@ export const postChannel = async (set: any, router: NextRouter, data: any) => {
 		url: `${baseUrl}chat/createChannel`,
 		headers: {
 			Authorization: `Bearer ${token}`,
-			'Content-Type': 'application/json'
+			"Content-Type": "application/json",
 		},
 		data: json,
 		withCredentials: true,
@@ -367,8 +395,6 @@ export const postChannel = async (set: any, router: NextRouter, data: any) => {
 
 export const changeMemberRole = async (data: any, set: any) => {
 	// POST /chat/setMemberStatus
-
-	// const currdata = {convId, member, status};
 	const token = getCookie("jwt");
 	const json = JSON.stringify(data);
 	return await axios({
@@ -376,21 +402,18 @@ export const changeMemberRole = async (data: any, set: any) => {
 		url: `${baseUrl}chat/setMemberStatus`,
 		headers: {
 			Authorization: `Bearer ${token}`,
-			'Content-Type': 'application/json'
+			"Content-Type": "application/json",
 		},
 		data: json,
 		withCredentials: true,
 	})
 		.then((res) => {
-			// console.log(res);
-			// set(res.data);
-			// router.push("/chat?login=" + res.data.login);
 			return true;
 		})
 		.catch((err) => {
 			return false;
 		});
-}
+};
 
 export const getFriends = async (set: any, setInitialState: any) => {
 	const token = getCookie("jwt");
@@ -399,45 +422,49 @@ export const getFriends = async (set: any, setInitialState: any) => {
 		url: `${baseUrl}friendship/friends`,
 		headers: {
 			Authorization: `Bearer ${token}`,
-			'Content-Type': 'application/json'
+			"Content-Type": "application/json",
 		},
 		withCredentials: true,
 	})
 		.then((res) => {
-			// console.log('get friend', res.data.data);
+			console.log("get friend", res.data.data);
 			setInitialState(res.data.data);
 			return true;
 		})
 		.catch((err) => {
 			return false;
 		});
-}
+};
 
 export const getChannelProfile = async (convId: any, set: any) => {
-
 	// POST /chat/channelProfile
 	const token = getCookie("jwt");
-	const json = {convId: convId};
+	const json = { convId: convId };
 	return await axios({
 		method: "post",
 		url: `${baseUrl}chat/channelProfile`,
 		headers: {
 			Authorization: `Bearer ${token}`,
-			'Content-Type': 'application/json'
+			"Content-Type": "application/json",
 		},
 		data: json,
 		withCredentials: true,
-	}).then((res) => {
-		// console.log(res);
-		return (res);
 	})
-	.catch((err) => {
-		return false;
-	});
-}
+		.then((res) => {
+			console.log(res);
+			return res;
+		})
+		.catch((err) => {
+			return false;
+		});
+};
 
-export const leaveChannel = async (convId: any, router: NextRouter, setNewData: any, prevData: any) => {
-
+export const leaveChannel = async (
+	convId: any,
+	router: NextRouter,
+	setNewData: any,
+	prevData: any
+) => {
 	// console.log(convId);
 	const token = getCookie("jwt");
 	const json = JSON.stringify({ convId: convId });
@@ -446,7 +473,7 @@ export const leaveChannel = async (convId: any, router: NextRouter, setNewData: 
 		url: `${baseUrl}chat/leaveChannel`,
 		headers: {
 			Authorization: `Bearer ${token}`,
-			'Content-Type': 'application/json'
+			"Content-Type": "application/json",
 		},
 		data: json,
 		withCredentials: true,
@@ -462,7 +489,7 @@ export const leaveChannel = async (convId: any, router: NextRouter, setNewData: 
 			console.log(err);
 			return false;
 		});
-}
+};
 
 export const getLoginInfo = async (login: any) => {
 
@@ -474,7 +501,7 @@ export const getLoginInfo = async (login: any) => {
 		url: `${baseUrl}chat/loginInfo/${login}`,
 		headers: {
 			Authorization: `Bearer ${token}`,
-			'Content-Type': 'application/json'
+			"Content-Type": "application/json",
 		},
 		withCredentials: true,
 	})
@@ -487,7 +514,7 @@ export const getLoginInfo = async (login: any) => {
 			console.log(err);
 			return false;
 		});
-}
+};
 
 export const check2FA_JWT = async (
 	jwt: CookieValueTypes,
@@ -602,7 +629,12 @@ export const requestsChannel = async (
 		});
 };
 
-export const userExists = async (set: any, login: string, router: NextRouter, dispatch: Dispatch<AnyAction>) => {
+export const userExists = async (
+	set: any,
+	login: string,
+	router: NextRouter,
+	dispatch: Dispatch<AnyAction>
+) => {
 	const token = getCookie("jwt");
 	const params = new URLSearchParams();
 	params.append("login", login);
@@ -616,8 +648,11 @@ export const userExists = async (set: any, login: string, router: NextRouter, di
 		withCredentials: true,
 	})
 		.then((res) => {
-			if (res.data.data)
-				set(login);
+			if (res.data.data) set(login);
+			else {
+				dispatch(ShowErrorMsg());
+				router.push("/profile");
+			}
 		})
 		.catch((err) => {
 			if (err.response.status === 401) {
@@ -626,7 +661,7 @@ export const userExists = async (set: any, login: string, router: NextRouter, di
 				router.replace("/");
 			}
 			dispatch(ShowErrorMsg());
-			router.push('/profile');
+			router.push("/profile");
 		});
 	return res;
 };

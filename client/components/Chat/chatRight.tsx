@@ -155,14 +155,10 @@ const ChatSection: React.FC<{
 }) => {
 
     useEffect(() => {
-        console.log("convId here", convId);
-        console.log(currentUser);
-        console.log(chatMsgs);
         setFConfId(convId);
     }, [convId])
 
     useEffect(() => {
-      console.log(fconvId);
     }, [fconvId])
     
 
@@ -318,7 +314,7 @@ const THeader: React.FunctionComponent<{
           <div className={Styles.avatarProps}>
             <img
               src={
-                currentUser?.avatar.startsWith("https")
+                currentUser?.avatar?.startsWith("https")
                   ? currentUser?.avatar
                   : getImageBySize(currentUser?.avatar, 70)
               }
@@ -485,6 +481,7 @@ export const ChatRight = (props: { setShowSetModal: any; login: number }) => {
               />
               {profile && (
                 <Profile
+                  login={currentUser.login}
                   setShowSetModal={showMembersMdl}
                   convId={currentUser.convId}
                   status={currentUser.status}

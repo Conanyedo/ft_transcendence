@@ -1,952 +1,1028 @@
 .chatContainer {
-    display: flex;
-    background-color: #2C2C2E;
-    justify-content: center;
-    max-width: 100%;
-    height: 100%;
-    border-radius: 15px;
+  display: flex;
+  background-color: #2c2c2e;
+  justify-content: center;
+  max-width: 100%;
+  height: 100%;
+  border-radius: 15px;
 }
 
 .chatLeft {
-    width: 30%;
-    background-color: #2C2C2E;
-    border-radius: 15px 0 0 15px;
+  width: 30%;
+  background-color: #2c2c2e;
+  border-radius: 15px 0 0 15px;
 }
 
 .chatRight {
-    width: 70%;
-    background-color: #2C2C2E;
-    border-radius: 0 15px 15px 0;
-    background-color: #242426;
+  width: 70%;
+  background-color: #2c2c2e;
+  border-radius: 0 15px 15px 0;
+  background-color: #242426;
 }
 
 .leftContent {
-    height: 100%;
-    width: 100%;
-    padding: 28px 20px 20px 20px;
-    display: flex;
-    flex-direction: column;
-    max-height: 100%;
+  height: 100%;
+  width: 100%;
+  padding: 28px 20px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  max-height: 100%;
 }
 
 .topSection {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .msg {
-    color: #C6E1FF;
-    font-weight: 700;
-    font-size: 24px;
+  color: #c6e1ff;
+  font-weight: 700;
+  font-size: 24px;
 }
 
 .chatInput {
-    border: 0;
-    background-color: #2C2C2E;
-    color: #D9D9D9;
-    font-size: 16px;
+  border: 0;
+  background-color: #2c2c2e;
+  color: #d9d9d9;
+  font-size: 16px;
 }
 
 .chatInput::placeholder {
-    font-size: 16px;
-    color: #758293;
+  font-size: 16px;
+  color: #758293;
 }
 
 .chatInput:focus {
-    outline: none;
-    font-size: 16px;
-    color: #D9D9D9;
-    font-weight: 500;
+  outline: none;
+  font-size: 16px;
+  color: #d9d9d9;
+  font-weight: 500;
 }
 
 .chatSearch {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-top: 2.313rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 2.313rem;
 }
 
 .chatUser {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 97%;
-    height: 72px;
-    margin-top: 20px;
-    cursor: pointer;
-    padding: 12px 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 97%;
+  height: 72px;
+  margin-top: 20px;
+  cursor: pointer;
+  padding: 12px 8px;
 }
 
-
 .avatarName {
-    display: flex;
-    gap: 20px;
+  display: flex;
+  gap: 20px;
 }
 
 .username {
-    color: #D9D9D9;
-    font-weight: 500;
-    font-size: 1.5rem;
-    display: flex;
-    align-items: center;
+  color: #d9d9d9;
+  font-weight: 500;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
 }
 
 .avatar {
-    border-radius: 8px;
-    width: 48px !important;
-    height: 46.93px !important;
+  border-radius: 8px;
+  width: 48px !important;
+  height: 46.93px !important;
 }
 
 .status {
-    color: #C6E1FF;
-    font-size: 1.167rem;
+  color: #c6e1ff;
+  font-size: 1.167rem;
 }
 
 .bottomSection {
-    position: relative;
-    width: 100%;
-    overflow-y: scroll;
-    overflow-x: hidden;
-    margin-top: 1rem;
-    height: 100%;
+  position: relative;
+  width: 100%;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  margin-top: 1rem;
+  height: 100%;
 }
 
 .bottomSection::-webkit-scrollbar {
-    background: #2D2F31;
-    width: 5px;
-    outline: 3px solid #2D2F31;
-    border-radius: 4px;
+  background: #2d2f31;
+  width: 5px;
+  outline: 3px solid #2d2f31;
+  border-radius: 4px;
 }
 
 .bottomSection::-webkit-scrollbar-thumb {
-    background: #242426;
-    border-radius: 4px;
+  background: #242426;
+  border-radius: 4px;
 }
 
 .topDetails {
-    display: flex;
-    justify-content: space-between;
-    height: 9.333rem;
-    background-color: #28282A;
-    border-radius: 0 15px 0 0;
-    padding: 18px 1.313rem;
-    align-items: center;
+  display: flex;
+  justify-content: space-between;
+  height: 9.333rem;
+  background-color: #28282a;
+  border-radius: 0 15px 0 0;
+  padding: 18px 1.313rem;
+  align-items: center;
 }
 
 .flex {
-    display: flex;
-    gap: 24px;
-    align-items: center;
-    cursor: pointer;
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  cursor: pointer;
 }
 
 .chatUsername {
-    color: #D9D9D9;
-    font-size: 2rem;
-    font-weight: 500;
+  color: #d9d9d9;
+  font-size: 2rem;
+  font-weight: 500;
 }
 
 .chatUserStatus {
-    color: #C6E1FF;
-    font-size: 1.333;
-    margin-top: 4px;
+  color: #c6e1ff;
+  font-size: 1.333;
+  margin-top: 4px;
 }
 
-.flex>div {
-    height: fit-content;
+.flex > div {
+  height: fit-content;
 }
 
-.flex>div>h1 {
-    margin: 0;
+.flex > div > h1 {
+  margin: 0;
 }
 
 .rightContent {
-    height: 100%;
-    /* background-color: coral; */
-    position: relative;
-    width: 100%;
+  height: 100%;
+  /* background-color: coral; */
+  position: relative;
+  width: 100%;
 }
 
 .chatSection {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    position: absolute;
-    bottom: 0;
-    top: 112px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: absolute;
+  bottom: 0;
+  top: 112px;
 }
 
 .msgsDisplay {
-    height: 100%;
-    overflow-y: auto;
-    overflow-x: hidden;
-    padding: 0;
-    width: calc(100% - (1.313rem * 2));
-    margin: 0 auto;
-    position: relative;
-    margin-right: auto;
-    margin-top: 2rem;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 0;
+  width: calc(100% - (1.313rem * 2));
+  margin: 0 auto;
+  position: relative;
+  margin-right: auto;
+  margin-top: 2rem;
 }
 
-
 .msgsDisplay::-webkit-scrollbar {
-    background: #2D2F31;
-    width: 5px;
-    outline: 3px solid #2D2F31;
-    padding-top: 0.5rem;
-    margin-left: 6px;
+  background: #2d2f31;
+  width: 5px;
+  outline: 3px solid #2d2f31;
+  padding-top: 0.5rem;
+  margin-left: 6px;
 }
 
 .msgsDisplay::-webkit-scrollbar-track {
-    background: #2D2F31;
+  background: #2d2f31;
 }
 
 .msgsDisplay::-webkit-scrollbar-thumb {
-    background: #2B2B2D;
-    height: 70%;
-    width: 3px;
-    border-radius: 5px;
+  background: #2b2b2d;
+  height: 70%;
+  width: 3px;
+  border-radius: 5px;
 }
 
 .msgInput {
-    width: 100%;
-    height: 50px;
-    background-color: #28282A;
-    border-radius: 5px;
-    display: flex;
-    align-items: center;
-    padding: 12px 14px;
-    justify-content: space-between;
+  width: 100%;
+  height: 50px;
+  background-color: #28282a;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  padding: 12px 14px;
+  justify-content: space-between;
 }
 
-.msgInput>input {
-    background-color: #28282A;
-    color: #D9D9D9;
-    width: 100%;
-    margin-right: 12px;
-    border: 0;
-    height: 1.5rem;
+.msgInput > input {
+  background-color: #28282a;
+  color: #d9d9d9;
+  width: 100%;
+  margin-right: 12px;
+  border: 0;
+  height: 1.5rem;
 }
 
-.msgInput>input:focus {
-    outline: none;
+.msgInput > input:focus {
+  outline: none;
 }
 
 .msgBox {
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
 }
 
 .msgContent {
-    padding: 1.25rem;
-    word-break: break-all;
-    text-align: left;
-    height: fit-content;
-    width: fit-content;
-    padding: 0.625rem 1.25rem;
-    margin-top: 1.313rem;
-    /* width: 40%; */
-    max-width: 45%;
-    margin-bottom: 2px;
-    font-size: 1.333rem;
-    color: #fff;
-    font-weight: 500;
+  padding: 1.25rem;
+  word-break: break-all;
+  text-align: left;
+  height: fit-content;
+  width: fit-content;
+  padding: 0.625rem 1.25rem;
+  margin-top: 1.313rem;
+  /* width: 40%; */
+  max-width: 45%;
+  margin-bottom: 2px;
+  font-size: 1.333rem;
+  color: #fff;
+  font-weight: 500;
 }
 
 .msgBox:last-child {
-    margin-bottom: 2rem;
+  margin-bottom: 2rem;
 }
 
-.msgContent>h3 {
-    color: #FFFFFF;
-    font-weight: 500;
-    font-size: 1rem;
+.msgContent > h3 {
+  color: #ffffff;
+  font-weight: 500;
+  font-size: 1rem;
 }
 
-.msgContent>p {
-    font-weight: 600;
-    font-size: 0.625rem;
+.msgContent > p {
+  font-weight: 600;
+  font-size: 0.625rem;
 }
 
 .chatUserClicked {
-    background-color: #242426;
-    border-radius: 5px;
+  background-color: #242426;
+  border-radius: 5px;
 }
 
 .sendDiv {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin: 1rem auto;
-    width: calc(100% - (1.313rem * 2));
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 1rem auto;
+  width: calc(100% - (1.313rem * 2));
 }
 
 @keyframes bounce-3 {
-    from {
-        transform: translateX(-15px);
-    }
+  from {
+    transform: translateX(-15px);
+  }
 
-    to {
-        transform: translateX(0);
-    }
+  to {
+    transform: translateX(0);
+  }
 }
 
 @-webkit-keyframes fadeIn {
-    from { opacity: 0; }
-      to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 @keyframes fadeIn {
-    from { opacity: 0; }
-      to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .animatedBtn {
-    -webkit-animation-name: bounce-3;
-    animation-name: bounce-3;
-    -webkit-animation-duration: 0.3s;
-    animation-duration: 0.3s;
-    -webkit-animation-fill-mode: both;
-    animation-fill-mode: both;
-    cursor: pointer;
+  -webkit-animation-name: bounce-3;
+  animation-name: bounce-3;
+  -webkit-animation-duration: 0.3s;
+  animation-duration: 0.3s;
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both;
+  cursor: pointer;
 }
 
 .console:hover {
-    cursor: pointer;
-    fill: #409CFF;
+  cursor: pointer;
+  fill: #409cff;
 }
 
 .msgTime {
-    display: flex;
-    /* margin-top: -1px; */
-    font-size: 0.625rem;
-    color: #D9D9D9;
+  display: flex;
+  /* margin-top: -1px; */
+  font-size: 0.625rem;
+  color: #d9d9d9;
 }
 
 .sendCtr {
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
 }
 
 .inviteMsg {
-    width: 19.5rem;
-    height: 8rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 1.083rem;
+  width: 19.5rem;
+  height: 8rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.083rem;
 }
 
-.inviteMsg>div {
-    display: flex;
-    align-items: center;
-    gap: 0.833rem;
+.inviteMsg > div {
+  display: flex;
+  align-items: center;
+  gap: 0.833rem;
 }
 
-.inviteMsg>div>* {
-    border-radius: 8px;
-    font-size: 1.333rem;
+.inviteMsg > div > * {
+  border-radius: 8px;
+  font-size: 1.333rem;
 }
 
-.inviteMsg>div>div>p {
-    font-size: 0.833rem;
-    font-weight: 300;
+.inviteMsg > div > div > p {
+  font-size: 0.833rem;
+  font-weight: 300;
 }
 
-.inviteMsg>button {
-    margin: 0 auto;
-    border: 1.5px solid #C6E1FF;
-    border-radius: 2px;
-    color: #C6E1FF;
-    font-size: 1rem;
-    width: 12.667rem;
-    height: 25px;
-    background-color: transparent;
-    cursor: pointer;
+.inviteMsg > button {
+  margin: 0 auto;
+  border: 1.5px solid #c6e1ff;
+  border-radius: 2px;
+  color: #c6e1ff;
+  font-size: 1rem;
+  width: 12.667rem;
+  height: 25px;
+  background-color: transparent;
+  cursor: pointer;
 }
 
-.inviteMsg>button:hover {
-    background-color: #C6E1FF;
-    color: #409CFF;
-    font-weight: 600;
+.inviteMsg > button:hover {
+  background-color: #c6e1ff;
+  color: #409cff;
+  font-weight: 600;
 }
 
 .console:hover svg {
-    cursor: pointer;
-    fill: #409CFF;
-    cursor: pointer;
+  cursor: pointer;
+  fill: #409cff;
+  cursor: pointer;
 }
 
 .grayBg {
-    position: absolute;
-    inset: 0;
-    background-color: #2C2C2E;
-    opacity: 0.5;
-    z-index: 999;
+  position: absolute;
+  inset: 0;
+  background-color: #2c2c2e;
+  opacity: 0.5;
+  z-index: 999;
 }
 
 .modalbox {
-    position: absolute;
-    margin: auto;
-    inset: 0;
-    z-index: 1000;
-    background-color: #242426;
-    height: fit-content;
-    width: 35rem;
-    padding: 1.25rem;
-    border-radius: 10px;
+  position: absolute;
+  margin: auto;
+  inset: 0;
+  z-index: 1000;
+  background-color: #242426;
+  height: fit-content;
+  width: 35rem;
+  padding: 1.25rem;
+  border-radius: 10px;
 }
 
 .form {
-    min-height: fit-content;
+  min-height: fit-content;
 }
 
-.modalbox>div:nth-child(1) {
-    margin-top: 1.25rem;
-    margin-bottom: 1.25rem;
+.modalbox > div:nth-child(1) {
+  margin-top: 1.25rem;
+  margin-bottom: 1.25rem;
 }
 
 .inputContainer {
-    position: relative;
+  position: relative;
 }
 
-.inputContainer>span {
-    font-weight: 500;
-    font-size: 18px;
-    color: #D9D9D9;
+.inputContainer > span {
+  font-weight: 500;
+  font-size: 18px;
+  color: #d9d9d9;
 }
 
-.inputContainer>input {
-    width: 100%;
+.inputContainer > input {
+  width: 100%;
 }
 
 .createChnl {
-    font-size: 20px;
-    color: #C6E1FF;
-    font-weight: 600;
+  font-size: 20px;
+  color: #c6e1ff;
+  font-weight: 600;
 }
 
 .mTop {
-    margin-top: 18px;
+  margin-top: 18px;
 }
 
-.options>div>h3 {
-    font-size: 18px;
-    color: #D9D9D9;
-    font-weight: 500;
+.options > div > h3 {
+  font-size: 18px;
+  color: #d9d9d9;
+  font-weight: 500;
 }
 
-.modalbox>div>form>span {
-    font-weight: 500;
-    font-size: 1.5rem;
-    color: #D9D9D9;
+.modalbox > div > form > span {
+  font-weight: 500;
+  font-size: 1.5rem;
+  color: #d9d9d9;
 }
 
-.modalbox>form>button {
-    background-color: #409CFF;
-    color: #fff;
-    font-weight: 500;
-    padding: 8px 0;
-    width: 100%;
-    margin-top: 1.25rem;
-    border-radius: 5px;
-    border: 0;
-    font-size: 1.5rem;
-    cursor: pointer;
+.modalBtn {
+  background-color: #409cff;
+  color: #fff;
+  font-weight: 500;
+  padding: 8px 0;
+  width: 100%;
+  margin-top: 1.25rem;
+  border-radius: 5px;
+  border: 0;
+  font-size: 1.5rem;
+  cursor: pointer;
 }
 
-.modalbox>form>p {
-    color: #D9D9D9;
-    font-size: 1rem;
-    margin-bottom: 1.5rem;
-    margin-top: 8px;
+.modalbox > form > p {
+  color: #d9d9d9;
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+  margin-top: 8px;
 }
 
 .options {
-    display: flex;
-    margin-top: 18px;
-    justify-content: space-between;
+  display: flex;
+  margin-top: 18px;
+  justify-content: space-between;
 }
 
-.modalbox>form>div:nth-child(2) {
-    margin-top: 18px;
+.modalbox > form > div:nth-child(2) {
+  margin-top: 18px;
 }
 
-.modalbox>form>div:nth-child(2)>div {
-    display: flex;
-    align-items: center;
-    gap: 0.3rem;
+.modalbox > form > div:nth-child(2) > div {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
 }
 
-.modalbox>div:first-child {
-    display: flex;
-    justify-content: space-between;
+.modalbox > div:first-child {
+  display: flex;
+  justify-content: space-between;
 }
 
-.modalbox>div:first-child>div {
-    cursor: pointer;
+.modalbox > div:first-child > div {
+  cursor: pointer;
 }
 
 .checkbox {
-    width: 0;
-    height: 0;
-    visibility: hidden;
+  width: 0;
+  height: 0;
+  visibility: hidden;
 }
 
 .label {
-    display: block;
-    width: 25px;
-    height: 13.97px;
-    background-color: #3A3A3C;
-    border-radius: 100px;
-    position: relative;
-    cursor: pointer;
-    transition: 0.5s;
+  display: block;
+  width: 25px;
+  height: 13.97px;
+  background-color: #3a3a3c;
+  border-radius: 100px;
+  position: relative;
+  cursor: pointer;
+  transition: 0.5s;
 }
 
 .channel {
-    height: 20px;
-    cursor: pointer;
+  height: 20px;
+  cursor: pointer;
 }
 
-.channel:hover>svg>path {
-    fill: #409CFF;
+.channel:hover > svg > path {
+  fill: #409cff;
 }
 
 /* Creating the toggle ball */
 
 .label::after {
-    content: "";
-    width: 10px;
-    height: 10px;
-    background-color: #D9D9D9;
-    position: absolute;
-    border-radius: 50%;
-    top: 2px;
-    left: 2px;
-    transition: 0.5s;
+  content: "";
+  width: 10px;
+  height: 10px;
+  background-color: #d9d9d9;
+  position: absolute;
+  border-radius: 50%;
+  top: 2px;
+  left: 2px;
+  transition: 0.5s;
 }
 
 .checkbox:checked + .label:after {
-    left: calc(100% - 2px);
-    transform: translateX(-100%);
+  left: calc(100% - 2px);
+  transform: translateX(-100%);
 }
 
 .checkbox:checked + .label {
-    background-color: #409CFF;
+  background-color: #409cff;
 }
 
 .menu {
-    height: 30px;
-    cursor: pointer;
-    position: relative;
-    display: flex;
-    flex-direction: column;
+  height: 30px;
+  cursor: pointer;
+  position: relative;
+  display: flex;
+  flex-direction: column;
 }
 
 .menuDropdown {
-    position: absolute; 
-    width: 145px;
-    height: fit-content;
-    background-color: #3A3A3C;
-    border-radius: 5px;
-    top: 35px;
-    right: 0;
-    z-index: 999;
-    box-shadow: 0px 0px 25px rgba(0, 0, 0, 0.5);
+  position: absolute;
+  width: 145px;
+  height: fit-content;
+  background-color: #3a3a3c;
+  border-radius: 5px;
+  top: 35px;
+  right: 0;
+  z-index: 999;
+  box-shadow: 0px 0px 25px rgba(0, 0, 0, 0.5);
 }
 
-.menuDropdown>div {
-    max-width: 100%;
-    height: 25px;
-    font-size: 14px;
-    color: #fff;
-    margin: 4px;
-    border-radius: 5px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.menuDropdown > div {
+  max-width: 100%;
+  height: 25px;
+  font-size: 14px;
+  color: #fff;
+  margin: 4px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.menuDropdown>div:hover {
-    background-color: #2B2B2D;
+.menuDropdown > div:hover {
+  background-color: #2b2b2d;
 }
 
 .redText {
-    color: #FF6482 !important;
+  color: #ff6482 !important;
 }
 
 .arrowAsset {
-    display: none !important;
+  display: none !important;
 }
 
 .pwd {
-    margin-bottom: 1.125rem;
-    -webkit-animation-name: fadeIn;
-    animation-name: fadeIn;
-    -webkit-animation-duration: 0.3s;
-    animation-duration: 0.3s;
-    -webkit-animation-fill-mode: both;
-    animation-fill-mode: both;
+  margin-bottom: 1.125rem;
+  -webkit-animation-name: fadeIn;
+  animation-name: fadeIn;
+  -webkit-animation-duration: 0.3s;
+  animation-duration: 0.3s;
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both;
 }
 
 .dropMembers {
-    width: 32.6rem;
-    background-color: #3A3A3C;
-    margin-top: 8px;
-    border-radius: 5px;
-    height: fit-content;
-    z-index: 999;
-    position: absolute;
-    max-height: 20.667rem;
-    overflow-y: scroll;
+  width: 32.6rem;
+  background-color: #3a3a3c;
+  margin-top: 8px;
+  border-radius: 5px;
+  height: fit-content;
+  z-index: 999;
+  position: absolute;
+  max-height: 20.667rem;
+  overflow-y: scroll;
 }
 
 .sUsr {
-    display: flex;
-    justify-content: space-between;
-    height: fit-content;
-    align-items: center;
-    padding: 14px 10px;
-    align-items: center;
-    max-width: 100%;
+  display: flex;
+  justify-content: space-between;
+  height: fit-content;
+  align-items: center;
+  padding: 14px 10px;
+  align-items: center;
+  max-width: 100%;
 }
 
-.sUsr>div {
-    color: #FFFFFF;
-    font-size: 14px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
+.sUsr > div {
+  color: #ffffff;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
-.sUsr>div>span {
-    border-radius: 5px;
+.sUsr > div > span {
+  border-radius: 5px;
 }
 
 .btnAdd {
-    border: 2px solid #409CFF;
-    border-radius: 5px;
-    font-size: 1rem;
-    color: #409CFF;
-    background-color: inherit;
-    padding: 6px 18px;
-    font-weight: 600;
-    cursor: pointer;
+  border: 2px solid #409cff;
+  border-radius: 5px;
+  font-size: 1rem;
+  color: #409cff;
+  background-color: inherit;
+  padding: 6px 18px;
+  font-weight: 600;
+  cursor: pointer;
 }
 
 .btnRmv {
-    border: 2px solid #758293;
-    border-radius: 5px;
-    font-size: 1rem;
-    font-weight: 600;
-    background-color: inherit;
-    padding: 6px 18px;
-    color: #758293;
-    cursor: pointer;
+  border: 2px solid #758293;
+  border-radius: 5px;
+  font-size: 1rem;
+  font-weight: 600;
+  background-color: inherit;
+  padding: 6px 18px;
+  color: #758293;
+  cursor: pointer;
 }
 
 .usrsInpt {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 5px;
-    height: fit-content;
-    overflow-y: auto;
-    max-height: 67px;
-    max-width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  height: fit-content;
+  overflow-y: auto;
+  max-height: 67px;
+  max-width: 100%;
 }
 
 .usrsInpt::-webkit-scrollbar {
-    width: 12px;
+  width: 12px;
 }
 
 .usrsInpt::-webkit-scrollbar-track {
-    background: inherit;        /* color of the tracking area */
+  background: inherit; /* color of the tracking area */
 }
 
 .usrsInpt::-webkit-scrollbar-thumb {
-    background-color: #2B2B2D    ;    /* color of the scroll thumb */
-    border-radius: 20px;       /* roundness of the scroll thumb */
-    border: 4px solid inherit;  /* creates padding around scroll thumb */
-    height: 37.95px;
-  }
-
-.usrsInpt, .modalbox>div>input {
-    width: 100%;
-    height: fit-content;
-    background: #3A3A3C;
-    border-radius: 5px;
-    padding: 10px;
-    color: #fff;
-    font-size: 14px;
-    margin-top: 0.667rem;
+  background-color: #2b2b2d; /* color of the scroll thumb */
+  border-radius: 20px; /* roundness of the scroll thumb */
+  border: 4px solid inherit; /* creates padding around scroll thumb */
+  height: 37.95px;
 }
 
-.usrsInpt>input {
-    background-color: inherit;
-    color: #fff;
-    width: 100%;
+.usrsInpt,
+.modalbox > div > input {
+  width: 100%;
+  height: fit-content;
+  background: #3a3a3c;
+  border-radius: 5px;
+  padding: 10px;
+  color: #fff;
+  font-size: 14px;
+  margin-top: 0.667rem;
 }
 
-.usrsInpt>input:focus, .modalbox>div>input:focus {
-    outline: none;
+.usrsInpt > input {
+  background-color: inherit;
+  color: #fff;
+  width: 100%;
+}
+
+.usrsInpt > input:focus,
+.modalbox > div > input:focus {
+  outline: none;
 }
 
 .usrTag {
-    background-color: #2B2B2D;
-    padding: 5px;
-    border-radius: 5px;
-    width: fit-content;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    cursor: pointer;
+  background-color: #2b2b2d;
+  padding: 5px;
+  border-radius: 5px;
+  width: fit-content;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
 }
 
 .avatarProps {
-    width: 76px;
-    height: 74.3px;
-    display: flex;
-    align-items: center;
+  width: 76px;
+  height: 74.3px;
+  display: flex;
+  align-items: center;
 }
 
-.avatarProps>img {
-    border-radius: 8px !important;
+.avatarProps > img {
+  border-radius: 8px !important;
 }
 
 .pointer {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .newCnv {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: #C6E1FF;
-    font-weight: 400;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #c6e1ff;
+  font-weight: 400;
 }
 
 .errorMsg {
-    color: #EF4664;
-    font-weight: 500;
-    margin-top: 2px;
-    font-size: 1rem;
+  color: #ef4664;
+  font-weight: 500;
+  margin-top: 2px;
+  font-size: 1rem;
 }
 
 @media only screen and (max-width: 1420px) {
-    .chatUser>p {
-        font-size: 1rem;
-    }
-    .chatUser>div>div{
-        font-size: 1.2rem;
-    }
+  .chatUser > p {
+    font-size: 1rem;
+  }
+  .chatUser > div > div {
+    font-size: 1.2rem;
+  }
 }
 
 @media only screen and (max-width: 1274px) {
+  .chatContainer {
+    height: 92%;
+  }
 
-    .chatContainer {
-        height: 92%;
-    }
+  .displayChat {
+    display: flex !important;
+  }
 
-    .displayChat {
-        display: flex !important;
-    }
+  .avatarProps {
+    width: 48px !important;
+    height: 48px !important;
+  }
 
-    .avatarProps {
-        width: 48px !important;
-        height: 48px !important;
-    }
+  .hideUsers {
+    display: none !important;
+  }
 
-    .hideUsers {
-        display: none !important;
-    }
+  .arrowAsset {
+    cursor: pointer;
+    display: block !important;
+  }
 
-    .arrowAsset {
-        cursor: pointer;
-        display: block !important;
-    }
+  .chatContainer {
+    margin: 0 auto;
+  }
 
-    .chatContainer {
-        margin: 0 auto;
-    }
+  .chatRight {
+    display: none;
+  }
 
-    .chatRight {
-        display: none;
-    }
+  .chatLeft {
+    width: 100%;
+    border-radius: 15px;
+    margin: 0;
+  }
 
-    .chatLeft {
-        width: 100%;
-        border-radius: 15px;
-        margin: 0;
-    }
+  .chatSection {
+    border-radius: 15px;
+  }
 
-    .chatSection {
-        border-radius: 15px;
-    }
+  .leftContent {
+    margin: 0;
+  }
 
-    .leftContent {
-        margin: 0;
-    }
+  .rightContent {
+    width: 100%;
+    border-radius: 15px;
+  }
 
-    .rightContent {
-        width: 100%;
-        border-radius: 15px;
-    }
+  .chatRight {
+    width: 100%;
+    border-radius: 15px;
+  }
 
-    .chatRight {
-        width: 100%;
-        border-radius: 15px;
-    }
+  .topDetails {
+    width: 100%;
+    padding: 1.313rem;
+    border-radius: 15px 15px 0 0;
+    align-items: center;
+    height: 8rem;
+  }
 
-    .topDetails {
-        width: 100%;
-        padding: 1.313rem;
-        border-radius: 15px 15px 0 0;
-        align-items: center;
-        height: 8rem;
-    }
+  .chatUserStatus {
+    margin-top: 5px;
+  }
 
-    .chatUserStatus {
-        margin-top: 5px;
-    }
+  .flex {
+    gap: 1.5rem;
+    width: 60%;
+  }
 
-    .flex {
-        gap: 1.5rem;
-        width: 60%;
-    }
+  .menu {
+    width: 20px;
+    height: 20px;
+  }
 
-    .menu {
-        width: 20px;
-        height: 20px;
-    }
+  .chatUsername {
+    font-size: 1.5rem;
+  }
 
-    .chatUsername {
-        font-size: 1.5rem;
-    }
-
-    .chatUserStatus {
-        font-size: 1rem;
-    }
-    
-    
+  .chatUserStatus {
+    font-size: 1rem;
+  }
 }
 
 /* Settings styles */
 
 .profileHeader {
-    display: flex;
-    justify-content: space-between;
-    max-width: 100%;
-    margin: 28px 24px;
-    align-items: center;
+  display: flex;
+  justify-content: space-between;
+  max-width: 100%;
+  margin: 28px 24px;
+  align-items: center;
 }
 
-.profileHeader>h1 {
-    font-size: 1.5rem !important;
-    color: #C6E1FF;
-    font-weight: 500;
+.profileHeader > h1 {
+  font-size: 1.5rem !important;
+  color: #c6e1ff;
+  font-weight: 500;
 }
 
-.profileHeader>button {
-    background-color: inherit;
-    border: 2px solid #409CFF;
-    border-radius: 5px;
-    padding: 7px 13px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 3px;
-    color: #409CFF;
-    font-weight: 600;
-    cursor: pointer;
+.profileHeader > button {
+  background-color: inherit;
+  border: 2px solid #409cff;
+  border-radius: 5px;
+  padding: 7px 13px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 3px;
+  color: #409cff;
+  font-weight: 600;
+  cursor: pointer;
 }
 
 .members {
-    max-width: 100%;
-    background-color: #2C2C2E;
-    height: fit-content;
-    border-radius: 5px;
-    margin: 20px 24px;
-    padding: 10px;
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
-    align-items: flex-start;
-    color: #C6E1FF;
-    font-size: 18px;
-    font-weight: 500;
+  max-width: 100%;
+  background-color: #2c2c2e;
+  height: fit-content;
+  border-radius: 5px;
+  margin: 20px 24px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  align-items: flex-start;
+  color: #c6e1ff;
+  font-size: 18px;
+  font-weight: 500;
 }
 
-.members>div {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    color: #D9D9D9;
-    font-size: 16px;
-    font-weight: 500;
-    width: 100%;
+.members > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #d9d9d9;
+  font-size: 16px;
+  font-weight: 500;
+  width: 100%;
 }
 
-.members>div>div:nth-child(2)>svg {
-    width: 24px;
-    height: 24px;
-    cursor: pointer;
-    
+.members > div > div:nth-child(2) > svg {
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
 }
-.members>div>div:nth-child(2) {
-    position: relative;
+.members > div > div:nth-child(2) {
+  position: relative;
 }
 
-.members>div>div:nth-child(3) {
-    border: 1px solid red;
-    position: absolute;
-    right: 0;
+.members > div > div:nth-child(3) {
+  border: 1px solid red;
+  position: absolute;
+  right: 0;
 }
 
 .membersAvtr {
-    display: flex;
-    gap: 14px;
-    align-items: center;
+  display: flex;
+  gap: 14px;
+  align-items: center;
 }
 
-.membersAvtr>span {
-    border-radius: 8px;
+.membersAvtr > span {
+  border-radius: 8px;
 }
 
 .flexCenter {
-    display: flex;
-    text-align: center;
-    justify-content: center;
+  display: flex;
+  text-align: center;
+  justify-content: center;
 }
 
 .error {
-    color: #EF4664;
+  color: #ef4664;
 }
 
 .selectedChatUsr {
-    border-radius: 8px;
-    background-color: #242426;
+  border-radius: 8px;
+  background-color: #242426;
 }
 
 .redDot {
-    width: 8px;
-    height: 8px;
-    background-color: #EF4664;
-    border-radius: 50%;
-    display: none;
+  width: 8px;
+  height: 8px;
+  background-color: #ef4664;
+  border-radius: 50%;
+  display: none;
 }
 
 .statusDiv {
-    display: flex;
-    align-items: center;
-    gap: 3px;
+  display: flex;
+  align-items: center;
+  gap: 3px;
 }
 
 .displayDot {
-    display: block;
+  display: block !important;
 }
 
+.whiteText {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 15px;
+  color: #d9d9d9;
+  width: 90%;
+}
+
+/* CheckBox styles */
+
+.checkmark {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  height: 19px;
+  width: 19px;
+  background-color: #2c2c2e;
+  border-radius: 50%;
+  border: 1px solid #d9d9d9;
+}
+
+/* On mouse-over, add a grey background color */
+.checkboxCont:hover .radioInput ~ .checkmark {
+  background-color: #2c2c2e;
+}
+
+/* When the radio button is checked, add a blue background */
+.checkboxCont .radioInput:checked ~ .checkmark {
+  background-color: #2c2c2e;
+}
+
+/* Create the indicator (the dot/circle - hidden when not checked) */
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+/* Show the indicator (dot/circle) when checked */
+.checkboxCont .radioInput:checked ~ .checkmark:after {
+  display: block;
+}
+
+/* Style the indicator (dot/circle) */
+.checkboxCont .checkmark:after {
+  top: 2.1px;
+  left: 2.1px;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: #409cff;
+}
+
+.checkCont {
+  position: relative;
+}
+
+.flexSpace {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 17px;
+  color: #d9d9d9;
+  margin-top: 15px;
+}

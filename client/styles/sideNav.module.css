@@ -95,6 +95,18 @@
 	cursor: pointer;
 	width: 2.727rem;
 	height: 2.727rem;
+	position: relative;
+}
+
+.IconsNav>div {
+	z-index: 1;
+	position: absolute;
+	width: 1rem;
+	height: 1rem;
+	background-color: #EF476F;
+	border-radius: 50%;
+	right: 0;
+	top: 0;
 }
 
 @media only screen and (max-width: 600px) {

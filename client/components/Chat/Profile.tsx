@@ -2,12 +2,20 @@ import { useEffect, useRef, useState } from "react";
 import Styles from "@styles/chat.module.css";
 import { MenuDropdown } from "./MenuDropdown";
 import Image from "next/image";
-import { MenuAsset } from "@svg/index";
 import addUser from "@public/add-user.svg";
-import { banMemberFromChannel, getChannelProfile } from "@hooks/useFetchData";
+import {
+  banMemberFromChannel,
+  changeMemberRole,
+  getChannelProfile,
+  leaveChannel,
+  muteMemberFromChnl,
+} from "@hooks/useFetchData";
 import menu from "@public/menu-asset.svg";
-import Avatar from "@public/profile.jpg";
 import { getImageBySize } from "@hooks/Functions";
+import { useOutsideAlerter } from "@hooks/Functions";
+import { AnyMessageParams } from "yup/lib/types";
+import { useRouter } from "next/router";
+import { MuteModal } from "@components/MuteModal";
 
 const Header = (props: {
   setShowSetModal: any;
@@ -43,56 +51,148 @@ const MenuElement = (props: {
   category: any;
   content: any;
   functions: any;
+  dropdwn: any;
+  setDropdown: any;
+  menuRef: any;
 }) => {
+  useEffect(() => {
+    console.log(props.content, props.functions);
+  }, [props.content, props.functions]);
+
   return (
     <MenuDropdown
       content={props.content}
       functions={props.functions}
       id={props.category}
+      dropdwn={props.dropdwn}
+      setDropdown={props.setDropdown}
+      menuRef={props.menuRef}
     />
   );
 };
 
-function banMember(user: any, convId: any) {
+// functions to set the user statuses
+
+async function banMember(user: any, convId: string, login: any, router: any) {
   let data = { convId: convId, member: user.login };
-  banMemberFromChannel(data);
-  return 0;
+
+  if (await banMemberFromChannel(data)) router.reload();
+  else console.log("There seems to be something wrong!");
 }
 
-function space() {
-  return 0;
+async function upgradeMember(
+  user: any,
+  convId: string,
+  login: any,
+  router: any
+) {
+  const data = { convId: convId, member: user.login, status: "Admin" };
+  if (await changeMemberRole(data, () => null)) router.reload();
+  else console.error("There seems to be something wrong!");
 }
 
-function upgradeMember(user: any, convId: any) {
-  // return(0);
+async function downgradeMember(
+  user: any,
+  convId: string,
+  login: AnyMessageParams,
+  router: any
+) {
+  const data = { convId: convId, member: user.login, status: "Member" };
+  if (await changeMemberRole(data, () => null)) {
+    console.log("changed successfully");
+  } else {
+    console.error("There seems to be something wrong!");
+  }
 }
 
-const changeContent = (
+// POST /chat/muteMember
+async function muteMember(user: any, convId: string, login: any, router: any) {
+  // muteMemberFromChnl
+  if (
+    await muteMemberFromChnl({
+      convId: convId,
+      member: user.login,
+      seconds: 30,
+    })
+  )
+    router.reload();
+  else console.log("There seems to be something wrong!");
+  // console.log(user, convId);
+}
+
+const showElemDropdown = (
+  e: any,
+  user: any,
+  dropdwn: any,
+  setdropdwn: any,
+  setRefs: any,
   role: any,
-  category: any,
   setContent: any,
   setFunctions: any,
-  setPermit: any,
-  user: any,
-  convId: string
+  convId: any,
+  login: any,
+  router: any,
+  previousId: any,
+  setPreviousId: any
 ) => {
-  const me = localStorage.getItem("owner");
-  if (role == category && me == user?.login) {
-    setContent([, "leave Channel"]);
-    setFunctions([() => space(), () => banMember(user, convId)]);
-  } else if (role == category && me != user?.login) {
-    setContent([, "Remove Member"]);
-    setFunctions([space(), banMember(user, convId)]);
-  } else if (
-    role != category &&
-    setRights(role, user.role) &&
-    role !== "Member"
-  ) {
-    setContent(["Upgrade Role", "Remove Member"]);
-    setFunctions([
-      () => upgradeMember(user, convId),
-      () => banMember(user, convId),
-    ]);
+  console.log(setRefs);
+
+  // resetting at first
+  console.log(previousId, dropdwn);
+  if (previousId !== undefined) {
+    setdropdwn(false);
+    console.log(previousId);
+    previousId.style = "display: none !important";
+  }
+
+  const id = e.target.parentElement.parentElement.parentElement.id;
+  console.log(id);
+  // setdropdwn(true);
+  // Condition if the clicked user is me
+  if (role == "Owner") {
+    console.log(setRefs.current[id].style);
+    setdropdwn(true);
+    setRefs.current[id].style = "display: block !important";
+
+    // setdropdwn(true);
+    // setdropdwn(!dropdwn);
+    if (user.status == "Admin") {
+      setContent(["Downgrade Member", "Ban Member", "Mute Member"]);
+      setFunctions([
+        () => downgradeMember(user, convId, login, router),
+        () => banMember(user, convId, login, router),
+        () => muteMember(user, convId, login, router),
+      ]);
+    } else if (user.status == "Member") {
+      setContent(["Upgrade Member", "Ban Member", "Mute Member"]);
+      setFunctions([
+        () => upgradeMember(user, convId, login, router),
+        () => banMember(user, convId, login, router),
+        () => muteMember(user, convId, login, router),
+      ]);
+    }
+    setPreviousId(setRefs.current[id]);
+  } else if (role == "Admin") {
+    console.log(setRefs.current[id]);
+    setdropdwn(true);
+    // console.log(id);
+    setRefs.current[id].style = "display: block !important";
+    if (user.status == "Admin") {
+      setContent(["Downgrade Member", "Ban Member", "Mute Member"]);
+      setFunctions([
+        () => downgradeMember(user, convId, login, router),
+        () => banMember(user, convId, login, router),
+        () => muteMember(user, convId, login, router),
+      ]);
+    } else if (user.status == "Member") {
+      setContent(["Upgrade Member", "Ban Member", "Mute Member"]);
+      setFunctions([
+        () => upgradeMember(user, convId, login, router),
+        () => banMember(user, convId, login, router),
+        () => muteMember(user, convId, login, router),
+      ]);
+    }
+    setPreviousId(setRefs.current[id]);
   }
 };
 
@@ -101,48 +201,34 @@ const Members = (props: {
   users: Array<Object>;
   category: string;
   convId: string;
+  login: string;
 }) => {
-  const [dropdwn, setdropdwn] = useState(false);
+  const [dropdwn, setDropdown] = useState(false);
   const setRefs: any = useRef([]);
   const [permit, setPermit] = useState(false);
   const [content, setContent] = useState<string[]>([]);
   const [functions, setFunctions] = useState<any>([]);
+  const [previousDrop, setPreviousDrop] = useState();
+  const [muteShow, setmuteShow] = useState(false);
 
-  const showElemDropdown = (e: any, user: any) => {
-    const id = e.target.parentElement.parentElement.parentElement.id;
-    if (!dropdwn) {
-      setRefs.current[id].style = "display: block";
-      const category = setRefs.current[id].firstChild.id;
-      changeContent(
-        props.role,
-        category,
-        setContent,
-        setFunctions,
-        setPermit,
-        user,
-        props.convId
-      );
-      setdropdwn(true);
-    } else {
-      setRefs.current[id].style = "display: none";
-      setdropdwn(false);
-    }
-  };
+  const me = localStorage.getItem("owner");
 
   useEffect(() => {
     setPermit(setRights(props.role, props.category));
   }, [props.role, props.category]);
 
-  useEffect(() => {
-    // console.log(props.users);
-  }, [props.users]);
+  useEffect(() => {}, [props.users]);
 
   useEffect(() => {
-    // console.log(functions);
-  }, [functions]);
+    console.log("functions are", functions);
+    console.log("content is", content);
+  }, [functions, content]);
 
+  const router = useRouter();
+  // useOutsideAlerter(props.menuRef, props.setDropdown);
   return (
     <>
+    <MuteModal show={muteShow} setShow={setmuteShow}/>
       {props?.users?.length !== 0 && (
         <div className={Styles.members}>
           {props.category}
@@ -151,7 +237,7 @@ const Members = (props: {
               <div className={Styles.membersAvtr}>
                 <Image
                   src={
-                    user?.avatar.startsWith("https")
+                    user?.avatar?.startsWith("https")
                       ? user?.avatar
                       : getImageBySize(user?.avatar, 70)
                   }
@@ -160,29 +246,65 @@ const Members = (props: {
                 />
                 <span>{user.fullname}</span>
               </div>
-              <div
-                id={i.toString()}
-                onClick={(e: any) => showElemDropdown(e, user)}
-                style={{
-                  display: permit ? "block" : "none",
-                  cursor: "pointer",
-                }}
-              >
-                <div>
-                  <Image src={menu} width={6} height={30} />
-                </div>
+              {me != user.login && (
                 <div
-                  style={{ display: "none" }}
-                  ref={(element) => (setRefs.current[i] = element)}
+                  id={i.toString()}
+                  onClick={(e: any) =>
+                    showElemDropdown(
+                      e,
+                      user,
+                      dropdwn,
+                      setDropdown,
+                      setRefs,
+                      props.role,
+                      setContent,
+                      setFunctions,
+                      props.convId,
+                      props.login,
+                      router,
+                      previousDrop,
+                      setPreviousDrop
+                    )
+                  }
+                  style={{
+                    display: permit ? "block" : "none",
+                    cursor: "pointer",
+                  }}
                 >
-                  <MenuElement
-                    role={props.role}
-                    category={props.category}
-                    content={content}
-                    functions={functions}
-                  />
+                  <div>
+                    <Image src={menu} width={6} height={30} />
+                  </div>
+                  <div
+                    id={i.toString()}
+                    // ref={(element) => (setRefs.current[i] = element)}
+                  >
+                      <div
+                        className={Styles.menuDropdown}
+                        id={i.toString()}
+                        ref={(element: any) => (setRefs.current[i] = element)}
+                        style={{ display: "none" }}
+                      >
+                        {content.map((element, i) => (
+                          <div
+                            key={i}
+                            onClick={functions[i]}
+                            className={[1, 2].includes(i) ? Styles.redText : ""}
+                          >
+                            {element}
+                          </div>
+                        ))}
+                      </div>
+                    {/* <MenuElement
+                      role={props.role}
+                      category={props.category}
+                      content={content}
+                      functions={functions}
+                      dropdwn={dropdwn}
+                      setDropdown={setDropdown} */}
+                    {/* /> */}
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           ))}
         </div>
@@ -220,6 +342,7 @@ function checkRole(data: any, setRole: any) {
 }
 
 export const Profile = (props: {
+  login: any;
   setShowSetModal: any;
   convId: string;
   status: string;
@@ -255,6 +378,7 @@ export const Profile = (props: {
             key="Owner"
             category="Owner"
             convId={props.convId}
+            login={props.login}
           />
           <Members
             role={role}
@@ -262,6 +386,7 @@ export const Profile = (props: {
             key="Admins"
             category="Admin"
             convId={props.convId}
+            login={props.login}
           />
           <Members
             role={role}
@@ -269,9 +394,71 @@ export const Profile = (props: {
             key="Members"
             category="Member"
             convId={props.convId}
+            login={props.login}
+          />
+          <Members
+            role={role}
+            users={data?.muted}
+            key="Muted"
+            category="Muted"
+            convId={props.convId}
+            login={props.login}
           />
         </>
       )}
     </>
   );
 };
+
+// else if (user.status == "Admin") {
+//   console.log("admin here");
+
+// }
+
+//
+// if (!dropdwn) {
+//   setRefs.current[id].style = "display: block";
+//   const category = setRefs.current[id].firstChild.id;
+//   changeContent(
+//     props.role,
+//     category,
+//     setContent,
+//     setFunctions,
+//     setPermit,
+//     user,
+//     props.convId
+//   );
+//   setdropdwn(true);
+// } else {
+//   setRefs.current[id].style = "display: none";
+//   setdropdwn(false);
+// }
+
+// const changeContent = (
+//   role: any,
+//   category: any,
+//   setContent: any,
+//   setFunctions: any,
+//   setPermit: any,
+//   user: any,
+//   convId: string
+// ) => {
+//   const me = localStorage.getItem("owner");
+//   if (role == category && me == user?.login) {
+//     setContent([, "leave Channel"]);
+//     setFunctions([() => space(), () => banMember(user, convId)]);
+//   } else if (role == category && me != user?.login) {
+//     setContent([, "Remove Member"]);
+//     setFunctions([space(), banMember(user, convId)]);
+//   } else if (
+//     role != category &&
+//     setRights(role, user.role) &&
+//     role !== "Member"
+//   ) {
+//     setContent(["Upgrade Role", "Remove Member"]);
+//     setFunctions([
+//       () => upgradeMember(user, convId),
+//       () => banMember(user, convId),
+//     ]);
+//   }
+// };

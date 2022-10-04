@@ -33,7 +33,6 @@ export const ChatLeft = (props: { login: any }) => {
   const dotRefs: Array<HTMLDivElement> | any = useRef([]);
 
   useEffect(() => {
-    // console.log(friends);
   }, [friends]);
 
   function resetForm(formik: any) {
@@ -102,15 +101,10 @@ export const ChatLeft = (props: { login: any }) => {
 
   // listen on msgs
   socket_notif.on("newMsg", (response) => {
-    console.log(response);
-    console.log(lastUsers);
-
     setConvId(response?.convId);
-    // console.log(convId);
 
     lastUsers.forEach((user, i) => {
       if (user.login == response.sender) {
-        console.log("here");
         dotRefs.current[i].classList.add(Styles.displayDot);
       }
     });
@@ -118,7 +112,6 @@ export const ChatLeft = (props: { login: any }) => {
   });
 
   useEffect(() => {
-    console.log(convId);
   }, [convId])
 
   return (
@@ -177,7 +170,7 @@ export const ChatLeft = (props: { login: any }) => {
                     <div className={Styles.avatar}>
                       <img
                         src={
-                          user?.avatar.startsWith("https")
+                          user?.avatar?.startsWith("https")
                             ? user?.avatar
                             : getImageBySize(user?.avatar, 70)
                         }

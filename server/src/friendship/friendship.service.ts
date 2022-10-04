@@ -138,33 +138,36 @@ export class FriendshipService {
 	}
 
 	async acceptRequest(user: string, friend: string) {
-		this.friendshipRepository
+		await this.friendshipRepository
 			.createQueryBuilder()
 			.update({ relation: userRelation.FRIEND })
 			.where('friendships.user = :friend AND friendships.friend = :user AND friendships.relation = :relation', { user: user, friend: friend, relation: userRelation.REQUESTED })
 			.execute();
-		await this.notifService.updateNotif(friend, user, notifType.INVITATION, notifStatus.ACCEPTED);
+		await this.notifService.updateNotif(friend, user, notifStatus.ACCEPTED);
+		return true;
 	}
 
 	async refuseRequest(user: string, friend: string) {
-		this.friendshipRepository
+		await this.friendshipRepository
 			.createQueryBuilder()
 			.delete()
 			.where('friendships.user = :friend AND friendships.friend = :user AND friendships.relation = :relation', { user: user, friend: friend, relation: userRelation.REQUESTED })
 			.execute();
-		await this.notifService.updateNotif(friend, user, notifType.INVITATION, notifStatus.REFUSED);
+		await this.notifService.updateNotif(friend, user, notifStatus.REFUSED);
+		return true;
 	}
 
 	async cancelRequest(user: string, friend: string) {
-		this.friendshipRepository
+		await this.friendshipRepository
 			.createQueryBuilder()
 			.delete()
 			.where('friendships.user = :user AND friendships.friend = :friend AND friendships.relation = :relation', { user: user, friend: friend, relation: userRelation.REQUESTED })
 			.execute();
+		return true;
 	}
 
 	async blockUser(user: string, friend: string) {
-		this.friendshipRepository
+		await this.friendshipRepository
 			.createQueryBuilder('friendships')
 			.delete()
 			.where('(friendships.user = :user OR friendships.user = :friend) AND (friendships.friend = :friend OR friendships.friend = :user)', { user: user, friend: friend })
@@ -176,14 +179,16 @@ export class FriendshipService {
 		friendship.relation = userRelation.BLOCKED;
 		await this.friendshipRepository.save(friendship);
 		await this.chatService.blockUser(user, friend);
+		return true;
 	}
 
 	async unblock(user: string, friend: string) {
-		this.friendshipRepository
+		await this.friendshipRepository
 			.createQueryBuilder()
 			.delete()
 			.where('friendships.user = :user AND friendships.friend = :friend AND friendships.relation = :relation', { user: user, friend: friend, relation: userRelation.BLOCKED })
 			.execute();
 		await this.chatService.unBlockUser(user, friend);
+		return true;
 	}
 }
