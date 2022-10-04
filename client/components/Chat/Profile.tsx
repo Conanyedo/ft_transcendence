@@ -116,19 +116,22 @@ async function UnmuteMember(convId: string, user: any, setData: any) {
   }
 }
 
-const MemberMenu: React.FC<{
+const DropDown: React.FC<{
   setRefs: any;
   i: number;
   content: Array<string>;
   functions: any;
 }> = ({ setRefs, i, content, functions }) => {
+
+  console.log("called dropdown");
+
+  console.log(content, functions);
   return (
     <>
       <div
         className={Styles.menuDropdown}
         id={i.toString()}
         ref={(element: any) => (setRefs.current[i] = element)}
-        style={{ display: "none" }}
       >
         {content.map((element, i) => (
           <div
@@ -185,23 +188,21 @@ const showElemDropdown = (e: any, data: any, propMethods: any) => {
   // resetting at first
 
   const id = e.target.parentElement.parentElement.parentElement.id;
-  console.log(id);
   // setdropdwn(true);
   // Condition if the clicked user is me
   if (data.role == "Owner") {
-    propMethods.setRefs.current[id].style = "display: block !important";
 
     if (data.user.status == "Admin") setAdminActions(data, methods);
     else if (data.user.status == "Member") setMemberActions(data, methods);
+    else if (data.user.status = "Muted") setMutedActions(data, methods);
   } else if (data.role == "Admin") {
-    propMethods.setRefs.current[id].style = "display: block !important";
     if (data.user.status == "Admin") setAdminActions(data, methods);
     else if (data.user.status == "Member") setMemberActions(data, methods);
     else if (data.user.status == "Muted") setMutedActions(data, methods);
   }
 };
 
-const Member = (props: {
+const MemberMenu = (props: {
   data: any;
   setRefs: any;
   setContent: any;
@@ -223,11 +224,18 @@ const Member = (props: {
     setData: props.setData,
   };
 
+  const [show, setshowdrop] = useState(false);
+
+  const ClickHandler = (e: any) => {
+    showElemDropdown(e, props.data, methods);
+    setshowdrop(value => !value);
+  }
+
   return (
     <>
       <div
         id={props.i.toString()}
-        onClick={(e: any) => showElemDropdown(e, props.data, methods)}
+        onClick={ClickHandler}
         style={{
           display: props.permit ? "block" : "none",
           cursor: "pointer",
@@ -240,12 +248,12 @@ const Member = (props: {
           id={props.i.toString()}
           // ref={(element) => (setRefs.current[i] = element)}
         >
-          <MemberMenu
+          {show && <DropDown
             setRefs={props.setRefs}
             i={props.i}
             content={props.data.content}
             functions={props.data.functions}
-          />
+          />}
           {/* <MenuElement
                       role={props.role}
                       category={props.category}
@@ -325,11 +333,11 @@ const Members = (props: {
                 />
                 <span>{user.fullname}</span>
               </div>
-              {me != user.login && (
-                <Member
+              {me != user.login && props.role != "Member" && (
+                <MemberMenu
                   data={{
                     user: user,
-                    role: user,
+                    role: props.role,
                     i,
                     convId: props.convId,
                     functions: functions,
@@ -455,56 +463,3 @@ export const Profile = (props: {
     </>
   );
 };
-
-// else if (user.status == "Admin") {
-//   console.log("admin here");
-
-// }
-
-//
-// if (!dropdwn) {
-//   setRefs.current[id].style = "display: block";
-//   const category = setRefs.current[id].firstChild.id;
-//   changeContent(
-//     props.role,
-//     category,
-//     setContent,
-//     setFunctions,
-//     setPermit,
-//     user,
-//     props.convId
-//   );
-//   setdropdwn(true);
-// } else {
-//   setRefs.current[id].style = "display: none";
-//   setdropdwn(false);
-// }
-
-// const changeContent = (
-//   role: any,
-//   category: any,
-//   setContent: any,
-//   setFunctions: any,
-//   setPermit: any,
-//   user: any,
-//   convId: string
-// ) => {
-//   const me = localStorage.getItem("owner");
-//   if (role == category && me == user?.login) {
-//     setContent([, "leave Channel"]);
-//     setFunctions([() => space(), () => banMember(user, convId)]);
-//   } else if (role == category && me != user?.login) {
-//     setContent([, "Remove Member"]);
-//     setFunctions([space(), banMember(user, convId)]);
-//   } else if (
-//     role != category &&
-//     setRights(role, user.role) &&
-//     role !== "Member"
-//   ) {
-//     setContent(["Upgrade Role", "Remove Member"]);
-//     setFunctions([
-//       () => upgradeMember(user, convId),
-//       () => banMember(user, convId),
-//     ]);
-//   }
-// };

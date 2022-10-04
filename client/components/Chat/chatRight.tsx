@@ -26,6 +26,7 @@ import sendArrow from "@public/send-arrow.svg";
 import { Profile } from "./Profile";
 import { getImageBySize } from "@hooks/Functions";
 import SettingGame from "@components/game/settingGame";
+import { ProtectedFormMdl } from "@components/ProtectedModal";
 
 // Splitting components
 
@@ -295,6 +296,10 @@ const THeader: React.FunctionComponent<{
     }
   }
 
+  useEffect(() => {
+    console.log(currentUser);
+  }, [currentUser])
+
   return (
     <div className={Styles.topDetails}>
       <div className={Styles.flex}>
@@ -426,9 +431,11 @@ export const ChatRight = (props: { setShowSetModal: any; login: number }) => {
   useEffect(() => {
     // listening for new messages
     socket_notif.on("newMsg", (response) => {
+      console.log(response);
       setChatMsgs([...chatMsgs, response] as any);
       setFConfId(response?.convId);
       setEnteredMsg("");
+      
       setConvStatus(currentUser, setStopUsr);
       // reset the conversations
       getLastConvs(setLastUsers, () => null);
@@ -458,6 +465,7 @@ export const ChatRight = (props: { setShowSetModal: any; login: number }) => {
   }, [lastUsers]);
 
   useEffect(() => {
+    console.log(currentUser);
     setConvStatus(currentUser, setStopUsr);
     setConvId(currentUser?.convId);
     setRelation(currentUser?.relation);

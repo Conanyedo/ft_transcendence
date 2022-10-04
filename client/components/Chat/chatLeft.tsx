@@ -47,7 +47,7 @@ export const ChatLeft = (props: { login: any }) => {
     convType: string,
     password: string,
     members: Array<string>,
-    setUsrTags: any,
+    setAddedUsers: any,
     formik: any,
     setError: any
   ) {
@@ -61,12 +61,7 @@ export const ChatLeft = (props: { login: any }) => {
       setError("");
       setShow(!show);
       var loginList: string[] = [];
-
-      members.forEach((member: any, i: any) => {
-        friends.forEach((friend: any) => {
-          if (friend.fullname == member) loginList.push(friend.login);
-        });
-      });
+      loginList = members.map((member: any) => member?.login);
 
       const data = {
         name: channelName,
@@ -74,11 +69,11 @@ export const ChatLeft = (props: { login: any }) => {
         members: loginList,
         password: password,
       };
-      postChannel(setChannelDetails, router, data);
 
+      postChannel(setChannelDetails, router, data);
       // reset the necessary fields
       resetForm(formik);
-      setUsrTags([]);
+      setAddedUsers([]);
     }
   }
 
