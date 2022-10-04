@@ -91,6 +91,7 @@ export class allGames {
       const player = new Player(isfriend.admin, isfriend.adminSocket, 'left');
       const playertwo = new Player(login, client, 'right');
       const newGame = new Game(player, playertwo, 'Classic', this.server, this, isfriend.idGame, Number(isfriend.theme));
+      isfriend.adminSocket.emit('gameStartedSoon', {check: true, id: newGame._ID});
       this.countLiveGames++;
       this.FriendGames.push(newGame);
       const time = setTimeout(() => {

@@ -89,6 +89,7 @@ export interface chatUser {
 	status?: string;
 	type: any;
 	login: string;
+	relation: string;
 }
 
 export interface chatMsg {
@@ -126,7 +127,8 @@ export interface NotificationType {
     status: string,
     gameId: string,
 	type: string,
-	refresh: any
+	refresh: any,
+	notifId: string,
 }
 
 

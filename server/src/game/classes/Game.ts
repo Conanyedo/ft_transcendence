@@ -47,6 +47,7 @@ export class Game {
     tmp.login = this._PlayerLeft.getlogin();
     this._PlayerRight.getsocket().emit('getCode', tmp);
     this._Ball = new Ball();
+    games.gameService.startMatch(this._PlayerLeft.getlogin(), this._PlayerRight.getlogin());
     setTimeout(() => {
       this.EmitScore(socket);
     }, 5100);

@@ -93,7 +93,7 @@ export function addUsrToChannel( user: any, setUsrTags: any, setshowDrpdown: any
 }
 
 export function removeUsrFromChannel() {
-    console.log("removed");
+    // console.log("removed");
 }
 
 export function filterUsers(value: string, setCloseUsrs:any, setshowDrpdown: any, initialUsrState: any, setUsrTags: any ) {
@@ -109,7 +109,7 @@ export function filterUsers(value: string, setCloseUsrs:any, setshowDrpdown: any
     // Filter out results
     let newUsrs = initialUsrState.filter((usr: any) => usr.fullname.toUpperCase().includes(upvalue));
 
-    console.log("new usrs", newUsrs);
+    // console.log("new usrs", newUsrs);
 
     setCloseUsrs(newUsrs);
     // Show the dropdown

@@ -1,4 +1,4 @@
-import Router from "next/router";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Game from "../../../components/game/Game";
 import LoadingElm from "../../../components/loading/Loading_elm";
@@ -6,12 +6,13 @@ import socket_game from "../../../config/socketGameConfig";
 
 const GameHome = () => {
 	const [auth, setAuth] = useState(false);
-	const { id } = Router.query;
+	const router = useRouter();
+	const { id } = router.query;
 	useEffect(() => {
 		if (id) {
 			socket_game.emit("checkMatchID", id);
 			socket_game.on("MatchNotFound", () => {
-				Router.replace("/game");
+				router.replace("/game");
 				socket_game.disconnect();
 			});
 		}

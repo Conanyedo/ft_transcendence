@@ -15,7 +15,7 @@ import { Option } from "@components/Modal/utils"
 import { getImageBySize } from "@hooks/Functions"
 
 function errorHandler(values: any, data: any) {
-    console.log("cName is", values.cName.length);
+    // console.log("cName is", values.cName.length);
     return (values.cName.length == 0 || data.oldPath == "" || !data.avatar)
 }
 
@@ -129,15 +129,8 @@ export const SettingsModal = (props: { setShowSetModal: any, showSetModal: any, 
     const ImageRef = useRef<any>(null);
 
     useEffect(() => {
-        console.log("previous old path is", oldPath);
-        console.log("imgsrc is", imgSrc);
         setAvatar(getImageBySize(props.data?.avatar, 70));
         setOldPath(getImageBySize(props.data?.avatar, 70));
-
-        console.log(avatar);
-
-
-        console.log("channel data", props.data)
 
         // the data should be as follows {name, type, password, avatar, oldPath}
         setUpdateData({ avatar: imgSrc, oldPath: oldPath });

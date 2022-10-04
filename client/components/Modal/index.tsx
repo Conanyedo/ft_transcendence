@@ -47,7 +47,7 @@ export function ModalForm(props: { createChannel: any }) {
             member: ""
         },
         onSubmit: values => {
-            console.log(values);
+            // console.log(values);
         },
     });
 
@@ -67,7 +67,7 @@ export function ModalForm(props: { createChannel: any }) {
         let value = event.target.value;
 
         formik.setFieldValue("member", value);
-        console.log(formik.values.member);
+        // console.log(formik.values.member);
 
         // Filter values here
         filterUsers(value, setCloseUsrs, setshowDrpdown, initialUsrState, setUsrTags);
