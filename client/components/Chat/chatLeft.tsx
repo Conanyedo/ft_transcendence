@@ -96,10 +96,10 @@ export const ChatLeft = (props: { login: any }) => {
   // listen on msgs
   useEffect(() => {
     socket_notif.on("newMsg", (response) => {
-      setConvId(response?.convId);
+      setConvId(response?.data.convId);
 
       lastUsers.forEach((user, i) => {
-        if (user.login == response.sender) {
+        if (user.login == response.data.sender) {
           dotRefs.current[i].classList.add(Styles.displayDot);
         }
       });
@@ -153,7 +153,7 @@ export const ChatLeft = (props: { login: any }) => {
             />
           </div>
           <div className={Styles.bottomSection}>
-            {lastUsers.map((user: any, i: any) => (
+            {lastUsers?.map((user: any, i: any) => (
               <Link
                 href={
                   `/chat?${user.type == "Dm" ? "login" : "channel"}=` +
@@ -201,7 +201,7 @@ export const ChatLeft = (props: { login: any }) => {
                 </div>
               </Link>
             ))}
-            {lastUsers.length == 0 && (
+            {lastUsers?.length == 0 && (
               <div className={Styles.newCnv}>No conversations yet</div>
             )}
           </div>
