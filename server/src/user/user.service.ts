@@ -131,12 +131,12 @@ export class UserService {
 		return user?.isAuthenticated;
 	}
 
-	async getUserHeader(id: string) {
+	async getUserHeader(login: string) {
 		const user: User = await this.userRepository
 			.createQueryBuilder('users')
 			.leftJoinAndSelect("users.stats", "stats")
 			.select(['users.fullname', 'users.avatar'])
-			.where('users.id = :id', { id: id })
+			.where('users.login = :login', { login: login })
 			.getOne();
 		if (!user)
 			return { err: 'User not found' };
