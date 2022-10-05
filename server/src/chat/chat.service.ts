@@ -213,7 +213,8 @@ export class ChatService {
 		if (!dates.length)
 			return null;
 		const joinDate: string = new Date(dates[0].joinDate).toISOString();
-		const leftDate: string = (!dates[0].leftDate) ? new Date().toISOString() : new Date(dates[0].leftDate).toISOString();
+		const leftDate: string = (!dates[0].leftDate) ? new Date().toISOString() : new Date(dates[0].
+			leftDate).toISOString();
 		const msgs: Message[] = await this.messageRepository
 			.query(`SELECT messages."sender", messages."msg", messages."createDate", messages."conversationId" as "convId", messages."invitation", messages."status" FROM messages where messages."conversationId" = '${convId}' AND messages."createDate" >= '${joinDate}' AND messages."createDate" <= '${leftDate}' order by messages."createDate" ASC;`);
 		if (!msgs.length)
