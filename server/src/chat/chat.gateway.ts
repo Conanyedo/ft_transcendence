@@ -4,7 +4,7 @@ import { Server, Socket } from 'socket.io'
 import { User } from "src/user/user.decorator";
 import { WsJwtGuard } from "src/2fa-jwt/jwt/jwt-ws.guard";
 import { ChatService } from "./chat.service";
-import { Conversation } from "./chat.entity";
+import { Conversation, invStatus } from "./chat.entity";
 import { createMsgDto, msgDto } from "./chat.dto";
 import { userParitalDto } from "src/user/user.dto";
 
@@ -40,6 +40,13 @@ export class ChatGateway {
 	}
 
 	@UseGuards(WsJwtGuard)
+	@SubscribeMessage('updateInvitation')
+	async updateInvitation(@User('login') login: string, @MessageBody('convId') convId: string, @MessageBody('msgId') msgId: string, @MessageBody('status') status: invStatus) {
+		await this.chatService.updateInvitation(login, convId, msgId, status);
+		return { data: true };
+	}
+
+	@UseGuards(WsJwtGuard)
 	@SubscribeMessage('sendMsg')
 	async sendMsg(@User('login') login: string, @ConnectedSocket() client: Socket, @MessageBody() data: createMsgDto) {
 		let msg: msgDto;
@@ -51,6 +58,7 @@ export class ChatGateway {
 			return msg;
 		const sockets: string[] = await this.chatService.getRoomSockets(login, msg.convId);
 		sockets.forEach((socket) => (this.server.to(socket).emit('newMsg', msg)))
+		return { data: true };
 		// this.server.to(msg.convId).emit('newMsg', msg);
 	}
 
