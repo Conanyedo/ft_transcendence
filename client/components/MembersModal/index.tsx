@@ -3,10 +3,10 @@ import { motion } from "framer-motion"
 import Image from "next/image"
 import Cross from "@public/Cross.svg"
 import { useFormik } from "formik"
-import { UsersModalInput } from "@components/Modal/index"
+import { Button, UsersModalInput } from "@components/Modal/index"
 import { useEffect, useRef, useState } from "react"
 import Avatar from "@public/profile.jpg"
-import { filterUsers, SuggestedUsr, addUsrToChannel, removeUsrFromChannel, } from "@components/Modal/utils"
+import { filterUsers, SuggestedUsr, addUsrToChannel, removeUsrFromChannel, filterOutUsers, } from "@components/Modal/utils"
 import { addMembers, getFriends } from "@hooks/useFetchData"
 
 const Input = (props: { title: string, handleChange: any, value: any, name: string }) => {
@@ -19,10 +19,11 @@ const Input = (props: { title: string, handleChange: any, value: any, name: stri
 export const MembersModal = (props: { setShowSetModal: any, showSetModal: any, convId: any }) => {
 
     const [initialUsrState, setInitialUsrState] = useState([]);
-    const [users, setUsers] = useState(initialUsrState);
     const [showDrpdown, setshowDrpdown] = useState(false);
-    const [usrTags, setUsrTags] = useState<Array<string>>([]);
-    const [logins, setUsrLogins] = useState<Array<string>>([]);
+
+    // new logic
+    const [friends, setFriends] = useState([]);
+    const [addedUsers, setAddedUsers]= useState([]);
 
     const inputRef= useRef("");
 
@@ -43,29 +44,37 @@ export const MembersModal = (props: { setShowSetModal: any, showSetModal: any, c
         let value = event.target.value;
         formik.setFieldValue("member", value);
         // Filter values here
-        filterUsers(value, setUsers, setshowDrpdown, initialUsrState, setUsrTags);
+        filterOutUsers(value, friends, setshowDrpdown);
     };
 
     useEffect(() => {
         // get list of friends on the first render
         const setUsrs = async () => {
-            return await getFriends(setUsers, setInitialUsrState);
+            return await getFriends(setFriends);
         }
         setUsrs();
     }, []);
 
     const addMember = () => {
         props.setShowSetModal(false);
-        // console.log("Member added");
-
         formik.setFieldValue("member", "");
-        setUsrTags([]);
-        let logins = users.map((item: any) => item?.login);
+        let logins = addedUsers.map((user: any) => user.login);
         const data = { convId: props.convId, members: logins};
-        // call the route to add the user here
+        // // call the route to add the user here
         addMembers(data);
+        setAddedUsers([]);
     }
-
+    
+    const clickHandler = (user: any) => {
+        addUsrToChannel(user,
+            setAddedUsers,
+            setshowDrpdown,
+            addedUsers,
+            inputRef,
+            setFriends,
+            friends);
+        formik.setFieldValue("member", "");
+    }
     return (<>
         {props.showSetModal && <><div style={{ display: props.showSetModal ? "block" : "none" }} className={Styles.grayBg}>&nbsp;</div>
             <motion.div className={Styles.modalbox} animate={{ scale: 1 }} initial={{ scale: 0.5 }}>
@@ -75,11 +84,14 @@ export const MembersModal = (props: { setShowSetModal: any, showSetModal: any, c
                 </div>
                 <form className={Styles.form} onSubmit={formik.handleSubmit}>
 
-                    <UsersModalInput UsersArray={usrTags} setUsersArray={setUsrTags} removeUser={removeUser} handleChange={handleOnChange} value={formik.values.member} inputRef={inputRef} />
+                    <UsersModalInput addedUsers={addedUsers} setAddedUsers={setAddedUsers} removeUser={removeUser} handleChange={handleOnChange} value={formik.values.member} inputRef={inputRef} />
                     {showDrpdown && <div className={Styles.dropMembers}>
-                        {users.map((usr, i) => <SuggestedUsr key={i} user={usr} userStatus={true} addUsrToChannel={addUsrToChannel} removeUsrFromChannel={removeUsrFromChannel} setUsrTags={setUsrTags} setshowDropdown={setshowDrpdown} usrTags={usrTags} setValue={formik.setFieldValue} inputRef={inputRef} initialUsrState={initialUsrState} setInitialUsrState={setInitialUsrState} />)}
+                        {friends.map((usr: any, i) => {
+                            if (usr.fullname.toLowerCase().includes((inputRef?.current?.value)))
+                                return <SuggestedUsr key={i} user={usr} action={clickHandler} />
+                        })}
                     </div>}
-                    <button type="button" onClick={addMember}>Add</button>
+                    <Button clickHandler={addMember} text="Add"/>
                 </form>
             </motion.div></>}
 

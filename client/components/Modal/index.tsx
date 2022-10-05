@@ -5,23 +5,31 @@ import React, { Dispatch, FormEvent, SetStateAction, useContext, useEffect, useR
 import { ChatContext, ChatContextType } from "@contexts/chatContext"
 import { motion } from "framer-motion"
 import Avatar from "@public/profile.jpg"
-import { Option, SuggestedUsr, UsrTag, addUsrToChannel, removeUsrFromChannel, removeTag, filterUsers } from "./utils"
+import { Option, SuggestedUsr, UsrTag, addUsrToChannel, removeUsrFromChannel, removeTag, filterUsers, filterOutUsers } from "./utils"
 import { chatValidationSchema } from "validation/chatSchemas"
 import { chatFormValues } from "@Types/dataTypes"
-
 // Importing formik hooks
-import { setIn, useFormik } from "formik";
+import { useFormik } from "formik";
 import { useOutsideAlerter } from "customHooks/Functions"
 import { getFriends } from "@hooks/useFetchData"
 
+export const UsersModalInput = (props: { addedUsers: any, setAddedUsers: any, removeUser: any, handleChange: any, value: any, inputRef: any}) => {
 
-export const UsersModalInput = (props: { UsersArray: any, setUsersArray: any, removeUser: any, handleChange: any, value: any, inputRef: any}) => {
+    console.log(props.addedUsers);
 
-    const userTagsItems = props.UsersArray;
+    const removeTagHandler = (e: any, element: any, index: number) => {
+        removeTag(
+            element,
+            e,
+            index.toString(),
+            props.addedUsers,
+            props.setAddedUsers
+          )
+    }
 
     return (<div className={Styles.usrsInpt}>
-        {userTagsItems.map((element: any, i: number) => <UsrTag key={i} fullname={element} removeTag={removeTag} id={i} usrTags={props.UsersArray} setUsrTags={props.setUsersArray} />)}
-        {(props.UsersArray.length < 10) && <input name="member" type="text" onChange={props.handleChange} value={props.value} ref={props.inputRef} />}
+        {props.addedUsers?.map((element: any, i: number) => <UsrTag key={i} removeTag={removeTagHandler} id={i} fullname={element.fullname}/>)}
+        {(props.addedUsers.length < 10) && <input name="member" type="text" onChange={props.handleChange} value={props.value} ref={props.inputRef} />}
     </div>)
 }
 
@@ -32,9 +40,7 @@ export function ModalForm(props: { createChannel: any }) {
     const [showDrpdown, setshowDrpdown] = useState(false);
     const [usrTags, setUsrTags] = useState<Array<string>>([]);
     const [friends, setFriends] = useState([]);
-    const [closeUsrs, setCloseUsrs] = useState(friends);
-    const [initialUsrState, setInitialUsrState] = useState([]);
-    const [textBtn, setTextBtn] = useState("");
+    const [addedUsers, setAddedUsers]= useState([]);
 
     const [errorMsg, setErrorMsg] = useState("");
 
@@ -53,7 +59,7 @@ export function ModalForm(props: { createChannel: any }) {
     useEffect(() => {
         // get list of friends on the first render
         const setUsrs = async () => {
-            return await getFriends(setCloseUsrs, setInitialUsrState);
+            return await getFriends(setFriends);
         }
         setUsrs();
     }, []);
@@ -68,9 +74,23 @@ export function ModalForm(props: { createChannel: any }) {
         formik.setFieldValue("member", value);
         // console.log(formik.values.member);
 
-        // Filter values here
-        filterUsers(value, setCloseUsrs, setshowDrpdown, initialUsrState, setUsrTags);
+        filterOutUsers(value, friends, setshowDrpdown);
     };
+
+    const removeUser = () => {
+        // console.log("remove user here");
+    }
+
+    const clickHandler = (user: any) => {
+        addUsrToChannel(user,
+            setAddedUsers,
+            setshowDrpdown,
+            addedUsers,
+            inputRef,
+            setFriends,
+            friends);
+            formik.setFieldValue("member", "");
+    }
 
     return (<>
         {errorMsg !== "" && <span className={Styles.error}>{errorMsg}</span>}
@@ -96,12 +116,15 @@ export function ModalForm(props: { createChannel: any }) {
             </div>}
             <div className={Styles.inputContainer + " " + Styles.mTop}>
                 <span>Add Members</span>
-                <UsersModalInput UsersArray={usrTags} setUsersArray={setUsrTags} removeUser={removeTag} handleChange={handleOnChange} value={formik.values.member} inputRef={inputRef} />
+                <UsersModalInput addedUsers={addedUsers} setAddedUsers={setAddedUsers} removeUser={removeUser} handleChange={handleOnChange} value={formik.values.member} inputRef={inputRef} />
                 {showDrpdown && <div className={Styles.dropMembers}>
-                    {closeUsrs.map((usr, i) => <SuggestedUsr key={i} user={usr} userStatus={true} addUsrToChannel={addUsrToChannel} removeUsrFromChannel={removeUsrFromChannel} setUsrTags={setUsrTags} setshowDropdown={setshowDrpdown} usrTags={usrTags} setValue={formik.setFieldValue} inputRef={inputRef} initialUsrState={initialUsrState} setInitialUsrState={setInitialUsrState} />)}
+                {friends.map((usr: any, i) => {
+                            if (usr.fullname.toLowerCase().includes((inputRef?.current?.value)))
+                                return <SuggestedUsr key={i} user={usr} action={clickHandler} />
+                        })}
                 </div>}
             </div>
-            <Button clickHandler={(e: any) => props.createChannel(formik.values.cName, channelMode, formik.values.password, usrTags, setUsrTags, formik, setErrorMsg)} text="Create"/>
+            <Button clickHandler={(e: any) => props.createChannel(formik.values.cName, channelMode, formik.values.password, addedUsers, setAddedUsers, formik, setErrorMsg)} text="Create"/>
         </form>
         </>
     )
@@ -133,37 +156,3 @@ export function ModalBox(props: { show: boolean, setShow: (Dispatch<SetStateActi
             </>}
         </>)
 }
-
-// Let's delete this later
-{/* Put the users choose input here */ }
-{/* <div className={Styles.usrsInpt}>
-        {usrTags.map((tag, i) => <UsrTag key={i} fullname={tag} removeTag={removeTag} id={i} usrTags={usrTags} setUsrTags={setUsrTags} />)}
-        {(usrTags.length < 10) && <input name="member" type="text" onChange={handleOnChange} value={formik.values.member} />}
-</div> */}
-
-// Method: "POST"
-
-// @IsNotEmpty()
-// name: string;
-
-// @IsNotEmpty()
-// type: convType;
-
-// @IsNotEmpty()
-// members: string[];
-
-// @IsNotEmpty()
-// password: string;
-
-// export enum memberStatus {
-// 	OWNER = "Owner",
-// 	ADMIN = "Admin",
-// 	MEMBER = "Member",
-// }
-
-// export enum convType {
-// 	DM = "Dm",
-// 	PUBLIC = "Public",
-// 	PROTECTED = "Protected",
-// 	PRIVATE = "Private",
-// }

@@ -81,7 +81,7 @@ export const getLastUsers = async (setLastUsers: any, login: any, setCurrentUser
 
         if (response != undefined)
             setLastUsers(response);
-
+            
         // handling the route login received
         if (login) {
             // check first if login exists

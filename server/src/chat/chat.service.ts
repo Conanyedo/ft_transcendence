@@ -72,10 +72,32 @@ export class ChatService {
 		convs.forEach((conv) => (client.join(conv.convId)));
 	}
 
-	async getUserInfo(login: string, user: string) {
-		const relation = await this.friendshipService.getRelation(login, user);
-		const userInfo = await this.userService.getFriend(user);
+	async getUserInfo(login: string, name: string) {
+		const userInfo = await this.userService.getFriend(name);
+		if (!userInfo)
+			return { err: 'User not found' };
+		const conv = await this.memberRepository
+			.query(`select conversations.id, count(*) from members join users on members."userId" = users.id join conversations on members."conversationId" = conversations.id where (users.login = '${login}' or users.login = '${name}') and conversations.type = 'Dm' group by conversations.id having count(*) = 2;`);
+		if (conv.length)
+			return { data: true };
+		const relation = await this.friendshipService.getRelation(login, name);
+		if (relation === 'blocked')
+			return { err: 'User not found' };
 		return { data: { ...userInfo, relation } };
+	}
+
+	async getChannelInfo(login: string, name: string) {
+		const conv = await this.conversationRepository
+			.query(`select conversations.id as "convId", conversations.type, conversations.avatar, conversations.name from conversations where conversations.type != 'Dm' AND conversations.name = '${name}';`);
+		if (!conv.length)
+			return { err: 'Channel not found' };
+		const member = await this.memberRepository
+			.query(`select members.id from members Join users ON members."userId" = users.id Join conversations ON members."conversationId" = conversations.id where users."login" = '${login}' AND conversations.name = '${name}';`);
+		if (member.length)
+			return { data: true };
+		if (conv[0].type === 'Private')
+			return { err: 'Channel not found' };
+		return { data: { convId: conv[0].convId, type: conv[0].type } };
 	}
 
 	async blockUser(login: string, user: string) {
@@ -191,7 +213,8 @@ export class ChatService {
 		if (!dates.length)
 			return null;
 		const joinDate: string = new Date(dates[0].joinDate).toISOString();
-		const leftDate: string = (!dates[0].leftDate) ? new Date().toISOString() : new Date(dates[0].leftDate).toISOString();
+		const leftDate: string = (!dates[0].leftDate) ? new Date().toISOString() : new Date(dates[0].
+			leftDate).toISOString();
 		const msgs: Message[] = await this.messageRepository
 			.query(`SELECT messages."sender", messages."msg", messages."createDate", messages."conversationId" as "convId", messages."invitation", messages."status" FROM messages where messages."conversationId" = '${convId}' AND messages."createDate" >= '${joinDate}' AND messages."createDate" <= '${leftDate}' order by messages."createDate" ASC;`);
 		if (!msgs.length)
