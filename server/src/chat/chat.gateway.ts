@@ -58,10 +58,9 @@ export class ChatGateway {
 		else
 			msg = await this.chatService.createNewMessage(login, data);
 		if (typeof msg === "string")
-			return msg;
-		
+			return { data: msg };
 		const sockets: string[] = await this.chatService.getRoomSockets(login, msg.convId);
-		sockets.forEach((socket) => (this.server.to(socket).emit('newMsg', msg)))
+		sockets.forEach((socket) => (this.server.to(socket).emit('newMsg', { data: msg })))
 		return { data: true };
 		// this.server.to(msg.convId).emit('newMsg', msg);
 	}
