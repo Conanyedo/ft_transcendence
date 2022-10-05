@@ -15,8 +15,8 @@ export const setMsg = (keycode: any, enteredMessage: string, setEnteredMsg:any, 
         const data = { msg: enteredMessage, convId, receiver: login }
         socket_notif.emit("sendMsg", data, (response:any) => {
             // handle msg
-            if (statuses.includes(response)) {
-                setStopUsr(response.toLowerCase());
+            if (statuses.includes(response.data)) {
+                setStopUsr(response.data.toLowerCase());
             }
             // Add chat msg here
             
@@ -72,9 +72,9 @@ export function filterCnvs(data: any, filterItem: any) {
 export function getLastConvs(setLastUsers: any, setInitialUsrData: any) {
     
     socket_notif.emit("getConversations", (response:any) => {
-        setLastUsers(response);
+        setLastUsers(response.data);
         // do some logic here
-        setInitialUsrData(response);
+        setInitialUsrData(response.data);
       })
 }
 
@@ -82,19 +82,19 @@ export const getLastUsers = async (setLastUsers: any, login: any, setCurrentUser
 
     socket_notif.emit("getConversations", [], (response: any) => {
 
-        if (response != undefined)
-            setLastUsers(response);
+        if (response.data != undefined)
+            setLastUsers(response.data);
             
         // handling the route login received
         if (login) {
             // check first if login exists
-            let item: any = response.find((user: any) => user.login == login);
+            let item: any = response.data.find((user: any) => user.login == login);
 
             if (item != undefined) {
                 setCurrentUser(item);
                 // get messages 
                 socket_notif.emit("getMsgs", item?.convId, (response: any) => {
-                    setChatMsgs(response);
+                    setChatMsgs(response.data);
                     // run on first render only
                     scrollToBottom(messagesEndRef);
                 })
