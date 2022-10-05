@@ -42,8 +42,7 @@ export class ChatGateway {
 	@UseGuards(WsJwtGuard)
 	@SubscribeMessage('updateInvitation')
 	async updateInvitation(@User('login') login: string, @MessageBody('convId') convId: string, @MessageBody('msgId') msgId: string, @MessageBody('status') status: invStatus) {
-		await this.chatService.updateInvitation(login, convId, msgId, status);
-		return { data: true };
+		return await this.chatService.updateInvitation(login, convId, msgId, status);
 	}
 
 	@UseGuards(WsJwtGuard)
