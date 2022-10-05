@@ -9,8 +9,6 @@ import { useRouter } from "next/router";
 import { getLoginInfo } from "@hooks/useFetchData";
 import { ChatRight } from "@components/Chat/chatRight";
 import { ChatLeft } from "@components/Chat/chatLeft";
-import { getLastConvs } from "@utils/chat";
-import LoadingElm from "@components/loading/Loading_elm";
 import { ProtectedFormMdl } from "@components/ProtectedModal";
 
 class channelDataType {
@@ -25,6 +23,7 @@ class channelDataType {
 const Chat = () => {
   // Setting local state
   const [showSetModal, setShowSetModal] = useState(false);
+  const [show, setShow] = useState(false);
   const [channelData, setChannelData] = useState<channelDataType>(
     new channelDataType()
   );
@@ -34,35 +33,61 @@ const Chat = () => {
 
   const router = useRouter();
   const [name, setName] = useState<any>("");
+  const [channelName, setchannelName] = useState<any>("");
   const { login, channel } = router.query;
 
-  useEffect(() => {
-    //upon entering execute this
+  const refresh = async () => {
     if (router.isReady) {
       // get login info first
-      if (channel != undefined)
-        getLoginInfo(channel, false, setChannelData);
-
+      if (channel != undefined) {
+        setchannelName(channel);
+        await getLoginInfo(channel, false, setChannelData);
+      }
       setName(login || channel);
       setShowCnv(true);
     }
+  };
+
+  useEffect(() => {
+    //upon entering execute this
+    refresh();
   }, [login, channel]);
 
-  // if (channelData.type == "" && channel){
-    
-  // 	return <LoadingElm />
-  // }
-  
-    console.log('channelData :' , name);
+  if (channelData.type !== "" && channelData.type !== "Public" && !show) {
+    console.log("condition being set here");
+    setShow(true);
+  } else if (
+    (channelData.type === "" || channelData.type == "Public") &&
+    show
+  ) {
+    setShow(false);
+  }
 
-    return (
-      <ChatProvider>
-        <div className={Styles.chatContainer}>
-          <ChatLeft login={name} />
-          {<ChatRight setShowSetModal={setShowSetModal} login={channelData.type !== '' && channelData.type !== 'Public'  ? undefined : name} />}
-          {channelData.type !== '' && channelData.type !== 'Public' && <ProtectedFormMdl convId={channelData.convId} />}
-        </div>
-      </ChatProvider>
-    );
+  return (
+    <ChatProvider>
+      <div className={Styles.chatContainer}>
+        <ChatLeft login={name} />
+        {
+          <ChatRight
+            setShowSetModal={setShowSetModal}
+            login={
+              channelData.type !== "" && channelData.type !== "Public"
+                ? undefined
+                : name
+            }
+          />
+        }
+        {show && (
+          <ProtectedFormMdl
+            convId={channelData.convId}
+            show={show}
+            setShow={setShow}
+            refresh={refresh}
+            name={channelName}
+          />
+        )}
+      </div>
+    </ChatProvider>
+  );
 };
 export default Chat;

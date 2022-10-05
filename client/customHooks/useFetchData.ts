@@ -277,31 +277,39 @@ export const fetchUserLogin = async (
 export const JoinChannel = async (
   set: any,
   router: NextRouter,
-  data: any
+  data: any,
+  setError: Dispatch<SetStateAction<string>>
 ) => {
+  const params = new URLSearchParams();
   const token = getCookie("jwt");
-  await axios
-    .post(`${baseUrl}chat/joinChannel`, {
+  const convId = data.convId;
+  const password = data.password;
+  console.log(convId, "|", password);
+  params.append("convId", convId);
+  params.append("password", password);
+  console.log(params);
+
+  return await axios
+    .post(`${baseUrl}chat/joinChannel`, params, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
-      data: data,
       withCredentials: true,
     })
     .then((res) => {
       console.log(res.data);
-      return (true);
-      // set(res.data.data);
+      // set(res.data);
+      return true;
     })
     .catch((err) => {
+      setError(err);
       if (err.response.status === 401) {
-        router.replace("/");
-        return (false);
+        eraseCookie("jwt");
+        socket_notif.disconnect();
       }
+      return false;
     });
 };
-
-
 
 export const addMembers = async (data: any) => {
   // POST /chat/addMembers
@@ -438,8 +446,11 @@ export const postChannel = async (set: any, router: NextRouter, data: any) => {
     .then((res) => {
       // console.log("create channel response", res);
       set(res.data);
-      router.push("/chat?login=" + res.data.login);
-      return true;
+
+      if (res.data.data.membersNum > 0)
+        router.push("/chat?channel=" + res.data.data.name);
+      else router.push("/chat?login=" + res.data.data.login);
+      // return true;
     })
     .catch((err) => {
       return false;
@@ -515,8 +526,8 @@ export const getChannelProfile = async (convId: any, set: any) => {
 export const leaveChannel = async (
   convId: any,
   router: NextRouter,
-  setNewData: any,
-  prevData: any
+  // setNewData: any,
+  // prevData: any
 ) => {
   // console.log(convId);
   const token = getCookie("jwt");
@@ -532,9 +543,7 @@ export const leaveChannel = async (
     withCredentials: true,
   })
     .then((res) => {
-      // console.log(res);
-      // console.log(JSON.parse(res.config.data));
-      setNewData(filterCnvs(prevData, res.config.data));
+      // setNewData(filterCnvs(prevData, res.config.data));
       router.push("/chat");
       return true;
     })
@@ -553,7 +562,7 @@ export const getLoginInfo = async (
 
   return await axios({
     method: "get",
-    url:`${baseUrl}chat/channelInfo/${login}`,
+    url: `${baseUrl}chat/channelInfo/${login}`,
     headers: {
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
@@ -562,12 +571,11 @@ export const getLoginInfo = async (
   })
     .then((res) => {
       if (res.data.err) {
-        Router.push('/chat');
+        // Router.push('/chat');
       } else {
         if (res.data?.data === true) {
-          setChnlData({type: 'Public',convId: ''});
-        }
-        else {
+          setChnlData({ type: "", convId: "" });
+        } else {
           setChnlData(res.data.data);
         }
       }

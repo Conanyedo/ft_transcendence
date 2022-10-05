@@ -23,10 +23,11 @@ import { MenuAsset } from "@svg/index";
 import { MenuDropdown } from "./MenuDropdown";
 import { GameIconAsset } from "@svg/index";
 import sendArrow from "@public/send-arrow.svg";
-import { Profile } from "./Profile";
+import { getDataOfMembers, Profile } from "./Profile";
 import { getImageBySize } from "@hooks/Functions";
 import SettingGame from "@components/game/settingGame";
 import { ProtectedFormMdl } from "@components/ProtectedModal";
+import { InviteMsg } from "./inviteMsg";
 
 // Splitting components
 
@@ -46,23 +47,37 @@ const SendMsg: React.FunctionComponent<{
   setEnteredMsg,
 }) => {
   const [settingGames, ShowSettingGames] = useState(false);
-  const [GameID, SetGameID] = useState('');
+  const [GameID, SetGameID] = useState("");
+
+  const me = localStorage.getItem("owner");
 
   useEffect(() => {
-    if (GameID !== '') {
+    if (GameID !== "") {
       // TODO send invit Card
-      console.log('Id game: ', GameID);
+      console.log("Id game: ", GameID);
     }
-  }, [GameID])
+  }, [GameID]);
 
   function hideSettingGame() {
-    ShowSettingGames(!settingGames);
+    let data = { sender: me, msg: "", invitation: GameID, convId: currentUser.convId };
+    socket_notif.emit("sendMsg", data, (response: any) => {
+      // handle msg
+      console.log(response);
+    });
+    ShowSettingGames(false);
+  }
+  const showSettingGame = () => {
+    ShowSettingGames(true);
   }
 
   return (
     <>
       {settingGames && (
-        <SettingGame Hide={hideSettingGame} login={currentUser?.login} setId={SetGameID} />
+        <SettingGame
+          Hide={hideSettingGame}
+          login={currentUser?.login}
+          setId={SetGameID}
+        />
       )}
       <div
         className={Styles.sendDiv}
@@ -92,7 +107,7 @@ const SendMsg: React.FunctionComponent<{
               }
             />
             {(currentUser?.type == "Dm" || relation == "friend") && (
-              <div onClick={hideSettingGame} className={Styles.console}>
+              <div onClick={showSettingGame} className={Styles.console}>
                 <GameIconAsset color="#D9D9D9" />
               </div>
             )}
@@ -146,8 +161,8 @@ const ChatSection: React.FC<{
   msgsDisplayDiv: any;
   chatMsgs: any;
   fconvId: string;
-  setFConfId: any
-  convId: string,
+  setFConfId: any;
+  convId: string;
   me: string;
   messagesEndRef: any;
 }> = ({
@@ -162,16 +177,12 @@ const ChatSection: React.FC<{
   me,
   messagesEndRef,
 }) => {
+  useEffect(() => {
+    setFConfId(convId);
+  }, [convId]);
 
-    useEffect(() => {
-        setFConfId(convId);
-    }, [convId])
+  useEffect(() => {}, [fconvId]);
 
-    useEffect(() => {
-    }, [fconvId])
-    
-
-    
   return (
     <>
       {currentUser && !profile && (
@@ -186,8 +197,7 @@ const ChatSection: React.FC<{
                   right: chatMsg.sender != me ? "auto" : "0",
                 }}
               >
-                {(chatMsg.convId == convId ||
-                  fconvId == chatMsg.convId) && (
+                {(chatMsg.convId == convId || fconvId == chatMsg.convId) && (
                   <div
                     className={Styles.msgBox}
                     style={{
@@ -195,7 +205,7 @@ const ChatSection: React.FC<{
                         chatMsg.sender == me ? "flex-end" : "flex-start",
                     }}
                   >
-                    <div
+                    {!chatMsg.invitation && <div
                       ref={messagesEndRef}
                       className={Styles.msgContent}
                       style={{
@@ -208,11 +218,10 @@ const ChatSection: React.FC<{
                       }}
                     >
                       {chatMsg.msg}
-                    </div>
+                    </div> || <InviteMsg senderLogin={chatMsg.sender as string} GameID={chatMsg.invitation as string} />}
                   </div>
                 )}
-                {(convId == chatMsg.convId ||
-                  fconvId == chatMsg.convId) && (
+                {(convId == chatMsg.convId || fconvId == chatMsg.convId) && (
                   <div
                     className={Styles.msgTime}
                     style={{
@@ -256,6 +265,9 @@ const THeader: React.FunctionComponent<{
   const [showMenuDropdown, setShowMenuDropdown] = useState(false);
   const router = useRouter();
 
+  const data = { currentUser, relation, dropdwn: showMenuDropdown };
+  const methods = { setDropdwn: setShowMenuDropdown, setRelation: setRelation };
+
   // functions here
   const unshowCnv = () => {
     setShowCnv(false);
@@ -270,35 +282,9 @@ const THeader: React.FunctionComponent<{
     router.push(`/profile/${login}`);
   };
 
-  async function BlockFriend() {
-    let result = await requests(
-      currentUser?.login,
-      "friendship/blockUser",
-      router
-    );
-
-    if (result == true) {
-      setRelation("Blocker");
-      router.push(`/chat?login=${currentUser?.login}`);
-    }
-  }
-
-  async function UnblockFriend() {
-    let result = await requests(
-      currentUser?.login,
-      "friendship/unblock",
-      router
-    );
-
-    if (result == true) {
-      setRelation("Friend");
-      router.push(`/chat?login=${currentUser?.login}`);
-    }
-  }
-
   useEffect(() => {
     console.log(currentUser);
-  }, [currentUser])
+  }, [currentUser]);
 
   return (
     <div className={Styles.topDetails}>
@@ -346,25 +332,10 @@ const THeader: React.FunctionComponent<{
         </div>
       </div>
       <div className={Styles.menu} onClick={showUsrMenu}>
-        <MenuAsset />
-        {showMenuDropdown && (
-          <MenuDropdown
-            content={
-              currentUser?.type == "Dm"
-                ? relation != "Blocker"
-                  ? [, "Block User"]
-                  : [, "Unblock User"]
-                : ["Settings", "Leave Channel"]
-            }
-            functions={[
-              () => setShowSetModal(true),
-              relation != "Blocker"
-                ? () => BlockFriend()
-                : () => UnblockFriend(),
-            ]}
-            id={""}
-          />
-        )}
+        <div onClick={() => setShowMenuDropdown(!showMenuDropdown)}>
+          <MenuAsset />
+        </div>
+        {showMenuDropdown && <MenuDropdown data={data} methods={methods} />}
       </div>
     </div>
   );
@@ -380,7 +351,8 @@ export const ChatRight = (props: { setShowSetModal: any; login: number }) => {
     setLastUsers,
     lastUsers,
     setInitialUsrData,
-    convId, setConvId
+    convId,
+    setConvId,
   } = useContext(ChatContext) as ChatContextType;
 
   // Setting some local state
@@ -392,6 +364,7 @@ export const ChatRight = (props: { setShowSetModal: any; login: number }) => {
   const [membersMdl, showMembersMdl] = useState(false);
   const [currentUser, setCurrentUser] = useState<any>();
   const [stopUsr, setStopUsr] = useState("");
+  const [data, setData] = useState<any>([]);
 
   const [enteredMsg, setEnteredMsg] = useState("");
   const [relation, setRelation] = useState("");
@@ -414,7 +387,6 @@ export const ChatRight = (props: { setShowSetModal: any; login: number }) => {
     );
     // lets make an asychronous call here
     if (props.login !== undefined) {
-      
       setShowCnv(true);
       setConvId(currentUser?.convId);
       setRelation(currentUser?.relation);
@@ -432,12 +404,15 @@ export const ChatRight = (props: { setShowSetModal: any; login: number }) => {
   useEffect(() => {
     // listening for new messages
     socket_notif.on("newMsg", (response) => {
-      console.log(response);
-      setChatMsgs([...chatMsgs, response] as any);
       setFConfId(response?.convId);
-      setEnteredMsg("");
-      
       setConvStatus(currentUser, setStopUsr);
+
+      console.log(currentUser, response);
+
+      // console.log()
+      if (currentUser.convId == response.convId)
+        setChatMsgs([...chatMsgs, response] as any);
+      setEnteredMsg("");
       // reset the conversations
       getLastConvs(setLastUsers, () => null);
       scrollToBottom(messagesEndRef);
@@ -446,7 +421,7 @@ export const ChatRight = (props: { setShowSetModal: any; login: number }) => {
     return () => {
       socket_notif.off("newMsg");
     };
-  }, [chatMsgs]);
+  }, [chatMsgs, currentUser]);
 
   const [fconvId, setFConfId] = useState<any>();
 
@@ -472,12 +447,16 @@ export const ChatRight = (props: { setShowSetModal: any; login: number }) => {
     setRelation(currentUser?.relation);
   }, [currentUser]);
 
+  const refresh = async () => {
+    showMembersMdl(false);
+    await getDataOfMembers(currentUser.convId, setData);
+  };
   return (
     <div className={`${Styles.chatRight} ${showCnv ? Styles.displayChat : ""}`}>
       <MembersModal
         showSetModal={membersMdl}
-        setShowSetModal={showMembersMdl}
-        convId={currentUser?.convId}
+        refresh={refresh}
+        currentUser={currentUser}
       />
       <SettingsModal
         showSetModal={showSetModal}
@@ -502,6 +481,8 @@ export const ChatRight = (props: { setShowSetModal: any; login: number }) => {
                   setShowSetModal={showMembersMdl}
                   convId={currentUser.convId}
                   status={currentUser.status}
+                  setData={setData}
+                  data={data}
                 />
               )}
               <ChatSection

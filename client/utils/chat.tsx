@@ -1,13 +1,16 @@
 import { chatUser } from "@Types/dataTypes";
 import socket_notif from "config/socketNotif";
-import { fetchDATA, fetchUserLogin } from "@hooks/useFetchData";
+import { fetchDATA, fetchUserLogin, requests } from "@hooks/useFetchData";
 import { InviteMsg } from "@components/Chat/inviteMsg";
+import Router from "next/router";
 
 const statuses = ["Banned", "Left", "Muted"];
 
 // Introducing in scope functions here
 export const setMsg = (keycode: any, enteredMessage: string, setEnteredMsg:any, convId: number, login: string, setStopUsr: any) => {
     
+    console.log(convId);
+
     if (enteredMessage !== "" && keycode == 13) {
         const data = { msg: enteredMessage, convId, receiver: login }
         socket_notif.emit("sendMsg", data, (response:any) => {
@@ -113,3 +116,31 @@ export const setConvStatus = (currentUser: any, setStopUsr: any) => {
         setStopUsr("");
     }
 }
+
+// block and unblock user utils
+
+export async function BlockFriend(currentUser: any, setRelation: any) {
+    let result = await requests(
+      currentUser?.login,
+      "friendship/blockUser",
+      Router
+    );
+
+    if (result == true) {
+      setRelation("Blocker");
+      Router.push(`/chat?login=${currentUser?.login}`);
+    }
+  }
+
+export async function UnblockFriend(currentUser: any, setRelation: any) {
+    let result = await requests(
+      currentUser?.login,
+      "friendship/unblock",
+      Router
+    );
+
+    if (result == true) {
+      setRelation("Friend");
+      Router.push(`/chat?login=${currentUser?.login}`);
+    }
+  }

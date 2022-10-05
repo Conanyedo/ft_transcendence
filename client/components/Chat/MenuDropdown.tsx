@@ -1,25 +1,52 @@
 import { useOutsideAlerter } from "@hooks/Functions";
+import { leaveChannel } from "@hooks/useFetchData";
 import Styles from "@styles/chat.module.css";
-import { useRef, useState } from "react";
+import { BlockFriend, UnblockFriend } from "@utils/chat";
+import Router from "next/router";
+import { useEffect, useRef, useState } from "react";
 
-export const MenuDropdown = (props: {
-  content: Array<any>;
-  functions: Array<any>;
-  id: string;
-  dropdwn: any,
-  setDropdown: any,
-  menuRef: any
-}) => {
+export const MenuDropdown = (props: { data: any; methods: any }) => {
+  const menuRef = useRef<any>("");
+  useOutsideAlerter(menuRef, props.methods.setDropdwn);
 
-  useOutsideAlerter(props.menuRef, props.setDropdown);
+  const [content, setContent] = useState<any>([]);
+  const [functions, setFunctions] = useState<any>([]);
+
+  console.log(props.data.relation);
+  // set conditions here
+  useEffect(() => {
+    if (
+      props.data.currentUser.type == "Dm" &&
+      props.data.relation != "Blocker"
+    ) {
+      setContent([, "Block User"]);
+      setFunctions([
+        ,
+        () => BlockFriend(props.data.currentUser, props.methods.setRelation),
+      ]);
+    } else if (
+      props.data.currentUser.type == "Dm" &&
+      props.data.relation == "Blocker"
+    ) {
+      setContent([, "Unblock User"]);
+      setFunctions([
+        ,
+        () => UnblockFriend(props.data.currentUser, props.methods.setRelation),
+      ]);
+    } else {
+      setContent([, "Leave Channel"]);
+      setFunctions([, () => leaveChannel(props.data.currentUser.convId, Router)]);
+    }
+  }, []);
+
   return (
     <>
-      {props.dropdwn && (
-        <div className={Styles.menuDropdown} id={props.id} ref={props.menuRef} style={{ display: "none"}}>
-          {props.content.map((element, i) => (
+      {props.data.dropdwn && (
+        <div className={Styles.menuDropdown} ref={menuRef}>
+          {content.map((element: any, i: any) => (
             <div
               key={i}
-              onClick={props.functions[i]}
+              onClick={functions[i]}
               className={[1, 2].includes(i) ? Styles.redText : ""}
             >
               {element}

@@ -78,14 +78,14 @@ async function banMember(user: any, convId: string, setData: any) {
   let data = { convId: convId, member: user.login };
 
   if (await banMemberFromChannel(data)) {
-    getData(convId, setData);
+    getDataOfMembers(convId, setData);
   } else console.log("There seems to be something wrong!");
 }
 
 async function upgradeMember(user: any, convId: string, setData: any) {
   const data = { convId: convId, member: user.login, status: "Admin" };
   if (await changeMemberRole(data, () => null)) {
-    getData(convId, setData);
+    getDataOfMembers(convId, setData);
   } else console.error("There seems to be something wrong!");
 }
 
@@ -110,7 +110,7 @@ async function UnmuteMember(convId: string, user: any, setData: any) {
 
   if (await UnmuteMemberFromChnl(data)) {
     console.log("Member unmuted successfully");
-    getData(convId, setData);
+    getDataOfMembers(convId, setData);
   } else {
     console.error("There seems to be something wrong!");
   }
@@ -303,7 +303,7 @@ const Members = (props: {
   const router = useRouter();
 
   const reloadHandler = () => {
-    getData(props.convId, props.setData);
+    getDataOfMembers(props.convId, props.setData);
     setmuteShow(false);
   };
   // useOutsideAlerter(props.menuRef, props.setDropdown);
@@ -389,7 +389,7 @@ function checkRole(data: any, setRole: any) {
   });
 }
 
-const getData = async (convId: any, setData: any) => {
+export const getDataOfMembers = async (convId: any, setData: any) => {
   const value: any = await getChannelProfile(convId, setData);
   setData(value?.data?.data);
   return;
@@ -400,18 +400,19 @@ export const Profile = (props: {
   setShowSetModal: any;
   convId: string;
   status: string;
+  setData: any;
+  data: any;
 }) => {
-  const [data, setData] = useState<any>([]);
   const [role, setRole] = useState("");
 
   useEffect(() => {
-    getData(props.convId, setData);
+    getDataOfMembers(props.convId, props.setData);
   }, []);
 
   useEffect(() => {
-    console.log(data);
-    checkRole(data, setRole);
-  }, [data, role]);
+    console.log(props.data);
+    checkRole(props.data, setRole);
+  }, [props.data, role]);
 
   return (
     <>
@@ -420,43 +421,43 @@ export const Profile = (props: {
         status={props.status}
         role={role}
       />
-      {data?.length !== 0 && (
+      {props.data?.length !== 0 && (
         <>
           <Members
             role={role}
-            users={data?.owner}
+            users={props.data?.owner}
             key="Owner"
             category="Owner"
             convId={props.convId}
             login={props.login}
-            setData={setData}
+            setData={props.setData}
           />
           <Members
             role={role}
-            users={data?.admins}
+            users={props.data?.admins}
             key="Admins"
             category="Admin"
             convId={props.convId}
             login={props.login}
-            setData={setData}
+            setData={props.setData}
           />
           <Members
             role={role}
-            users={data?.members}
+            users={props.data?.members}
             key="Members"
             category="Member"
             convId={props.convId}
             login={props.login}
-            setData={setData}
+            setData={props.setData}
           />
           <Members
             role={role}
-            users={data?.muted}
+            users={props.data?.muted}
             key="Muted"
             category="Muted"
             convId={props.convId}
             login={props.login}
-            setData={setData}
+            setData={props.setData}
           />
         </>
       )}
