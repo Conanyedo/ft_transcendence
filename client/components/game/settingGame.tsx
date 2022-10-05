@@ -1,27 +1,27 @@
 import socket_game from "config/socketGameConfig"
 import Image from "next/image"
-import { useRouter } from "next/router"
-import { Dispatch, SetStateAction, useState } from "react"
+import { useState } from "react"
 import classes from "../../styles/Lobby.module.css"
 import Cross from "../../public/FriendIcons/Cross.svg"
 import Theme1 from "../../public/GameThemes/theme1.png"
 import Theme2 from "../../public/GameThemes/theme2.png"
 import Theme3 from "../../public/GameThemes/theme3.png"
 
-const SettingGame: React.FC<{ Hide: () => void; login: string; setId: Dispatch<SetStateAction<string>> }> = (props) => {
+const SettingGame: React.FC<{ sendGame: (id: string) => void; login: string; Hide: () => void}> = (props) => {
 	const owner = localStorage.getItem("owner")
 	const [themeselected, setThemeselected] = useState("1")
 	const selectThemehandler = (e: React.MouseEvent<HTMLImageElement>) => {
 		setThemeselected((e.target as HTMLImageElement).alt)
 	}
 	const StartHandler = () => {
+
 		if (props.login)
 			socket_game.emit(
 				"newFriendGame",
 				{ Theme: themeselected, friend: props.login, login: owner },
 				(id: string) => {
-					props.setId(id)
-					props.Hide();
+					if (id)
+						props.sendGame(id);
 				}
 			)
 	}
