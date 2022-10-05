@@ -15,6 +15,7 @@ import {
 } from "@components/Modal/utils";
 import { addMembers, getFriends } from "@hooks/useFetchData";
 import Router from "next/router";
+import { useOutsideAlerter } from "@hooks/Functions";
 
 const Input = (props: {
   title: string;
@@ -39,7 +40,8 @@ const Input = (props: {
 export const MembersModal = (props: {
   refresh: any;
   showSetModal: any;
-  currentUser: any
+  currentUser: any;
+  setShowSetModal: any;
 }) => {
   const [initialUsrState, setInitialUsrState] = useState([]);
   const [showDrpdown, setshowDrpdown] = useState(false);
@@ -47,6 +49,7 @@ export const MembersModal = (props: {
   // new logic
   const [friends, setFriends] = useState([]);
   const [addedUsers, setAddedUsers] = useState([]);
+  const [status, setStatus] = useState();
 
   const inputRef = useRef("");
 
@@ -80,13 +83,17 @@ export const MembersModal = (props: {
     setUsrs();
   }, []);
 
+  useEffect(() => {
+    setUsrs();
+  }, [status])
+
   const addMember = async () => {
     formik.setFieldValue("member", "");
     let logins = addedUsers.map((user: any) => user.login);
     const data = { convId: props.currentUser.convId, members: logins };
     // // call the route to add the user here
     console.log(props.currentUser);
-    await addMembers(data);
+    await addMembers(data, setStatus);
     setAddedUsers([]);
     props.refresh();
   };
@@ -108,6 +115,16 @@ export const MembersModal = (props: {
     console.log(friends);
   }, [friends]);
 
+  function CloseMdl() {
+    props.setShowSetModal(false);
+    console.log("it gets closed");
+  }
+
+  const modalRef = useRef<any>("");
+
+  // useOutsideAlerter here
+  useOutsideAlerter(modalRef, props.setShowSetModal);
+
   return (
     <>
       {props.showSetModal && (
@@ -118,54 +135,56 @@ export const MembersModal = (props: {
           >
             &nbsp;
           </div>
-          <motion.div
-            className={Styles.modalbox}
-            animate={{ scale: 1 }}
-            initial={{ scale: 0.5 }}
-          >
-            <div>
-              <h1 className={Styles.createChnl}>Add Members</h1>
+          <div ref={modalRef}>
+            <motion.div
+              className={Styles.modalbox}
+              animate={{ scale: 1 }}
+              initial={{ scale: 0.5 }}
+            >
               <div>
-                <Image
-                  src={Cross}
-                  width={10}
-                  height={10}
-                  onClick={() => props.setShowSetModal(!props.showSetModal)}
-                />
-              </div>
-            </div>
-            <form className={Styles.form} onSubmit={formik.handleSubmit}>
-              <UsersModalInput
-                addedUsers={addedUsers}
-                setAddedUsers={setAddedUsers}
-                removeUser={removeUser}
-                handleChange={handleOnChange}
-                value={formik.values.member}
-                inputRef={inputRef}
-                oldUsers={friends}
-                setOldUsers={setFriends}
-              />
-              {showDrpdown && (
-                <div className={Styles.dropMembers}>
-                  {friends.map((usr: any, i) => {
-                    if (
-                      usr?.fullname
-                        ?.toLowerCase()
-                        .includes(inputRef?.current?.value)
-                    )
-                      return (
-                        <SuggestedUsr
-                          key={i}
-                          user={usr}
-                          action={clickHandler}
-                        />
-                      );
-                  })}
+                <h1 className={Styles.createChnl}>Add Members</h1>
+                <div>
+                  <Image
+                    src={Cross}
+                    width={10}
+                    height={10}
+                    onClick={CloseMdl}
+                  />
                 </div>
-              )}
-              <Button clickHandler={addMember} text="Add" />
-            </form>
-          </motion.div>
+              </div>
+              <form className={Styles.form} onSubmit={formik.handleSubmit}>
+                <UsersModalInput
+                  addedUsers={addedUsers}
+                  setAddedUsers={setAddedUsers}
+                  removeUser={removeUser}
+                  handleChange={handleOnChange}
+                  value={formik.values.member}
+                  inputRef={inputRef}
+                  oldUsers={friends}
+                  setOldUsers={setFriends}
+                />
+                {showDrpdown && (
+                  <div className={Styles.dropMembers}>
+                    {friends.map((usr: any, i) => {
+                      if (
+                        usr?.fullname
+                          ?.toLowerCase()
+                          .includes(inputRef?.current?.value)
+                      )
+                        return (
+                          <SuggestedUsr
+                            key={i}
+                            user={usr}
+                            action={clickHandler}
+                          />
+                        );
+                    })}
+                  </div>
+                )}
+                <Button clickHandler={addMember} text="Add" />
+              </form>
+            </motion.div>
+          </div>
         </>
       )}
     </>

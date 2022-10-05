@@ -97,6 +97,10 @@
   height: 46.93px !important;
 }
 
+.avatar>img {
+  border-radius: 8px;
+}
+
 .status {
   color: #c6e1ff;
   font-size: 1.167rem;
@@ -185,7 +189,6 @@
   width: calc(100% - (1.313rem * 2));
   margin: 0 auto;
   position: relative;
-  margin-right: auto;
   margin-top: 2rem;
 }
 
@@ -194,7 +197,7 @@
   width: 5px;
   outline: 3px solid #2d2f31;
   padding-top: 0.5rem;
-  margin-left: 6px;
+  border-radius: 5px;
 }
 
 .msgsDisplay::-webkit-scrollbar-track {
@@ -217,6 +220,7 @@
   align-items: center;
   padding: 12px 14px;
   justify-content: space-between;
+  margin-right: 7px;
 }
 
 .msgInput > input {
@@ -251,6 +255,7 @@
   font-size: 1.333rem;
   color: #fff;
   font-weight: 500;
+  margin-right: 7px;
 }
 
 .msgBox:last-child {
@@ -328,6 +333,7 @@
   /* margin-top: -1px; */
   font-size: 0.625rem;
   color: #d9d9d9;
+  margin-right: 7px;
 }
 
 .sendCtr {
@@ -336,8 +342,8 @@
 }
 
 .inviteMsg {
-  width: 19.5rem;
-  height: fit-content;
+  width: 243px;
+  min-height: 93.86px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -345,9 +351,18 @@
   gap: 1.083rem;
   background-color: #409cff;
   padding: 10px 20px;
+  border-radius: 5px 5px 0 5px;
+  margin-right: 7px;
+  margin-top: 10px;
 }
 
-.inviteMsg > div {
+.inviteMsg>div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.938rem;
+}
+
+.inviteCont {
   display: flex;
   gap: 1rem;
 }
@@ -374,6 +389,7 @@
 
 .receivedInvit {
   background-color: #3a3a3c !important;
+  border-radius: 0 5px 5px 5px;
 }
 
 .inviteCont > img {
@@ -388,26 +404,46 @@
   gap: 1rem;
 }
 
+.refuseBtn, .acceptBtn {
+  border: 1.5px solid #758293 !important;
+  color: #758293 !important;
+  font-weight: 500;
+}
+
+.acceptBtn {
+  border: 1.5px solid #409CFF !important;
+  color: #409CFF !important;
+}
+
+.acceptBtn:hover {
+  border: 1.5px solid #409CFF !important;
+  background-color: #409CFF !important;
+  color: #FFFFFF !important;
+  font-weight: 500;
+}
+
 .inviteBtns > button, .inviteBtn {
   margin: 0 auto;
   border: 1.5px solid #c6e1ff;
   border-radius: 2px;
   color: #c6e1ff;
   font-size: 1rem;
-  width: 8rem;
   height: 25px;
+  width: fit-content;
+  padding: 5px 27px;
   background-color: transparent;
   cursor: pointer;
+  display: flex;
+  align-items: center;
 }
 
 .inviteBtn {
-  width: 152px;
+  width: 152px !important;
 }
 
 .inviteBtns > button:hover, .inviteBtn:hover {
-  background-color: #c6e1ff;
-  color: #409cff;
-  font-weight: 600;
+  background-color: #758293;
+  color: #FFFFFF !important;
 }
 
 .console:hover svg {

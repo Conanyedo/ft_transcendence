@@ -286,12 +286,20 @@ const THeader: React.FunctionComponent<{
     console.log(currentUser);
   }, [currentUser]);
 
+  const showHideDrop = () => {
+    console.log("clicked here");
+    setShowMenuDropdown(!showMenuDropdown);
+    console.log(showMenuDropdown);
+  }
+
+  console.log(relation);
+
   return (
     <div className={Styles.topDetails}>
       <div className={Styles.flex}>
-        <div className={Styles.arrowAsset}>
+        {!profile && <div className={Styles.arrowAsset}>
           <Image src={arrowBack} width={16} height={16} onClick={unshowCnv} />
-        </div>
+        </div>}
 
         {profile && (
           <div
@@ -331,12 +339,12 @@ const THeader: React.FunctionComponent<{
           </div>
         </div>
       </div>
-      <div className={Styles.menu} onClick={showUsrMenu}>
-        <div onClick={() => setShowMenuDropdown(!showMenuDropdown)}>
+      { (!(["Left", "Banned"].includes(relation))) && <div className={Styles.menu} onClick={showUsrMenu}>
+        <div onClick={showHideDrop}>
           <MenuAsset />
         </div>
         {showMenuDropdown && <MenuDropdown data={data} methods={methods} />}
-      </div>
+      </div>}
     </div>
   );
 };
@@ -457,6 +465,7 @@ export const ChatRight = (props: { setShowSetModal: any; login: number }) => {
         showSetModal={membersMdl}
         refresh={refresh}
         currentUser={currentUser}
+        setShowSetModal={showMembersMdl}
       />
       <SettingsModal
         showSetModal={showSetModal}

@@ -311,7 +311,7 @@ export const JoinChannel = async (
     });
 };
 
-export const addMembers = async (data: any) => {
+export const addMembers = async (data: any, setData: any) => {
   // POST /chat/addMembers
   const token = getCookie("jwt");
   const json = JSON.stringify(data);
@@ -326,8 +326,7 @@ export const addMembers = async (data: any) => {
     withCredentials: true,
   })
     .then((res) => {
-      // console.log(res);
-      // set(res.data);
+      setData(res.data.data)
       return true;
     })
     .catch((err) => {

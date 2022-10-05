@@ -1,4 +1,4 @@
-import { useOutsideAlerter } from "@hooks/Functions";
+// import { useOutsideAlerter } from "@hooks/Functions";
 import { leaveChannel } from "@hooks/useFetchData";
 import Styles from "@styles/chat.module.css";
 import { BlockFriend, UnblockFriend } from "@utils/chat";
@@ -6,13 +6,11 @@ import Router from "next/router";
 import { useEffect, useRef, useState } from "react";
 
 export const MenuDropdown = (props: { data: any; methods: any }) => {
-  const menuRef = useRef<any>("");
-  useOutsideAlerter(menuRef, props.methods.setDropdwn);
+  const menuRef = useRef<any>(null);
 
   const [content, setContent] = useState<any>([]);
   const [functions, setFunctions] = useState<any>([]);
-
-  console.log(props.data.relation);
+  
   // set conditions here
   useEffect(() => {
     if (

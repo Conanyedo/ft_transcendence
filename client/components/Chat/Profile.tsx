@@ -47,31 +47,6 @@ const setRights = (role: string, category: string) => {
   return categories.indexOf(role) >= categories.indexOf(category);
 };
 
-const MenuElement = (props: {
-  role: any;
-  category: any;
-  content: any;
-  functions: any;
-  dropdwn: any;
-  setDropdown: any;
-  menuRef: any;
-}) => {
-  useEffect(() => {
-    console.log(props.content, props.functions);
-  }, [props.content, props.functions]);
-
-  return (
-    <MenuDropdown
-      content={props.content}
-      functions={props.functions}
-      id={props.category}
-      dropdwn={props.dropdwn}
-      setDropdown={props.setDropdown}
-      menuRef={props.menuRef}
-    />
-  );
-};
-
 // functions to set the user statuses
 
 async function banMember(user: any, convId: string, setData: any) {
@@ -121,18 +96,13 @@ const DropDown: React.FC<{
   i: number;
   content: Array<string>;
   functions: any;
-}> = ({ setRefs, i, content, functions }) => {
-
-  console.log("called dropdown");
+  setshowdrop: any;
+}> = ({ setRefs, i, content, functions, setshowdrop }) => {
 
   console.log(content, functions);
   return (
     <>
-      <div
-        className={Styles.menuDropdown}
-        id={i.toString()}
-        ref={(element: any) => (setRefs.current[i] = element)}
-      >
+      <div className={Styles.menuDropdown} id={i.toString()}>
         {content.map((element, i) => (
           <div
             key={i}
@@ -191,10 +161,9 @@ const showElemDropdown = (e: any, data: any, propMethods: any) => {
   // setdropdwn(true);
   // Condition if the clicked user is me
   if (data.role == "Owner") {
-
     if (data.user.status == "Admin") setAdminActions(data, methods);
     else if (data.user.status == "Member") setMemberActions(data, methods);
-    else if (data.user.status = "Muted") setMutedActions(data, methods);
+    else if ((data.user.status = "Muted")) setMutedActions(data, methods);
   } else if (data.role == "Admin") {
     if (data.user.status == "Admin") setAdminActions(data, methods);
     else if (data.user.status == "Member") setMemberActions(data, methods);
@@ -224,12 +193,15 @@ const MemberMenu = (props: {
     setData: props.setData,
   };
 
-  const [show, setshowdrop] = useState(false);
+  const [showdropmenu, setshowdropmenu] = useState<boolean>(false);
 
   const ClickHandler = (e: any) => {
     showElemDropdown(e, props.data, methods);
-    setshowdrop(value => !value);
-  }
+    setshowdropmenu(!showdropmenu);
+  };
+  const dropRef = useRef<any>("");
+
+  useOutsideAlerter(dropRef, setshowdropmenu);
 
   return (
     <>
@@ -240,28 +212,21 @@ const MemberMenu = (props: {
           display: props.permit ? "block" : "none",
           cursor: "pointer",
         }}
+        ref={dropRef}
       >
         <div>
           <Image src={menu} width={6} height={30} />
         </div>
-        <div
-          id={props.i.toString()}
-          // ref={(element) => (setRefs.current[i] = element)}
-        >
-          {show && <DropDown
-            setRefs={props.setRefs}
-            i={props.i}
-            content={props.data.content}
-            functions={props.data.functions}
-          />}
-          {/* <MenuElement
-                      role={props.role}
-                      category={props.category}
-                      content={content}
-                      functions={functions}
-                      dropdwn={dropdwn}
-                      setDropdown={setDropdown} */}
-          {/* /> */}
+        <div id={props.i.toString()}>
+          {showdropmenu && (
+            <DropDown
+              setRefs={props.setRefs}
+              i={props.i}
+              content={props.data.content}
+              functions={props.data.functions}
+              setshowdrop={setshowdropmenu}
+            />
+          )}
         </div>
       </div>
     </>
