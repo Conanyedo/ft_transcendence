@@ -42,8 +42,8 @@ const Notif_item: React.FC<NotificationType> = (props) => {
 			props.refresh()
 		} else if (props.type.includes("Game")) {
 			socket_notif.emit("updateGame", { notifId: props.notifId, status: "Refused" }, () => {
-				props.refresh();
-				socket_game.emit("refuseChallenge", props.gameId);
+				props.refresh()
+				socket_game.emit("refuseChallenge", props.gameId)
 			})
 		}
 	}
@@ -88,10 +88,12 @@ const Notif_item: React.FC<NotificationType> = (props) => {
 										onClick={refuseHandler}>
 										Decline
 									</motion.span>
-									<motion.span onClick={acceptHandler}
-									variants={itemVariants}
-									animate={isOpen ? "open" : "closed"}
-									>Accept</motion.span>
+									<motion.span
+										onClick={acceptHandler}
+										variants={itemVariants}
+										animate={isOpen ? "open" : "closed"}>
+										Accept
+									</motion.span>
 								</>
 							)}
 						</motion.div>
@@ -121,8 +123,8 @@ const Notif: React.FC = () => {
 			const isfresh = data.data.find((notif: NotificationType) => notif.status === "Sent")
 			if (isfresh) setisNew(true)
 			else setisNew(false)
-			if (data.data.length) setnotification(data.data);
-			setisOpen(false);
+			if (data.data.length) setnotification(data.data)
+			setisOpen(false)
 		})
 	}
 	useOutsideAlerter(notifMenu, setisOpen)
@@ -238,11 +240,13 @@ const Header: React.FC<{ setPos: (page: string) => void }> = (props) => {
 	const searchHanler: FormEventHandler = (e) => {
 		let current: any = input.current
 		e.preventDefault()
-		props.setPos("hide")
-		router.push({
-			pathname: "/search",
-			query: { search: `${current.value}` },
-		})
+		if (current.value !== "") {
+			props.setPos("hide")
+			router.push({
+				pathname: "/search",
+				query: { search: `${current.value}` },
+			})
+		}
 	}
 	useEffect(() => {
 		let current: any = input.current
@@ -251,14 +255,14 @@ const Header: React.FC<{ setPos: (page: string) => void }> = (props) => {
 
 	useEffect(() => {
 		// redirect to the game when started
-		socket_game.connect();
+		socket_game.connect()
 		socket_game.on("gameStartedSoon", (props) => {
 			if (props.check === true) {
 				if (!router.asPath.includes("game/lobby?gameID=")) router.push("/game/lobby?gameID=" + props.id)
 			}
 		})
 		return () => {
-			socket_game.off("gameStartedSoon");
+			socket_game.off("gameStartedSoon")
 		}
 	}, [])
 
