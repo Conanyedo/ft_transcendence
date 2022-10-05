@@ -13,7 +13,7 @@ import Chat from "../../public/SideNav/Chat.svg";
 import GameSelected from "../../public/SelectedSideNav/GameSelected.svg";
 import Game from "../../public/SideNav/Game.svg";
 
-import LogoutSelected from "../../public/SelectedSideNav/LogOutSelected.svg";
+import LogoutSelected from "../../public/SelectedSideNav/LogoutSelected.svg";
 import Logout from "../../public/Logout.svg";
 
 import classes from "../../styles/sideNav.module.css";
