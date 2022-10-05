@@ -10,9 +10,11 @@ import Setting from "../Settings/settings";
 import ProfileInfoEdit from "../Settings/ProfileInfoEdit";
 import { useDispatch, useSelector } from "react-redux";
 import {
+	HideErrorGameMsg,
 	HideErrorMsg,
 	Settings,
 	Toggle,
+	ToggleErrorGameValue,
 	ToggleErrorValue,
 	ToggleValue,
 } from "../../store/UI-Slice";
@@ -33,10 +35,23 @@ const ContentWrapper: React.FC<PropsType> = ({ children }) => {
 	const jwt = getCookie("jwt");
 	const [posIndicator, setPosIndicator] = useState(classesNav.hide);
 	const ShowError = useSelector(ToggleErrorValue);
+	const ShowErrorGame = useSelector(ToggleErrorGameValue);
 	if (ShowError) {
 		const timer = () => {
 			const id = setTimeout(() => {
 				dispatch(HideErrorMsg());
+				return () => {
+					clearTimeout(id);
+				};
+			}, 3000);
+			return () => clearTimeout(id);
+		};
+		timer();
+	}
+	if (ShowErrorGame) {
+		const timer = () => {
+			const id = setTimeout(() => {
+				dispatch(HideErrorGameMsg());
 				return () => {
 					clearTimeout(id);
 				};
@@ -77,6 +92,13 @@ const ContentWrapper: React.FC<PropsType> = ({ children }) => {
 			{ShowError && (
 				<MsgSlideUp
 					msg="User Not Found"
+					colorCtn="#FF6482"
+					colorMsg="#ECF5FF"
+				/>
+			)}
+			{ShowErrorGame && (
+				<MsgSlideUp
+					msg="invitation is already sent"
 					colorCtn="#FF6482"
 					colorMsg="#ECF5FF"
 				/>
