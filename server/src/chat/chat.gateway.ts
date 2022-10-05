@@ -49,9 +49,6 @@ export class ChatGateway {
 	@UseGuards(WsJwtGuard)
 	@SubscribeMessage('sendMsg')
 	async sendMsg(@User('login') login: string, @ConnectedSocket() client: Socket, @MessageBody() data: createMsgDto) {
-		console.log(`CnovId : ${data.convId}`);
-		console.log(`invit : ${data.invitation}`);
-		console.log(`msg : ${data.msg}`);
 		let msg: msgDto;
 		if (!data.convId && data.receiver)
 			msg = await this.chatService.createNewDm(client, data);
