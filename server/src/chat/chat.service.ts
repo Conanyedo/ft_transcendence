@@ -242,6 +242,9 @@ export class ChatService {
 			.update({ status: status })
 			.where(`id = '${msgId}' AND status = '${invStatus.SENT}'`)
 			.execute();
+		const msg = await this.messageRepository
+			.query(`SELECT messages."id" as "msgId", messages."sender", messages."msg", messages."createDate", messages."conversationId" as "convId", messages."invitation", messages."status" FROM messages where messages."id" = '${msgId}';`);
+		return { data: msg[0] };
 	}
 
 	async createNewDm(client: Socket, data: createMsgDto) {
