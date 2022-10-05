@@ -22,7 +22,7 @@ export const ChatLeft = (props: { login: any }) => {
     chatUsersRefs,
     friends,
     convId,
-    setConvId
+    setConvId,
   } = useContext(ChatContext) as ChatContextType;
   const [show, setShow] = useState<boolean>(false);
   const [displayBlueIcon, setDisplayBlueIcon] = useState(false);
@@ -32,8 +32,7 @@ export const ChatLeft = (props: { login: any }) => {
   const router = useRouter();
   const dotRefs: Array<HTMLDivElement> | any = useRef([]);
 
-  useEffect(() => {
-  }, [friends]);
+  useEffect(() => {}, [friends]);
 
   function resetForm(formik: any) {
     formik.setFieldValue("cName", "");
@@ -95,19 +94,22 @@ export const ChatLeft = (props: { login: any }) => {
   }
 
   // listen on msgs
-  socket_notif.on("newMsg", (response) => {
-    setConvId(response?.convId);
-
-    lastUsers.forEach((user, i) => {
-      if (user.login == response.sender) {
-        dotRefs.current[i].classList.add(Styles.displayDot);
-      }
-    });
-    
-  });
-
   useEffect(() => {
-  }, [convId])
+    socket_notif.on("newMsg", (response) => {
+      setConvId(response?.convId);
+
+      lastUsers.forEach((user, i) => {
+        if (user.login == response.sender) {
+          dotRefs.current[i].classList.add(Styles.displayDot);
+        }
+      });
+    });
+    return () => {
+      socket_notif.off("newMsg");
+    };
+  }, []);
+
+  useEffect(() => {}, [convId]);
 
   return (
     <>
@@ -152,7 +154,13 @@ export const ChatLeft = (props: { login: any }) => {
           </div>
           <div className={Styles.bottomSection}>
             {lastUsers.map((user: any, i: any) => (
-              <Link href={`/chat?${user.type == "Dm" ? "login" : "channel"}=` + user.login} key={i}>
+              <Link
+                href={
+                  `/chat?${user.type == "Dm" ? "login" : "channel"}=` +
+                  user.login
+                }
+                key={i}
+              >
                 <div
                   key={i}
                   ref={(element) => {

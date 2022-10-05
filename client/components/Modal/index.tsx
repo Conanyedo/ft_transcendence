@@ -13,9 +13,9 @@ import { useFormik } from "formik";
 import { useOutsideAlerter } from "customHooks/Functions"
 import { getFriends } from "@hooks/useFetchData"
 
-export const UsersModalInput = (props: { addedUsers: any, setAddedUsers: any, removeUser: any, handleChange: any, value: any, inputRef: any}) => {
+export const UsersModalInput = (props: { addedUsers: any, setAddedUsers: any, removeUser: any, handleChange: any, value: any, inputRef: any, oldUsers: any, setOldUsers: any}) => {
 
-    console.log(props.addedUsers);
+    // console.log(props.addedUsers);
 
     const removeTagHandler = (e: any, element: any, index: number) => {
         removeTag(
@@ -23,9 +23,15 @@ export const UsersModalInput = (props: { addedUsers: any, setAddedUsers: any, re
             e,
             index.toString(),
             props.addedUsers,
-            props.setAddedUsers
+            props.setAddedUsers,
+            props.oldUsers,
+            props.setOldUsers
           )
     }
+
+    useEffect(() => {
+        console.log(props.addedUsers);
+    }, [props.addedUsers])
 
     return (<div className={Styles.usrsInpt}>
         {props.addedUsers?.map((element: any, i: number) => <UsrTag key={i} removeTag={removeTagHandler} id={i} fullname={element.fullname}/>)}

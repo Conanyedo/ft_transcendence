@@ -186,13 +186,16 @@ export function filterUsers(
 }
 
 export function removeTag(
-  fullname: string,
-  e: React.ChangeEvent<HTMLInputElement>,
+  e: any,
+  element: any,
   id: string,
-  usrTags: Array<string>,
-  setUsrTags: any
+  addedUsers: any,
+  setAddedUsers: any,
+  oldUsers: any,
+  setOldUsers: any
 ) {
-  let i = e.target.parentElement?.parentElement?.parentElement?.id;
-  const newUsrTags = usrTags.filter((item) => item !== fullname);
-  setUsrTags(newUsrTags);
+  let res = addedUsers.filter((item: any) => item.fullname !== element)
+  setAddedUsers(res);
+  let returnItem = addedUsers.filter((item: any) => item.fullname == element);
+  if (returnItem.length != 0) setOldUsers([...oldUsers, ...returnItem]);
 }
