@@ -98,6 +98,9 @@ export class msgDto {
 	@IsNotEmpty()
 	convId: string;
 
+	@IsNotEmpty()
+	msgId: string;
+
 }
 
 export class conversationDto {
