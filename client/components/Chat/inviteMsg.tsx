@@ -29,6 +29,7 @@ export function InviteMsg(props: {chatMsg: any}) {
       }
     );
   };
+
   const refuseHandler = async () => {
     socket_game.emit("refuseChallenge", msgData?.invitation);
     socket_notif.emit('updateInvitation', {convId: msgData?.convId, msgId: msgData?.msgId, status: 'Refused' }, (res: any) => {
@@ -51,53 +52,57 @@ export function InviteMsg(props: {chatMsg: any}) {
   if (msgData?.sender == me)
     return (
       <div className={Styles.inviteMsg}>
-        <div className={Styles.inviteCont}>
-          <img
-            src={pathAvatar}
-            width={38}
-            height={38}
-            className={Styles.inviteAvatar}
-          />
-          <div className={Styles.inviteUsr}>
-            {userInfo?.fullname}
+        <div>
+          <div className={Styles.inviteCont}>
+            <img
+              src={pathAvatar}
+              width={38}
+              height={38}
+              className={Styles.inviteAvatar}
+            />
+            <div className={Styles.inviteUsr}>
+              {userInfo?.fullname}
             {msgData?.status === 'Sent' && <p>You invited them to play pong game</p>}
             {msgData?.status === 'Canceled' && <p>the invitation has been canceled</p>}
             {msgData?.status === 'Refused' && <p>the invitation has been Refused</p>}
             {msgData?.status === 'Accepted' && <p>the invitation has been Accepted</p>}
+            </div>
           </div>
-        </div>
-        {msgData?.status === 'Sent' && <button className={Styles.inviteBtn} onClick={cancelHandler}>
+          {msgData?.status === 'Sent' && <button className={Styles.inviteBtn} onClick={cancelHandler}>
           Cancel Invitation
         </button>}
+        </div>
       </div>
     );
   return (
     <div className={`${Styles.inviteMsg} ${Styles.receivedInvit}`}>
       <div>
         <div className={Styles.inviteCont}>
-          <img
-            src={pathAvatar}
-            width={38}
-            height={38}
-            className={Styles.inviteAvatar}
-          />
-        </div>
-        <div className={Styles.inviteTxt}>
-          {userInfo?.fullname}
+          <div className={Styles.inviteCont}>
+            <img
+              src={pathAvatar}
+              width={38}
+              height={38}
+              className={Styles.inviteAvatar}
+            />
+          </div>
+          <div className={Styles.inviteTxt}>
+            {userInfo?.fullname}
             {msgData?.status === 'Sent' && <p>You invited them to play pong game</p>}
             {msgData?.status === 'Canceled' && <p>the invitation has been canceled</p>}
             {msgData?.status === 'Refused' && <p>You refused the invitation</p>}
             {msgData?.status === 'Accepted' && <p>You accepted the invitation</p>}
+          </div>
         </div>
+        {msgData?.status === 'Sent' && <div className={Styles.inviteBtns}>
+          <button onClick={refuseHandler} className={Styles.refuseBtn}>
+            Refuse
+          </button>
+          <button onClick={acceptHandler} className={Styles.acceptBtn}>
+            Accept
+          </button>
+        </div>}
       </div>
-      {msgData?.status === 'Sent' && <div className={Styles.inviteBtns}>
-        <button className={Styles.inviteBtn} onClick={acceptHandler}>
-          Accept
-        </button>
-        <button className={Styles.inviteBtn} onClick={refuseHandler}>
-          Refuse
-        </button>
-      </div>}
     </div>
   );
 }
