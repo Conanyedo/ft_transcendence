@@ -6,7 +6,7 @@ import { friendDto } from 'src/friendship/friendship.dto';
 import { UserService } from 'src/user/user.service';
 import { Repository } from 'typeorm';
 import { conversationDto, createChannelDto, createConvDto, createMemberDto, createMsgDto, msgDto, updateChannelDto } from './chat.dto';
-import { Conversation, convType, Member, memberStatus, Message } from './chat.entity';
+import { Conversation, convType, invStatus, Member, memberStatus, Message } from './chat.entity';
 import { ChatGateway } from './chat.gateway';
 
 import * as bcrypt from 'bcrypt';
@@ -157,7 +157,7 @@ export class ChatService {
 			}
 			return convInfo;
 		}))
-		return [...conversations];
+		return { data: [...conversations] };
 	}
 
 	async createConv(newConv: createConvDto, members: createMemberDto[]) {
@@ -211,13 +211,13 @@ export class ChatService {
 		const dates = await this.memberRepository
 			.query(`select members."joinDate", members."leftDate" from members where members."conversationId" = '${convId}' AND members."userId" = '${id}';`);
 		if (!dates.length)
-			return null;
-		const joinDate: string = new Date(dates[0].joinDate).toISOString();
+			return { err: 'Invalid data' };
+		const joinDate: string = new Date(dates[0].joinDate.getTime() - dates[0].joinDate.getTimezoneOffset() * 60000).toISOString();
 		const leftDate: string = (!dates[0].leftDate) ? new Date().toISOString() : new Date(dates[0].leftDate).toISOString();
 		const msgs: Message[] = await this.messageRepository
-			.query(`SELECT messages."sender", messages."msg", messages."createDate", messages."conversationId" as "convId", messages."invitation", messages."status" FROM messages where messages."conversationId" = '${convId}' AND messages."createDate" >= '${joinDate}' AND messages."createDate" <= '${leftDate}' order by messages."createDate" ASC;`);
+			.query(`SELECT messages."id" as "msgId", messages."sender", messages."msg", messages."createDate", messages."conversationId" as "convId", messages."invitation", messages."status" FROM messages where messages."conversationId" = '${convId}' AND messages."createDate" >= '${joinDate}' AND messages."createDate" <= '${leftDate}' order by messages."createDate" ASC;`);
 		if (!msgs.length)
-			return null;
+			return { data: msgs };
 		const conv: Conversation = await this.getConvById(convId);
 		const newMsgs: Message[] = [];
 		await Promise.all(msgs.map(async (msg) => {
@@ -229,7 +229,19 @@ export class ChatService {
 					newMsgs.push(msg);
 			}
 		}))
-		return [...newMsgs];
+		return { data: [...newMsgs] };
+	}
+
+	async updateInvitation(login: string, convId: string, msgId: string, status: invStatus) {
+		const exist = await this.memberRepository
+			.query(`select from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND users.login != '${login}';`);
+		if (!exist.length)
+			return { err: 'Invalid data' };
+		await this.messageRepository
+			.createQueryBuilder('messages')
+			.update({ status: status })
+			.where(`id = '${msgId}' AND status = '${invStatus.SENT}'`)
+			.execute();
 	}
 
 	async createNewDm(client: Socket, data: createMsgDto) {
@@ -252,7 +264,7 @@ export class ChatService {
 		clients.forEach((client) => (client.join(conv.id)));
 		const friendSockets = sockets.filter((socket) => (socket.data.login === data.receiver))
 		friendSockets.forEach((friendSocket) => (friendSocket.join(conv.id)));
-		const msg: msgDto = { msg: data.msg, sender: client.data.login, invitation: newMsg.invitation, status: newMsg.status, date: newMsg.createDate, convId: conv.id };
+		const msg: msgDto = { msg: data.msg, sender: client.data.login, invitation: newMsg.invitation, status: newMsg.status, date: newMsg.createDate, convId: conv.id, msgId: newMsg.id };
 		return msg;
 	}
 
@@ -265,7 +277,7 @@ export class ChatService {
 			return status;
 		const newMsg: Message = await this.storeMsg(data.msg, login, data.invitation, conv);
 		await this.updateConvDate(conv.id, newMsg.createDate);
-		const msg: msgDto = { msg: data.msg, sender: login, invitation: newMsg.invitation, status: newMsg.status, date: newMsg.createDate, convId: conv.id };
+		const msg: msgDto = { msg: data.msg, sender: login, invitation: newMsg.invitation, status: newMsg.status, date: newMsg.createDate, convId: conv.id, msgId: newMsg.id };
 		return msg;
 	}
 
