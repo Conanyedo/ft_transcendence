@@ -91,4 +91,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	removeGameLobby(client: Socket, gameID: string) {
 		this.allGames.removeGameLobby(client, gameID);
 	}
+	@SubscribeMessage('checkLobby')
+	checkLobby(client: Socket, data: {admin:string, login: string}) {
+		return this.allGames.checkLobby(client, data);
+	}
 }

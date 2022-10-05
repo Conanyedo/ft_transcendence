@@ -314,4 +314,14 @@ export class allGames {
     if (this.FriendsLobby.length && gameID)
       this.FriendsLobby = this.FriendsLobby.filter((lobby) => (lobby.idGame !== gameID));
   }
+  checkLobby(client: Socket, data: {admin:string, login: string}) {
+    let lobby: LobbyFriends;
+    if (this.FriendsLobby.length)
+      lobby = this.FriendsLobby.find(lobby => {
+        if (lobby.admin === data.admin && lobby.friend === data.login)
+          return lobby;
+      })
+    if (lobby && lobby.admin !== '') return true;
+    return false;
+  }
 }
