@@ -88,18 +88,32 @@ export class allGames {
       (game) => GameID && game.idGame === GameID,
     );
     if (GameID && isfriend && isfriend.idGame) {
-      const player = new Player(isfriend.admin, isfriend.adminSocket, 'left');
-      const playertwo = new Player(login, client, 'right');
-      const newGame = new Game(player, playertwo, 'Classic', this.server, this, isfriend.idGame, Number(isfriend.theme));
-      isfriend.adminSocket.emit('gameStartedSoon', {check: true, id: newGame._ID});
-      this.countLiveGames++;
-      this.FriendGames.push(newGame);
-      const time = setTimeout(() => {
-        this.server.to(newGame._ID).emit('gameStarted', true);
-        return () => {
-          clearTimeout(time);
-        }
-      }, 300);
+      isfriend.adminSocket.emit('gameStartedSoon', {
+        check: true,
+        id: isfriend.idGame,
+      });
+      setTimeout(() => {
+        this.FriendsLobby = this.FriendsLobby.filter((game) => GameID && game.idGame === GameID)
+        const player = new Player(isfriend.admin, isfriend.adminSocket, 'left');
+        const playertwo = new Player(login, client, 'right');
+        const newGame = new Game(
+          player,
+          playertwo,
+          'Classic',
+          this.server,
+          this,
+          isfriend.idGame,
+          Number(isfriend.theme),
+        );
+        this.countLiveGames++;
+        this.FriendGames.push(newGame);
+        const time = setTimeout(() => {
+          this.server.to(newGame._ID).emit('gameStarted', true);
+          return () => {
+            clearTimeout(time);
+          };
+        }, 300);
+      }, 100);
       return GameID;
     }
   }
@@ -312,15 +326,17 @@ export class allGames {
   }
   removeGameLobby(client: Socket, gameID: string) {
     if (this.FriendsLobby.length && gameID)
-      this.FriendsLobby = this.FriendsLobby.filter((lobby) => (lobby.idGame !== gameID));
+      this.FriendsLobby = this.FriendsLobby.filter(
+        (lobby) => lobby.idGame !== gameID,
+      );
   }
-  checkLobby(client: Socket, data: {admin:string, login: string}) {
+  checkLobby(client: Socket, data: { admin: string; login: string }) {
     let lobby: LobbyFriends;
     if (this.FriendsLobby.length)
-      lobby = this.FriendsLobby.find(lobby => {
+      lobby = this.FriendsLobby.find((lobby) => {
         if (lobby.admin === data.admin && lobby.friend === data.login)
           return lobby;
-      })
+      });
     if (lobby && lobby.admin !== '') return true;
     return false;
   }

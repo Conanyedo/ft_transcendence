@@ -343,7 +343,7 @@
 
 .inviteMsg {
   width: 243px;
-  min-height: 93.86px;
+  min-height: fit-content;
   display: flex;
   flex-direction: column;
   align-items: center;
