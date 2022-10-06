@@ -117,10 +117,7 @@ export const updateChnlInfo = async (
   router: any,
   login: any
 ) => {
-  // /chat/updateChannel
-  // the data should be as follows {name, type, password, avatar, oldPath}
   const token = getCookie("jwt");
-  // const json = JSON.stringify(data);
   return await axios({
     method: "post",
     url: `${baseUrl}chat/updateChannel`,
@@ -135,7 +132,6 @@ export const updateChnlInfo = async (
       if (res.data == true) {
         router.push(`/chat?login=${login}`);
       }
-      // set(res.data);
       return true;
     })
     .catch((err) => {
@@ -313,8 +309,11 @@ export const JoinChannel = async (
 
 export const addMembers = async (data: any, setData: any) => {
   // POST /chat/addMembers
+  const params = new URLSearchParams();
+  params.append("convId", data.convId);
+  params.append("members", data.members);
+
   const token = getCookie("jwt");
-  const json = JSON.stringify(data);
   return await axios({
     method: "post",
     url: `${baseUrl}chat/addMembers`,
@@ -322,7 +321,7 @@ export const addMembers = async (data: any, setData: any) => {
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
     },
-    data: json,
+    data: params,
     withCredentials: true,
   })
     .then((res) => {
@@ -335,9 +334,12 @@ export const addMembers = async (data: any, setData: any) => {
 };
 
 export const banMemberFromChannel = async (data: any) => {
-  // /chat/banMember
+
   const token = getCookie("jwt");
-  const json = JSON.stringify(data);
+  const params = new URLSearchParams();
+  params.append("convId", data.convId);
+  params.append("member", data.member);
+
   return await axios({
     method: "post",
     url: `${baseUrl}chat/banMember`,
@@ -345,12 +347,10 @@ export const banMemberFromChannel = async (data: any) => {
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
     },
-    data: json,
+    data: params,
     withCredentials: true,
   })
     .then((res) => {
-      // console.log(res);
-      // set(res.data);
       return true;
     })
     .catch((err) => {
@@ -360,8 +360,12 @@ export const banMemberFromChannel = async (data: any) => {
 
 export const muteMemberFromChnl = async (data: any) => {
   // /chat/banMember
+
+  const params = new URLSearchParams();
+  params.append("convId", data.convId);
+  params.append("member", data.member);
+
   const token = getCookie("jwt");
-  const json = JSON.stringify(data);
   return await axios({
     method: "post",
     url: `${baseUrl}chat/muteMember`,
@@ -369,7 +373,7 @@ export const muteMemberFromChnl = async (data: any) => {
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
     },
-    data: json,
+    data: params,
     withCredentials: true,
   })
     .then((res) => {
@@ -382,8 +386,11 @@ export const muteMemberFromChnl = async (data: any) => {
 
 export const UnmuteMemberFromChnl = async (data: any) => {
   // /chat/banMember
+  const params = new URLSearchParams();
+  params.append("convId", data.convId);
+  params.append("member", data.member);
+
   const token = getCookie("jwt");
-  const json = JSON.stringify(data);
   return await axios({
     method: "post",
     url: `${baseUrl}chat/unmuteMember`,
@@ -391,7 +398,7 @@ export const UnmuteMemberFromChnl = async (data: any) => {
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
     },
-    data: json,
+    data: params,
     withCredentials: true,
   })
     .then((res) => {
@@ -431,7 +438,13 @@ export const checkCode2FA = async (code: string, router: NextRouter) => {
 
 export const postChannel = async (set: any, router: NextRouter, data: any) => {
   const token = getCookie("jwt");
-  const json = JSON.stringify(data);
+
+  const params = new URLSearchParams();
+  params.append("name", data.name);
+  params.append("type", data.type);
+  params.append("members", data.members);
+  params.append("password", data.password);
+
   return await axios({
     method: "post",
     url: `${baseUrl}chat/createChannel`,
@@ -439,7 +452,7 @@ export const postChannel = async (set: any, router: NextRouter, data: any) => {
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
     },
-    data: json,
+    data: params,
     withCredentials: true,
   })
     .then((res) => {
@@ -459,7 +472,12 @@ export const postChannel = async (set: any, router: NextRouter, data: any) => {
 export const changeMemberRole = async (data: any, set: any) => {
   // POST /chat/setMemberStatus
   const token = getCookie("jwt");
-  const json = JSON.stringify(data);
+
+  const params = new URLSearchParams();
+  params.append("convId", data.convId);
+  params.append("member", data.member);
+  params.append("status", data.status);
+  
   return await axios({
     method: "post",
     url: `${baseUrl}chat/setMemberStatus`,
@@ -467,7 +485,7 @@ export const changeMemberRole = async (data: any, set: any) => {
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
     },
-    data: json,
+    data: params,
     withCredentials: true,
   })
     .then((res) => {
@@ -502,7 +520,9 @@ export const getFriends = async (setInitialState: any) => {
 export const getChannelProfile = async (convId: any, set: any) => {
   // POST /chat/channelProfile
   const token = getCookie("jwt");
-  const json = { convId: convId };
+  const params = new URLSearchParams();
+  params.append("convId", convId);
+
   return await axios({
     method: "post",
     url: `${baseUrl}chat/channelProfile`,
@@ -510,7 +530,7 @@ export const getChannelProfile = async (convId: any, set: any) => {
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
     },
-    data: json,
+    data: params,
     withCredentials: true,
   })
     .then((res) => {
@@ -525,12 +545,12 @@ export const getChannelProfile = async (convId: any, set: any) => {
 export const leaveChannel = async (
   convId: any,
   router: NextRouter,
-  // setNewData: any,
-  // prevData: any
 ) => {
-  // console.log(convId);
+
+  const params = new URLSearchParams();
+  params.append("convId", convId);
+
   const token = getCookie("jwt");
-  const json = JSON.stringify({ convId: convId });
   return await axios({
     method: "post",
     url: `${baseUrl}chat/leaveChannel`,
@@ -538,7 +558,7 @@ export const leaveChannel = async (
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
     },
-    data: json,
+    data: params,
     withCredentials: true,
   })
     .then((res) => {

@@ -297,180 +297,184 @@ const THeader: React.FunctionComponent<{
 	)
 }
 
-export const ChatRight = (props: { setShowSetModal: any; login: number }) => {
-	const {
-		showCnv,
-		setShowCnv,
-		messagesEndRef,
-		chatMsgs,
-		setChatMsgs,
-		setLastUsers,
-		lastUsers,
-		setInitialUsrData,
-		convId,
-		setConvId,
-	} = useContext(ChatContext) as ChatContextType
+export const ChatRight = (props: { setShowSetModal: any; setSelectedConv: any; login: number }) => {
+  const {
+    showCnv,
+    setShowCnv,
+    messagesEndRef,
+    chatMsgs,
+    setChatMsgs,
+    setLastUsers,
+    lastUsers,
+    setInitialUsrData,
+    convId,
+    setConvId,
+  } = useContext(ChatContext) as ChatContextType;
 
-	// Setting some local state
-	const [profile, setShowprofile] = useState(false)
-	const [me, setMe] = useState(localStorage.getItem("owner"))
-	const router = useRouter()
-	const { PathconvId } = router.query
+  // Setting some local state
+  const [profile, setShowprofile] = useState(false);
+  const [me, setMe] = useState(localStorage.getItem("owner"));
 
-	// Settings and members modal show state
-	const [showSetModal, setShowSetModal] = useState(false)
-	const [membersMdl, showMembersMdl] = useState(false)
-	const [currentUser, setCurrentUser] = useState<any>()
-	const [stopUsr, setStopUsr] = useState("")
-	const [data, setData] = useState<any>([])
+  // Settings and members modal show state
+  const [showSetModal, setShowSetModal] = useState(false);
+  const [membersMdl, showMembersMdl] = useState(false);
+  const [currentUser, setCurrentUser] = useState<any>();
+  const [stopUsr, setStopUsr] = useState("");
+  const [data, setData] = useState<any>([]);
 
-	const [enteredMsg, setEnteredMsg] = useState("")
-	const [relation, setRelation] = useState("")
+  const [enteredMsg, setEnteredMsg] = useState("");
+  const [relation, setRelation] = useState("");
 
-	// refs
-	const msgsDisplayDiv = useRef<any>()
-	const token = getCookie("jwt")
+  const router = useRouter();
 
-	// UseEffect here
-	useEffect(() => {
-		getLastUsers(setLastUsers, props.login, setCurrentUser, setChatMsgs, messagesEndRef, router)
-		// lets make an asychronous call here
-		if (props.login !== undefined) {
-			setShowCnv(true)
-			setConvId(currentUser?.convId)
-			setRelation(currentUser?.relation)
-			setConvStatus(currentUser, setStopUsr)
-			if (profile) setShowprofile(false)
-		} else if (props.login == undefined && !PathconvId) {
-			setCurrentUser(undefined)
-			router.push("/chat")
-		}
+  // refs
+  const msgsDisplayDiv = useRef<any>();
+  const token = getCookie("jwt");
 
-		// run on first render only
-		scrollToBottom(messagesEndRef)
-	}, [props.login])
+  // UseEffect here
+  useEffect(() => {
+    getLastUsers(
+      setLastUsers,
+      props.login,
+      setCurrentUser,
+      setChatMsgs,
+      messagesEndRef,
+      router
+    );
+    // lets make an asychronous call here
+    if (props.login !== undefined) {
+      setShowCnv(true);
+      setConvId(currentUser?.convId);
+      setRelation(currentUser?.relation);
+      setConvStatus(currentUser, setStopUsr);
+      if (profile) setShowprofile(false);
+    } else if (props.login == undefined) {
+      setCurrentUser(undefined);
+      router.push("/chat");
+    }
 
-	useEffect(() => {
-		if (PathconvId) {
-			const user = currentUser;
-			user.convId = PathconvId;
-      console.log('new convId', user.convId);
-			setCurrentUser(user);
-		}
-	}, [PathconvId])
+    // run on first render only
+    scrollToBottom(messagesEndRef);
+  }, [props.login]);
 
-	useEffect(() => {
-		console.log("current user gets triggered here", currentUser)
-		// listening for new messages
-		socket_notif.on("newMsg", (response) => {
-			setFConfId(response?.data.convId)
-			setConvStatus(currentUser, setStopUsr)
+  useEffect(() => {
+    // listening for new messages
+    socket_notif.on("newMsg", (response) => {
+      setFConfId(response?.data.convId);
+      setConvStatus(currentUser, setStopUsr);
 
-			console.log(currentUser, response.data)
-			console.log("current user", response.data)
+      console.log(currentUser, response.data);
 
-			console.log("rah daz mn hna", currentUser.convId)
-			if (currentUser.convId == response.data.convId) {
-				setChatMsgs([...chatMsgs, response.data] as any)
-			}
-			setEnteredMsg("")
-			// reset the conversations
-			getLastConvs(setLastUsers, () => null)
-			scrollToBottom(messagesEndRef)
-		})
+      // console.log()
+      if (currentUser.convId == response.data.convId)
+        setChatMsgs([...chatMsgs, response.data] as any);
+      setEnteredMsg("");
+      // reset the conversations
+      getLastConvs(setLastUsers, () => null);
+      scrollToBottom(messagesEndRef);
+    });
 
-		return () => {
-			socket_notif.off("newMsg")
-		}
-	}, [chatMsgs, currentUser])
+    props.setSelectedConv(currentUser?.convId);
 
-	const [fconvId, setFConfId] = useState<any>()
+    return () => {
+      socket_notif.off("newMsg");
+    };
+  }, [chatMsgs, currentUser]);
 
-	useEffect(() => {
-		if (currentUser?.convId == undefined) {
-			lastUsers.forEach((user) => {
-				if (user?.login == currentUser?.login && user?.login !== null && currentUser?.login == undefined) {
-					setCurrentUser(user)
-					setRelation(user?.relation)
-				}
-			})
-		}
-	}, [lastUsers])
+  const [fconvId, setFConfId] = useState<any>();
 
-	useEffect(() => {
-		console.log("current user is", currentUser)
-		setConvStatus(currentUser, setStopUsr)
-		setConvId(currentUser?.convId)
-		setRelation(currentUser?.relation)
-	}, [currentUser])
+  useEffect(() => {
+    if (currentUser?.convId == undefined) {
+      lastUsers.forEach((user) => {
+        if (
+          user?.login == currentUser?.login &&
+          user?.login !== null &&
+          currentUser?.login == undefined
+        ) {
+          setCurrentUser(user);
+          setRelation(user?.relation);
+        }
+      });
+    }
+  }, [lastUsers]);
 
-	const refresh = async () => {
-		showMembersMdl(false)
-		await getDataOfMembers(currentUser.convId, setData)
-	}
-	return (
-		<div className={`${Styles.chatRight} ${showCnv ? Styles.displayChat : ""}`}>
-			<MembersModal
-				showSetModal={membersMdl}
-				refresh={refresh}
-				currentUser={currentUser}
-				setShowSetModal={showMembersMdl}
-			/>
-			<SettingsModal showSetModal={showSetModal} setShowSetModal={setShowSetModal} data={currentUser} />
-			{currentUser && (
-				<div className={`${Styles.rightContent}`}>
-					{currentUser && (
-						<>
-							<THeader
-								profile={profile}
-								setShowprofile={setShowprofile}
-								currentUser={currentUser}
-								relation={relation}
-								setRelation={setRelation}
-								setShowSetModal={setShowSetModal}
-							/>
-							{profile && (
-								<Profile
-									login={currentUser.login}
-									setShowSetModal={showMembersMdl}
-									convId={currentUser.convId}
-									status={currentUser.status}
-									setData={setData}
-									data={data}
-								/>
-							)}
-							<ChatSection
-								children={
-									<SendMsg
-										setCurrentUser={setCurrentUser}
-										currentUser={currentUser}
-										relation={relation}
-										stopUsr={stopUsr}
-										setStopUsr={setStopUsr}
-										enteredMsg={enteredMsg}
-										setEnteredMsg={setEnteredMsg}
-									/>
-								}
-								currentUser={currentUser}
-								profile={profile}
-								msgsDisplayDiv={msgsDisplayDiv}
-								chatMsgs={chatMsgs}
-								fconvId={fconvId}
-								setFConfId={setFConfId}
-								convId={convId}
-								me={me as string}
-								messagesEndRef={messagesEndRef}
-							/>
-						</>
-					)}
-				</div>
-			)}
+  useEffect(() => {
+    console.log("current user is", currentUser);
+    setConvStatus(currentUser, setStopUsr);
+    setConvId(currentUser?.convId);
+    setRelation(currentUser?.relation);
+  }, [currentUser]);
 
-			{currentUser == undefined && (
-				<div className={Styles.newCnv}>
-					<h1>Start a new conversation</h1>
-				</div>
-			)}
-		</div>
-	)
-}
+  const refresh = async () => {
+    showMembersMdl(false);
+    await getDataOfMembers(currentUser.convId, setData);
+  };
+  return (
+    <div className={`${!showCnv ? Styles.displayNone : Styles.displayChat} ${Styles.chatRight}`}>
+      <MembersModal
+        showSetModal={membersMdl}
+        refresh={refresh}
+        currentUser={currentUser}
+        setShowSetModal={showMembersMdl}
+      />
+      <SettingsModal
+        showSetModal={showSetModal}
+        setShowSetModal={setShowSetModal}
+        data={currentUser}
+      />
+      {currentUser != undefined && (
+        <div className={`${Styles.rightContent}`}>
+          {currentUser && (
+            <>
+              <THeader
+                profile={profile}
+                setShowprofile={setShowprofile}
+                currentUser={currentUser}
+                relation={relation}
+                setRelation={setRelation}
+                setShowSetModal={setShowSetModal}
+              />
+              {profile && (
+                <Profile
+                  login={currentUser.login}
+                  setShowSetModal={showMembersMdl}
+                  convId={currentUser.convId}
+                  status={currentUser.status}
+                  setData={setData}
+                  data={data}
+                />
+              )}
+              <ChatSection
+                children={
+                  <SendMsg
+                    currentUser={currentUser}
+                    relation={relation}
+                    stopUsr={stopUsr}
+                    setStopUsr={setStopUsr}
+                    enteredMsg={enteredMsg}
+                    setEnteredMsg={setEnteredMsg}
+                  />
+                }
+                currentUser={currentUser}
+                profile={profile}
+                msgsDisplayDiv={msgsDisplayDiv}
+                chatMsgs={chatMsgs}
+                fconvId={fconvId}
+                setFConfId={setFConfId}
+                convId={convId}
+                me={me as string}
+                messagesEndRef={messagesEndRef}
+              />
+            </>
+          )}
+        </div>
+      )}
+
+      {currentUser == undefined && (
+        <div className={`${showCnv ? Styles.displayChat : Styles.displayNone} ${Styles.newCnv}`}>
+          <h1>Start a new conversation</h1>
+        </div>
+      )}
+    </div>
+  );
+};

@@ -12,7 +12,7 @@ import Search from "@public/Icon.svg";
 import { getImageBySize } from "@hooks/Functions";
 import socket_notif from "config/socketNotif";
 
-export const ChatLeft = (props: { login: any }) => {
+export const ChatLeft = (props: { login: any, selectedConv: any, setSelectedConv: any }) => {
   // Setting some local state
   const {
     lastUsers,
@@ -27,7 +27,6 @@ export const ChatLeft = (props: { login: any }) => {
   const [show, setShow] = useState<boolean>(false);
   const [displayBlueIcon, setDisplayBlueIcon] = useState(false);
   const [channelDetails, setChannelDetails] = useState<any>();
-  const [previousElem, setPreviousElem] = useState<any>();
 
   const router = useRouter();
   const dotRefs: Array<HTMLDivElement> | any = useRef([]);
@@ -84,15 +83,6 @@ export const ChatLeft = (props: { login: any }) => {
     // setLastUsers(props.login);
   }, [lastUsers]);
 
-  function selectUser(element: any) {
-    if (previousElem?.classList.value.includes("selected"))
-      previousElem.classList.remove(Styles.selectedChatUsr);
-    if (element.children[1].children[1]?.classList.value.includes("displayDot"))
-      element.children[1].children[1].classList.remove(Styles.displayDot);
-    element.classList.add(Styles.selectedChatUsr);
-    setPreviousElem(element);
-  }
-
   // listen on msgs
   useEffect(() => {
     socket_notif.on("newMsg", (response) => {
@@ -104,10 +94,17 @@ export const ChatLeft = (props: { login: any }) => {
         }
       });
     });
+    console.log(showCnv);
     return () => {
       socket_notif.off("newMsg");
     };
   }, []);
+
+  function selectConv(convId: string) {
+    setShowCnv(true);
+    props.setSelectedConv(convId);
+  }
+
 
   useEffect(() => {}, [convId]);
 
@@ -166,8 +163,8 @@ export const ChatLeft = (props: { login: any }) => {
                   ref={(element) => {
                     chatUsersRefs.current[parseInt(i)] = element;
                   }}
-                  onClick={() => selectUser(chatUsersRefs.current[parseInt(i)])}
-                  className={Styles.chatUser}
+                  onClick={() => selectConv(user.convId)}
+                  className={`${Styles.chatUser} ${props.selectedConv == user.convId ? Styles.selectedChatUsr : ''}`}
                 >
                   <div className={Styles.avatarName}>
                     <div className={Styles.avatar}>

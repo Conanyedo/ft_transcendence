@@ -27,6 +27,7 @@ const Chat = () => {
   const [channelData, setChannelData] = useState<channelDataType>(
     new channelDataType()
   );
+  const [selectedConv, setSelectedConv] = useState<string>();
 
   const { showCnv, setShowCnv, lastUsers, setLastUsers, setInitialUsrData } =
     useContext(ChatContext) as ChatContextType;
@@ -66,10 +67,11 @@ const Chat = () => {
   return (
     <ChatProvider>
       <div className={Styles.chatContainer}>
-        <ChatLeft login={name} />
+        <ChatLeft login={name} selectedConv={selectedConv} setSelectedConv={setSelectedConv}/>
         {
           <ChatRight
             setShowSetModal={setShowSetModal}
+            setSelectedConv={setSelectedConv}
             login={
               channelData.type !== "" && channelData.type !== "Public"
                 ? undefined
