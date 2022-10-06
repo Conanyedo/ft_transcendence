@@ -76,10 +76,6 @@ export const ChatLeft = (props: { login: any, selectedConv: any, setSelectedConv
   }
 
   useEffect(() => {
-    if (props.login != undefined) setShowCnv(true);
-  }, []);
-
-  useEffect(() => {
     // setLastUsers(props.login);
   }, [lastUsers]);
 
@@ -105,12 +101,11 @@ export const ChatLeft = (props: { login: any, selectedConv: any, setSelectedConv
     props.setSelectedConv(convId);
   }
 
-
   useEffect(() => {}, [convId]);
 
   return (
     <>
-      <div className={`${Styles.chatLeft} ${showCnv ? Styles.hideUsers : ""}`}>
+      <div className={`${Styles.chatLeft} ${showCnv ? Styles.displayNone : ""}`}>
         <div className={Styles.leftContent}>
           <div className={Styles.topSection}>
             <div className={Styles.msg}>Message</div>

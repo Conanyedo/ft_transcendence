@@ -399,7 +399,6 @@ export const ChatRight = (props: { setShowSetModal: any; setSelectedConv: any; l
     );
     // lets make an asychronous call here
     if (props.login !== undefined) {
-      setShowCnv(true);
       setConvId(currentUser?.convId);
       setRelation(currentUser?.relation);
       setConvStatus(currentUser, setStopUsr);
@@ -465,8 +464,9 @@ export const ChatRight = (props: { setShowSetModal: any; setSelectedConv: any; l
     showMembersMdl(false);
     await getDataOfMembers(currentUser.convId, setData);
   };
+
   return (
-    <div className={`${!showCnv ? Styles.displayNone : Styles.displayChat} ${Styles.chatRight}`}>
+    <div className={`${Styles.chatRight} ${showCnv ? Styles.displayChat : Styles.displayNone}`}>
       <MembersModal
         showSetModal={membersMdl}
         refresh={refresh}
@@ -527,7 +527,7 @@ export const ChatRight = (props: { setShowSetModal: any; setSelectedConv: any; l
       )}
 
       {currentUser == undefined && (
-        <div className={`${showCnv ? Styles.displayChat : Styles.displayNone} ${Styles.newCnv}`}>
+        <div className={`${Styles.newCnv} ${showCnv ? Styles.displayChat : Styles.displayNone}`}>
           <h1>Start a new conversation</h1>
         </div>
       )}
