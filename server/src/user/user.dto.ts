@@ -1,78 +1,48 @@
-import { IsBoolean, IsEmail, IsNotEmpty, IsString } from "class-validator";
+import { IsOptional, IsString, Length, Matches } from "class-validator";
 import { userAchievements } from "./stats.entity";
 
-export class userDto {
+export class updateProfileValidate {
 
-	@IsNotEmpty()
-	id?: string;
-
-	@IsNotEmpty()
-	login: string;
-
-	@IsNotEmpty()
+	@IsOptional()
+	@IsString()
+	@Length(4, 20)
+	@Matches(/^(?=.{4,20}$)(?![ _.-])(?!.*[_.-]{2})[a-zA-Z0-9 ._-]+(?<![ _.-])$/)
 	fullname: string;
 
-	@IsNotEmpty()
-	avatar: string;
-
-	@IsBoolean()
-	isAuthenticated?: boolean;
-
+	@IsOptional()
 	@IsString()
-	_2faSecret?: string;
+	oldPath: string;
+}
 
-	@IsBoolean()
+export interface userParitalDto {
+	id: string;
+	login: string;
+	isFirst?: boolean;
+}
+
+export interface userDto {
+	id?: string;
+	login: string;
+	fullname: string;
+	avatar: string;
+	isAuthenticated?: boolean;
+	_2faSecret?: string;
 	is2faEnabled?: boolean;
 }
 
-export class userParitalDto {
-
-	@IsNotEmpty()
+export interface statsDto {
 	id: string;
-
-	@IsNotEmpty()
-	login: string;
-
-	@IsBoolean()
-	isFirst?: boolean = false;
-}
-
-export class statsDto {
-
-	@IsNotEmpty()
-	id: string;
-
-	@IsNotEmpty()
 	XP: number;
-
-	@IsNotEmpty()
 	GP: number;
-
-	@IsNotEmpty()
 	numGames: number;
-
-	@IsNotEmpty()
 	gamesWon: number;
-
-	@IsNotEmpty()
 	rank: number;
-
-	@IsNotEmpty()
 	achievement: userAchievements[];
 }
 
-export class rankDto {
-
-	@IsNotEmpty()
+export interface rankDto {
 	id: string;
-
-	@IsNotEmpty()
 	XP: number;
-
-	@IsNotEmpty()
 	GP: number;
-
-	@IsNotEmpty()
 	rank: number;
-
 }
