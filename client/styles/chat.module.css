@@ -789,6 +789,8 @@
 
 .avatarProps > img {
   border-radius: 8px !important;
+  max-width: 76px;
+  min-height: 74.3px;
 }
 
 .pointer {
@@ -829,12 +831,22 @@
   .displayChat {
     display: flex !important;
   }
+  
+  .displayNone {
+    display: none !important;
+  }
+  
 
   .avatarProps {
-    width: 48px !important;
-    height: 48px !important;
+    max-width: fit-content;
+    max-height: fit-content;
   }
 
+  .avatarProps>img {
+    width: 48px;
+    min-height: 48px;
+  }
+  
   .hideUsers {
     display: none !important;
   }
@@ -848,12 +860,8 @@
     margin: 0 auto;
   }
 
-  .chatRight {
-    display: none;
-  }
-
   .chatLeft {
-    width: 100%;
+    width: 100% !important;
     border-radius: 15px;
     margin: 0;
   }
@@ -904,6 +912,14 @@
 
   .chatUserStatus {
     font-size: 1rem;
+  }
+
+  .chnlType {
+    font-size: 1.5rem !important;
+  }
+
+  .modalbox {
+    z-index: 1000 !important;
   }
 }
 
@@ -1092,7 +1108,4 @@
   line-height: 17px;
   color: #d9d9d9;
   margin-top: 15px;
-}
-
-.background {
 }

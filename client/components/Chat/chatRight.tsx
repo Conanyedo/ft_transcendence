@@ -28,6 +28,9 @@ import { getImageBySize } from "@hooks/Functions";
 import SettingGame from "@components/game/settingGame";
 import { ProtectedFormMdl } from "@components/ProtectedModal";
 import { InviteMsg } from "./inviteMsg";
+import socket_game from "config/socketGameConfig";
+import { useDispatch } from "react-redux";
+import { ShowErrorGameMsg } from "@store/UI-Slice";
 
 // Splitting components
 
@@ -47,36 +50,37 @@ const SendMsg: React.FunctionComponent<{
   setEnteredMsg,
 }) => {
   const [settingGames, ShowSettingGames] = useState(false);
-  const [GameID, SetGameID] = useState("");
+	const dispatch = useDispatch();
 
   const me = localStorage.getItem("owner");
 
-  useEffect(() => {
-    if (GameID !== "") {
-      // TODO send invit Card
-      console.log("Id game: ", GameID);
-    }
-  }, [GameID]);
-
-  function hideSettingGame() {
-    let data = { sender: me, msg: "", invitation: GameID, convId: currentUser.convId };
-    socket_notif.emit("sendMsg", data, (response: any) => {
-      // handle msg
-      console.log(response);
-    });
+  const HideSetting = () => {
     ShowSettingGames(false);
   }
+  function sendGame(gameID: string) {
+    let data = { sender: me, msg: "", invitation: gameID, convId: currentUser.convId };
+    socket_notif.emit("sendMsg", data, (response: any) => {
+      // handle msg
+    });
+      ShowSettingGames(false);
+  }
   const showSettingGame = () => {
-    ShowSettingGames(true);
+    socket_game.emit('checkLobby', {admin: me, login: currentUser.login}, (data: boolean) => {
+      if (!data) {
+        ShowSettingGames(true);
+      } else {
+        dispatch(ShowErrorGameMsg());
+      }
+    })
   }
 
   return (
     <>
       {settingGames && (
         <SettingGame
-          Hide={hideSettingGame}
+          sendGame={sendGame}
           login={currentUser?.login}
-          setId={SetGameID}
+          Hide={HideSetting}
         />
       )}
       <div
@@ -218,7 +222,7 @@ const ChatSection: React.FC<{
                       }}
                     >
                       {chatMsg.msg}
-                    </div> || <InviteMsg senderLogin={chatMsg.sender as string} GameID={chatMsg.invitation as string} />}
+                    </div> || <InviteMsg chatMsg={chatMsg} />}
                   </div>
                 )}
                 {(convId == chatMsg.convId || fconvId == chatMsg.convId) && (
@@ -349,7 +353,7 @@ const THeader: React.FunctionComponent<{
   );
 };
 
-export const ChatRight = (props: { setShowSetModal: any; login: number }) => {
+export const ChatRight = (props: { setShowSetModal: any; setSelectedConv: any; login: number }) => {
   const {
     showCnv,
     setShowCnv,
@@ -412,19 +416,21 @@ export const ChatRight = (props: { setShowSetModal: any; login: number }) => {
   useEffect(() => {
     // listening for new messages
     socket_notif.on("newMsg", (response) => {
-      setFConfId(response?.convId);
+      setFConfId(response?.data.convId);
       setConvStatus(currentUser, setStopUsr);
 
-      console.log(currentUser, response);
+      console.log(currentUser, response.data);
 
       // console.log()
-      if (currentUser.convId == response.convId)
-        setChatMsgs([...chatMsgs, response] as any);
+      if (currentUser.convId == response.data.convId)
+        setChatMsgs([...chatMsgs, response.data] as any);
       setEnteredMsg("");
       // reset the conversations
       getLastConvs(setLastUsers, () => null);
       scrollToBottom(messagesEndRef);
     });
+
+    props.setSelectedConv(currentUser?.convId);
 
     return () => {
       socket_notif.off("newMsg");
@@ -460,7 +466,7 @@ export const ChatRight = (props: { setShowSetModal: any; login: number }) => {
     await getDataOfMembers(currentUser.convId, setData);
   };
   return (
-    <div className={`${Styles.chatRight} ${showCnv ? Styles.displayChat : ""}`}>
+    <div className={`${!showCnv ? Styles.displayNone : Styles.displayChat} ${Styles.chatRight}`}>
       <MembersModal
         showSetModal={membersMdl}
         refresh={refresh}
@@ -472,7 +478,7 @@ export const ChatRight = (props: { setShowSetModal: any; login: number }) => {
         setShowSetModal={setShowSetModal}
         data={currentUser}
       />
-      {currentUser && (
+      {currentUser != undefined && (
         <div className={`${Styles.rightContent}`}>
           {currentUser && (
             <>
@@ -521,7 +527,7 @@ export const ChatRight = (props: { setShowSetModal: any; login: number }) => {
       )}
 
       {currentUser == undefined && (
-        <div className={Styles.newCnv}>
+        <div className={`${showCnv ? Styles.displayChat : Styles.displayNone} ${Styles.newCnv}`}>
           <h1>Start a new conversation</h1>
         </div>
       )}

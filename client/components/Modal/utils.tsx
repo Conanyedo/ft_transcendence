@@ -4,6 +4,7 @@ import Styles from "@styles/chat.module.css";
 import Avatar from "@public/profile.jpg";
 import Image from "next/image";
 import TagCross from "@public/white-cross.svg";
+import Classes from "@styles/modals.module.css"
 
 // use datalist to show possible results
 export function CustomToggleBtn(id: any) {
@@ -58,7 +59,7 @@ export function Option(props: { type: string }) {
   return (
     <>
       <div>
-        <h3>{props.type}</h3>
+        <h3 className={Styles.chnlType}>{props.type}</h3>
         {/* toggle switch lies here */}
         <CustomToggleBtn id={props.type} />
       </div>
@@ -73,8 +74,8 @@ export function SuggestedUsr(props: {
   return (
     <div className={Styles.sUsr}>
       <div>
-        <div>
-          <Image src={props.user?.avatar} width={32} height={32} />
+        <div className={Classes.dropAvatar}>
+          <img src={props.user?.avatar} />
         </div>
         <span>{props.user.fullname}</span>
       </div>
