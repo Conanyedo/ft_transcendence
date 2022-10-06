@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import classes from "../../styles/Lobby.module.css";
-
 import down from "../../public/Game/Down.svg";
 import Cross from "../../public/FriendIcons/Cross.svg";
 import Image from "next/image";
 import Queue from "./Queue";
 import socket_game from "../../config/socketGameConfig";
 import RankStar from "../../public/Game/raking-stars.svg";
+import Pongmania from "../../public/Pongmania.svg";
 import Theme1 from "../../public/GameThemes/theme1.png";
 import Theme2 from "../../public/GameThemes/theme2.png";
 import Theme3 from "../../public/GameThemes/theme3.png";
@@ -187,7 +187,6 @@ export const FriendGameSetting: React.FC<{
 };
 
 const Lobby = () => {
-	const router = useRouter();
 	const [cardisOpen, setCardisOpen] = useState(false);
 	const [QueuePage, setQueuePage] = useState(false);
 	const [ErrorMsg, setErrorMsg] = useState(false);
@@ -226,7 +225,9 @@ const Lobby = () => {
 					<div className={classes.LobbyContainer}>
 						<span>Game Lobby</span>
 						<div className={classes.pingPongContainer}>
-							<span>Pong Game</span>
+							<div className={classes.pongManiaLogo}>
+								<Image src={Pongmania} />
+							</div>
 							<p>
 								Lorem ipsum dolor sit amet consectetur
 								adipiscing elit Ut et massa mi. Aliquam in
@@ -244,11 +245,10 @@ const Lobby = () => {
 								</div>
 								<p>
 									Lorem ipsum dolor sit amet consectetur
-									adipiscing elit Ut et massa mi. Aliquam in
-									Lorem ipsum dolor sit amet consectetur
-									adipiscing elit Ut et massa. Lorem ipsum
+									adipiscing elit Ut et massa mi. Lorem ipsum
 									dolor sit amet consectetur adipiscing elit
-									Ut et massa mi.
+									Ut et massa mi. Lorem ipsum dolor sit amet
+									consectetur adipiscing elit Ut et massa mi.
 								</p>
 								<div
 									className={classes.JoinQueue}
