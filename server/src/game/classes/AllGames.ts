@@ -340,4 +340,20 @@ export class allGames {
     if (lobby && lobby.admin !== '') return true;
     return false;
   }
+  getGameId(login: string) {
+    let game: Game;
+    if (this.RankGames.length) {
+      game = this.RankGames.find(game => {
+          if (game._PlayerLeft.getlogin() === login || game._PlayerRight.getlogin() === login)
+          return game;
+      })
+    }
+    if (this.RankGames.length && !game && !game._ID) {
+      game = this.FriendGames.find(game => {
+        if (game._PlayerLeft.getlogin() === login || game._PlayerRight.getlogin() === login)
+        return game;
+    })
+    }
+    return game._ID;
+  }
 }
