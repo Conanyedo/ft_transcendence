@@ -12,7 +12,11 @@ import Search from "@public/Icon.svg";
 import { getImageBySize } from "@hooks/Functions";
 import socket_notif from "config/socketNotif";
 
-export const ChatLeft = (props: { login: any, selectedConv: any, setSelectedConv: any }) => {
+export const ChatLeft = (props: {
+  login: any;
+  selectedConv: any;
+  setSelectedConv: any;
+}) => {
   // Setting some local state
   const {
     lastUsers,
@@ -81,9 +85,9 @@ export const ChatLeft = (props: { login: any, selectedConv: any, setSelectedConv
   }
 
   useEffect(() => {
-    if (searchVal == "")
-      setSearchUsrs(lastUsers);
-  }, [lastUsers]);
+    console.log("search val is", searchVal);
+    if (searchVal == "") setSearchUsrs(lastUsers);
+  }, [lastUsers, searchVal]);
 
   // listen on msgs
   useEffect(() => {
@@ -107,16 +111,13 @@ export const ChatLeft = (props: { login: any, selectedConv: any, setSelectedConv
     props.setSelectedConv(convId);
   }
 
-  function Search(e: any) {
-    setSearchVal(e.target.value);
-    filterChatUsers(searchVal, searchUsrs, setSearchUsrs, lastUsers);
-  }
-
   useEffect(() => {}, [convId]);
 
   return (
     <>
-      <div className={`${Styles.chatLeft} ${showCnv ? Styles.displayNone : ""}`}>
+      <div
+        className={`${Styles.chatLeft} ${showCnv ? Styles.displayNone : ""}`}
+      >
         <div className={Styles.leftContent}>
           <div className={Styles.topSection}>
             <div className={Styles.msg}>Message</div>
@@ -150,58 +151,70 @@ export const ChatLeft = (props: { login: any, selectedConv: any, setSelectedConv
               type="Text"
               className={Styles.chatInput}
               placeholder="Search"
-              onChange={Search}
+              onChange={(e) => setSearchVal(e.target.value)}
             />
           </div>
           <div className={Styles.bottomSection}>
-            {searchUsrs?.map((user: any, i: any) => (
-              <Link
-                href={
-                  `/chat?${user.type == "Dm" ? "login" : "channel"}=` +
-                  user.login
-                }
-                key={i}
-              >
-                <div
-                  key={i}
-                  ref={(element) => {
-                    chatUsersRefs.current[parseInt(i)] = element;
-                  }}
-                  onClick={() => selectConv(user.convId)}
-                  className={`${Styles.chatUser} ${props.selectedConv == user.convId ? Styles.selectedChatUsr : ''}`}
-                >
-                  <div className={Styles.avatarName}>
-                    <div className={Styles.avatar}>
-                      <img
-                        src={
-                          user?.avatar?.startsWith("https")
-                            ? user?.avatar
-                            : getImageBySize(user?.avatar, 70)
-                        }
-                      />
-                    </div>
-                    <div className={Styles.username}>
-                      {user?.name} {user?.channelname}
-                    </div>
-                  </div>
-                  <div className={Styles.statusDiv}>
-                    <p className={Styles.status}>
-                      {user?.membersNum
-                        ? user?.membersNum + " members"
-                        : user.status}
-                    </p>
+            {searchUsrs?.map((user: any, i: any) => {
+              if (
+                user?.name?.toUpperCase().includes(searchVal.toUpperCase()) ||
+                user?.channelname?.toUpperCase().includes(searchVal.toUpperCase()) ||
+                searchVal === ''
+              ) {
+                return (
+                  <Link
+                    href={
+                      `/chat?${user.type == "Dm" ? "login" : "channel"}=` +
+                      user.login
+                    }
+                    key={i}
+                  >
                     <div
-                      className={Styles.redDot}
+                      key={i}
                       ref={(element) => {
-                        dotRefs.current[parseInt(i)] = element;
+                        chatUsersRefs.current[parseInt(i)] = element;
                       }}
+                      onClick={() => selectConv(user.convId)}
+                      className={`${Styles.chatUser} ${
+                        props.selectedConv == user.convId
+                          ? Styles.selectedChatUsr
+                          : ""
+                      }`}
                     >
-                      &nbsp;
+                      <div className={Styles.avatarName}>
+                        <div className={Styles.avatar}>
+                          <img
+                            src={
+                              user?.avatar?.startsWith("https")
+                                ? user?.avatar
+                                : getImageBySize(user?.avatar, 70)
+                            }
+                          />
+                        </div>
+                        <div className={Styles.username}>
+                          {user?.name} {user?.channelname}
+                        </div>
+                      </div>
+                      <div className={Styles.statusDiv}>
+                        <p className={Styles.status}>
+                          {user?.membersNum
+                            ? user?.membersNum + " members"
+                            : user.status}
+                        </p>
+                        <div
+                          className={Styles.redDot}
+                          ref={(element) => {
+                            dotRefs.current[parseInt(i)] = element;
+                          }}
+                        >
+                          &nbsp;
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </div>
-              </Link>
-            ))}
+                  </Link>
+                );
+              }
+            })}
             {lastUsers?.length == 0 && (
               <div className={Styles.newCnv}>No conversations yet</div>
             )}

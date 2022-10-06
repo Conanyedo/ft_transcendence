@@ -74,3 +74,159 @@
         left: 0;
     }
 }
+
+
+/*  */
+
+.body {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    height: 100vh;
+    background-color: #1C1C1E;
+}
+
+.header {
+    display: flex;
+    flex-direction: row;
+    padding: 3rem 4rem 0 4rem;
+    /* align-items :center; */
+    justify-content: space-between;
+
+}
+
+._1337logo img {
+    width: 8rem;
+}
+
+.aboutUs {
+    cursor: pointer;
+    font-family: 'Inter';
+    font-weight: 300;
+    font-size: 1.8rem;
+    line-height: 2.125rem;
+    color: #FFFFFF;
+}
+
+.pongmania_container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 80%;
+}
+
+.pongmania_content {
+    height: 75%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.pongmania_content object {
+    width: 80%;
+	animation: zoom-in-zoom-out 6s ease-in-out infinite;
+}
+
+/* @keyframes float {
+	0% {
+		transform: translatey(0px);
+	}
+	50% {
+		transform: translatey(-4rem);
+	}
+	100% {
+		transform: translatey(0px);
+	}
+} */
+
+
+@keyframes zoom-in-zoom-out {
+    0% {
+    transform: scale(1, 1);
+    }
+    50% {
+    transform: scale(1.15, 1.15);
+    }
+    100% {
+    transform: scale(1, 1);
+    }
+    }
+
+.pongmania_content p {
+
+    font-family: 'Inter';
+    font-weight: 200;
+    font-size: 1.4rem;
+    text-align: center;
+    width: 60%;
+    height: 6rem;
+    color: #FFFFFF;
+}
+
+.login_button {
+    font-family: 'Inter';
+    font-weight: 600;
+    font-size: 1.2rem;
+    color: #FFFFFF;
+    height: 5rem;
+    width: 30rem;
+    background: linear-gradient(90deg, #409CFF -14.17%, #1978DE 112.92%);
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.footer {
+    font-family: 'Inter';
+    font-weight: 300;
+    font-size: 1.2rem;
+    color: #BABABA;
+    /* grid-column:; */
+    /* align-items: center;
+    justify-content: center; */
+    margin-top: auto;
+    margin-bottom: 1rem;
+    text-align: center;
+    
+    display: grid;
+    grid-template-columns: 25% 50% 25%;
+    grid-template-rows: auto;
+    grid-template-areas: ". main sidebar";
+    align-items: center;
+}
+
+.footer>p {
+    grid-area: main;
+}
+
+.contributors a {
+    text-decoration: none;
+    color: #409CFF;
+}
+
+.audio {
+    display: none;
+}
+
+.sound {
+    width: 3rem;
+    cursor: pointer;
+    grid-area: sidebar;
+    justify-self: flex-end;
+    margin-right: 4rem;
+}
+
+.sound:hover>.mute {
+    display: none;
+}
+
+.sound>.muteSelected {
+    display: none;
+}
+
+.sound:hover>.muteSelected {
+    display: inline;
+}

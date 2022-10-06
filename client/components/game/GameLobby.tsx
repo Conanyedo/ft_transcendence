@@ -2,7 +2,7 @@ import Image from "next/image";
 import classes from "../../styles/GameLobby.module.css";
 import classesELM from "../../styles/Loading.module.css";
 import classesGameHeader from "../../styles/liveGame.module.css";
-import { EmtyUser, GameDataType, UserTypeNew } from "../../Types/dataTypes";
+import { EmtyUser, gameControleType, GameDataType, UserTypeNew } from "../../Types/dataTypes";
 import React, { useEffect, useRef, useState } from "react";
 import { render } from "../../config/game";
 import socket_game from "../../config/socketGameConfig";
@@ -96,7 +96,7 @@ class GameFriendType {
 }
 
 const GameLobby: React.FC<{ GameID: string }> = (props) => {
-	const gameData: GameDataType = new GameDataType(1500);
+	const gameData: gameControleType = new gameControleType(1500);
 	const [datagame, setDataGame] = useState<GameFriendType>();
 	const [startGame, setStartGame] = useState(false);
 	const [ErrorMsg, setErrorMsg] = useState(false);

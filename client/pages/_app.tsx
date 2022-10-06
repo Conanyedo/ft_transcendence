@@ -17,7 +17,7 @@ function MyApp({ Component, pageProps }: AppProps) {
 			{typeof window === "undefined" ? null : (
 				<>
 					<Head>
-						<title>Login</title>
+						<title>PongMania</title>
 					</Head>
 					<Component {...pageProps} />
 				</>

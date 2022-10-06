@@ -35,6 +35,8 @@ const Channel: React.FC<ChannelDataType> = (props) => {
 				/>
 			)) || (
 				<JoinChannel
+					type={props.type}
+					name={props.title}
 					id={props.convId}
 					router={router}
 					refresh={refresh}

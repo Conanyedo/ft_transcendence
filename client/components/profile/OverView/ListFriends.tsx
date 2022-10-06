@@ -5,11 +5,13 @@ import Router, { useRouter } from "next/router";
 
 import Message from "../../../public/ChatIcon.svg";
 import Options from "../../../public/LeaderBoard/Options.svg";
+import LiveGameSelected from "../../../public/FriendIcons/LiveGameFriend.svg";
 import { getImageBySize, useOutsideAlerter } from "../../../customHooks/Functions";
 import { fetchDATA, requests } from "../../../customHooks/useFetchData";
 import { UserTypeNew } from "../../../Types/dataTypes";
 import LoadingElm from "../../loading/Loading_elm";
 import { OptionMenu } from "../../buttons";
+import socket_game from "config/socketGameConfig";
 
 class types extends UserTypeNew {
 	refresh: any
@@ -28,7 +30,14 @@ const Friend: React.FC<types> = (props) => {
 		await requests(props.login, "friendship/blockUser", Router);
 		props.refresh();
 	}
-	const goToChat = () => Router.push("/chat?login=" + props.login);
+	const goToChat = () => {
+		if (props.status === 'In Game') {
+			socket_game.emit('getGameId', props.login, (data: string) => {
+				Router.push("/live-games/" + data);
+			})
+		} else
+			Router.push("/chat?login=" + props.login);
+	};
 	useOutsideAlerter(wrapperRef, setoptionTaggle);
 	const pathImage = getImageBySize(props.avatar, 70);
 	return (
@@ -50,7 +59,9 @@ const Friend: React.FC<types> = (props) => {
 					className={`${classes.sendMsg} ${classes.hideMsgBtn}`}
 					onClick={goToChat}
 				>
-					<Image src={Message} width="100" height="100" />
+					{props.status === 'In Game' &&
+					<Image src={LiveGameSelected} width="100" height="100" /> ||
+					<Image src={Message} width="100" height="100" />}
 				</div>
 				<div
 					className={`${classes.sendMsg} ${classes.optionsbtnctn}`}
