@@ -171,13 +171,13 @@ export class ChatService {
 			conv.password = await this.encryptPassword(newConv.password);
 		conv = await this.conversationRepository.save(conv);
 
-		members.forEach(async (mem) => {
+		await Promise.all(members.map(async (mem) => {
 			const member: Member = new Member();
 			member.status = mem.status;
 			member.conversation = conv;
 			member.user = await this.userService.getUser(mem.login);
 			await this.memberRepository.save(member);
-		});
+		}));
 		return conv;
 	}
 
@@ -261,7 +261,6 @@ export class ChatService {
 		];
 		const conv: Conversation = await this.createConv(newConv, newMembers);
 		const newMsg: Message = await this.storeMsg(data.msg, client.data.login, data.invitation, conv);
-		client.join(conv.id);
 		const sockets = await this.chatGateway.server.fetchSockets();
 		const clients = sockets.filter((socket) => (socket.data.login === client.data.login));
 		clients.forEach((client) => (client.join(conv.id)));
