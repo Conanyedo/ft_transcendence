@@ -286,7 +286,7 @@ const Members = (props: {
           {props.category}
           {props?.users?.map((user: any, i: number) => (
             <div key={i}>
-              <div className={Styles.membersAvtr}>
+              <div className={Styles.membersAvtr} onClick={() => router.push(`/profile/${user.login}`)}>
                 <Image
                   src={
                     user?.avatar?.startsWith("https")

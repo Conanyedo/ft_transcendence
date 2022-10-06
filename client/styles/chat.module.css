@@ -994,6 +994,7 @@
   display: flex;
   gap: 14px;
   align-items: center;
+  cursor: pointer;
 }
 
 .membersAvtr > span {

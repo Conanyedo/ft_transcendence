@@ -10,7 +10,7 @@ const nextConfig = {
   reactStrictMode: false,
   swcMinify: true,
   images: {
-    domains: ['robohash.org', 'cdn.intra.42.fr', 'lh3.googleusercontent.com'],
+    domains: ['robohash.org', 'cdn.intra.42.fr', 'lh3.googleusercontent.com', 'localhost'],
     formats: ['image/avif', 'image/webp'],
   },
 }
