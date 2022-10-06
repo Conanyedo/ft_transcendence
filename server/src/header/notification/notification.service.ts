@@ -1,10 +1,9 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Notification, notifStatus, notifType } from './notification.entity';
-import { Server, Socket } from 'socket.io'
+import { Notification, notifStatus } from './notification.entity';
 import { UserService } from 'src/user/user.service';
-import { notificationCreateDto, notificationDto } from './notification.dto';
+import { notificationCreateDto } from './notification.dto';
 import { opponentDto } from 'src/game/game.dto';
 import { NotificationGateway } from './notification.gateway';
 
