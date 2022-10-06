@@ -288,6 +288,12 @@ export class ChatService {
 	}
 
 	async createChannel(owner: string, data: createChannelDto) {
+		if (data.type !== convType.DM) {
+			const exist = await this.conversationRepository
+				.query(`SELECT FROM conversations where conversations.name = '${data.name}';`);
+			if (exist.length)
+				return { err: 'Name already in use' };
+		}
 		if (data.type === convType.PROTECTED && !data.password?.length)
 			return { err: 'Please provide password' };
 		if (data.type !== convType.PROTECTED) data.password = undefined;
