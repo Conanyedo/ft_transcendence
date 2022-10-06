@@ -1,19 +1,17 @@
-import { forwardRef, Inject, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Server, Socket } from 'socket.io';
+import { Socket } from 'socket.io';
 import { deleteAvatar, deleteOldAvatar, isFileValid, resizeAvatar } from 'src/config/upload.config';
-import { friendDto } from 'src/friendship/friendship.dto';
 import { UserService } from 'src/user/user.service';
 import { Repository } from 'typeorm';
 import { conversationDto, createChannelDto, createConvDto, createMemberDto, createMsgDto, msgDto, updateChannelDto } from './chat.dto';
 import { Conversation, convType, invStatus, Member, memberStatus, Message } from './chat.entity';
 import { ChatGateway } from './chat.gateway';
-
-import * as bcrypt from 'bcrypt';
-import { Cron, SchedulerRegistry } from '@nestjs/schedule';
+import { SchedulerRegistry } from '@nestjs/schedule';
 import { CronJob } from 'cron';
 import { FriendshipService } from 'src/friendship/friendship.service';
 import { ConfigService } from '@nestjs/config';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class ChatService {
@@ -273,9 +271,13 @@ export class ChatService {
 	}
 
 	async createNewMessage(login: string, data: createMsgDto) {
+		if (!data.convId)
+			return null;
 		const conv = await this.getConvById(data.convId);
 		const exist = await this.memberRepository
 			.query(`select members.status from members Join users ON members."userId" = users.id where members."conversationId" = '${data.convId}' AND users."login" = '${login}';`);
+		if (!exist.length)
+			return null;
 		const status = exist[0].status;
 		if (status === 'Muted' || status === 'Left' || status === 'Banned' || status === 'Blocker')
 			return status;
@@ -286,7 +288,7 @@ export class ChatService {
 	}
 
 	async createChannel(owner: string, data: createChannelDto) {
-		if (data.type === convType.PROTECTED && !data.password.length)
+		if (data.type === convType.PROTECTED && !data.password?.length)
 			return { err: 'Please provide password' };
 		if (data.type !== convType.PROTECTED) data.password = undefined;
 		const avatar: string = `https://ui-avatars.com/api/?name=${data.name}&size=220&background=2C2C2E&color=409CFF&length=1`;
@@ -475,6 +477,10 @@ export class ChatService {
 			deleteAvatar('channels', data.avatar);
 			return { err: 'Invalid data' };
 		}
+		if (data.type === 'Protected' && !data.password) {
+			deleteAvatar('channels', data.avatar);
+			return { err: 'Please provide password' };
+		}
 		if (data.name) {
 			const exist = await this.conversationRepository
 				.query(`SELECT FROM conversations where conversations.name = '${data.name}' AND conversations.id != '${convId}';`);
@@ -484,9 +490,11 @@ export class ChatService {
 			}
 			await this.setChannelName(convId, data.name);
 		}
-
-		if (data.avatar)
+		if (data.avatar) {
 			data.avatar = await isFileValid('channels', data.avatar);
+			if (!data.avatar)
+				return { err: 'Invalid avatar format' };
+		}
 		if (data.avatar && data.oldPath)
 			deleteOldAvatar('channels', data.oldPath);
 		if (data.avatar) {
