@@ -7,7 +7,7 @@ import AddFriend from "../public/FriendIcons/ADDFriend.svg";
 import Respond from "../public/FriendIcons/Respond.svg";
 import { motion } from "framer-motion";
 import { requests, requestsChannel } from "../customHooks/useFetchData";
-import { NextRouter } from "next/router";
+import Router, { NextRouter } from "next/router";
 import { useRef, useState } from "react";
 import { useOutsideAlerter } from "../customHooks/Functions";
 import socket_notif from "../config/socketNotif";
@@ -169,9 +169,14 @@ export const JoinChannel: React.FC<{
 	id: string;
 	router: NextRouter;
 	refresh: () => void;
+	type: string;
+	name: string;
 }> = (props) => {
 	const handler = async () => {
+		if (props.type !== 'Protected')
 		await requestsChannel(props.id, "chat/joinChannel", props.router);
+		else
+			Router.push('/chat?channel=' + props.name)
 		props.refresh();
 	};
 	return (
