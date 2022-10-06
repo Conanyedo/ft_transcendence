@@ -27,9 +27,14 @@ export const ChatLeft = (props: { login: any, selectedConv: any, setSelectedConv
   const [show, setShow] = useState<boolean>(false);
   const [displayBlueIcon, setDisplayBlueIcon] = useState(false);
   const [channelDetails, setChannelDetails] = useState<any>();
+  const [searchVal, setSearchVal] = useState("");
 
   const router = useRouter();
   const dotRefs: Array<HTMLDivElement> | any = useRef([]);
+
+  // set a state just for filtered users and put the actual users in it
+
+  const [searchUsrs, setSearchUsrs] = useState(lastUsers);
 
   useEffect(() => {}, [friends]);
 
@@ -76,7 +81,8 @@ export const ChatLeft = (props: { login: any, selectedConv: any, setSelectedConv
   }
 
   useEffect(() => {
-    // setLastUsers(props.login);
+    if (searchVal == "")
+      setSearchUsrs(lastUsers);
   }, [lastUsers]);
 
   // listen on msgs
@@ -99,6 +105,11 @@ export const ChatLeft = (props: { login: any, selectedConv: any, setSelectedConv
   function selectConv(convId: string) {
     setShowCnv(true);
     props.setSelectedConv(convId);
+  }
+
+  function Search(e: any) {
+    setSearchVal(e.target.value);
+    filterChatUsers(searchVal, searchUsrs, setSearchUsrs, lastUsers);
   }
 
   useEffect(() => {}, [convId]);
@@ -139,13 +150,11 @@ export const ChatLeft = (props: { login: any, selectedConv: any, setSelectedConv
               type="Text"
               className={Styles.chatInput}
               placeholder="Search"
-              onChange={(e) =>
-                filterChatUsers(e, lastUsers, setLastUsers, initialusrData)
-              }
+              onChange={Search}
             />
           </div>
           <div className={Styles.bottomSection}>
-            {lastUsers?.map((user: any, i: any) => (
+            {searchUsrs?.map((user: any, i: any) => (
               <Link
                 href={
                   `/chat?${user.type == "Dm" ? "login" : "channel"}=` +

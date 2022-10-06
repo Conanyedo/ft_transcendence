@@ -44,17 +44,16 @@ export function sendInvite(currentUser: any, setChatMsgs: any, chatMsgs: any) {
     }
 }
 
-export function filterChatUsers(e: React.ChangeEvent<HTMLInputElement>, lastUsers: any, setLastUsers: any, initialUsersState: any) {
-    let value = e.target.value.toUpperCase();
+export function filterChatUsers(value: string, searchUsrs: any, setSearchUsrs: any, initialData: any) {
 
     // Return to initial state
     if (value == "") {
-        setLastUsers(initialUsersState);
+        setSearchUsrs(initialData);
         return;
     }
-    let newUsers: Array<chatUser> = lastUsers.filter((user: chatUser) => user?.name?.toUpperCase().includes(value));
+    let newUsers: Array<chatUser> = searchUsrs.filter((user: chatUser) => user?.name?.toUpperCase().includes(value));
 
-    setLastUsers(newUsers);
+    setSearchUsrs(newUsers);
 }
 
 export function filterCnvs(data: any, filterItem: any) {
