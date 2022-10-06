@@ -13,6 +13,7 @@ import * as bcrypt from 'bcrypt';
 import { Cron, SchedulerRegistry } from '@nestjs/schedule';
 import { CronJob } from 'cron';
 import { FriendshipService } from 'src/friendship/friendship.service';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class ChatService {
@@ -29,7 +30,8 @@ export class ChatService {
 		private friendshipService: FriendshipService,
 		@Inject(forwardRef(() => ChatGateway))
 		private chatGateway: ChatGateway,
-		private schedulerRegistry: SchedulerRegistry
+		private schedulerRegistry: SchedulerRegistry,
+		private readonly configService: ConfigService
 	) { }
 
 	async searchChannels(login: string, search: string) {
@@ -488,7 +490,7 @@ export class ChatService {
 		if (data.avatar && data.oldPath)
 			deleteOldAvatar('channels', data.oldPath);
 		if (data.avatar) {
-			await this.setChannelAvatar(convId, `/uploads/channels/${data.avatar}`);
+			await this.setChannelAvatar(convId, `http://${this.configService.get('SERVER_IP')}/uploads/channels/${data.avatar}`);
 			resizeAvatar('channels', data.avatar);
 		}
 		if (data.type)
