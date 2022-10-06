@@ -1,38 +1,39 @@
-import { IsBoolean, IsEmail, IsNotEmpty, IsString } from "class-validator";
+import { IsEnum, IsNotEmpty, IsString, IsUUID, Length, Matches } from "class-validator";
 import { notifStatus, notifType } from "./notification.entity";
 
-export class notificationCreateDto {
+export class gameInvitValidate {
+	@IsNotEmpty()
+	@IsString()
+	@Length(4, 20)
+	@Matches(/^(?=.{2,20}$)(?![ _.-])(?!.*[_.-]{2})[a-zA-Z0-9 ._-]+(?<![ _.-])$/)
+	player: string;
 
 	@IsNotEmpty()
+	@IsString()
+	gameId: string;
+}
+
+export class gameUpdateValidate {
+	@IsUUID()
+	notifId: string;
+
+	@IsNotEmpty()
+	@IsEnum(notifStatus, { each: true, message: 'Status must be either Sent, Accepted or Refused' })
+	status: notifStatus;
+}
+
+export interface notificationCreateDto {
 	from: string;
-
-	@IsNotEmpty()
 	to: string;
-
-	@IsNotEmpty()
 	gameId?: string;
-
-	@IsNotEmpty()
 	type: notifType;
 }
 
-export class notificationDto {
-
-	@IsNotEmpty()
+export interface notificationDto {
 	login: string;
-
-	@IsNotEmpty()
 	fullname: string;
-
-	@IsNotEmpty()
 	avatar: string;
-
-	@IsNotEmpty()
 	status: notifStatus;
-
-	@IsNotEmpty()
 	gameId: string;
-
-	@IsNotEmpty()
 	type: notifType;
 }
