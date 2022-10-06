@@ -1,30 +1,23 @@
-import { IsBoolean, IsDate, IsEmail, IsNotEmpty, IsString } from "class-validator";
+import { IsNotEmpty, IsString, Length, Matches } from "class-validator";
 
-export class friendshipDto {
-
+export class loginValidate {
 	@IsNotEmpty()
+	@IsString()
+	@Length(4, 20)
+	@Matches(/^(?=.{2,20}$)(?![ _.-])(?!.*[_.-]{2})[a-zA-Z0-9 ._-]+(?<![ _.-])$/)
+	login: string;
+};
+
+
+export interface friendshipDto {
 	id?: string;
-
-	@IsNotEmpty()
 	user: string;
-
-	@IsNotEmpty()
 	friend: string;
-
 }
 
-export class friendDto {
-
-	@IsNotEmpty()
+export interface friendDto {
 	login: string;
-
-	@IsNotEmpty()
 	fullname: string;
-
-	@IsNotEmpty()
 	avatar: string;
-
-	@IsNotEmpty()
 	status?: string;
-
 }
