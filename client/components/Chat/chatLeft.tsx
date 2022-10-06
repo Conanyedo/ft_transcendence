@@ -85,7 +85,6 @@ export const ChatLeft = (props: {
   }
 
   useEffect(() => {
-    console.log("search val is", searchVal);
     if (searchVal == "") setSearchUsrs(lastUsers);
   }, [lastUsers, searchVal]);
 
