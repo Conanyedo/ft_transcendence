@@ -44,8 +44,10 @@ const Chat = () => {
         setchannelName(channel);
         await getLoginInfo(channel, false, setChannelData);
       }
+      if (login === undefined)
+        setShowCnv(false);
+        
       setName(login || channel);
-      setShowCnv(true);
     }
   };
 

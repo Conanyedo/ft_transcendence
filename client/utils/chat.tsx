@@ -41,11 +41,6 @@ export function showProfile(profile: boolean, setShowprofile: any) {
 	}
 }
 
-export const setChatUser = (user: chatUser, setShowCnv: any) => {
-	//Set current state of the user
-	setShowCnv(true)
-}
-
 export function sendInvite(currentUser: any, setChatMsgs: any, chatMsgs: any) {
 	if (currentUser !== undefined) {
 		const newMsg = { msgContent: InviteMsg(currentUser), time: "07:19 PM", type: "sender", name: "You" }
