@@ -1,12 +1,12 @@
-import { forwardRef, Inject, UseGuards } from "@nestjs/common";
-import { ConnectedSocket, MessageBody, OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, SubscribeMessage, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
-import { Server, Socket } from 'socket.io'
+import { forwardRef, Inject, UseGuards, ValidationPipe } from "@nestjs/common";
+import { MessageBody, SubscribeMessage, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
+import { Server } from 'socket.io'
 import { NotificationService } from "./notification.service";
-import { notifStatus, notifType } from './notification.entity';
+import { notifType } from './notification.entity';
 import { User } from "src/user/user.decorator";
 import { WsJwtGuard } from "src/2fa-jwt/jwt/jwt-ws.guard";
-import { UserService } from "src/user/user.service";
-import { notificationDto } from "./notification.dto";
+import { gameInvitValidate, gameUpdateValidate, notificationDto } from "./notification.dto";
+import { loginValidate } from "src/friendship/friendship.dto";
 
 @WebSocketGateway({
 	cors: {
@@ -25,33 +25,32 @@ export class NotificationGateway {
 
 	@UseGuards(WsJwtGuard)
 	@SubscribeMessage('sendRequest')
-	async sendRequest(@User('login') login: string, @MessageBody() friend: string) {
-		const notif = await this.notifService.saveNofit({ from: login, to: friend, type: notifType.INVITATION });
-		await this.notifService.sendNotif(notif, friend);
+	async sendRequest(@User('login') login: string, @MessageBody(ValidationPipe) data: loginValidate) {
+		const notif = await this.notifService.saveNofit({ from: login, to: data.login, type: notifType.INVITATION });
+		await this.notifService.sendNotif(notif, data.login);
 		return { data: true };
 	}
 
 	@UseGuards(WsJwtGuard)
 	@SubscribeMessage('sendGame')
-	async sendGame(@User('login') login: string, @MessageBody('player') player: string, @MessageBody('gameId') gameId: string) {
-		const notif = await this.notifService.saveNofit({ from: login, to: player, gameId: gameId, type: notifType.GAME });
-		await this.notifService.sendNotif(notif, player);
+	async sendGame(@User('login') login: string, @MessageBody(ValidationPipe) data: gameInvitValidate) {
+		const notif = await this.notifService.saveNofit({ from: login, to: data.player, gameId: data.gameId, type: notifType.GAME });
+		await this.notifService.sendNotif(notif, data.player);
 		return { data: true };
 	}
 
 	@UseGuards(WsJwtGuard)
 	@SubscribeMessage('updateGame')
-	async updateGame(@User('login') login: string, @MessageBody('notifId') notifId: string, @MessageBody('status') status: notifStatus) {
-		await this.notifService.updateGameNotif(notifId, status);
+	async updateGame(@User('login') login: string, @MessageBody(ValidationPipe) data: gameUpdateValidate) {
+		await this.notifService.updateGameNotif(data.notifId, data.status);
 		return { data: true };
 	}
 
 	@UseGuards(WsJwtGuard)
 	@SubscribeMessage('getNotif')
-	async getNotifs(@User('login') login: string, @ConnectedSocket() client: Socket) {
+	async getNotifs(@User('login') login: string) {
 		const notifs: notificationDto[] = await this.notifService.getNotifs(login);
 		return { data: notifs };
-		// this.server.to(client.id).emit('Notif', { data: notifs });
 	}
 
 }

@@ -1,5 +1,5 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { JwtAuthService } from 'src/2fa-jwt/jwt/jwt-auth.service';
 import { userDto, userParitalDto } from 'src/user/user.dto';
 import { UserService } from 'src/user/user.service';
@@ -7,7 +7,6 @@ import { authenticator } from 'otplib';
 import { toDataURL } from 'qrcode';
 import { Jwt2faAuthService } from 'src/2fa-jwt/2fa/2fa-auth.service';
 import { ConfigService } from '@nestjs/config';
-import { userStatus } from 'src/user/user.entity';
 
 @Injectable()
 export class AuthService {
@@ -19,7 +18,6 @@ export class AuthService {
 		private readonly configService: ConfigService
 	) { }
 
-	// Check if User exist or add it to database
 	async checkUserExist(user: userDto): Promise<userParitalDto> {
 		let getUser: userParitalDto = await this.userService.getPartialUser(user.login);
 		if (!getUser) {
@@ -29,24 +27,22 @@ export class AuthService {
 		return { ...getUser };
 	}
 
-	// Set Cookies
 	setJWTCookie(user: userParitalDto, res: Response) {
-		const accessToken = this.jwtAuthService.setJwt(user);
+		const accessToken: string = this.jwtAuthService.setJwt(user);
 		res.cookie('jwt', accessToken);
 		res.cookie('jwt-2fa', '', { maxAge: 1 });
 	}
+
 	setJWT2faCookie(user: userParitalDto, res: Response) {
-		const accessToken = this.jwt2faAuthService.set2faJwt(user);
+		const accessToken: string = this.jwt2faAuthService.set2faJwt(user);
 		res.cookie('jwt-2fa', accessToken);
 	}
-	// ----------------------
 
-	// Authenticate User
 	async authenticateUser(user: userParitalDto, res: Response) {
 		if (user.isFirst)
 			res.cookie('isFirst', true);
 		user = { login: user.login, id: user.id };
-		const is2faEnabled = await this.userService.get2faEnabled(user.id);
+		const is2faEnabled: boolean = await this.userService.get2faEnabled(user.id);
 		if (is2faEnabled) {
 			this.setJWT2faCookie(user, res);
 			return res.redirect(`http://${this.configService.get('CLIENT_IP')}/?_2fa=true`);
@@ -55,42 +51,36 @@ export class AuthService {
 		res.redirect(`http://${this.configService.get('CLIENT_IP')}/`);
 		this.userService.setUserAuthenticated(user.id, true);
 	}
+
 	async setUserAuthenticated(user: userParitalDto) {
 		this.userService.setUserAuthenticated(user.id, true);
 	}
-	// ---------------------
 
-	// Log User out
 	logout(user: userParitalDto, res: Response) {
 		this.userService.setUserAuthenticated(user.id, false);
 		res.cookie('jwt', '', { maxAge: 1 });
 	}
-	// ---------------------
 
-	// Log User out
 	async isAuthorized(user: userParitalDto) {
-		const isAuthorized = await this.userService.getIsAuthenticated(user.id);
+		const isAuthorized: boolean = await this.userService.getIsAuthenticated(user.id);
 		if (!isAuthorized)
 			throw new UnauthorizedException('Unauthorized');
 		return { data: isAuthorized };
 	}
-	// ---------------------
 
-	// 2FactorAuthentication
 	async generate2fa(user: userParitalDto) {
-		const secret = authenticator.generateSecret();
+		const secret: string = authenticator.generateSecret();
 		this.userService.set2faSecret(user.id, secret);
-		const otpAuthUrl = authenticator.keyuri(user.login, 'Transcendence', secret);
-		const qrCode = await toDataURL(otpAuthUrl);
+		const otpAuthUrl: string = authenticator.keyuri(user.login, 'Transcendence', secret);
+		const qrCode: string = await toDataURL(otpAuthUrl);
 		return { data: qrCode };
 	}
 
-	set2faEnabled(user: userParitalDto, status: boolean) {
-		this.userService.set2faEnabled(user.id, status);
+	async set2faEnabled(user: userParitalDto, status: boolean) {
+		await this.userService.set2faEnabled(user.id, status);
+		return true;
 	}
-	// ---------------------
 
-	// Check if 2fa Code valid
 	async is2faCodeValid(user: userParitalDto, code: string) {
 		const secret = await this.userService.getSecret(user.id);
 		const isValid = authenticator.verify({ token: code, secret: secret });
@@ -98,7 +88,6 @@ export class AuthService {
 			return { err: 'Wrong authentication code' };
 		return { data: true };
 	}
-	// ---------------------
 
 	async is2faEnabled(user: userParitalDto) {
 		const is2faEnabled: boolean = await this.userService.get2faEnabled(user.id);

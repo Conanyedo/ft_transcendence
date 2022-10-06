@@ -15,8 +15,7 @@ async function bootstrap() {
 		credentials: true
 	});
 	app.useStaticAssets(join(__dirname, '../'));
-	app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
-	
+	app.useGlobalPipes(new ValidationPipe({ transform: true, whitelist: true, /*skipUndefinedProperties: true*/ }));
 	await app.listen(+`${configService.get('SERVER_PORT')}`);
 }
 bootstrap();
