@@ -123,7 +123,6 @@ export const updateChnlInfo = async (
     url: `${baseUrl}chat/updateChannel`,
     headers: {
       Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
     },
     data: formData,
     withCredentials: true,
@@ -319,7 +318,6 @@ export const addMembers = async (data: any, setData: any) => {
     url: `${baseUrl}chat/addMembers`,
     headers: {
       Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
     },
     data: params,
     withCredentials: true,
@@ -345,7 +343,6 @@ export const banMemberFromChannel = async (data: any) => {
     url: `${baseUrl}chat/banMember`,
     headers: {
       Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
     },
     data: params,
     withCredentials: true,
@@ -371,7 +368,6 @@ export const muteMemberFromChnl = async (data: any) => {
     url: `${baseUrl}chat/muteMember`,
     headers: {
       Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
     },
     data: params,
     withCredentials: true,
@@ -396,7 +392,6 @@ export const UnmuteMemberFromChnl = async (data: any) => {
     url: `${baseUrl}chat/unmuteMember`,
     headers: {
       Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
     },
     data: params,
     withCredentials: true,
@@ -450,7 +445,6 @@ export const postChannel = async (set: any, router: NextRouter, data: any) => {
     url: `${baseUrl}chat/createChannel`,
     headers: {
       Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
     },
     data: params,
     withCredentials: true,
@@ -483,7 +477,6 @@ export const changeMemberRole = async (data: any, set: any) => {
     url: `${baseUrl}chat/setMemberStatus`,
     headers: {
       Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
     },
     data: params,
     withCredentials: true,
@@ -503,7 +496,6 @@ export const getFriends = async (setInitialState: any) => {
     url: `${baseUrl}friendship/friends`,
     headers: {
       Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
     },
     withCredentials: true,
   })
@@ -528,16 +520,16 @@ export const getChannelProfile = async (convId: any, set: any) => {
     url: `${baseUrl}chat/channelProfile`,
     headers: {
       Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
     },
     data: params,
     withCredentials: true,
   })
     .then((res) => {
-      console.log(res);
       return res;
     })
     .catch((err) => {
+      console.log(err);
+      
       return false;
     });
 };
@@ -556,7 +548,6 @@ export const leaveChannel = async (
     url: `${baseUrl}chat/leaveChannel`,
     headers: {
       Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
     },
     data: params,
     withCredentials: true,
@@ -584,7 +575,6 @@ export const getLoginInfo = async (
     url: `${baseUrl}chat/channelInfo/${login}`,
     headers: {
       Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
     },
     withCredentials: true,
   })

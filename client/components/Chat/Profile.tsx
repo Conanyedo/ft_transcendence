@@ -356,6 +356,7 @@ function checkRole(data: any, setRole: any) {
 
 export const getDataOfMembers = async (convId: any, setData: any) => {
   const value: any = await getChannelProfile(convId, setData);
+  console.log('data li katji: ', value);
   setData(value?.data?.data);
   return;
 };
