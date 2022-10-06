@@ -846,10 +846,6 @@
     width: 48px;
     min-height: 48px;
   }
-  
-  .hideUsers {
-    display: none !important;
-  }
 
   .arrowAsset {
     cursor: pointer;

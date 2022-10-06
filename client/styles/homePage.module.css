@@ -73,8 +73,6 @@
     100% {
         left: 0;
     }
-<<<<<<< Updated upstream
-=======
 }
 
 
@@ -231,5 +229,4 @@
 
 .sound:hover>.muteSelected {
     display: inline;
->>>>>>> Stashed changes
 }
