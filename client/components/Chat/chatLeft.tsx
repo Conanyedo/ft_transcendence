@@ -56,6 +56,7 @@ export const ChatLeft = (props: {
     members: Array<string>,
     setAddedUsers: any,
     formik: any,
+    error: string,
     setError: any
   ) {
     if (
@@ -66,7 +67,6 @@ export const ChatLeft = (props: {
       setError("Please enter the required credentials**");
     } else {
       setError("");
-      setShow(!show);
       var loginList: string[] = [];
       loginList = members.map((member: any) => member?.login);
 
@@ -77,7 +77,11 @@ export const ChatLeft = (props: {
         password: password,
       };
 
-      postChannel(setChannelDetails, router, data);
+      postChannel(setChannelDetails, router, data, setError);
+
+      console.log(error);
+
+      // setShow(!show);
       // reset the necessary fields
       resetForm(formik);
       setAddedUsers([]);

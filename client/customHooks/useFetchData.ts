@@ -447,7 +447,7 @@ export const checkCode2FA = async (code: string, router: NextRouter) => {
     });
 };
 
-export const postChannel = async (set: any, router: NextRouter, data: any) => {
+export const postChannel = async (set: any, router: NextRouter, data: any, setError: any) => {
   const token = getCookie("jwt");
   const json = JSON.stringify(data);
   return await axios({
@@ -461,6 +461,9 @@ export const postChannel = async (set: any, router: NextRouter, data: any) => {
     withCredentials: true,
   })
     .then((res) => {
+      if (res.data.err == "") {
+        
+      }
       set(res.data);
       if (res.data.data.membersNum > 0)
         router.push("/chat?channel=" + res.data.data.name);
