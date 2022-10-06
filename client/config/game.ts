@@ -1,4 +1,4 @@
-import { GameDataType } from "../Types/dataTypes"
+import { gameControleType } from "../Types/dataTypes"
 import { Theme } from "./gameMap"
 
 function drawRect(
@@ -35,20 +35,20 @@ function drawRect(
 function drawCircle(x: number, y: number, r: number, color: string, ctx: CanvasRenderingContext2D) {
 	ctx.beginPath()
 	ctx.fillStyle = color
-	ctx.shadowBlur = r * 1.5
-	ctx.shadowColor = color
+	// ctx.shadowBlur = r * 1.5
+	// ctx.shadowColor = color
 	ctx.arc(x, y, r, 0, Math.PI * 2, false)
 	ctx.fill()
 	ctx.closePath()
 }
 
-function drawNet(data: GameDataType, ctx: CanvasRenderingContext2D, lineColor: string) {
+function drawNet(data: gameControleType, ctx: CanvasRenderingContext2D, lineColor: string) {
 	for (let i = 0; i <= data.canvasHieght; i += 15) {
 		drawRect(data.canvasWidth / 2 - 2.5, i, 5, 10, lineColor, ctx, false)
 	}
 }
 
-export function render(data: GameDataType, canvas: any, theme: Theme) {
+export function render(data: gameControleType, canvas: any, theme: Theme) {
 	const ctx = canvas.getContext("2d") as CanvasRenderingContext2D
 	drawRect(0, 0, data.canvasWidth, data.canvasHieght, theme.backgroundColor, ctx, false)
 	drawRect(0, data.paddleLeft.paddleY, data.widthPaddle, data.HieghtPaddle, theme.leftPaddleColor, ctx, true)
