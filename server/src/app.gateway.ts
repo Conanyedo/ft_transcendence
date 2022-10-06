@@ -1,4 +1,4 @@
-import { SubscribeMessage, WebSocketGateway, OnGatewayInit, WebSocketServer, OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
+import { WebSocketGateway, OnGatewayInit, WebSocketServer, OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
 import { Socket, Server } from 'socket.io';
 import { Logger } from '@nestjs/common';
 import { JwtAuthService } from './2fa-jwt/jwt/jwt-auth.service';
@@ -19,7 +19,7 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
 	) { }
 
 	afterInit(server: any) {
-		this.logger.log('Initialized!');
+		this.logger.log('App Gateway initialized!');
 	}
 
 	async handleConnection(client: Socket) {

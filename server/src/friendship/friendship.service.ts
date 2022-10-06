@@ -1,8 +1,7 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ChatService } from 'src/chat/chat.service';
-import { notifStatus, notifType } from 'src/header/notification/notification.entity';
-import { NotificationGateway } from 'src/header/notification/notification.gateway';
+import { notifStatus } from 'src/header/notification/notification.entity';
 import { NotificationService } from 'src/header/notification/notification.service';
 import { UserService } from 'src/user/user.service';
 import { Repository } from 'typeorm';

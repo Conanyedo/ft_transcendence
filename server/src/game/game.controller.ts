@@ -1,8 +1,8 @@
-import { Body, Controller, Get, Param, Post, Request, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Controller, Get, Param, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/2fa-jwt/jwt/jwt-auth.guard';
+import { loginValidate } from 'src/friendship/friendship.dto';
 import { User } from 'src/user/user.decorator';
 import { userParitalDto } from 'src/user/user.dto';
-import { gameDto } from './game.dto';
 import { GameService } from './game.service';
 
 @Controller('game')
@@ -17,14 +17,8 @@ export class GameController {
 	
 	@Get('/matchHistory/:login')
 	@UseGuards(JwtAuthGuard)
-	async getUserMatches(@Param('login') login: string) {
-		return await this.gameService.getMatches(login);
-	}
-
-	@Post('/insertMatch')
-	@UseGuards(JwtAuthGuard)
-	async insertMatch(@Param('login') login: string, @Body() gameResult) {
-		return await this.gameService.insertMatches(gameResult);
+	async getUserMatches(@Param('login') data: loginValidate) {
+		return await this.gameService.getMatches(data.login);
 	}
 
 }

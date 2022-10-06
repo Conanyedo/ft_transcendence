@@ -1,10 +1,11 @@
-import { Body, Controller, Get, Param, Post, Request, UploadedFile, UseGuards, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
-import { userDto, userParitalDto } from './user.dto';
+import { Body, Controller, Get, Param, Post, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { updateProfileValidate, userParitalDto } from './user.dto';
 import { UserService } from './user.service';
 import { JwtAuthGuard } from '../2fa-jwt/jwt/jwt-auth.guard';
 import { User } from './user.decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { isFileValid, uploadUsersConfig } from 'src/config/upload.config';
+import { uploadUsersConfig } from 'src/config/upload.config';
+import { loginValidate } from 'src/friendship/friendship.dto';
 
 @Controller('user')
 export class UserController {
@@ -14,14 +15,14 @@ export class UserController {
 	@Post('/editProfile')
 	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(FileInterceptor('avatar', uploadUsersConfig))
-	async editProfile(@User() user: userParitalDto, @UploadedFile() avatar: Express.Multer.File, @Body('fullname') fullname: string, @Body('oldPath') oldPath: string) {
-		return await this.userService.editProfile(user.id, fullname, avatar?.filename, oldPath);
+	async editProfile(@User() user: userParitalDto, @UploadedFile() avatar: Express.Multer.File, @Body() data: updateProfileValidate) {
+		return await this.userService.editProfile(user.id, data.fullname, avatar?.filename, data.oldPath);
 	}
 
 	@Post('/isExist')
 	@UseGuards(JwtAuthGuard)
-	async userExist(@User() user: userParitalDto, @Body('login') login: string) {
-		return await this.userService.userExist(user.login, login);
+	async userExist(@User() user: userParitalDto, @Body() data: loginValidate) {
+		return await this.userService.userExist(user.login, data.login);
 	}
 
 	@Get('/header')
@@ -32,8 +33,8 @@ export class UserController {
 
 	@Get('/header/:login')
 	@UseGuards(JwtAuthGuard)
-	async getUserHeader(@User() user: userParitalDto, @Param('login') login: string) {
-		return await this.userService.getUserHeader(login);
+	async getUserHeader(@Param() data: loginValidate) {
+		return await this.userService.getUserHeader(data.login);
 	}
 
 	@Get('/info')
@@ -44,8 +45,8 @@ export class UserController {
 
 	@Get('/info/:login')
 	@UseGuards(JwtAuthGuard)
-	async getUserInfo(@User() user: userParitalDto, @Param('login') login: string) {
-		return await this.userService.getUserInfo(user.login, login);
+	async getUserInfo(@User() user: userParitalDto, @Param() data: loginValidate) {
+		return await this.userService.getUserInfo(user.login, data.login);
 	}
 
 	@Get('/stats')
@@ -56,8 +57,8 @@ export class UserController {
 
 	@Get('/stats/:login')
 	@UseGuards(JwtAuthGuard)
-	async getUserStats(@Param('login') login: string) {
-		return await this.userService.getUserStats(login, 'login');
+	async getUserStats(@Param() data: loginValidate) {
+		return await this.userService.getUserStats(data.login, 'login');
 	}
 
 	@Get('/achievements')
@@ -68,8 +69,8 @@ export class UserController {
 
 	@Get('/achievements/:login')
 	@UseGuards(JwtAuthGuard)
-	async getAchievements(@Param('login') login: string) {
-		return await this.userService.getAchievements(login, 'login');
+	async getAchievements(@Param() data: loginValidate) {
+		return await this.userService.getAchievements(data.login, 'login');
 	}
 
 	@Get('/leaderborad')

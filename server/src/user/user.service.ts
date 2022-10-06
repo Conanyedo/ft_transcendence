@@ -1,13 +1,12 @@
-import { BadRequestException, forwardRef, Inject, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
-import { stat } from 'fs';
-import { deleteAvatar, deleteOldAvatar, isFileValid, resizeAvatar } from 'src/config/upload.config';
+import { deleteOldAvatar, isFileValid, resizeAvatar } from 'src/config/upload.config';
 import { friendDto } from 'src/friendship/friendship.dto';
 import { userRelation } from 'src/friendship/friendship.entity';
 import { FriendshipService } from 'src/friendship/friendship.service';
 import { opponentDto } from 'src/game/game.dto';
-import { Repository, SelectQueryBuilder } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Stats, userAchievements } from './stats.entity';
 import { rankDto, statsDto, userDto, userParitalDto } from './user.dto';
 import { User, userStatus } from './user.entity';
@@ -48,7 +47,6 @@ export class UserService {
 		return getUser;
 	}
 
-	// Edit Profile
 	async editProfile(id: string, fullname: string, avatar: string, oldPath: string) {
 		if (fullname) {
 			const exist = await this.userRepository.query(`SELECT FROM users where users.fullname = '${fullname}' AND users.id != '${id}';`);
@@ -67,7 +65,6 @@ export class UserService {
 		return { data: true }
 	}
 
-	// User Getters
 	async getUser(login: string) {
 		const user: User = await this.userRepository
 			.createQueryBuilder('users')
@@ -233,7 +230,6 @@ export class UserService {
 		const friend: friendDto = { login: user.login, fullname: user.fullname, avatar: user.avatar, status: user.status };
 		return { ...friend };
 	}
-	// ------------------------------
 
 	async getRank() {
 		const rank: rankDto[] = await this.statsRepository
@@ -276,7 +272,6 @@ export class UserService {
 			.execute();
 	}
 
-	// User Setters
 	async setUserAuthenticated(id: string, state: boolean) {
 		const status: userStatus = (state) ? userStatus.ONLINE : userStatus.OFFLINE;
 		return await this.userRepository

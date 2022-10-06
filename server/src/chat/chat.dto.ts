@@ -1,132 +1,169 @@
-import { IsBoolean, IsEmail, IsNotEmpty, IsString } from "class-validator";
-import { User } from "src/user/user.entity";
-import { Conversation, convType, invStatus, memberStatus } from "./chat.entity";
+import { IsArray, IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString, IsUUID, Length, Matches, Max, Min } from "class-validator";
+import { convType, invStatus, memberStatus } from "./chat.entity";
+
+export class passwordValidate {
+	@IsOptional()
+	@Matches(/^(?=(.*[a-z]){1,})(?=(.*[A-Z]){1,})(?=(.*[0-9]){1,})(?=(.*[!@#$%^&*()\-__+.]){1,}).{8,}$/, { message: 'Password must contain at least 8 characters.At least one number, one uppercase letter and one special character' })
+	password: string;
+};
+
+export class nameValidate {
+	@IsNotEmpty()
+	@IsString()
+	@Length(4, 20)
+	@Matches(/^(?=.{2,20}$)(?![ _.-])(?!.*[_.-]{2})[a-zA-Z0-9 ._-]+(?<![ _.-])$/)
+	name: string;
+};
+
+export class convIdValidate {
+	@IsUUID()
+	convId: string;
+};
+
+export class memberValidate {
+	@IsNotEmpty()
+	@IsString()
+	@Length(4, 20)
+	@Matches(/^(?=.{2,20}$)(?![ _.-])(?!.*[_.-]{2})[a-zA-Z0-9 ._-]+(?<![ _.-])$/)
+	member: string;
+};
+
+export class membersValidate {
+	@IsArray()
+	@IsString({ each: true })
+	@Length(4, 20, { each: true })
+	@Matches(/^(?=.{2,20}$)(?![ _.-])(?!.*[_.-]{2})[a-zA-Z0-9 ._-]+(?<![ _.-])$/, { each: true })
+	members: string[];
+};
+
+export class memberStatusValidate {
+	@IsNotEmpty()
+	@IsEnum(memberStatus, { each: true, message: 'Invalid member status' })
+	status: memberStatus;
+};
+
+export class secondsValidate {
+	@IsNumber()
+	@Min(5)
+	@Max(2592000)
+	seconds: number;
+};
 
 export class createMsgDto {
 
-	@IsNotEmpty()
+	@IsOptional()
+	@IsString()
 	msg: string;
 
+	@IsOptional()
+	@IsNotEmpty()
 	@IsString()
-	receiver?: string;
+	@Length(4, 20)
+	@Matches(/^(?=.{2,20}$)(?![ _.-])(?!.*[_.-]{2})[a-zA-Z0-9 ._-]+(?<![ _.-])$/)
+	receiver: string;
 
-	@IsString()
-	convId?: string;
+	@IsOptional()
+	@IsUUID()
+	convId: string;
 
+	@IsOptional()
 	@IsString()
-	invitation?: string;
+	invitation: string;
 
 }
 
-export class createMemberDto {
+export class updateInvitationDto {
+
+	@IsUUID()
+	convId: string;
+
+	@IsUUID()
+	msgId: string;
 
 	@IsNotEmpty()
-	status: memberStatus;
-
-	@IsNotEmpty()
-	login: string;
-
-}
-
-export class createConvDto {
-
-	@IsNotEmpty()
-	name?: string;
-
-	@IsNotEmpty()
-	type: convType;
-	
-	@IsString()
-	password?: string;
-	
-	@IsString()
-	avatar?: string;
-
+	@IsEnum(invStatus, { each: true, message: 'Invalid invitation status' })
+	status: invStatus;
 }
 
 export class createChannelDto {
 
 	@IsNotEmpty()
+	@IsString()
+	@Length(4, 20)
+	@Matches(/^(?=.{2,20}$)(?![ _.-])(?!.*[_.-]{2})[a-zA-Z0-9 ._-]+(?<![ _.-])$/)
 	name: string;
 
 	@IsNotEmpty()
+	@IsEnum(convType, { each: true, message: 'Conversation must be either Public, Protected or Private' })
 	type: convType;
 
-	@IsNotEmpty()
+	@IsArray()
+	@IsString({ each: true })
+	@Length(2, 20, { each: true })
+	@Matches(/^(?=.{2,20}$)(?![ _.-])(?!.*[_.-]{2})[a-zA-Z0-9 ._-]+(?<![ _.-])$/, { each: true })
 	members: string[];
 
-	@IsNotEmpty()
+	@IsOptional()
+	@Matches(/^(?=(.*[a-z]){1,})(?=(.*[A-Z]){1,})(?=(.*[0-9]){1,})(?=(.*[!@#$%^&*()\-__+.]){1,}).{8,}$/, { message: 'Password must contain at least 8 characters.At least one number, one uppercase letter and one special character' })
 	password: string;
 
 }
 
 export class updateChannelDto {
 
-	@IsNotEmpty()
+	@IsOptional()
+	@IsString()
+	@Length(2, 20)
+	@Matches(/^(?=.{2,20}$)(?![ _.-])(?!.*[_.-]{2})[a-zA-Z0-9 ._-]+(?<![ _.-])$/)
 	name: string;
 
-	@IsNotEmpty()
+	@IsOptional()
+	@IsEnum(convType, { each: true, message: 'Conversation must be either Public, Protected or Private' })
 	type: convType;
 
-	@IsNotEmpty()
+	@IsOptional()
+	@Matches(/^(?=(.*[a-z]){1,})(?=(.*[A-Z]){1,})(?=(.*[0-9]){1,})(?=(.*[!@#$%^&*()\-__+.]){1,}).{8,}$/, { message: 'Password must contain at least 8 characters.At least one number, one uppercase letter and one special character' })
 	password: string;
 
-	@IsNotEmpty()
+	@IsOptional()
+	@IsString()
 	avatar: string;
 
-	@IsNotEmpty()
+	@IsOptional()
+	@IsString()
 	oldPath: string;
 }
 
-export class msgDto {
-
-	@IsNotEmpty()
-	msg: string;
-
-	@IsNotEmpty()
-	sender: string;
-
-	@IsNotEmpty()
-	invitation: string;
-
-	@IsNotEmpty()
-	status: invStatus;
-
-	@IsNotEmpty()
-	date: Date;
-
-	@IsNotEmpty()
+export interface conversationDto {
 	convId: string;
-
-	@IsNotEmpty()
-	msgId: string;
-
-}
-
-export class conversationDto {
-
-	@IsNotEmpty()
-	convId: string;
-
-	@IsNotEmpty()
 	type: string;
-
-	@IsNotEmpty()
 	relation: string;
-
-	@IsString()
 	name?: string;
-
-	@IsString()
 	login?: string;
-
-	@IsString()
 	avatar?: string;
-
-	@IsString()
 	status?: string;
-
-	@IsString()
 	membersNum?: number;
-
 }
+
+export interface createMemberDto {
+	status: memberStatus;
+	login: string;
+}
+
+export interface createConvDto {
+	name?: string;
+	type: convType;
+	password?: string;
+	avatar?: string;
+}
+
+export interface msgDto {
+	msg: string;
+	sender: string;
+	invitation: string;
+	status: invStatus;
+	date: Date;
+	convId: string;
+	msgId: string;
+}
+
