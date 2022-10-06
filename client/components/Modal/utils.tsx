@@ -74,7 +74,7 @@ export function SuggestedUsr(props: {
     <div className={Styles.sUsr}>
       <div>
         <div>
-          <Image src={Avatar} width={32} height={32} />
+          <Image src={props.user?.avatar} width={32} height={32} />
         </div>
         <span>{props.user.fullname}</span>
       </div>

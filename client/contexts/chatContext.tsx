@@ -70,7 +70,7 @@ const ChatProvider = ({ children }: any) => {
     });
 
     getLastConvs(setLastUsers, setInitialUsrData);
-    getFriends(() => null, setFriends);
+    getFriends(setFriends);
 
     setCurrentUser(lastUsers[0]);
     return () => {
