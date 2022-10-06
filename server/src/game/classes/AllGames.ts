@@ -75,13 +75,15 @@ export class allGames {
     if (!idGame && !this.FriendsLobby.length) return;
     let game: LobbyFriends;
     if (idGame) game = this.FriendsLobby.find((game) => game.idGame == idGame);
-    if (game)
+    if (game) {
+      this.server.to(idGame).emit('gameStarted', true);
       return {
         gameID: game.idGame,
         admin: game.admin,
         friend: game.friend,
         Theme: game.theme,
       };
+    }
   }
   joinFriendGame(client: Socket, GameID: string, login: string) {
     const isfriend = this.FriendsLobby.find(
@@ -112,7 +114,7 @@ export class allGames {
           return () => {
             clearTimeout(time);
           };
-        }, 300);
+        }, 10);
       }, 100);
       return GameID;
     }
@@ -322,7 +324,6 @@ export class allGames {
         }
       });
     }
-    // if ()
   }
   removeGameLobby(client: Socket, gameID: string) {
     if (this.FriendsLobby.length && gameID)
@@ -348,12 +349,14 @@ export class allGames {
           return game;
       })
     }
-    if (this.RankGames.length && !game && !game._ID) {
+    if (this.FriendGames.length && !game) {
       game = this.FriendGames.find(game => {
         if (game._PlayerLeft.getlogin() === login || game._PlayerRight.getlogin() === login)
         return game;
     })
     }
-    return game._ID;
+    if (game && game?._ID)
+      return game._ID;
+    return null;
   }
 }
