@@ -1,4 +1,5 @@
 import { BadRequestException, forwardRef, Inject, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { stat } from 'fs';
 import { deleteAvatar, deleteOldAvatar, isFileValid, resizeAvatar } from 'src/config/upload.config';
@@ -23,7 +24,8 @@ export class UserService {
 		private userRepository: Repository<User>,
 		@InjectRepository(Stats)
 		private statsRepository: Repository<Stats>,
-		private readonly friendshipService: FriendshipService
+		private readonly friendshipService: FriendshipService,
+		private readonly configService: ConfigService
 	) { }
 
 	async registerUser(newUser: userDto): Promise<userParitalDto> {
@@ -59,7 +61,7 @@ export class UserService {
 		if (avatar && oldPath)
 			deleteOldAvatar('users', oldPath);
 		if (avatar) {
-			await this.setAvatar(id, `/uploads/users/${avatar}`);
+			await this.setAvatar(id, `http://${this.configService.get('SERVER_IP')}/uploads/users/${avatar}`);
 			resizeAvatar('users', avatar);
 		}
 		return { data: true }
@@ -131,12 +133,12 @@ export class UserService {
 		return user?.isAuthenticated;
 	}
 
-	async getUserHeader(id: string) {
+	async getUserHeader(login: string) {
 		const user: User = await this.userRepository
 			.createQueryBuilder('users')
 			.leftJoinAndSelect("users.stats", "stats")
 			.select(['users.fullname', 'users.avatar'])
-			.where('users.id = :id', { id: id })
+			.where('users.login = :login', { login: login })
 			.getOne();
 		if (!user)
 			return { err: 'User not found' };

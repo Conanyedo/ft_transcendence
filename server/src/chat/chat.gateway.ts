@@ -4,7 +4,7 @@ import { Server, Socket } from 'socket.io'
 import { User } from "src/user/user.decorator";
 import { WsJwtGuard } from "src/2fa-jwt/jwt/jwt-ws.guard";
 import { ChatService } from "./chat.service";
-import { Conversation } from "./chat.entity";
+import { Conversation, invStatus } from "./chat.entity";
 import { createMsgDto, msgDto } from "./chat.dto";
 import { userParitalDto } from "src/user/user.dto";
 
@@ -40,21 +40,24 @@ export class ChatGateway {
 	}
 
 	@UseGuards(WsJwtGuard)
+	@SubscribeMessage('updateInvitation')
+	async updateInvitation(@User('login') login: string, @MessageBody('convId') convId: string, @MessageBody('msgId') msgId: string, @MessageBody('status') status: invStatus) {
+		return await this.chatService.updateInvitation(login, convId, msgId, status);
+	}
+
+	@UseGuards(WsJwtGuard)
 	@SubscribeMessage('sendMsg')
 	async sendMsg(@User('login') login: string, @ConnectedSocket() client: Socket, @MessageBody() data: createMsgDto) {
-		console.log(`CnovId : ${data.convId}`);
-		console.log(`invit : ${data.invitation}`);
-		console.log(`msg : ${data.msg}`);
 		let msg: msgDto;
 		if (!data.convId && data.receiver)
 			msg = await this.chatService.createNewDm(client, data);
 		else
 			msg = await this.chatService.createNewMessage(login, data);
 		if (typeof msg === "string")
-			return msg;
-		
+			return { err: msg };
 		const sockets: string[] = await this.chatService.getRoomSockets(login, msg.convId);
-		sockets.forEach((socket) => (this.server.to(socket).emit('newMsg', msg)))
+		sockets.forEach((socket) => (this.server.to(socket).emit('newMsg', { data: msg })))
+		return { data: msg.convId };
 		// this.server.to(msg.convId).emit('newMsg', msg);
 	}
 

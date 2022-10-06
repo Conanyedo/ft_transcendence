@@ -1,6 +1,6 @@
 import classes from "../../styles/Profile.module.css";
 import Image from "next/image";
-import pen from "../../public/editPen.svg";
+import pen from "../../public/EditPen.svg";
 import React, { useEffect, useState } from "react";
 import { EmtyUser, rankObj, UserTypeNew } from "../../Types/dataTypes";
 import { useRouter } from "next/router";

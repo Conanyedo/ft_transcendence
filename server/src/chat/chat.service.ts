@@ -6,13 +6,14 @@ import { friendDto } from 'src/friendship/friendship.dto';
 import { UserService } from 'src/user/user.service';
 import { Repository } from 'typeorm';
 import { conversationDto, createChannelDto, createConvDto, createMemberDto, createMsgDto, msgDto, updateChannelDto } from './chat.dto';
-import { Conversation, convType, Member, memberStatus, Message } from './chat.entity';
+import { Conversation, convType, invStatus, Member, memberStatus, Message } from './chat.entity';
 import { ChatGateway } from './chat.gateway';
 
 import * as bcrypt from 'bcrypt';
 import { Cron, SchedulerRegistry } from '@nestjs/schedule';
 import { CronJob } from 'cron';
 import { FriendshipService } from 'src/friendship/friendship.service';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class ChatService {
@@ -29,7 +30,8 @@ export class ChatService {
 		private friendshipService: FriendshipService,
 		@Inject(forwardRef(() => ChatGateway))
 		private chatGateway: ChatGateway,
-		private schedulerRegistry: SchedulerRegistry
+		private schedulerRegistry: SchedulerRegistry,
+		private readonly configService: ConfigService
 	) { }
 
 	async searchChannels(login: string, search: string) {
@@ -157,7 +159,7 @@ export class ChatService {
 			}
 			return convInfo;
 		}))
-		return [...conversations];
+		return { data: [...conversations] };
 	}
 
 	async createConv(newConv: createConvDto, members: createMemberDto[]) {
@@ -171,13 +173,13 @@ export class ChatService {
 			conv.password = await this.encryptPassword(newConv.password);
 		conv = await this.conversationRepository.save(conv);
 
-		members.forEach(async (mem) => {
+		await Promise.all(members.map(async (mem) => {
 			const member: Member = new Member();
 			member.status = mem.status;
 			member.conversation = conv;
 			member.user = await this.userService.getUser(mem.login);
 			await this.memberRepository.save(member);
-		});
+		}));
 		return conv;
 	}
 
@@ -211,14 +213,13 @@ export class ChatService {
 		const dates = await this.memberRepository
 			.query(`select members."joinDate", members."leftDate" from members where members."conversationId" = '${convId}' AND members."userId" = '${id}';`);
 		if (!dates.length)
-			return null;
-		const joinDate: string = new Date(dates[0].joinDate).toISOString();
-		const leftDate: string = (!dates[0].leftDate) ? new Date().toISOString() : new Date(dates[0].
-			leftDate).toISOString();
+			return { err: 'Invalid data' };
+		const joinDate: string = new Date(dates[0].joinDate.getTime() - dates[0].joinDate.getTimezoneOffset() * 60000).toISOString();
+		const leftDate: string = (!dates[0].leftDate) ? new Date().toISOString() : new Date(dates[0].leftDate).toISOString();
 		const msgs: Message[] = await this.messageRepository
-			.query(`SELECT messages."sender", messages."msg", messages."createDate", messages."conversationId" as "convId", messages."invitation", messages."status" FROM messages where messages."conversationId" = '${convId}' AND messages."createDate" >= '${joinDate}' AND messages."createDate" <= '${leftDate}' order by messages."createDate" ASC;`);
+			.query(`SELECT messages."id" as "msgId", messages."sender", messages."msg", messages."createDate", messages."conversationId" as "convId", messages."invitation", messages."status" FROM messages where messages."conversationId" = '${convId}' AND messages."createDate" >= '${joinDate}' AND messages."createDate" <= '${leftDate}' order by messages."createDate" ASC;`);
 		if (!msgs.length)
-			return null;
+			return { data: msgs };
 		const conv: Conversation = await this.getConvById(convId);
 		const newMsgs: Message[] = [];
 		await Promise.all(msgs.map(async (msg) => {
@@ -230,7 +231,22 @@ export class ChatService {
 					newMsgs.push(msg);
 			}
 		}))
-		return [...newMsgs];
+		return { data: [...newMsgs] };
+	}
+
+	async updateInvitation(login: string, convId: string, msgId: string, status: invStatus) {
+		const exist = await this.memberRepository
+			.query(`select from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND users.login != '${login}';`);
+		if (!exist.length)
+			return { err: 'Invalid data' };
+		await this.messageRepository
+			.createQueryBuilder('messages')
+			.update({ status: status })
+			.where(`id = '${msgId}' AND status = '${invStatus.SENT}'`)
+			.execute();
+		const msg = await this.messageRepository
+			.query(`SELECT messages."id" as "msgId", messages."sender", messages."msg", messages."createDate", messages."conversationId" as "convId", messages."invitation", messages."status" FROM messages where messages."id" = '${msgId}';`);
+		return { data: msg[0] };
 	}
 
 	async createNewDm(client: Socket, data: createMsgDto) {
@@ -247,13 +263,12 @@ export class ChatService {
 		];
 		const conv: Conversation = await this.createConv(newConv, newMembers);
 		const newMsg: Message = await this.storeMsg(data.msg, client.data.login, data.invitation, conv);
-		client.join(conv.id);
 		const sockets = await this.chatGateway.server.fetchSockets();
 		const clients = sockets.filter((socket) => (socket.data.login === client.data.login));
 		clients.forEach((client) => (client.join(conv.id)));
 		const friendSockets = sockets.filter((socket) => (socket.data.login === data.receiver))
 		friendSockets.forEach((friendSocket) => (friendSocket.join(conv.id)));
-		const msg: msgDto = { msg: data.msg, sender: client.data.login, invitation: newMsg.invitation, status: newMsg.status, date: newMsg.createDate, convId: conv.id };
+		const msg: msgDto = { msg: data.msg, sender: client.data.login, invitation: newMsg.invitation, status: newMsg.status, date: newMsg.createDate, convId: conv.id, msgId: newMsg.id };
 		return msg;
 	}
 
@@ -266,7 +281,7 @@ export class ChatService {
 			return status;
 		const newMsg: Message = await this.storeMsg(data.msg, login, data.invitation, conv);
 		await this.updateConvDate(conv.id, newMsg.createDate);
-		const msg: msgDto = { msg: data.msg, sender: login, invitation: newMsg.invitation, status: newMsg.status, date: newMsg.createDate, convId: conv.id };
+		const msg: msgDto = { msg: data.msg, sender: login, invitation: newMsg.invitation, status: newMsg.status, date: newMsg.createDate, convId: conv.id, msgId: newMsg.id };
 		return msg;
 	}
 
@@ -475,7 +490,7 @@ export class ChatService {
 		if (data.avatar && data.oldPath)
 			deleteOldAvatar('channels', data.oldPath);
 		if (data.avatar) {
-			await this.setChannelAvatar(convId, `/uploads/channels/${data.avatar}`);
+			await this.setChannelAvatar(convId, `http://${this.configService.get('SERVER_IP')}/uploads/channels/${data.avatar}`);
 			resizeAvatar('channels', data.avatar);
 		}
 		if (data.type)
