@@ -96,7 +96,7 @@ const SearchUserList: React.FC<{ value: string }> = (props) => {
 	const refresh = () =>
 		fetchDATA(setSearchData, router, `search/users/?search=${props.value}`);
 	useEffect(() => {
-		if (props.value)
+		if (props.value && ((/^(?![ _.-])(?!.*[_.-]{2})[a-zA-Z0-9 ._-]+(?<![ _.-])$/g).test(props.value)))
 			fetchDATA(
 				setSearchData,
 				router,
