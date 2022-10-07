@@ -1,13 +1,13 @@
 import classes from "../../styles/factorAuth.module.css"
 import CrossIcon from "../../public/FriendIcons/Cross.svg"
 import Image from "next/image"
-import OtpInput from "react-otp-input"
 import { useEffect, useState } from "react"
 import LoadingElm from "../loading/Loading_elm"
 import { check2FA_JWT, checkCode2FA } from "../../customHooks/useFetchData"
 import { useRouter } from "next/router"
 import { getCookie } from "cookies-next"
 import { eraseCookie } from "../../customHooks/Functions"
+import OtpInput from "react-otp-input-rc-17"
 
 const FactorAuth = () => {
 	const router = useRouter()
