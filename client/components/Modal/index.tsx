@@ -15,8 +15,6 @@ import { getFriends } from "@hooks/useFetchData"
 
 export const UsersModalInput = (props: { addedUsers: any, setAddedUsers: any, removeUser: any, handleChange: any, value: any, inputRef: any, oldUsers: any, setOldUsers: any}) => {
 
-    // console.log(props.addedUsers);
-
     const removeTagHandler = (element: any) => {
         removeTag(
             element,
@@ -26,7 +24,6 @@ export const UsersModalInput = (props: { addedUsers: any, setAddedUsers: any, re
     }
 
     useEffect(() => {
-        console.log(props.addedUsers);
     }, [props.addedUsers])
 
     return (<div className={Styles.usrsInpt}>
@@ -75,14 +72,12 @@ export function ModalForm(props: { createChannel: any }) {
         let value = event.target.value;
 
         formik.setFieldValue("member", value);
-        // console.log(formik.values.member);
         setErrorMsg("");
 
         filterOutUsers(value, friends, setshowDrpdown);
     };
 
     const removeUser = () => {
-        // console.log("remove user here");
     }
 
     const clickHandler = (user: any) => {
@@ -122,7 +117,7 @@ export function ModalForm(props: { createChannel: any }) {
                 <span>Add Members</span>
                 <UsersModalInput addedUsers={addedUsers} setAddedUsers={setAddedUsers} removeUser={removeUser} handleChange={handleOnChange} value={formik.values.member} inputRef={inputRef} oldUsers={friends} setOldUsers={setFriends} />
                 {showDrpdown && <div className={Styles.dropMembers}>
-                {friends.map((usr: any, i) => {
+                {friends.filter(item => !addedUsers.includes(item)).map((usr: any, i) => {
                             if (usr.fullname.toLowerCase().includes((inputRef?.current?.value)))
                                 return <SuggestedUsr key={i} user={usr} action={clickHandler} />
                         })}

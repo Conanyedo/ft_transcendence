@@ -84,8 +84,6 @@ const SendMsg: React.FunctionComponent<{
 							onKeyDown={(event) => {
 								if (event.keyCode !== 13) return
 								setMsg(event.keyCode, enteredMsg, currentUser, setStopUsr)
-								console.log("daz hna")
-								// Router.push('/chat');
 							}}
 						/>
 						{(currentUser?.type == "Dm" || relation == "friend") && (
@@ -234,16 +232,11 @@ const THeader: React.FunctionComponent<{
 	}
 
 	useEffect(() => {
-		console.log(currentUser)
 	}, [currentUser])
 
 	const showHideDrop = () => {
-		console.log("clicked here")
 		setShowMenuDropdown(!showMenuDropdown)
-		console.log(showMenuDropdown)
 	}
-
-	console.log(relation)
 
 	return (
 		<div className={Styles.topDetails}>
@@ -356,9 +349,6 @@ export const ChatRight = (props: { setShowSetModal: any; setSelectedConv: any; l
 			setFConfId(response?.data.convId)
 			setConvStatus(currentUser, setStopUsr)
 
-			console.log(currentUser, response.data)
-
-			// console.log()
 			if (currentUser.convId == response.data.convId) setChatMsgs([...chatMsgs, response.data] as any)
 			setEnteredMsg("")
 			// reset the conversations

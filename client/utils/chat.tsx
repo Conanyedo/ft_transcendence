@@ -6,14 +6,10 @@ import Router from "next/router"
 
 const statuses = ["Banned", "Left", "Muted"]
 
-// Introducing in scope functions here
 export const setMsg = (keycode: any, enteredMessage: string, currentUser: any, setStopUsr: any) => {
 	if (enteredMessage !== "" && keycode == 13) {
 		const data = { msg: enteredMessage, convId: currentUser.convId, receiver: currentUser.login }
-		console.log(data)
 		socket_notif.emit("sendMsg", data, (response: any) => {
-			// handle msg
-			console.log(response.data)
 			if (statuses.includes(response.data.err)) {
 				setStopUsr(response.data.err.toLowerCase())
 			} else if (response.data !== "") {
@@ -24,8 +20,6 @@ export const setMsg = (keycode: any, enteredMessage: string, currentUser: any, s
 					}, 90)
 				}
 			}
-
-			// Add chat msg here
 		})
 	}
 }

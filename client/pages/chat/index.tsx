@@ -57,7 +57,6 @@ const Chat = () => {
   }, [login, channel]);
 
   if (channelData.type !== "" && channelData.type !== "Public" && !show) {
-    console.log("condition being set here");
     setShow(true);
   } else if (
     (channelData.type === "" || channelData.type == "Public") &&

@@ -232,7 +232,6 @@ export const fetchDATA = async (set: any, router: NextRouter, Path: string) => {
 			else router.push('/profile');
 		})
 		.catch((err) => {
-			console.log('Error : ', err.response)
 			if (err.response.status === 401) {
 				eraseCookie("jwt")
 				socket_notif.disconnect()
@@ -421,14 +420,12 @@ export const checkCode2FA = async (code: string, router: NextRouter) => {
 
 export const postChannel = async (set: any, router: NextRouter, data: any, setError: any) => {
 	const token = getCookie("jwt")
-	console.log("data: ", data)
 	const json = JSON.stringify({
 		name: data.name,
 		type: data.type,
 		members: [...data.members],
 		password: data.password.length > 0 ? data.password : undefined,
 	})
-	console.log("json: ", json)
 	return await axios({
 		method: "post",
 		url: `${baseUrl}chat/createChannel`,
@@ -518,7 +515,6 @@ export const getChannelProfile = async (convId: any, set: any) => {
 			return res
 		})
 		.catch((err) => {
-			console.log(err)
 			return false
 		})
 }
@@ -543,7 +539,6 @@ export const leaveChannel = async (convId: any, router: NextRouter) => {
 			return true
 		})
 		.catch((err) => {
-			console.log(err)
 			return false
 		})
 }

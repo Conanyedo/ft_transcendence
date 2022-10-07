@@ -58,14 +58,8 @@ export const MembersModal = (props: {
       member: "",
     },
     onSubmit: (values) => {
-      // console.log(values);
     },
   });
-
-  const removeUser = () => {
-    // console.log("remove user here");
-    console.log("remove user here");
-  };
 
   const handleOnChange = (event: any) => {
     let value = event.target.value;
@@ -91,8 +85,6 @@ export const MembersModal = (props: {
     formik.setFieldValue("member", "");
     let logins = addedUsers?.map((user: any) => user.login);
     const data = { convId: props.currentUser.convId, members: logins };
-    // // call the route to add the user here
-    console.log(props.currentUser);
     await addMembers(data, setStatus);
     setAddedUsers([]);
     props.refresh();
@@ -112,12 +104,10 @@ export const MembersModal = (props: {
   };
 
   useEffect(() => {
-    console.log(friends);
   }, [friends]);
 
   function CloseMdl() {
     props.setShowSetModal(false);
-    console.log("it gets closed");
   }
 
   const modalRef = useRef<any>("");

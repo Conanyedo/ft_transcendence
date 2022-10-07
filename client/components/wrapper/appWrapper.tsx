@@ -82,7 +82,6 @@ const ContentWrapper: React.FC<PropsType> = ({ children }) => {
 		router.replace("/");
 		return <LoadingElm />;
 	} else if (!isAuth) {
-		console.log('checkkkkk');
 		return <LoadingElm />;
 	}
 	const toggleHandler = () => dispatch(Toggle());

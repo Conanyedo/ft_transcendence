@@ -66,7 +66,6 @@ const ChatProvider = ({ children }: any) => {
 
   useEffect(() => {
     socket_notif.on("connect", () => {
-      // console.log(socket_notif.id);
     });
 
     getLastConvs(setLastUsers, setInitialUsrData);
