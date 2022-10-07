@@ -43,7 +43,7 @@ const SendMsg: React.FunctionComponent<{
 		ShowSettingGames(false)
 	}
 	function sendGame(gameID: string) {
-		let data = { sender: me, msg: "", invitation: gameID, convId: currentUser.convId, receiver: currentUser.login }
+		let data = { sender: me, invitation: gameID, convId: currentUser.convId, receiver: currentUser.login }
 		socket_notif.emit("sendMsg", data, (response: any) => {
 			// handle msg
 			if (!currentUser.convId) {
