@@ -6,10 +6,10 @@ import { motion } from "framer-motion"
 import { useDispatch, useSelector } from "react-redux"
 import { HideSettings, Settings } from "../../store/UI-Slice"
 import MsgSlideUp from "./slideUpMsg"
-import OtpInput from "react-otp-input"
 import { check2FACode, getQRcodeOrdisableCode, Is2FAEnaled } from "../../customHooks/useFetchData"
 import { useRouter } from "next/router"
 import { useRef } from "react"
+import OtpInput from "react-otp-input-rc-17"
 
 const variants = {
 	open: { scale: 1 },
@@ -57,6 +57,7 @@ const SecondPage: React.FC<{
 				ref={ref_input}
 				value={props.inputValue}
 				numInputs={6}
+				
 				inputStyle={{
 					width: "3rem",
 					height: "3rem",
