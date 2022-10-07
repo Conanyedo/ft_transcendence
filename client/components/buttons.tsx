@@ -41,7 +41,7 @@ export const ADDButton: React.FC<{
 }> = (props) => {
 	const handler = async () => {
 		await requests(props.login, "friendship/addFriend", props.router);
-		socket_notif.emit('sendRequest', props.login, () => {
+		socket_notif.emit('sendRequest', {login: props.login}, () => {
 			props.refresh();
 		});
 	};

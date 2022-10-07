@@ -1,34 +1,37 @@
-import classes from "../../styles/factorAuth.module.css";
-import CrossIcon from "../../public/FriendIcons/Cross.svg";
-import Image from "next/image";
-import OtpInput from "react-otp-input";
-import { useEffect, useState } from "react";
-import { Grid } from "@material-ui/core";
-import LoadingElm from "../loading/Loading_elm";
-import { check2FA_JWT, checkCode2FA } from "../../customHooks/useFetchData";
-import { useRouter } from "next/router";
-import { getCookie } from "cookies-next";
-import { eraseCookie } from "../../customHooks/Functions";
+import classes from "../../styles/factorAuth.module.css"
+import CrossIcon from "../../public/FriendIcons/Cross.svg"
+import Image from "next/image"
+import OtpInput from "react-otp-input"
+import { useEffect, useState } from "react"
+import LoadingElm from "../loading/Loading_elm"
+import { check2FA_JWT, checkCode2FA } from "../../customHooks/useFetchData"
+import { useRouter } from "next/router"
+import { getCookie } from "cookies-next"
+import { eraseCookie } from "../../customHooks/Functions"
 
 const FactorAuth = () => {
-	const router = useRouter();
-	const jwt = getCookie("jwt-2fa");
+	const router = useRouter()
+	const jwt = getCookie("jwt-2fa")
 	if (!jwt) {
-		router.push("/");
-		return <LoadingElm />;
+		router.push("/")
+		return <LoadingElm />
 	}
-	const [isValid, setisValid] = useState(false);
-	const [inputValue, setInputValue] = useState("");
-	const [isError, setisError] = useState(false);
+	const [isValid, setisValid] = useState(false)
+	const [inputValue, setInputValue] = useState("")
+	const [isError, setisError] = useState(false)
 	useEffect(() => {
-		if (jwt)
-			check2FA_JWT(jwt, setisValid, router);
-	}, []);
-	if (!isValid) return <LoadingElm />;
+		if (jwt) check2FA_JWT(jwt, setisValid, router)
+	}, [])
+	if (!isValid) return <LoadingElm />
 	const CheckHandler = async () => {
-		if (await checkCode2FA(inputValue, router)) setisError(false);
-		else setisError(true);
-	};
+		if (await checkCode2FA(inputValue, router)) setisError(false)
+		else setisError(true)
+	}
+	const sub = (e: any) => {
+		e.preventDefault();
+		if (inputValue.length === 6)
+			CheckHandler();
+	}
 	return (
 		<>
 			<div className={classes.background}>
@@ -38,48 +41,43 @@ const FactorAuth = () => {
 						<div
 							className={classes.cross}
 							onClick={() => {
-								eraseCookie('jwt-2fa');
-								router.replace('/');
-							}}
-						>
+								eraseCookie("jwt-2fa")
+								router.replace("/")
+							}}>
 							<Image src={CrossIcon} width="72" height="72" />
 						</div>
 					</div>
 					<div className={classes.inputContainer}>
-						<Grid>
-							<OtpInput
-								value={inputValue}
-								numInputs={6}
-								inputStyle={{
-									width: "3rem",
-									height: "3rem",
-									margin: "0 .5rem",
-									fontSize: "1.5rem",
-									borderRadius: 4,
-									border: `1px solid ${
-										isError ? "red" : "black"
-									}`,
-								}}
-								onChange={(e: any) => {
-									setInputValue(e);
-								}}
-								shouldAutoFocus={true}
-								isInputNum={true}
-							/>
-						</Grid>
+					<form onSubmit={sub}>
+						<OtpInput
+							value={inputValue}
+							numInputs={6}
+							inputStyle={{
+								width: "3rem",
+								height: "3rem",
+								margin: "0 .5rem",
+								fontSize: "1.5rem",
+								borderRadius: 4,
+								border: `1px solid ${isError ? "red" : "black"}`,
+							}}
+							onChange={(e: any) => {
+								setInputValue(e)
+							}}
+							shouldAutoFocus={true}
+							isInputNum={true}
+						/>
+						<button style={{display: 'none'}}/>
+						</form>
 					</div>
 					<div
-						className={`${classes.btn} ${
-							inputValue.length === 6 ? classes.btnNext : ""
-						}`}
-						onClick={CheckHandler}
-					>
+						className={`${classes.btn} ${inputValue.length === 6 ? classes.btnNext : ""}`}
+						onClick={CheckHandler}>
 						Confirmer
 					</div>
 				</div>
 			</div>
 		</>
-	);
-};
+	)
+}
 
-export default FactorAuth;
+export default FactorAuth

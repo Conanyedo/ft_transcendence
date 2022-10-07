@@ -67,6 +67,13 @@
 }
 
 .qrCodeContainer {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+.qrCodeContainer>form {
 	align-self: center;
 	margin-bottom: 1.5rem;
 	display: flex;
@@ -77,7 +84,7 @@
 	width: 50%;
 }
 
-.qrCodeContainer>span {
+.qrCodeContainer span {
 	font-family: 'Inter';
 	font-style: normal;
 	font-weight: 400;

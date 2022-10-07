@@ -8,7 +8,6 @@ import LoadingElm from "../../../components/loading/Loading_elm";
 import MatchHistoryFriend from "../../../components/profile/friendProfile/matchHistoryFriend";
 import { userExists } from "@hooks/useFetchData";
 import { useDispatch } from "react-redux";
-import { ShowErrorMsg } from "@store/UI-Slice";
 
 const ProfileFriend = () => {
 	const [userId, setuserId] = useState<string>("");
@@ -19,8 +18,10 @@ const ProfileFriend = () => {
 	const owner = localStorage.getItem("owner");
 	
 	useEffect(() => {
-		if (login)
+		if (login && (/^(?![ _.-])(?!.*[_.-]{2})[a-zA-Z0-9 ._-]+(?<![ _.-])$/g).test(login))
 			userExists(setuserId, login, route, dispatch);
+		else
+			route.replace('/profile');
 	}, [login]);
 	if (login === owner as string) {
 		route.replace('/profile');

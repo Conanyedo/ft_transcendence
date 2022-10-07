@@ -9,7 +9,6 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@material-ui/core": "^4.12.4",
     "@reduxjs/toolkit": "^1.8.3",
     "@splinetool/react-spline": "^2.2.1",
     "@splinetool/runtime": "^0.9.101",
