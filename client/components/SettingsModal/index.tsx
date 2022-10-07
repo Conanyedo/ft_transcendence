@@ -47,7 +47,6 @@ const Form = ({ data, currUser, setShowSetModal }: any) => {
             password: "",
         },
         onSubmit: values => {
-            // console.log(values);
         },
     });
 

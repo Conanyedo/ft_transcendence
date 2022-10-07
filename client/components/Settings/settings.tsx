@@ -44,9 +44,7 @@ const SecondPage: React.FC<{
 }> = (props) => {
 	const ref_input = useRef<OtpInput>(null)
 	useEffect(() => {
-		console.log(ref_input)
 		const elm = ref_input!.current as OtpInput
-		console.log(elm)
 	}, [])
 
 	return (

@@ -232,7 +232,6 @@ export const fetchDATA = async (set: any, router: NextRouter, Path: string) => {
 			else router.push('/profile');
 		})
 		.catch((err) => {
-			console.log('Error : ', err.response)
 			if (err.response.status === 401) {
 				eraseCookie("jwt")
 				socket_notif.disconnect()
@@ -343,9 +342,7 @@ export const banMemberFromChannel = async (data: any) => {
 }
 
 export const muteMemberFromChnl = async (data: any) => {
-	// /chat/banMember
-
-	const json = JSON.stringify({ convId: data.convId, member: data.member })
+	const json = JSON.stringify({ convId: data.convId, member: data.member, seconds: data.seconds })
 
 	const token = getCookie("jwt")
 	return await axios({
@@ -421,14 +418,12 @@ export const checkCode2FA = async (code: string, router: NextRouter) => {
 
 export const postChannel = async (set: any, router: NextRouter, data: any, setError: any) => {
 	const token = getCookie("jwt")
-	console.log("data: ", data)
 	const json = JSON.stringify({
 		name: data.name,
 		type: data.type,
 		members: [...data.members],
-		password: data.password.length > 0 ? data.password : undefined,
+		password: data.password,
 	})
-	console.log("json: ", json)
 	return await axios({
 		method: "post",
 		url: `${baseUrl}chat/createChannel`,
@@ -518,12 +513,11 @@ export const getChannelProfile = async (convId: any, set: any) => {
 			return res
 		})
 		.catch((err) => {
-			console.log(err)
 			return false
 		})
 }
 
-export const leaveChannel = async (convId: any, router: NextRouter) => {
+export const leaveChannel = async (convId: any, router: NextRouter, set: any) => {
 	const json = JSON.stringify({ convId: convId })
 
 	const token = getCookie("jwt")
@@ -539,11 +533,11 @@ export const leaveChannel = async (convId: any, router: NextRouter) => {
 	})
 		.then((res) => {
 			if (res.data.err) return false
-			router.push("/chat")
-			return true
+			set(false);
+			router.push("/chat");
+			return true;
 		})
 		.catch((err) => {
-			console.log(err)
 			return false
 		})
 }

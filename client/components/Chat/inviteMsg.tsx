@@ -48,7 +48,6 @@ export function InviteMsg(props: {chatMsg: any}) {
   }, [msgData?.sender]);
   
   const pathAvatar = getImageBySize(userInfo?.avatar, 70);
-  console.log(msgData);
   if (msgData?.sender == me)
     return (
       <div className={Styles.inviteMsg}>

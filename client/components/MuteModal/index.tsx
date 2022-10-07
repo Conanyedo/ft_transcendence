@@ -37,7 +37,6 @@ const times = [
 ];
 const seconds = [3600, 28800, 43200, 86400, 604800, 2630000];
 
-// POST /chat/muteMember
 async function muteMember(
   user: any,
   convId: string,
@@ -47,8 +46,6 @@ async function muteMember(
 ) {
 
   let timing = seconds[times.indexOf(time)];
-  console.log(timing);
-  // muteMemberFromChnl
   if (
     await muteMemberFromChnl({
       convId: convId,
@@ -56,11 +53,8 @@ async function muteMember(
       seconds: timing,
     })
   ) {
-    console.log("Done Successfully");
     setShow();
   }
-    
-  else console.log("There seems to be something wrong!");
 }
 
 const TimeForm: React.FC<{ user:any, convId: string, setShow: any }> = ({ user, convId, setShow }) => {

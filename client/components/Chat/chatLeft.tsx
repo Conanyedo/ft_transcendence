@@ -39,6 +39,13 @@ export const ChatLeft = (props: {
   // set a state just for filtered users and put the actual users in it
 
   const [searchUsrs, setSearchUsrs] = useState(lastUsers);
+  const [mount, setMount] = useState(false);
+
+  useEffect(() => {
+    setMount(true);
+
+    return () => setMount(false);
+  }, [])
 
   useEffect(() => {}, [friends]);
 
@@ -49,7 +56,6 @@ export const ChatLeft = (props: {
   }
 
   function validateData(data: any, setError: any, error: string) {
-    console.log(data.channelName);
     const checkname = (obj: any) => obj.name == data.channelName;
     if (
       data.channelName.length == 0 ||
@@ -60,12 +66,10 @@ export const ChatLeft = (props: {
       return false;
     }
     if (lastUsers.some(checkname)) {
-      console.log("enters here ?");
       setError("Name already in use");
       return false;
     }
     if (!(data.channelName.length >= 4)) {
-      console.log(data.channelName.length < 4);
       setError("Channel name should contain at least 4 characters");
       return false;
     }
@@ -78,7 +82,6 @@ export const ChatLeft = (props: {
       ).test(data.password);
     }
     setError("");
-    console.log("err at return is", error);
     return true;
   }
 
@@ -129,7 +132,6 @@ export const ChatLeft = (props: {
         }
       });
     });
-    console.log(showCnv);
     return () => {
       socket_notif.off("newMsg");
     };
@@ -144,7 +146,7 @@ export const ChatLeft = (props: {
 
   return (
     <>
-      <div
+      {mount && <div
         className={`${Styles.chatLeft} ${showCnv ? Styles.displayNone : ""}`}
       >
         <div className={Styles.leftContent}>
@@ -251,7 +253,7 @@ export const ChatLeft = (props: {
             )}
           </div>
         </div>
-      </div>
+      </div>}
     </>
   );
 };

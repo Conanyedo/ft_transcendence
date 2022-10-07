@@ -54,40 +54,26 @@ async function banMember(user: any, convId: string, setData: any) {
 
   if (await banMemberFromChannel(data)) {
     getDataOfMembers(convId, setData);
-  } else console.log("There seems to be something wrong!");
+  }
 }
 
 async function upgradeMember(user: any, convId: string, setData: any) {
   const data = { convId: convId, member: user.login, status: "Admin" };
   if (await changeMemberRole(data, () => null)) {
     getDataOfMembers(convId, setData);
-  } else console.error("There seems to be something wrong!");
+  }
 }
 
 async function downgradeMember(user: any, convId: string) {
   const data = { convId: convId, member: user.login, status: "Member" };
-  if (await changeMemberRole(data, () => null)) {
-    console.log("changed successfully");
-  } else {
-    console.error("There seems to be something wrong!");
-  }
+  await changeMemberRole(data, () => null)
 }
 
 async function UnmuteMember(convId: string, user: any, setData: any) {
-  // POST /chat/unmuteMember
-
-  // takes {
-  //   convId: string,
-  //   member: string,
-  // }
 
   let data = { convId: convId, member: user.login };
-
   if (await UnmuteMemberFromChnl(data)) {
-    console.log("Member unmuted successfully");
     getDataOfMembers(convId, setData);
-  } else {
-    console.error("There seems to be something wrong!");
   }
 }
 
@@ -99,7 +85,6 @@ const DropDown: React.FC<{
   setshowdrop: any;
 }> = ({ setRefs, i, content, functions, setshowdrop }) => {
 
-  console.log(content, functions);
   return (
     <>
       <div className={Styles.menuDropdown} id={i.toString()}>
@@ -261,8 +246,6 @@ const Members = (props: {
   useEffect(() => {}, [props.users]);
 
   useEffect(() => {
-    console.log("functions are", functions);
-    console.log("content is", content);
   }, [functions, content]);
 
   const router = useRouter();
@@ -356,7 +339,6 @@ function checkRole(data: any, setRole: any) {
 
 export const getDataOfMembers = async (convId: any, setData: any) => {
   const value: any = await getChannelProfile(convId, setData);
-  console.log('data li katji: ', value);
   setData(value?.data?.data);
   return;
 };
@@ -376,7 +358,6 @@ export const Profile = (props: {
   }, []);
 
   useEffect(() => {
-    console.log(props.data);
     checkRole(props.data, setRole);
   }, [props.data, role]);
 

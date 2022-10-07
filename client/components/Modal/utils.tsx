@@ -119,16 +119,11 @@ export function addUsrToChannel(
   setshowDropdown(false);
   let items_addedUsers: any = [...addedUsers]; // users that we are gonna send to db
 
-  console.log(oldUsers);
   oldUsers?.map((item: any) => {
     (item?.fullname == user?.fullname) ? items_addedUsers.push(item) : () => null;
   });
 
   setAddedUsers(items_addedUsers);
-}
-
-export function removeUsrFromChannel() {
-  // console.log("removed");
 }
 
 export function filterOutUsers(
@@ -145,7 +140,6 @@ export function filterOutUsers(
     return
   }
 
-  console.log(oldUsers);
   // Show the dropdown
   upvalue ? setshowDrpdown(true) : setshowDrpdown(false);
 }
@@ -158,7 +152,6 @@ export function filterUsers(
 ) {
   let upvalue = value.toUpperCase();
 
-  console.log(upvalue);
   // Return to initial state
   if (upvalue == "") {
     setCloseUsrs([]);
@@ -181,6 +174,6 @@ export function removeTag(
   addedUsers: any,
   setAddedUsers: any,
 ) {
-  let res = addedUsers.filter((item: any) => item.fullname == element);
+  let res = addedUsers.filter((item: any) => item.fullname != element.fullname);
   setAddedUsers(res);
 }

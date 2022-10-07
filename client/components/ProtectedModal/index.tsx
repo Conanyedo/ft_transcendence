@@ -27,9 +27,7 @@ export const ProtectedFormMdl: React.FC<{convId: string, show: boolean, setShow:
             setError("Please enter the password!");
         } else {
             let data = {password: inputVal, convId: convId}
-            console.log(data);
             const res: boolean = await JoinChannel(() => null, router, data, setError);
-            console.log(res);
             
             if (res) {
                 await refresh();

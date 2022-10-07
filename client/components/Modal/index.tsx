@@ -15,8 +15,6 @@ import { getFriends } from "@hooks/useFetchData"
 
 export const UsersModalInput = (props: { addedUsers: any, setAddedUsers: any, removeUser: any, handleChange: any, value: any, inputRef: any, oldUsers: any, setOldUsers: any}) => {
 
-    // console.log(props.addedUsers);
-
     const removeTagHandler = (element: any) => {
         removeTag(
             element,
@@ -26,7 +24,6 @@ export const UsersModalInput = (props: { addedUsers: any, setAddedUsers: any, re
     }
 
     useEffect(() => {
-        console.log(props.addedUsers);
     }, [props.addedUsers])
 
     return (<div className={Styles.usrsInpt}>
@@ -64,6 +61,8 @@ export function ModalForm(props: { createChannel: any }) {
         }
         setMount(true);
         setUsrs();
+
+        return () => setMount(false);
     }, []);
 
     const onSubmit = (values: chatFormValues) => {
@@ -75,14 +74,12 @@ export function ModalForm(props: { createChannel: any }) {
         let value = event.target.value;
 
         formik.setFieldValue("member", value);
-        // console.log(formik.values.member);
         setErrorMsg("");
 
         filterOutUsers(value, friends, setshowDrpdown);
     };
 
     const removeUser = () => {
-        // console.log("remove user here");
     }
 
     const clickHandler = (user: any) => {
@@ -122,7 +119,7 @@ export function ModalForm(props: { createChannel: any }) {
                 <span>Add Members</span>
                 <UsersModalInput addedUsers={addedUsers} setAddedUsers={setAddedUsers} removeUser={removeUser} handleChange={handleOnChange} value={formik.values.member} inputRef={inputRef} oldUsers={friends} setOldUsers={setFriends} />
                 {showDrpdown && <div className={Styles.dropMembers}>
-                {friends.map((usr: any, i) => {
+                {friends.filter(item => !addedUsers.includes(item)).map((usr: any, i) => {
                             if (usr.fullname.toLowerCase().includes((inputRef?.current?.value)))
                                 return <SuggestedUsr key={i} user={usr} action={clickHandler} />
                         })}
@@ -144,12 +141,19 @@ export const Button: React.FC<{clickHandler: any, text: string}> = ({clickHandle
 export function ModalBox(props: { show: boolean, setShow: (Dispatch<SetStateAction<boolean>>), createChannel: any }): JSX.Element {
 
     const modalRef = useRef(null);
+    const [mount, setMount] = useState(false);
+
+    useEffect(() => {
+        setMount(true);
+
+        return () => setMount(false);
+    }, [])
 
     // set add and remove user from channel
     useOutsideAlerter(modalRef, props.setShow);
     return (
         <>
-            {props.show && <><div style={{ display: props.show ? "block" : "none" }} className={Styles.grayBg}>&nbsp;</div>
+            {props.show && mount && <><div style={{ display: props.show ? "block" : "none" }} className={Styles.grayBg}>&nbsp;</div>
                 <motion.div ref={modalRef} className={Styles.modalbox} animate={{ scale: 1 }} initial={{ scale: 0.5 }}>
                     <div>
                         <h1 className={Styles.createChnl}>Create channel</h1>
