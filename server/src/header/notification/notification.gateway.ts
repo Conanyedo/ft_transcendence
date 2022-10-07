@@ -8,11 +8,7 @@ import { WsJwtGuard } from "src/2fa-jwt/jwt/jwt-ws.guard";
 import { gameInvitValidate, gameUpdateValidate, notificationDto } from "./notification.dto";
 import { loginValidate } from "src/friendship/friendship.dto";
 
-@WebSocketGateway({
-	cors: {
-		origin: '*'
-	}
-})
+@WebSocketGateway()
 export class NotificationGateway {
 
 	constructor(
