@@ -7,11 +7,7 @@ import { ChatService } from "./chat.service";
 import { convIdValidate, createMsgDto, msgDto, updateInvitationDto } from "./chat.dto";
 import { userParitalDto } from "src/user/user.dto";
 
-@WebSocketGateway({
-	cors: {
-		origin: '*'
-	}
-})
+@WebSocketGateway()
 export class ChatGateway {
 
 	constructor(

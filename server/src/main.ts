@@ -4,6 +4,7 @@ import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
 import { AppModule } from './app.module';
+import { SocketIOAdapter } from './socket-io-adapter';
 
 
 async function bootstrap() {
@@ -16,6 +17,7 @@ async function bootstrap() {
 	});
 	app.useStaticAssets(join(__dirname, '../'));
 	app.useGlobalPipes(new ValidationPipe({ transform: true, whitelist: true, /*skipUndefinedProperties: true*/ }));
+	app.useWebSocketAdapter(new SocketIOAdapter(app, configService));
 	await app.listen(+`${configService.get('SERVER_PORT')}`);
 }
 bootstrap();
