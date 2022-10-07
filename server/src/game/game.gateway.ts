@@ -9,7 +9,7 @@ import { Server, Socket } from 'socket.io';
 import { allGames } from './classes/AllGames';
 import { GameService } from './game.service';
 
-@WebSocketGateway(5551, { cors: { origin: '*' } })
+@WebSocketGateway(5551)
 export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 	constructor (public readonly gameService: GameService) {}
@@ -18,17 +18,11 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	allGames: allGames;
 
 	handleConnection(client: Socket) {
-		const token = client.handshake.headers.authorization;
-		if (!token || token === 'Bearer undefined')
-			client.disconnect();
-		else
-			console.log('game connected: ', client.id);
 		if (this.allGames?.server !== this.server) {
 			this.allGames = new allGames(this.server, this.gameService)
 		}
 	}
 	handleDisconnect(client: Socket) {
-		console.log('game Disconnect: ', client.id);
 		this.allGames.clientDisconnect(client);
 	}
 	@SubscribeMessage('resumeGame')
