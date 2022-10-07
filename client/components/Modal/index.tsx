@@ -61,6 +61,8 @@ export function ModalForm(props: { createChannel: any }) {
         }
         setMount(true);
         setUsrs();
+
+        return () => setMount(false);
     }, []);
 
     const onSubmit = (values: chatFormValues) => {
@@ -139,12 +141,19 @@ export const Button: React.FC<{clickHandler: any, text: string}> = ({clickHandle
 export function ModalBox(props: { show: boolean, setShow: (Dispatch<SetStateAction<boolean>>), createChannel: any }): JSX.Element {
 
     const modalRef = useRef(null);
+    const [mount, setMount] = useState(false);
+
+    useEffect(() => {
+        setMount(true);
+
+        return () => setMount(false);
+    }, [])
 
     // set add and remove user from channel
     useOutsideAlerter(modalRef, props.setShow);
     return (
         <>
-            {props.show && <><div style={{ display: props.show ? "block" : "none" }} className={Styles.grayBg}>&nbsp;</div>
+            {props.show && mount && <><div style={{ display: props.show ? "block" : "none" }} className={Styles.grayBg}>&nbsp;</div>
                 <motion.div ref={modalRef} className={Styles.modalbox} animate={{ scale: 1 }} initial={{ scale: 0.5 }}>
                     <div>
                         <h1 className={Styles.createChnl}>Create channel</h1>

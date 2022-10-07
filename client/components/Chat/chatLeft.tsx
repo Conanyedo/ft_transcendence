@@ -39,6 +39,13 @@ export const ChatLeft = (props: {
   // set a state just for filtered users and put the actual users in it
 
   const [searchUsrs, setSearchUsrs] = useState(lastUsers);
+  const [mount, setMount] = useState(false);
+
+  useEffect(() => {
+    setMount(true);
+
+    return () => setMount(false);
+  }, [])
 
   useEffect(() => {}, [friends]);
 
@@ -139,7 +146,7 @@ export const ChatLeft = (props: {
 
   return (
     <>
-      <div
+      {mount && <div
         className={`${Styles.chatLeft} ${showCnv ? Styles.displayNone : ""}`}
       >
         <div className={Styles.leftContent}>
@@ -246,7 +253,7 @@ export const ChatLeft = (props: {
             )}
           </div>
         </div>
-      </div>
+      </div>}
     </>
   );
 };

@@ -424,7 +424,7 @@ export const postChannel = async (set: any, router: NextRouter, data: any, setEr
 		name: data.name,
 		type: data.type,
 		members: [...data.members],
-		password: data.password.length > 0 ? data.password : undefined,
+		password: data.password,
 	})
 	return await axios({
 		method: "post",
