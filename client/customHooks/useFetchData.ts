@@ -419,7 +419,7 @@ export const checkCode2FA = async (code: string, router: NextRouter) => {
 		})
 }
 
-export const postChannel = async (set: any, router: NextRouter, data: any) => {
+export const postChannel = async (set: any, router: NextRouter, data: any, setError: any) => {
 	const token = getCookie("jwt")
 	console.log("data: ", data)
 	const json = JSON.stringify({
@@ -440,10 +440,15 @@ export const postChannel = async (set: any, router: NextRouter, data: any) => {
 		withCredentials: true,
 	})
 		.then((res) => {
-			if (res.data.err) return false
-			set(res.data)
-			if (res.data.data.membersNum > 0) router.push("/chat?channel=" + res.data.data.name)
-			else router.push("/chat?login=" + res.data.data.login)
+			if (res.data.err !== undefined) {
+				setError(res.data.err);
+			  } else {
+				setError("");
+				set(res.data);
+				if (res.data.data.membersNum > 0)
+				  router.push("/chat?channel=" + res.data.data.name);
+				else router.push("/chat?login=" + res.data.data.login);
+			  }
 		})
 		.catch((err) => {
 			return false

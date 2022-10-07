@@ -48,6 +48,40 @@ export const ChatLeft = (props: {
     formik.setFieldValue("member", "");
   }
 
+  function validateData(data: any, setError: any, error: string) {
+    console.log(data.channelName);
+    const checkname = (obj: any) => obj.name == data.channelName;
+    if (
+      data.channelName.length == 0 ||
+      data.convType.length == 0 ||
+      data.members.length == 0
+    ) {
+      setError("Please enter the required credentials**");
+      return false;
+    }
+    if (lastUsers.some(checkname)) {
+      console.log("enters here ?");
+      setError("Name already in use");
+      return false;
+    }
+    if (!(data.channelName.length >= 4)) {
+      console.log(data.channelName.length < 4);
+      setError("Channel name should contain at least 4 characters");
+      return false;
+    }
+    if (data.convType == "Protected") {
+      setError(
+        "Password must contain at least 8 characters.At least one number, one uppercase letter and one special character"
+      );
+      return RegExp(
+        /^(?=(.*[a-z]){1,})(?=(.*[A-Z]){1,})(?=(.*[0-9]){1,})(?=(.*[!@#$%^&*()\-__+.]){1,}).{8,}$/
+      ).test(data.password);
+    }
+    setError("");
+    console.log("err at return is", error);
+    return true;
+  }
+
   // functions
   async function createChannel(
     channelName: string,
@@ -56,32 +90,28 @@ export const ChatLeft = (props: {
     members: Array<string>,
     setAddedUsers: any,
     formik: any,
+    error: string,
     setError: any
   ) {
     if (
-      channelName.length == 0 ||
-      convType.length == 0 ||
-      members.length == 0
+      validateData(
+        { channelName, convType, members, password },
+        setError,
+        error
+      ) &&
+      error == ""
     ) {
-      setError("Please enter the required credentials**");
-    } else {
-      setError("");
-      setShow(!show);
       var loginList: string[] = [];
-      loginList = members.map((member: any) => member?.login);
-
-      const data = {
-        name: channelName,
-        type: convType,
-        members: loginList,
-        password: password,
-      };
-
-      postChannel(setChannelDetails, router, data);
+      loginList = members?.map((member: any) => member?.login);
+      let data: any = { name: channelName, type: convType, members: loginList };
+      if (password != "") data.password = password;
+      postChannel(setChannelDetails, router, data, setError);
       // reset the necessary fields
-      resetForm(formik);
-      setAddedUsers([]);
+      setShow(!show);
+      setError("");
     }
+    resetForm(formik);
+    setAddedUsers([]);
   }
 
   useEffect(() => {
@@ -157,8 +187,10 @@ export const ChatLeft = (props: {
             {searchUsrs?.map((user: any, i: any) => {
               if (
                 user?.name?.toUpperCase().includes(searchVal.toUpperCase()) ||
-                user?.channelname?.toUpperCase().includes(searchVal.toUpperCase()) ||
-                searchVal === ''
+                user?.channelname
+                  ?.toUpperCase()
+                  .includes(searchVal.toUpperCase()) ||
+                searchVal === ""
               ) {
                 return (
                   <Link
