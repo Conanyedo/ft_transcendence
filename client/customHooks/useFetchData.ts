@@ -229,10 +229,10 @@ export const fetchDATA = async (set: any, router: NextRouter, Path: string) => {
 		})
 		.then((res) => {
 			if (res.data.data) set(res.data.data)
-			else router.back()
+			else router.push('/profile');
 		})
 		.catch((err) => {
-			console.log(err.response)
+			console.log('Error : ', err.response)
 			if (err.response.status === 401) {
 				eraseCookie("jwt")
 				socket_notif.disconnect()

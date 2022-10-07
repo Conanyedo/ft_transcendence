@@ -38,7 +38,6 @@ export class GameService {
 
 	async updateStats(player: string, gameType: string, winner: boolean) {
 		const stats: statsDto = await this.userService.getStats(player);
-		console.log('winner: ', winner, ' | Playes: ', player, ' | Stats: ', stats);
 		stats.numGames++;
 		stats.gamesWon += (winner) ? 1 : 0;
 		if (gameType === 'Ranked')
@@ -77,8 +76,6 @@ export class GameService {
 		if (stats.rank === 1 && !stats.achievement.includes(userAchievements.FIRSTPLACE) && winner)
 			stats.achievement.push(userAchievements.FIRSTPLACE);
 		await this.userService.updateAchievements(stats.id, stats.achievement);
-		const newStats: Stats = await this.userService.getStats(player);
-		console.log('New Stats: ', newStats);
 	}
 
 	async insertMatches(gameResult: gameDto) {
