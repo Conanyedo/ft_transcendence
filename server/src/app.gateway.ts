@@ -1,20 +1,18 @@
 import { WebSocketGateway, OnGatewayInit, WebSocketServer, OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
 import { Socket, Server } from 'socket.io';
 import { Logger } from '@nestjs/common';
-import { JwtAuthService } from './2fa-jwt/jwt/jwt-auth.service';
 import { UserService } from './user/user.service';
 import { userStatus } from './user/user.entity';
 
-@WebSocketGateway({ cors: { origin: '*' } })
+@WebSocketGateway()
 export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
-	
+
 	@WebSocketServer()
 	server: Server;
-	
+
 	private logger: Logger = new Logger('AppGateway');
 
 	constructor(
-		private jwtService: JwtAuthService,
 		private userService: UserService
 	) { }
 
@@ -23,29 +21,11 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
 	}
 
 	async handleConnection(client: Socket) {
-		console.log('Connected to the server:  ', client.id);
-		const token = client.handshake.headers.authorization.split(' ')[1];
-		try {
-			const payload = this.jwtService.verify(token);
-			client.data.login = payload.login;
-			this.userService.setStatus(payload.login, userStatus.ONLINE);
-		}
-		catch (e) {
-			client.disconnect();
-			console.log('Disconnected due to invalid token!!');
-		}
+		this.userService.setStatus(client.data.login, userStatus.ONLINE);
 	}
 
 	async handleDisconnect(client: Socket) {
-		console.log('Disconneted from the server:  ', client.id);
-		const token = client.handshake.headers.authorization.split(' ')[1];
-		try {
-			const payload = this.jwtService.verify(token);
-			this.userService.setStatus(payload.login, userStatus.OFFLINE);
-			client.disconnect();
-		}
-		catch (e) {
-			client.disconnect();
-		}
+		this.userService.setStatus(client.data.login, userStatus.OFFLINE);
+		client.disconnect();
 	}
 }
