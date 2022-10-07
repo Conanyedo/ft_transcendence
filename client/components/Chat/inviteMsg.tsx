@@ -43,7 +43,7 @@ export function InviteMsg(props: {chatMsg: any}) {
     })
   };
   useEffect(() => {
-    if (msgData?.sender !== '')
+    if (msgData?.sender !== '' && msgData?.sender)
       fetchDATA(setuserInfo, Router, "user/info/" + msgData?.sender);
   }, [msgData?.sender]);
   
