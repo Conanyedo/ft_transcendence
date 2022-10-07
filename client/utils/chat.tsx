@@ -93,7 +93,7 @@ export const getLastUsers = async (
 			if (item != undefined) {
 				setCurrentUser(item)
 				// get messages
-				socket_notif.emit("getMsgs", item?.convId, (response: any) => {
+				socket_notif.emit("getMsgs", {convId: item?.convId}, (response: any) => {
 					setChatMsgs(response.data)
 					// run on first render only
 					scrollToBottom(messagesEndRef)
