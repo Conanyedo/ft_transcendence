@@ -2,17 +2,6 @@ import { TypeOrmModuleAsyncOptions, TypeOrmModuleOptions } from "@nestjs/typeorm
 import { ConfigModule } from '@nestjs/config';
 import { ConfigService } from '@nestjs/config';
 
-// export const typeOrmConfig: TypeOrmModuleOptions = {
-// 	type: 'postgres',
-// 	host: 'localhost',
-// 	port: 5432,
-// 	username: 'Conanyedo',
-// 	password: 'nestjs',
-// 	database: 'nestjs',
-// 	autoLoadEntities: true,
-// 	synchronize: true,
-// }
-
 export const typeOrmConfigAsync: TypeOrmModuleAsyncOptions = {
 	imports: [ConfigModule],
 	inject: [ConfigService],
