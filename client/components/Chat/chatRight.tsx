@@ -387,7 +387,8 @@ export const ChatRight = (props: { setShowSetModal: any; setSelectedConv: any; l
 	}, [lastUsers])
 
 	useEffect(() => {
-		console.log("current user is", currentUser)
+		if (currentUser?.convId == undefined && currentUser?.relation == "friend")
+			setShowCnv(true);
 		setConvStatus(currentUser, setStopUsr)
 		setConvId(currentUser?.convId)
 		setRelation(currentUser?.relation)

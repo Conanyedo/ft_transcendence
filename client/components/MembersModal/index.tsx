@@ -89,7 +89,7 @@ export const MembersModal = (props: {
 
   const addMember = async () => {
     formik.setFieldValue("member", "");
-    let logins = addedUsers.map((user: any) => user.login);
+    let logins = addedUsers?.map((user: any) => user.login);
     const data = { convId: props.currentUser.convId, members: logins };
     // // call the route to add the user here
     console.log(props.currentUser);

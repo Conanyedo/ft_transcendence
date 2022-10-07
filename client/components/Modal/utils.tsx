@@ -98,7 +98,7 @@ export function UsrTag(props: {
     <div className={Styles.usrTag} id={props.id.toString()}>
       {props.fullname}
       <div
-        onClick={(e) => props.removeTag(props.fullname, e, props.id)}
+        onClick={(e) => props.removeTag(props.fullname)}
       >
         <Image src={TagCross} width={6} height={6} />
       </div>
@@ -117,17 +117,13 @@ export function addUsrToChannel(
 ) {
   inputRef.current.focus();
   setshowDropdown(false);
-
-  let items_oldUsers: any = []; // users that we are gonna filter again
   let items_addedUsers: any = [...addedUsers]; // users that we are gonna send to db
 
   console.log(oldUsers);
   oldUsers?.map((item: any) => {
-    if (item?.fullname != user?.fullname) items_oldUsers.push(item);
-    else if (item?.fullname == user?.fullname) items_addedUsers.push(item);
+    (item?.fullname == user?.fullname) ? items_addedUsers.push(item) : () => null;
   });
-  
-  setOldUsers(items_oldUsers);
+
   setAddedUsers(items_addedUsers);
 }
 
@@ -150,11 +146,6 @@ export function filterOutUsers(
   }
 
   console.log(oldUsers);
-
-  // setDropUsers(
-  //   oldUsers.filter((usr: any) => usr.fullname.toUpperCase().includes(upvalue))
-  // );
-
   // Show the dropdown
   upvalue ? setshowDrpdown(true) : setshowDrpdown(false);
 }
@@ -164,7 +155,6 @@ export function filterUsers(
   setCloseUsrs: any,
   setshowDrpdown: any,
   initialUsrState: any,
-  setUsrTags: any
 ) {
   let upvalue = value.toUpperCase();
 
@@ -187,16 +177,10 @@ export function filterUsers(
 }
 
 export function removeTag(
-  e: any,
   element: any,
-  id: string,
   addedUsers: any,
   setAddedUsers: any,
-  oldUsers: any,
-  setOldUsers: any
 ) {
-  let res = addedUsers.filter((item: any) => item.fullname !== element)
+  let res = addedUsers.filter((item: any) => item.fullname == element);
   setAddedUsers(res);
-  let returnItem = addedUsers.filter((item: any) => item.fullname == element);
-  if (returnItem.length != 0) setOldUsers([...oldUsers, ...returnItem]);
 }

@@ -17,15 +17,11 @@ export const UsersModalInput = (props: { addedUsers: any, setAddedUsers: any, re
 
     // console.log(props.addedUsers);
 
-    const removeTagHandler = (e: any, element: any, index: number) => {
+    const removeTagHandler = (element: any) => {
         removeTag(
             element,
-            e,
-            index.toString(),
             props.addedUsers,
-            props.setAddedUsers,
-            props.oldUsers,
-            props.setOldUsers
+            props.setAddedUsers
           )
     }
 
@@ -34,7 +30,7 @@ export const UsersModalInput = (props: { addedUsers: any, setAddedUsers: any, re
     }, [props.addedUsers])
 
     return (<div className={Styles.usrsInpt}>
-        {props.addedUsers?.map((element: any, i: number) => <UsrTag key={i} removeTag={removeTagHandler} id={i} fullname={element.fullname}/>)}
+        {props.addedUsers?.map((element: any, i: number) => <UsrTag key={i} removeTag={() => removeTagHandler(element)} id={i} fullname={element.fullname}/>)}
         {(props.addedUsers.length < 10) && <input name="member" type="text" onChange={props.handleChange} value={props.value} ref={props.inputRef} />}
     </div>)
 }
@@ -42,13 +38,12 @@ export const UsersModalInput = (props: { addedUsers: any, setAddedUsers: any, re
 export function ModalForm(props: { createChannel: any }) {
 
     // setting local state
-    const { protectedChannel, channelMode } = useContext(ChatContext) as ChatContextType;
+    const { protectedChannel, channelMode, lastUsers } = useContext(ChatContext) as ChatContextType;
     const [showDrpdown, setshowDrpdown] = useState(false);
-    const [usrTags, setUsrTags] = useState<Array<string>>([]);
     const [friends, setFriends] = useState([]);
     const [addedUsers, setAddedUsers]= useState([]);
-
     const [errorMsg, setErrorMsg] = useState("");
+    const [mount, setMount] = useState(false);
 
     const inputRef = useRef("");
     // Set the form validation using Yup && formik
@@ -67,18 +62,21 @@ export function ModalForm(props: { createChannel: any }) {
         const setUsrs = async () => {
             return await getFriends(setFriends);
         }
+        setMount(true);
         setUsrs();
     }, []);
 
     const onSubmit = (values: chatFormValues) => {
         alert(JSON.stringify(values, null, 2));
     };
+    
 
     const handleOnChange = (event: any) => {
         let value = event.target.value;
 
         formik.setFieldValue("member", value);
         // console.log(formik.values.member);
+        setErrorMsg("");
 
         filterOutUsers(value, friends, setshowDrpdown);
     };
@@ -98,8 +96,8 @@ export function ModalForm(props: { createChannel: any }) {
             formik.setFieldValue("member", "");
     }
 
-    return (<>
-        {errorMsg !== "" && <span className={Styles.error}>{errorMsg}</span>}
+    return ( <>
+        {mount && <>{errorMsg !== "" && <span className={Styles.error}>{errorMsg}</span>}
         <form className={Styles.form} onSubmit={formik.handleSubmit}>
             <div className={Styles.inputContainer}>
                 <span>Channel name</span>
@@ -122,7 +120,7 @@ export function ModalForm(props: { createChannel: any }) {
             </div>}
             <div className={Styles.inputContainer + " " + Styles.mTop}>
                 <span>Add Members</span>
-                <UsersModalInput addedUsers={addedUsers} setAddedUsers={setAddedUsers} removeUser={removeUser} handleChange={handleOnChange} value={formik.values.member} inputRef={inputRef} />
+                <UsersModalInput addedUsers={addedUsers} setAddedUsers={setAddedUsers} removeUser={removeUser} handleChange={handleOnChange} value={formik.values.member} inputRef={inputRef} oldUsers={friends} setOldUsers={setFriends} />
                 {showDrpdown && <div className={Styles.dropMembers}>
                 {friends.map((usr: any, i) => {
                             if (usr.fullname.toLowerCase().includes((inputRef?.current?.value)))
@@ -130,8 +128,8 @@ export function ModalForm(props: { createChannel: any }) {
                         })}
                 </div>}
             </div>
-            <Button clickHandler={(e: any) => props.createChannel(formik.values.cName, channelMode, formik.values.password, addedUsers, setAddedUsers, formik, setErrorMsg)} text="Create"/>
-        </form>
+            <Button clickHandler={(e: any) => props.createChannel(formik.values.cName, channelMode, formik.values.password, addedUsers, setAddedUsers, formik, errorMsg, setErrorMsg)} text="Create"/>
+        </form></>}
         </>
     )
 }
