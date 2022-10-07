@@ -5,7 +5,7 @@ USER root
 WORKDIR /app
 COPY . .
 RUN chmod 700 script.sh
-RUN npm install --force
+RUN npm install
 
 EXPOSE 3000
 
