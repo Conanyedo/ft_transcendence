@@ -57,6 +57,12 @@ const ProfileInfoEdit: React.FC<profileData> = (props) => {
 		props.setTagle(false);
 	};
 	const pathImage = getImageBySize(UserData?.avatar, 70);
+	const sub = (e: any) => {
+		e.preventDefault();
+		if (e.keyCode !== 13)
+			return;
+		toggleHandler();
+	}
 	return (
 		<motion.div
 			className={classes.background}
@@ -107,6 +113,7 @@ const ProfileInfoEdit: React.FC<profileData> = (props) => {
 					type="text"
 					defaultValue={UserData?.fullname}
 					ref={nameRef}
+					onKeyUpCapture={sub}
 				/>
 				{errorName !== "" && (
 					<motion.p
