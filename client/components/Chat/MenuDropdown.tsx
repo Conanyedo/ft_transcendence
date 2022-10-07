@@ -1,15 +1,17 @@
 // import { useOutsideAlerter } from "@hooks/Functions";
+import { ChatContext, ChatContextType } from "@contexts/chatContext";
 import { leaveChannel } from "@hooks/useFetchData";
 import Styles from "@styles/chat.module.css";
 import { BlockFriend, UnblockFriend } from "@utils/chat";
 import Router from "next/router";
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 
 export const MenuDropdown = (props: { data: any; methods: any }) => {
   const menuRef = useRef<any>(null);
 
   const [content, setContent] = useState<any>([]);
   const [functions, setFunctions] = useState<any>([]);
+  const { setShowCnv }  = useContext(ChatContext) as ChatContextType;
   
   // set conditions here
   useEffect(() => {
@@ -33,7 +35,7 @@ export const MenuDropdown = (props: { data: any; methods: any }) => {
       ]);
     } else {
       setContent([, "Leave Channel"]);
-      setFunctions([, () => leaveChannel(props.data.currentUser.convId, Router)]);
+      setFunctions([, () => leaveChannel(props.data.currentUser.convId, Router, setShowCnv)]);
     }
   }, []);
 

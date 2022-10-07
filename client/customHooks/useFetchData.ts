@@ -342,9 +342,7 @@ export const banMemberFromChannel = async (data: any) => {
 }
 
 export const muteMemberFromChnl = async (data: any) => {
-	// /chat/banMember
-
-	const json = JSON.stringify({ convId: data.convId, member: data.member })
+	const json = JSON.stringify({ convId: data.convId, member: data.member, seconds: data.seconds })
 
 	const token = getCookie("jwt")
 	return await axios({
@@ -519,7 +517,7 @@ export const getChannelProfile = async (convId: any, set: any) => {
 		})
 }
 
-export const leaveChannel = async (convId: any, router: NextRouter) => {
+export const leaveChannel = async (convId: any, router: NextRouter, set: any) => {
 	const json = JSON.stringify({ convId: convId })
 
 	const token = getCookie("jwt")
@@ -535,8 +533,9 @@ export const leaveChannel = async (convId: any, router: NextRouter) => {
 	})
 		.then((res) => {
 			if (res.data.err) return false
-			router.push("/chat")
-			return true
+			set(false);
+			router.push("/chat");
+			return true;
 		})
 		.catch((err) => {
 			return false

@@ -37,7 +37,6 @@ const times = [
 ];
 const seconds = [3600, 28800, 43200, 86400, 604800, 2630000];
 
-// POST /chat/muteMember
 async function muteMember(
   user: any,
   convId: string,
