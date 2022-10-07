@@ -4,7 +4,6 @@ import React, {
   useEffect,
   SetStateAction,
   useRef,
-  useMemo,
 } from "react";
 import { chatMsg, chatUser } from "@Types/dataTypes";
 import socket_notif from "config/socketNotif";

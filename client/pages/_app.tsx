@@ -5,7 +5,7 @@ import { store } from "@store/store";
 import { Provider } from "react-redux";
 import { ChatProvider } from "@contexts/chatContext";
 import Head from "next/head";
-import Router, { useRouter } from "next/router";
+import { useRouter } from "next/router";
 import ContentWrapper from "../components/wrapper/appWrapper";
 
 function MyApp({ Component, pageProps }: AppProps) {

@@ -1,5 +1,6 @@
 // import { useOutsideAlerter } from "@hooks/Functions";
 import { ChatContext, ChatContextType } from "@contexts/chatContext";
+import { useOutsideAlerter } from "@hooks/Functions";
 import { leaveChannel } from "@hooks/useFetchData";
 import Styles from "@styles/chat.module.css";
 import { BlockFriend, UnblockFriend } from "@utils/chat";
@@ -38,7 +39,7 @@ export const MenuDropdown = (props: { data: any; methods: any }) => {
       setFunctions([, () => leaveChannel(props.data.currentUser.convId, Router, setShowCnv)]);
     }
   }, []);
-
+	useOutsideAlerter(menuRef, setShowCnv); // TODO
   return (
     <>
       {props.data.dropdwn && (

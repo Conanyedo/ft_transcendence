@@ -5,16 +5,12 @@ import Cross from "@public/Cross.svg";
 import { useFormik } from "formik";
 import { Button, UsersModalInput } from "@components/Modal/index";
 import { useEffect, useRef, useState } from "react";
-import Avatar from "@public/profile.jpg";
 import {
-  filterUsers,
   SuggestedUsr,
   addUsrToChannel,
-  removeUsrFromChannel,
   filterOutUsers,
 } from "@components/Modal/utils";
 import { addMembers, getFriends } from "@hooks/useFetchData";
-import Router from "next/router";
 import { useOutsideAlerter } from "@hooks/Functions";
 
 const Input = (props: {
@@ -114,7 +110,7 @@ export const MembersModal = (props: {
 
   // useOutsideAlerter here
   useOutsideAlerter(modalRef, props.setShowSetModal);
-
+  const value = inputRef?.current as React.InputHTMLAttributes<HTMLInputElement>;
   return (
     <>
       {props.showSetModal && (
@@ -146,7 +142,6 @@ export const MembersModal = (props: {
                 <UsersModalInput
                   addedUsers={addedUsers}
                   setAddedUsers={setAddedUsers}
-                  removeUser={removeUser}
                   handleChange={handleOnChange}
                   value={formik.values.member}
                   inputRef={inputRef}
@@ -159,7 +154,7 @@ export const MembersModal = (props: {
                       if (
                         usr?.fullname
                           ?.toLowerCase()
-                          .includes(inputRef?.current?.value)
+                          .includes(value?.value)
                       )
                         return (
                           <SuggestedUsr

@@ -1,3 +1,4 @@
+import { MutableRefObject } from "react";
 import { allRanks } from "../config/baseURL";
 import unranked from '../public/Tiers/Unranked.svg';
 
@@ -246,4 +247,11 @@ export class FriendOnline {
 	fullname: string = '';
 	avatar: string = '';
 	status: string = '';
+}
+
+export interface N_ITEMS {
+	alt: string;
+	src: any;
+	move: any;
+	ref_ctn: MutableRefObject<null> | any;
 }

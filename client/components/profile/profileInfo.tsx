@@ -7,12 +7,12 @@ import { useRouter } from "next/router";
 import { fetchDATA } from "../../customHooks/useFetchData";
 import { getImageBySize, getRankUser } from "../../customHooks/Functions";
 import { Toggle } from "@store/UI-Slice";
-import { useAppDispatch } from "@store/hooks";
+import { useDispatch } from "react-redux";
 
 const ProfileInfo: React.FC = () => {
 	const [user, setUser] = useState<UserTypeNew>(EmtyUser);
 	const router = useRouter();
-	const dispatch = useAppDispatch();
+	const dispatch = useDispatch();
 	useEffect(() => {
 		fetchDATA(setUser, router, 'user/info');
 		return () => {

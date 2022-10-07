@@ -1,11 +1,11 @@
 import Styles from "@styles/chat.module.css"
 import Cross from "@public/Cross.svg"
 import Image from "next/image"
-import React, { Dispatch, FormEvent, SetStateAction, useContext, useEffect, useRef, useState } from "react"
+import React, { Dispatch, SetStateAction, useContext, useEffect, useRef, useState } from "react"
 import { ChatContext, ChatContextType } from "@contexts/chatContext"
 import { motion } from "framer-motion"
 import Avatar from "@public/profile.jpg"
-import { Option, SuggestedUsr, UsrTag, addUsrToChannel, removeUsrFromChannel, removeTag, filterUsers, filterOutUsers } from "./utils"
+import { Option, SuggestedUsr, UsrTag, addUsrToChannel, removeTag, filterOutUsers } from "./utils"
 import { chatValidationSchema } from "validation/chatSchemas"
 import { chatFormValues } from "@Types/dataTypes"
 // Importing formik hooks
@@ -13,7 +13,7 @@ import { useFormik } from "formik";
 import { useOutsideAlerter } from "customHooks/Functions"
 import { getFriends } from "@hooks/useFetchData"
 
-export const UsersModalInput = (props: { addedUsers: any, setAddedUsers: any, removeUser: any, handleChange: any, value: any, inputRef: any, oldUsers: any, setOldUsers: any}) => {
+export const UsersModalInput = (props: { addedUsers: any, setAddedUsers: any, handleChange: any, value: any, inputRef: any, oldUsers: any, setOldUsers: any}) => {
 
     const removeTagHandler = (element: any) => {
         removeTag(
@@ -79,9 +79,6 @@ export function ModalForm(props: { createChannel: any }) {
         filterOutUsers(value, friends, setshowDrpdown);
     };
 
-    const removeUser = () => {
-    }
-
     const clickHandler = (user: any) => {
         addUsrToChannel(user,
             setAddedUsers,
@@ -92,7 +89,7 @@ export function ModalForm(props: { createChannel: any }) {
             friends);
             formik.setFieldValue("member", "");
     }
-
+    const elm = inputRef?.current as React.InputHTMLAttributes<HTMLInputElement>;
     return ( <>
         {mount && <>{errorMsg !== "" && <span className={Styles.error}>{errorMsg}</span>}
         <form className={Styles.form} onSubmit={formik.handleSubmit}>
@@ -117,10 +114,10 @@ export function ModalForm(props: { createChannel: any }) {
             </div>}
             <div className={Styles.inputContainer + " " + Styles.mTop}>
                 <span>Add Members</span>
-                <UsersModalInput addedUsers={addedUsers} setAddedUsers={setAddedUsers} removeUser={removeUser} handleChange={handleOnChange} value={formik.values.member} inputRef={inputRef} oldUsers={friends} setOldUsers={setFriends} />
+                <UsersModalInput addedUsers={addedUsers} setAddedUsers={setAddedUsers} handleChange={handleOnChange} value={formik.values.member} inputRef={inputRef} oldUsers={friends} setOldUsers={setFriends} />
                 {showDrpdown && <div className={Styles.dropMembers}>
                 {friends.filter(item => !addedUsers.includes(item)).map((usr: any, i) => {
-                            if (usr.fullname.toLowerCase().includes((inputRef?.current?.value)))
+                            if (usr.fullname.toLowerCase().includes((elm?.value)))
                                 return <SuggestedUsr key={i} user={usr} action={clickHandler} />
                         })}
                 </div>}

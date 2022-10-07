@@ -95,7 +95,7 @@ export class allGames {
         id: isfriend.idGame,
       });
       setTimeout(() => {
-        this.FriendsLobby = this.FriendsLobby.filter((game) => GameID && game.idGame === GameID)
+        this.FriendsLobby = this.FriendsLobby.filter((game) => GameID && game.idGame !== GameID)
         const player = new Player(isfriend.admin, isfriend.adminSocket, 'left');
         const playertwo = new Player(login, client, 'right');
         const newGame = new Game(
@@ -115,7 +115,7 @@ export class allGames {
             clearTimeout(time);
           };
         }, 10);
-      }, 100);
+      }, 200);
       return GameID;
     }
   }
@@ -338,6 +338,8 @@ export class allGames {
         if (lobby.admin === data.admin && lobby.friend === data.login)
           return lobby;
       });
+      console.log(lobby);
+      
     if (lobby && lobby.admin !== '') return true;
     return false;
   }

@@ -1,22 +1,12 @@
 import classes from "../../../styles/overView.module.css";
-
 import { motion } from "framer-motion";
 import "react-sweet-progress/lib/style.css";
-
 import React, { useState } from "react";
-
 import FriendProfileList from "./FriendProfileList";
 import LeaderBoard from "./LeaderBord";
-import { useRouter } from "next/router";
-import { useSelector } from "react-redux";
-import { selectUser } from "../../../store/userSlice";
-// import Message from ''
 
 const OverView: React.FC = () => {
-	const rout = useRouter();
 	const [overViewShow, setOverViewShow] = useState(true);
-	const [showFriend, setShowFriend] = useState(rout.query.id === undefined);
-	const user = useSelector(selectUser);
 
 	const showOverView = () => {
 		setOverViewShow(true);

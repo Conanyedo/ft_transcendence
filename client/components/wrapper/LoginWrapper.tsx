@@ -1,7 +1,7 @@
 import { getCookie } from "cookies-next";
 import {  useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { checkJWT, fetchDATA } from "../../customHooks/useFetchData";
+import { checkJWT } from "../../customHooks/useFetchData";
 import LoadingElm from "../loading/Loading_elm";
 
 type PropsType = {

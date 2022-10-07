@@ -3,7 +3,6 @@ import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
 import UploadIcon from "../../public/FriendIcons/UploadIcon.svg";
 import CrossIcon from "../../public/FriendIcons/Cross.svg";
-import { useAppDispatch } from "../../store/hooks";
 import { Toggle } from "../../store/UI-Slice";
 import { EmtyUser, UserTypeNew } from "../../Types/dataTypes";
 import { motion } from "framer-motion";
@@ -15,6 +14,7 @@ import {
 	useOutsideAlerter,
 	validation,
 } from "../../customHooks/Functions";
+import { useDispatch } from "react-redux";
 
 interface profileData {
 	setTagle: (t: boolean) => void;
@@ -30,7 +30,7 @@ const ProfileInfoEdit: React.FC<profileData> = (props) => {
 	const ImageRef = useRef<any>(null);
 	const avatarRef = useRef<any>(null);
 	const wrapperRef = useRef(null);
-	const dispatch = useAppDispatch();
+	const dispatch = useDispatch();
 	const router = useRouter();
 	const token = getCookie("jwt");
 	const [UserData, setUserData] = useState<UserTypeNew>(EmtyUser);

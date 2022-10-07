@@ -1,34 +1,24 @@
 import Image from "next/image";
 import { motion } from "framer-motion";
-
 import UserSelected from "../../public/SelectedSideNav/ProfileSelected.svg";
 import User from "../../public/SideNav/Profile.svg";
-
 import LiveGameSelected from "../../public/SelectedSideNav/LiveGameSelected.svg";
 import LiveGame from "../../public/SideNav/LiveGame.svg";
-
 import ChatSelected from "../../public/SelectedSideNav/ChatSelected.svg";
 import Chat from "../../public/SideNav/Chat.svg";
-
 import GameSelected from "../../public/SelectedSideNav/GameSelected.svg";
 import Game from "../../public/SideNav/Game.svg";
-
 import LogoutSelected from "../../public/SelectedSideNav/LogoutSelected.svg";
 import Logout from "../../public/Logout.svg";
-
 import classes from "../../styles/sideNav.module.css";
 import { useRouter } from "next/router";
 import { MutableRefObject, useEffect, useRef, useState } from "react";
 import { getCookie } from "cookies-next";
 import { LogOut } from "../../customHooks/useFetchData";
 import socket_notif from "config/socketNotif";
+import { N_ITEMS } from "@Types/dataTypes";
 
-interface N_ITEMS {
-	alt: string;
-	src: any;
-	move: any;
-	ref_ctn: MutableRefObject<null> | any;
-}
+
 
 const ItemsNav: React.FC<N_ITEMS> = (props) => {
 	const [newMsg, setNewMsg] = useState(false);
@@ -42,7 +32,7 @@ const ItemsNav: React.FC<N_ITEMS> = (props) => {
 
 	useEffect(() => {
 		if (props.alt === '/chat') {
-			socket_notif.on('newMsg', () => { // TODO new route
+			socket_notif.on('newMsg', () => {
 				if (!rout.asPath.includes('/chat'))
 					setNewMsg(true);
 			})

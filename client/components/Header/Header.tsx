@@ -9,11 +9,10 @@ import { getImageBySize, useOutsideAlerter } from "../../customHooks/Functions"
 import { motion, Variants } from "framer-motion"
 import { fetchDATA, LogOut, requests } from "../../customHooks/useFetchData"
 import { EmtyUser, NotificationType, UserTypeNew } from "../../Types/dataTypes"
-import { getCookie } from "cookies-next"
 import socket_notif from "../../config/socketNotif"
-import { useAppDispatch } from "@store/hooks"
 import { ShowSettings, Toggle } from "@store/UI-Slice"
 import socket_game from "config/socketGameConfig"
+import { useDispatch } from "react-redux"
 
 const Notif_item: React.FC<NotificationType> = (props) => {
 	const [isOpen, setIsOpen] = useState(false)
@@ -111,7 +110,6 @@ const Notif: React.FC = () => {
 	const [isNew, setisNew] = useState(false)
 	const notifMenu = useRef(null)
 	const ref_icon = useRef(null)
-	const token = getCookie("jwt")
 	const clicknotifHandler = (e: any) => {
 		if (ref_icon.current && ref_icon.current == e.target) {
 			setisOpen((value) => !value)
@@ -182,7 +180,7 @@ const Notif: React.FC = () => {
 const UserSection = () => {
 	const menu = useRef(null)
 	const router = useRouter()
-	const dispatch = useAppDispatch()
+	const dispatch = useDispatch()
 	const [dropDown, setDropDown] = useState(false)
 	const [isMounted, setIsMounted] = useState(false)
 	const [UserData, setUserData] = useState<UserTypeNew>(EmtyUser)

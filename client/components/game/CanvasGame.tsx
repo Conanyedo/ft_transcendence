@@ -1,4 +1,3 @@
-import Router from "next/router";
 import React, { useEffect, useRef, useState } from "react";
 import { render } from "../../config/game";
 import { allTheme } from "../../config/gameMap";
@@ -25,7 +24,7 @@ const CanvasGame: React.FC<{GameID: string}> = (props) => {
 		else if (ev.key === "ArrowDown")
 			socket_game.emit("go_Down", { login: owner });
 	}
-	const stopPaddle = (ev: KeyboardEvent) => {
+	const stopPaddle = () => {
 		socket_game.emit("stop", { login: owner });
 	}
 	useEffect(() => {

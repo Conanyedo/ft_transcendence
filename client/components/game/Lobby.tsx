@@ -17,6 +17,7 @@ import { useRouter } from "next/router";
 import { FriendOnline } from "@Types/dataTypes";
 import { getImageBySize, useOutsideAlerter } from "@hooks/Functions";
 import socket_notif from "config/socketNotif";
+import { InputHTMLAttributes } from "react";
 
 class PropsType extends FriendOnline {
 	select: any;
@@ -53,19 +54,23 @@ export const FriendGameSetting: React.FC<{
 	);
 	const [ListFriends, setListFriends] = useState<FriendOnline[]>([]);
 	const [isOpen, setisOpen] = useState(false);
-	const ref_input = useRef(null);
+	const ref_input = useRef<HTMLInputElement>(null);
 	const ref_listSelect = useRef(null);
 	const ref_Select = useRef(null);
-	const ClickHandler = (e: object) => {
+	const ClickHandler = () => {
 		if (friendSelected.login !== "") ClicktoSerachHandler();
 		else setisOpen((v) => !v);
 	};
 	const SearchHandler = () => {
 		setisOpen(true);
-		setFriendSelected(ref_input.current!.value);
+		const elm = ref_input?.current;
+		const friend = new FriendOnline();
+		friend.fullname = elm!.value
+		setFriendSelected(friend);
 	};
-	const selectThemehandler = (e: object) => {
-		setThemeselected(e!.target!.alt as string);
+	const selectThemehandler = (e: React.MouseEvent<HTMLImageElement>) => {
+		const target = e?.target as HTMLImageElement;
+		setThemeselected(target?.alt);
 	};
 	const StartHandler = () => {
 		if (friendSelected.login) {

@@ -2,7 +2,7 @@ import Image from "next/image";
 import classes from "../../styles/GameLobby.module.css";
 import classesELM from "../../styles/Loading.module.css";
 import classesGameHeader from "../../styles/liveGame.module.css";
-import { EmtyUser, gameControleType, GameDataType, UserTypeNew } from "../../Types/dataTypes";
+import { EmtyUser, gameControleType, UserTypeNew } from "../../Types/dataTypes";
 import React, { useEffect, useRef, useState } from "react";
 import { render } from "../../config/game";
 import socket_game from "../../config/socketGameConfig";
@@ -11,7 +11,6 @@ import { allTheme } from "config/gameMap";
 import { fetchDATA } from "@hooks/useFetchData";
 import { getImageBySize, getRankUser, runTimer } from "@hooks/Functions";
 import { useDispatch } from "react-redux";
-import { ShowErrorMsg } from "@store/UI-Slice";
 import MsgSlideUp from "@components/Settings/slideUpMsg";
 
 const GameHeader: React.FC<{
@@ -103,7 +102,6 @@ const GameLobby: React.FC<{ GameID: string }> = (props) => {
 	const ref_canvas = useRef(null);
 	const ref_span = useRef(null);
 	const router = useRouter();
-	const dispatch = useDispatch();
 	useEffect(() => {
 		socket_game.emit("FriendGameInfo", props.GameID, (data: any) => {
 			setDataGame(data);

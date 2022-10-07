@@ -27,7 +27,7 @@ const FactorAuth = () => {
 		if (await checkCode2FA(inputValue, router)) setisError(false)
 		else setisError(true)
 	}
-	const sub = (e: any) => {
+	const sub = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		if (inputValue.length === 6)
 			CheckHandler();

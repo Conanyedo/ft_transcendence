@@ -477,6 +477,12 @@
 	}
 }
 
+@media screen and (max-width:600px) {
+	.SearchCTN {
+		height: 92%;
+	}
+}
+
 @media screen and (max-width:450px) {
 	.Hover,
 	.notHover,

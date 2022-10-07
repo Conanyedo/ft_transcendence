@@ -1,6 +1,6 @@
 import { chatUser } from "@Types/dataTypes"
 import socket_notif from "config/socketNotif"
-import { fetchDATA, fetchUserLogin, requests } from "@hooks/useFetchData"
+import { fetchUserLogin, requests } from "@hooks/useFetchData"
 import { InviteMsg } from "@components/Chat/inviteMsg"
 import Router from "next/router"
 

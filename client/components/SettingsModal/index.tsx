@@ -6,9 +6,7 @@ import { useFormik } from "formik"
 import classes from "@styles/EditProfile.module.css";
 import { useState, useRef, useEffect, useContext } from "react"
 import UploadIcon from "@public/FriendIcons/UploadIcon.svg";
-import { getFriends, updateChnlInfo, updateUserInfo } from "../../customHooks/useFetchData";
-import { useAppDispatch } from "@store/hooks";
-import { getCookie } from "cookies-next";
+import { updateChnlInfo } from "../../customHooks/useFetchData";
 import { useRouter } from "next/router"
 import { ChatContext, ChatContextType } from "@contexts/chatContext"
 import { Option } from "@components/Modal/utils"
@@ -83,12 +81,7 @@ const Form = ({ data, currUser, setShowSetModal }: any) => {
 }
 
 const ImageUploader = (props: { setImgSrc: any, ImageRef: any, avatar: any, setAvatar: any }) => {
-
-    const nameRef = useRef<any>(null);
-    const token = getCookie("jwt");
     const avatarRef = useRef<any>(null);
-    const dispatch = useAppDispatch();
-    const router = useRouter();
 
     const toggleHandler = async (e: any) => {
         var file = e.target.files[0];

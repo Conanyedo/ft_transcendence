@@ -3,7 +3,6 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import classes from "../../styles/Search.module.css";
 import { getImageBySize, useOutsideAlerter } from "../../customHooks/Functions";
-import profile from "../../public/profileImage.png";
 import Option from "../../public/FriendIcons/OptionIcon.svg";
 import {
 	ADDButton,
@@ -12,7 +11,7 @@ import {
 	PendingButton,
 	RequestButton,
 } from "../buttons";
-import { EmtyUser, UserTypeNew } from "../../Types/dataTypes";
+import { UserTypeNew } from "../../Types/dataTypes";
 import { useRouter } from "next/router";
 import { fetchDATA, requests } from "../../customHooks/useFetchData";
 

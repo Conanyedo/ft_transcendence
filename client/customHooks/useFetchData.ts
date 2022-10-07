@@ -14,8 +14,6 @@ import { eraseCookie } from "./Functions"
 export const getQRcodeOrdisableCode = async (status: string, route: NextRouter): Promise<string> => {
 	const token = getCookie("jwt")
 	const json = JSON.stringify({ is2faEnabled: status })
-	// const params = new URLSearchParams();
-	// params.append("is2faEnabled", status);
 	return await axios({
 		method: "post",
 		url: `${baseUrl}auth/2faEnabling`,

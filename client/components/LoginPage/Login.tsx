@@ -31,7 +31,12 @@ const Login = () => {
 	}
 	return (
 		<>
-			<div className={classes.body}>
+			<motion.div
+				initial={{ y: 10, opacity: 0 }}
+				animate={{ y: 0, opacity: 1 }}
+				exit={{ y: -10, opacity: 0 }}
+				transition={{ duration: 0.5 }}
+				className={classes.body}>
 				<div className={classes.header}>
 					<div className={classes._1337logo}>
 						<img src={logo.src} alt="1337_official_logo" />
@@ -78,14 +83,7 @@ const Login = () => {
 					<source src="luffy.mp3" type="audio/mpeg" />
 					Your browser does not support the audio element.
 				</audio>
-				{/* <motion.div
-					whileHover={{ scale: 1.2 }}
-					whileTap={{ scale: 1.1 }}
-					className={classes.loginBtn}
-					onClick={(e) => router.push(`${baseUrl}auth/google/login`)}>
-					Google
-				</motion.div> */}
-			</div>
+			</motion.div>
 		</>
 	)
 }

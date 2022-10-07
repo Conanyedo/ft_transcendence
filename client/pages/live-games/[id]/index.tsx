@@ -2,7 +2,6 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import GameToWatch from "../../../components/liveGame/GameToWatch";
 import LoadingElm from "../../../components/loading/Loading_elm";
-import ContentWrapper from "../../../components/wrapper/appWrapper";
 import socket_game from "../../../config/socketGameConfig";
 
 const WatchGame = () => {

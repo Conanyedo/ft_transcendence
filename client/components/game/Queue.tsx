@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import socket_game from "../../config/socketGameConfig";
 import { getImageBySize, getRankUser } from "../../customHooks/Functions";
 import classes from "../../styles/Queue.module.css";

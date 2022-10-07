@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import ContentWrapper from "../../components/wrapper/appWrapper";
 import SearchComponent from "../../components/search/search";
 
 const Search = () => {
