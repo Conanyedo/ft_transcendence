@@ -61,7 +61,7 @@ export class Message {
 	@Column()
 	sender: string;
 
-	@Column({ type: 'text' })
+	@Column({ type: 'text', nullable: true })
 	msg: string;
 
 	@Column({ default: null })
