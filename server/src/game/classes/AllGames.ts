@@ -76,7 +76,9 @@ export class allGames {
     let game: LobbyFriends;
     if (idGame) game = this.FriendsLobby.find((game) => game.idGame == idGame);
     if (game) {
-      this.server.to(idGame).emit('gameStarted', true);
+      setTimeout(() => {
+        this.server.to(idGame).emit('gameStarted', true);
+      }, 300)
       return {
         gameID: game.idGame,
         admin: game.admin,

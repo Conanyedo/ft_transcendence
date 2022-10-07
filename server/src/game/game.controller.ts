@@ -17,7 +17,7 @@ export class GameController {
 	
 	@Get('/matchHistory/:login')
 	@UseGuards(JwtAuthGuard)
-	async getUserMatches(@Param('login') data: loginValidate) {
+	async getUserMatches(@Param() data: loginValidate) {
 		return await this.gameService.getMatches(data.login);
 	}
 
