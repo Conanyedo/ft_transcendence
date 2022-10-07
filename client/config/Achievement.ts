@@ -20,27 +20,27 @@ export const AllAchievement: achievementType[] = [
 		disc: "won 10 matchs consecutively",
 	},
 	{
-        id: 3,
-		logo: boss,
-		title: "who's the boss",
-		disc: "Taking the first place in rank",
-	},
-	{
-        id: 4,
-		logo: king,
-		title: "Gold king",
-		disc: "Reaching the gold tier",
-	},
-	{
-        id: 5,
+				id: 3,
 		logo: Invincible,
 		title: "Invincible",
 		disc: "won 20 games successively",
 	},
 	{
-        id: 6,
+				id: 4,
 		logo: Fly_higher,
 		title: "Fly higher",
 		disc: "reaching the level 5",
+	},
+	{
+				id: 5,
+		logo: king,
+		title: "Gold king",
+		disc: "Reaching the gold tier",
+	},
+	{
+        id: 6,
+		logo: boss,
+		title: "who's the boss",
+		disc: "Taking the first place in rank",
 	},
 ];
