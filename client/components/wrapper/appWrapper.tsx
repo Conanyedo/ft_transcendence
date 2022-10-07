@@ -2,6 +2,7 @@ import { getCookie } from "cookies-next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import classesNav from "../../styles/sideNav.module.css";
+import classes from "../../styles/Profile.module.css";
 import LoadingElm from "../loading/Loading_elm";
 import Header from "../Header/Header";
 import SideNav from "../Header/sideNav";
@@ -107,7 +108,10 @@ const ContentWrapper: React.FC<PropsType> = ({ children }) => {
 			{displayCard && <ProfileInfoEdit setTagle={toggleHandler} />}
 			<Header setPos={navBarHandler} />
 			<SideNav onNav={navBarHandler} currentPos={posIndicator} />
-			<Section elm={children} />
+			<Section elm={<>
+			{children}
+			<div className={classes.buttom}></div>
+			</>} />
 		</>
 	);
 };
