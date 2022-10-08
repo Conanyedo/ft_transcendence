@@ -31,8 +31,6 @@ const OptionOfFriend: React.FC<{
 		requests(props.login, "friendship/blockUser", router);
 		router.back();
 	}
-	const unfriendhandler = () =>
-		requests(props.login, "friendship/unfriend", router);
 	const goToChat = () => router.push(`/chat?login=${props.login}`);
 	return (
 		<div className={classes.optionBtnFriend}>
@@ -74,15 +72,8 @@ const OptionOfFriend: React.FC<{
 					<Image src={option_friend} />
 					{optionTaggle && (
 						<OptionMenu
-							FirstBtn={
-								props.relation === "friend"
-									? "Message"
-									: "Unfriend"
-							}
-							firstClick={
-								(props.relation === "friend" && goToChat) ||
-								unfriendhandler
-							}
+							FirstBtn={"Message"}
+							firstClick={goToChat}
 							SecondBtn="Block User"
 							SecondClick={Blockhandler}
 							width="9rem"
