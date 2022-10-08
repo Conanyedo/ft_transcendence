@@ -6,6 +6,7 @@ import { JoinChannel, LeaveChannel } from "../buttons";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { fetchDATA } from "@hooks/useFetchData";
+import { getImageBySize } from "@hooks/Functions";
 
 interface ChannelDataType {
 	Avatar: string;
@@ -18,11 +19,12 @@ interface ChannelDataType {
 const Channel: React.FC<ChannelDataType> = (props) => {
 	const refresh = () => props.refresh();
 	const router = useRouter();
+	const pathImage = getImageBySize(props.Avatar, 70);
 	return (
 		<div className={classes.Channel}>
 			<div className={classes.Avatar_Channel}>
 				<div className={classes.avatar}>
-					<img src={props.Avatar} />
+					<img src={pathImage} />
 				</div>
 				<div className={classes.ChannelName}>{props.title}</div>
 			</div>
