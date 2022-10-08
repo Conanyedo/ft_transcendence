@@ -219,14 +219,19 @@ export class ChatService {
 		if (!msgs.length)
 			return { data: msgs };
 		const conv: Conversation = await this.getConvById(convId);
-		const newMsgs: Message[] = [];
+		const newMsgs: msgDto[] = [];
 		await Promise.all(msgs.map(async (msg) => {
+			const msgSent: msgDto = { msg: msg.msg, sender: msg.sender, invitation: msg.invitation, status: msg.status, date: msg.createDate, convId: conv.id, msgId: msg.id }
 			if (conv.type === convType.DM)
-				newMsgs.push(msg);
+				newMsgs.push(msgSent);
 			else {
 				const relation = await this.friendshipService.getRelation(login, msg.sender);
-				if (relation !== 'blocked')
-					newMsgs.push(msg);
+				if (relation !== 'blocked') {
+					const fullname = await this.memberRepository
+						.query(`select users.fullname from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND users."login" = '${msg.sender}';`);
+					msgSent.fullname = fullname[0].fullname;
+					newMsgs.push(msgSent);
+				}
 			}
 		}))
 		return { data: [...newMsgs] };
