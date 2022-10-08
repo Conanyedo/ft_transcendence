@@ -15,8 +15,11 @@ import { getImageBySize, getRankUser } from "../../../customHooks/Functions"
 const ElmRank: React.FC<matchDataType> = (props) => {
 	const avatar = props.badge === 1 ? Rank_1 : props.badge === 2 ? Rank_2 : props.badge === 3 ? Rank_3 : null
 	const route = useRouter()
+	const owner = localStorage.getItem("owner");
 	const Clickhandler = () => {
-		if (props.relation !== "blocked") route.push("/profile/" + props.login)
+		if (props.relation === "blocked" || props.login === owner)
+			return;
+		route.push("/profile/" + props.login)
 	}
 	const tier: rankObj = getRankUser(props.GP)
 	let winRatio = Math.floor((props.Win / props.games) * 100)
@@ -133,12 +136,12 @@ const LeaderBoard: React.FC = () => {
 										<ElmRank
 											key={user?.login}
 											fullName={user?.fullname}
-											games={user?.stats.numGames}
-											Win={user?.stats.gamesWon}
+											games={user?.numGames}
+											Win={user?.gamesWon}
 											badge={idx + 1}
 											avatar={user?.avatar}
 											login={user?.login}
-											GP={user?.stats.GP}
+											GP={user?.GP}
 											relation={user?.relation}
 										/>
 									))}
