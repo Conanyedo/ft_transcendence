@@ -23,7 +23,7 @@ const User: React.FC<types> = (props) => {
 	const router = useRouter();
 	const [option, setOption] = useState(false);
 	const TaggleHandler = () => setOption(!option);
-	const goToChat = () => router.push("/chat/" + props.login);
+	const goToChat = () => router.push("/chat?login=" + props.login);
 	const wrapperRef = useRef(null);
 	const BlockHandler = async () => {
 		await requests(props.login, "friendship/blockUser", router);
