@@ -8,7 +8,7 @@ import { FriendshipService } from 'src/friendship/friendship.service';
 import { opponentDto } from 'src/game/game.dto';
 import { Repository } from 'typeorm';
 import { Stats, userAchievements } from './stats.entity';
-import { rankDto, statsDto, userDto, userParitalDto } from './user.dto';
+import { leaderBoardDto, rankDto, statsDto, userDto, userParitalDto } from './user.dto';
 import { User, userStatus } from './user.entity';
 
 const fs = require('fs');
@@ -178,16 +178,19 @@ export class UserService {
 	}
 
 	async getLeaderBoard(login: string) {
-		const users: User[] = await this.userRepository
-			.createQueryBuilder('users')
-			.leftJoinAndSelect("users.stats", "stats")
-			.select(['users.login', 'users.fullname', 'users.avatar', 'stats.rank', 'stats.numGames', 'stats.gamesWon', 'stats.GP'])
-			.orderBy('stats.GP', 'DESC')
-			.getMany();
-		const leaderBoard = await Promise.all(users.map(async (user) => {
+		const users = await this.userRepository
+			.query(`select users.login, users.fullname, users.avatar, stats.rank, stats."numGames", stats."gamesWon", stats."GP" from users join stats on users."statsId" = stats.id order by stats."GP" DESC`)
+		if (!users.length)
+			return { data: [...users] };
+		const leaderBoard: leaderBoardDto[] = await Promise.all(users.map(async (user) => {
 			const relation = await this.friendshipService.getRelation(login, user.login);
-			return { ...user, relation }
+			return { login: user.login, fullname: user.fullname, avatar: user.avatar, rank: user.rank, numGames: user.numGames, gamesWon: user.gamesWon, GP: user.GP, relation: relation };
 		}))
+		leaderBoard.sort((a: leaderBoardDto, b: leaderBoardDto) => {
+			const right: number = a.GP;
+			const left: number = b.GP;
+			return left - right;
+		});
 		return { data: [...leaderBoard] };
 	}
 
