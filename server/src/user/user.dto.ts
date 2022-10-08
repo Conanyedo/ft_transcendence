@@ -46,3 +46,14 @@ export interface rankDto {
 	GP: number;
 	rank: number;
 }
+
+export interface leaderBoardDto {
+	login: string;
+	fullname: string;
+	avatar: string;
+	numGames: string;
+	gamesWon: string;
+	GP: number;
+	rank: number;
+	relation: string;
+}
