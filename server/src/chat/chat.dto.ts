@@ -143,6 +143,7 @@ export interface conversationDto {
 	avatar?: string;
 	status?: string;
 	membersNum?: number;
+	lastUpdate?: Date;
 }
 
 export interface createMemberDto {
