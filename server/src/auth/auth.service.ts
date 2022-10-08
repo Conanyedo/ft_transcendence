@@ -27,10 +27,14 @@ export class AuthService {
 		return { ...getUser };
 	}
 
+	redirect2fa(res: Response) {
+		res.redirect(`http://${this.configService.get('CLIENT_IP')}/`);
+	}
+	
 	setJWTCookie(user: userParitalDto, res: Response) {
 		const accessToken: string = this.jwtAuthService.setJwt(user);
 		res.cookie('jwt', accessToken);
-		res.cookie('jwt-2fa', '', { maxAge: 1 });
+		// res.cookie('jwt-2fa', '', { maxAge: 1 });
 	}
 
 	setJWT2faCookie(user: userParitalDto, res: Response) {
