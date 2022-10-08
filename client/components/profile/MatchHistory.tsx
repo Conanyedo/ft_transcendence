@@ -8,7 +8,10 @@ import { getImageBySize } from "../../customHooks/Functions";
 
 export const Match: React.FC<HistoryMatchType> = (props) => {
 	const router = useRouter();
+	const owner = localStorage.getItem("owner");
 	const profileHandler = () => {
+		if (props.login === owner)
+			return;
 		router.push(`/profile/${props.login}`);
 	}
 	const pathImage = getImageBySize(props.avatar, 70);
