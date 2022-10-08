@@ -23,7 +23,7 @@ services:
       - "5432:5432"
     volumes:
       - pongmania:/var/lib/postgresql/data
-      - ./server/db.sql:/docker-entrypoint-initdb.d/db.sql
+      # - ./server/db.sql:/docker-entrypoint-initdb.d/db.sql
     environment:
       - POSTGRES_USER=Conanyedo
       - POSTGRES_PASSWORD=pongmania
