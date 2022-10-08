@@ -112,8 +112,6 @@ export const getLastUsers = async (
           "getMsgs",
           { convId: item?.convId },
           (response: any) => {
-            console.table(response.data);
-            
             setChatMsgs(response.data);
             // run on first render only
             scrollToBottom(messagesEndRef);
@@ -166,7 +164,6 @@ function errorHandler(values: any, data: any) {
       /^(?=.{2,20}$)(?![ _.-])(?!.*[_.-]{2})[a-zA-Z0-9 ._-]+(?<![ _.-])$/
     ).test(values.cName)
   ) {
-	console.log(values.cName);
     return "Channel name shouldbe between 3 to 20 characters and can contain one of these: [space_.-].";
   }
   if (
