@@ -11,6 +11,7 @@ import { useDispatch } from "react-redux";
 
 const ProfileFriend = () => {
 	const [userId, setuserId] = useState<string>("");
+	const [isUp, setisUp] = useState(false);
 	const route = useRouter();
 	const dispatch = useDispatch();
 	const { id } = route.query;
@@ -22,14 +23,20 @@ const ProfileFriend = () => {
 			userExists(setuserId, login, route, dispatch);
 		else
 			route.replace('/profile');
+		return () => {
+			setuserId('');
+		}
 	}, [login]);
+	useEffect(() => {
+		setisUp(true);
+	}, [])
 	if (login === owner as string) {
 		route.replace('/profile');
 		return <LoadingElm />
 	}
 	return (
 		<>
-			{userId && 
+			{userId && isUp &&
 					<div className={classes.profileCtn}>
 						{userId && (
 							<>
