@@ -22,10 +22,10 @@ export class SocketIOAdapter extends IoAdapter {
 
 		options.cors = { origin: `http://${clientIP}` };
 
-		const jwtAuthService = this.app.get(JwtAuthService);
+		// const jwtAuthService = this.app.get(JwtAuthService);
 
 		const server = super.createIOServer(port, options);
-		server.use(verifyTokenMiddleware(jwtAuthService, this.logger))
+		// server.use(verifyTokenMiddleware(jwtAuthService, this.logger))
 		return server;
 	}
 }
