@@ -64,9 +64,11 @@ async function upgradeMember(user: any, convId: string, setData: any) {
   }
 }
 
-async function downgradeMember(user: any, convId: string) {
+async function downgradeMember(user: any, convId: string, setData: any) {
   const data = { convId: convId, member: user.login, status: "Member" };
-  await changeMemberRole(data, () => null)
+  if (await changeMemberRole(data, () => null)) {
+    getDataOfMembers(convId, setData);
+  }
 }
 
 async function UnmuteMember(convId: string, user: any, setData: any) {
@@ -116,7 +118,7 @@ function setAdminActions(data: any, methods: any) {
 
   // update muteMember to a handler to show popup
   methods.setFunctions([
-    () => downgradeMember(data.user, data.convId),
+    () => downgradeMember(data.user, data.convId, methods.setData),
     () => banMember(data.user, data.convId, methods.setData),
     () => methods.setmuteShow(true),
   ]);

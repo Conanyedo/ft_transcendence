@@ -121,10 +121,10 @@ export const updateChnlInfo = async (formData: any, router: any, login: any) => 
 		withCredentials: true,
 	})
 		.then((res) => {
-			if (res.data == true) {
-				router.push(`/chat?login=${login}`)
+			if (res.data.data == true) {
+				router.push(`/chat?channel=${login}`)
 			}
-			return true
+			return true;
 		})
 		.catch((err) => {
 			return false

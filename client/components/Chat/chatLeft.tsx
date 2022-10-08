@@ -55,34 +55,29 @@ export const ChatLeft = (props: {
     formik.setFieldValue("member", "");
   }
 
-  function validateData(data: any, setError: any, error: string) {
+  function validateData(data: any) {
     const checkname = (obj: any) => obj.name == data.channelName;
     if (
       data.channelName.length == 0 ||
       data.convType.length == 0 ||
       data.members.length == 0
     ) {
-      setError("Please enter the required credentials**");
-      return false;
+      return "There is a missing input.";
     }
     if (lastUsers.some(checkname)) {
-      setError("Name already in use");
-      return false;
+      return "Name already in use.";
     }
-    if (!(data.channelName.length >= 4)) {
-      setError("Channel name should contain at least 4 characters");
-      return false;
+    if (!(data.channelName.length >= 4) || !RegExp(
+      /^(?=.{2,20}$)(?![ _.-])(?!.*[_.-]{2})[a-zA-Z0-9 ._-]+(?<![ _.-])$/
+    ).test(data.channelName)) {
+      return "Channel name shouldbe between 3 to 20 characters and can contain one of these: [space_.-].";
     }
-    if (data.convType == "Protected") {
-      setError(
-        "Password must contain at least 8 characters.At least one number, one uppercase letter and one special character"
-      );
-      return RegExp(
-        /^(?=(.*[a-z]){1,})(?=(.*[A-Z]){1,})(?=(.*[0-9]){1,})(?=(.*[!@#$%^&*()\-__+.]){1,}).{8,}$/
-      ).test(data.password);
+    if (data.convType == "Protected" && !RegExp(
+      /^(?=(.*[a-z]){1,})(?=(.*[A-Z]){1,})(?=(.*[0-9]){1,})(?=(.*[!@#$%^&*()\-__+.]){1,}).{8,}$/
+    ).test(data.password)) {
+      return "Password must contain at least 8 characters.At least one number, one uppercase letter and one special character";
     }
-    setError("");
-    return true;
+    return "";
   }
 
   // functions
@@ -96,13 +91,10 @@ export const ChatLeft = (props: {
     error: string,
     setError: any
   ) {
-    if (
-      validateData(
-        { channelName, convType, members, password },
-        setError,
-        error
-      ) &&
-      error == ""
+    let res = validateData(
+      { channelName, convType, members, password },
+    );
+    if (res == ""
     ) {
       var loginList: string[] = [];
       loginList = members?.map((member: any) => member?.login);
@@ -112,6 +104,8 @@ export const ChatLeft = (props: {
       // reset the necessary fields
       setShow(!show);
       setError("");
+    } else {
+        setError(res);
     }
     resetForm(formik);
     setAddedUsers([]);

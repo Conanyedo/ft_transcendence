@@ -223,7 +223,7 @@ const THeader: React.FunctionComponent<{
 	const router = useRouter()
 
 	const data = { currentUser, relation, dropdwn: showMenuDropdown }
-	const methods = { setDropdwn: setShowMenuDropdown, setRelation: setRelation }
+	const methods = { setDropdwn: setShowMenuDropdown, setRelation: setRelation, setModal: setShowSetModal }
 
 	// functions here
 	const unshowCnv = () => {

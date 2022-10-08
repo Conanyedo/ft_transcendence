@@ -35,11 +35,11 @@ export const MenuDropdown = (props: { data: any; methods: any }) => {
         () => UnblockFriend(props.data.currentUser, props.methods.setRelation),
       ]);
     } else {
-      setContent([, "Leave Channel"]);
-      setFunctions([, () => leaveChannel(props.data.currentUser.convId, Router, setShowCnv)]);
+      setContent(["Update Channel", "Leave Channel"]);
+      setFunctions([() => props.methods.setModal(true), () => leaveChannel(props.data.currentUser.convId, Router, setShowCnv)]);
     }
   }, []);
-	useOutsideAlerter(menuRef, setShowCnv); // TODO
+	useOutsideAlerter(menuRef, props.methods.setDropdwn);
   return (
     <>
       {props.data.dropdwn && (

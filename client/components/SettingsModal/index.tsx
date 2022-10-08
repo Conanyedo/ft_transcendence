@@ -6,33 +6,12 @@ import { useFormik } from "formik"
 import classes from "@styles/EditProfile.module.css";
 import { useState, useRef, useEffect, useContext } from "react"
 import UploadIcon from "@public/FriendIcons/UploadIcon.svg";
-import { updateChnlInfo } from "../../customHooks/useFetchData";
 import { useRouter } from "next/router"
 import { ChatContext, ChatContextType } from "@contexts/chatContext"
 import { Option } from "@components/Modal/utils"
 import { getImageBySize } from "@hooks/Functions"
-
-function errorHandler(values: any, data: any) {
-    return (values.cName.length == 0 || data.oldPath == "" || !data.avatar)
-}
-
-function updateChannel(values: any, data: any, currUser: any, router: any, setshowModal: any, setErrorMsg: any) {
-
-    if (!errorHandler(values, data)) {
-        const formData = new FormData();
-        formData.append('convId', currUser.convId);
-        formData.append('name', values.cName);
-        formData.append('type', values.type);
-        formData.append('password', values.password);
-        formData.append('avatar', data.avatar);
-        formData.append('oldPath', data.oldPath);
-        updateChnlInfo(formData, router, values.cName);
-        setshowModal(false);
-    } else {
-        setErrorMsg("Please provide the necessary input values.");
-    }
-    
-}
+import { updateChannel } from "@utils/chat"
+import { Button } from "@components/Modal"
 
 const Form = ({ data, currUser, setShowSetModal }: any) => {
     const { protectedChannel, channelMode } = useContext(ChatContext) as ChatContextType;
@@ -76,7 +55,7 @@ const Form = ({ data, currUser, setShowSetModal }: any) => {
                 <span>Password</span>
                 <input name="password" type="password" className={Styles.usrsInpt} onChange={formik.handleChange} value={formik.values.password} />
             </div>}
-            <button type="button" onClick={(e) => updateChannel(formik.values, data, currUser, router, setShowSetModal, setErrorMsg)}>Update</button>
+            <Button text="Update" clickHandler={(e: any) => updateChannel(formik.values, data, currUser, router, setShowSetModal, setErrorMsg)} />
         </form></>)
 }
 
