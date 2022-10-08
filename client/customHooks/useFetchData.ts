@@ -289,6 +289,7 @@ export const JoinChannel = async (
 		withCredentials: true,
 	})
 		.then((res) => {
+      setError(res.data.err);
 			if (res.data.err) return false
 			return true
 		})
@@ -629,7 +630,7 @@ export const checkJWT = async (
   })
     .then((res) => {
       if (res.data.err) return set(false);
-      router.push("/profile");
+      set(true);
       eraseCookie("jwt-2fa");
     })
     .catch((err) => {

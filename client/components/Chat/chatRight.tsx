@@ -179,7 +179,7 @@ const ChatSection: React.FC<{
 														borderRadius:
 															chatMsg.sender == me ? "5px 5px 0 5px" : "0 5px 5px 5px",
 													}}>
-                            <span className={Styles.senderName}>{chatMsg.sender === me ? "" : chatMsg.sender}</span>
+                            {currentUser.type !== 'Dm' && <span className={Styles.senderName}>{chatMsg.sender === me ? "" : chatMsg?.fullname?.split(' ')[0] }{currentUser.type}</span>}
 													{chatMsg.msg}
 												</div>
 											</>

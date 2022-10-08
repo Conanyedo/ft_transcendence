@@ -21,16 +21,15 @@ export const ProtectedFormMdl: React.FC<{
   const router = useRouter();
   const mdlRef = useRef<any>();
 
-  const closePopup = () => {
-    setShow(false);
-    router.push("/chat");
+  const closePopup = async () => {
+    setShow();
   };
 
   const handleChange = (e: any) => {
     setInputVal(e.target.value);
   };
 
-  const Submit = async () => {
+  const Submit = async (e: any) => {
     if (inputVal == "") {
       setError("Please enter the password!");
     } else if (!RegExp(
@@ -47,6 +46,7 @@ export const ProtectedFormMdl: React.FC<{
         setError
       );
 
+      console.log(name, res);
       if (res) {
         await refresh();
         router.push(`/chat?channel=${name}`);
@@ -75,7 +75,10 @@ export const ProtectedFormMdl: React.FC<{
               </div>
             </div>
             {error !== "" && <p className={Styles.errorMsg}>{error}</p>}
-            <form className={Styles.form}>
+            <form className={Styles.form} onSubmit={(e: any) => {
+              e.preventDefault();
+              Submit(e);
+            }}>
               <input
                 type="password"
                 onChange={handleChange}

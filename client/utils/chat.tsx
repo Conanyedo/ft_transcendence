@@ -112,6 +112,8 @@ export const getLastUsers = async (
           "getMsgs",
           { convId: item?.convId },
           (response: any) => {
+            console.table(response.data);
+            
             setChatMsgs(response.data);
             // run on first render only
             scrollToBottom(messagesEndRef);

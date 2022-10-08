@@ -71,6 +71,11 @@ const Chat = () => {
     setShow(false);
   }
 
+  const closePopup = () => {
+    setChannelData(new channelDataType());
+    setShow(false);
+  }
+
   return (
     <ChatProvider>
       <div className={Styles.chatContainer}>
@@ -89,7 +94,7 @@ const Chat = () => {
           <ProtectedFormMdl
             convId={channelData.convId}
             show={show}
-            setShow={setShow}
+            setShow={closePopup}
             refresh={refresh}
             name={channelName}
           />
