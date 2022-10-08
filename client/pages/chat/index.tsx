@@ -27,6 +27,7 @@ const Chat = () => {
   const [channelData, setChannelData] = useState<channelDataType>(
     new channelDataType()
   );
+
   const [selectedConv, setSelectedConv] = useState<string>();
 
   const { showCnv, setShowCnv, lastUsers, setLastUsers, setInitialUsrData } =
@@ -53,7 +54,12 @@ const Chat = () => {
 
   useEffect(() => {
     //upon entering execute this
-    refresh();
+    if ((RegExp(
+      /^(?=.{2,20}$)(?![ _.-])(?!.*[_.-]{2})[a-zA-Z0-9 ._-]+(?<![ _.-])$/
+    ).test((login || channel) as string))) {
+      refresh();
+    } 
+    
   }, [login, channel]);
 
   if (channelData.type !== "" && channelData.type !== "Public" && !show) {
@@ -79,8 +85,7 @@ const Chat = () => {
                 : name
             }
           />
-        }
-        {show && (
+        } {show}
           <ProtectedFormMdl
             convId={channelData.convId}
             show={show}
@@ -88,7 +93,6 @@ const Chat = () => {
             refresh={refresh}
             name={channelName}
           />
-        )}
       </div>
     </ChatProvider>
   );

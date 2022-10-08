@@ -237,8 +237,6 @@ const Members = (props: {
   const [muteShow, setmuteShow] = useState(false);
   const [selectedUsr, setSelectedUsr] = useState();
 
-  let data = {};
-
   const me = localStorage.getItem("owner");
 
   useEffect(() => {
@@ -352,6 +350,7 @@ export const Profile = (props: {
   status: string;
   setData: any;
   data: any;
+  relation: string;
 }) => {
   const [role, setRole] = useState("");
 
@@ -373,7 +372,7 @@ export const Profile = (props: {
       {props.data?.length !== 0 && (
         <>
           <Members
-            role={role}
+            role={props.relation}
             users={props.data?.owner}
             key="Owner"
             category="Owner"
@@ -382,7 +381,7 @@ export const Profile = (props: {
             setData={props.setData}
           />
           <Members
-            role={role}
+            role={props.relation}
             users={props.data?.admins}
             key="Admins"
             category="Admin"
@@ -391,7 +390,7 @@ export const Profile = (props: {
             setData={props.setData}
           />
           <Members
-            role={role}
+            role={props.relation}
             users={props.data?.members}
             key="Members"
             category="Member"
@@ -400,7 +399,7 @@ export const Profile = (props: {
             setData={props.setData}
           />
           <Members
-            role={role}
+            role={props.relation}
             users={props.data?.muted}
             key="Muted"
             category="Muted"

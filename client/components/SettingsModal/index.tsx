@@ -19,7 +19,7 @@ const Form = ({ data, currUser, setShowSetModal }: any) => {
     // Set the form validation using Yup && formik
     const formik = useFormik({
         initialValues: {
-            cName: "",
+            cName: currUser.name,
             type: channelMode,
             password: "",
         },
@@ -74,7 +74,7 @@ const ImageUploader = (props: { setImgSrc: any, ImageRef: any, avatar: any, setA
     };
 
     return (<div className={classes.avatar}>
-        <img src={props.avatar} ref={avatarRef} />
+        <img src={props?.avatar} ref={avatarRef} />
         <input
             type="file"
             className={`${classes.toggle} ${classes.inputHide}`}

@@ -1092,7 +1092,7 @@
 
 /* Style the indicator (dot/circle) */
 .checkboxCont .checkmark:after {
-  top: 2.1px;
+  top: 2px;
   left: 2.1px;
   width: 13px;
   height: 13px;

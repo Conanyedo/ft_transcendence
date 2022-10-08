@@ -18,7 +18,6 @@ import sendArrow from "@public/send-arrow.svg"
 import { getDataOfMembers, Profile } from "./Profile"
 import { getImageBySize } from "@hooks/Functions"
 import SettingGame from "@components/game/settingGame"
-import { ProtectedFormMdl } from "@components/ProtectedModal"
 import { InviteMsg } from "./inviteMsg"
 import socket_game from "config/socketGameConfig"
 import { useDispatch } from "react-redux"
@@ -400,7 +399,9 @@ export const ChatRight = (props: { setShowSetModal: any; setSelectedConv: any; l
 		setMount(true)
 
 		return () => setMount(false)
-	}, [])
+	}, []);
+
+
 
 	return (
 		<>
@@ -433,6 +434,7 @@ export const ChatRight = (props: { setShowSetModal: any; setSelectedConv: any; l
 											status={currentUser.status}
 											setData={setData}
 											data={data}
+											relation={currentUser.relation}
 										/>
 									)}
 									<ChatSection

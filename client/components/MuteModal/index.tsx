@@ -6,6 +6,7 @@ import Cross from "@public/Cross.svg";
 import { Button } from "@components/Modal";
 import { muteMemberFromChnl } from "@hooks/useFetchData";
 import { useRouter } from "next/router";
+import { useOutsideAlerter } from "@hooks/Functions";
 
 const CheckBox: React.FC<{ time: string; set: any }> = ({ time, set }) => {
   const clickHandler = () => {
@@ -89,6 +90,8 @@ export const MuteModal: React.FC<{
 }> = ({ setShow, user, convId }) => {
 
   const modalRef = useRef<any>("");
+
+  useOutsideAlerter(modalRef, setShow);
   return (
     <>
       <div
