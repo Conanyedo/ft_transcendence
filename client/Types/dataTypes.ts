@@ -24,6 +24,7 @@ export class UserTypeNew {
 	fullname: string = '';
 	stats: Stats = new Stats();
 	rank: number = 0;
+	GP: number = 0;
 	numGames: number = 0;
 	gamesWon: number = 0;
 	achievement: number[] = [];
@@ -41,6 +42,7 @@ export const EmtyUser : UserTypeNew = {
 	fullname: '',
 	stats: new Stats(),
 	rank: 0,
+	GP: 0,
 	numGames: 0,
 	gamesWon: 0,
 	achievement: [],
