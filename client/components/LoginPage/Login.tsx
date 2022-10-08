@@ -60,9 +60,9 @@ const Login = () => {
 					<p>
 						Made with <span>♥️</span> by{" "}
 						<span className={classes.contributors}>
-							<a href="https://github.com/Conanyedo">Youuness Bouddou</a> -{" "}
-							<a href="https://github.com/ikramkharbouch"> Ikram Kharbouch</a> -{" "}
-							<a href="https://github.com/cabouelw">Choaib Abouelwafa</a>
+							<a href="https://github.com/Conanyedo">Younes Bouddou</a> -{" "}
+							<a href="https://github.com/cabouelw">Choaib Abouelwafa</a> -{" "}
+							<a href="https://github.com/ikramkharbouch"> Ikram Kharbouch</a>
 						</span>
 					</p>
 					<div className={classes.sound} onClick={setinMute}>

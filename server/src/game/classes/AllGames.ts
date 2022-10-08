@@ -340,8 +340,6 @@ export class allGames {
         if (lobby.admin === data.admin && lobby.friend === data.login)
           return lobby;
       });
-      console.log(lobby);
-      
     if (lobby && lobby.admin !== '') return true;
     return false;
   }

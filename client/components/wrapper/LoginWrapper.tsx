@@ -18,6 +18,9 @@ const LoginWrapper: React.FC<PropsType> = ({ children }) => {
 	useEffect(() => {
 		setIsMounted(true);
 	}, []);
+	useEffect(() => {
+		if (IsAuth) router.replace('/profile')
+	}, [IsAuth])
 	if (jwt) {
 		checkJWT(router, setIsAuth);
 		return <LoadingElm />;

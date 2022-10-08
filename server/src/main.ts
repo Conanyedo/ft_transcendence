@@ -17,7 +17,7 @@ async function bootstrap() {
 	});
 	app.useStaticAssets(join(__dirname, '../'));
 	app.useGlobalPipes(new ValidationPipe({ transform: true, whitelist: true, /*skipUndefinedProperties: true*/ }));
-	// app.useWebSocketAdapter(new SocketIOAdapter(app, configService));
+	app.useWebSocketAdapter(new SocketIOAdapter(app, configService));
 	await app.listen(+`${configService.get('SERVER_PORT')}`);
 }
 bootstrap();

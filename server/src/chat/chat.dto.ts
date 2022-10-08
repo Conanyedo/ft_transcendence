@@ -160,6 +160,7 @@ export interface createConvDto {
 export interface msgDto {
 	msg: string;
 	sender: string;
+	fullname?: string;
 	invitation: string;
 	status: invStatus;
 	date: Date;

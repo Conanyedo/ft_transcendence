@@ -227,51 +227,47 @@ export const fetchAchievements = async (
 };
 
 export const fetchDATA = async (set: any, router: NextRouter, Path: string) => {
-  const token = getCookie("jwt");
-  await axios
-    .get(`${baseUrl}${Path}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      withCredentials: true,
-    })
-    .then((res) => {
-      if (res.data.data) set(res.data.data);
-      else router.push("/profile");
-    })
-    .catch((err) => {
-      if (err.response.status === 401) {
-        eraseCookie("jwt");
-        socket_notif.disconnect();
-        router.replace("/");
-      }
-    });
-};
+	const token = getCookie("jwt")
+	await axios
+		.get(`${baseUrl}${Path}`, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+			withCredentials: true,
+		})
+		.then((res) => {
+			if (res.data.data) set(res.data.data)
+			else router.push("/profile")
+		})
+		.catch((err) => {
+			if (err.response.status === 401) {
+				eraseCookie("jwt")
+				socket_notif.disconnect()
+				router.replace("/")
+			}
+		})
+}
 
-export const fetchUserLogin = async (
-  set: any,
-  router: NextRouter,
-  login: string
-) => {
-  const token = getCookie("jwt");
-  await axios
-    .get(`${baseUrl}chat/loginInfo/${login}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      withCredentials: true,
-    })
-    .then((res) => {
-      set(res.data.data);
-    })
-    .catch((err) => {
-      if (err.response.status === 401) {
-        eraseCookie("jwt");
-        socket_notif.disconnect();
-        router.replace("/");
-      }
-    });
-};
+export const fetchUserLogin = async (set: any, router: NextRouter, login: string) => {
+	const token = getCookie("jwt")
+	await axios
+		.get(`${baseUrl}chat/loginInfo/${login}`, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+			withCredentials: true,
+		})
+		.then((res) => {
+			set(res.data.data)
+		})
+		.catch((err) => {
+			if (err.response.status === 401) {
+				eraseCookie("jwt")
+				socket_notif.disconnect()
+				router.replace("/")
+			}
+		})
+}
 
 export const JoinChannel = async (
   set: any,
@@ -279,30 +275,32 @@ export const JoinChannel = async (
   data: any,
   setError: Dispatch<SetStateAction<string>>
 ) => {
-  const token = getCookie("jwt");
-  const json = JSON.stringify({ convId: data.convId, password: data.password });
-  return await axios
-    .post(`${baseUrl}chat/joinChannel`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      data: json,
-      withCredentials: true,
-    })
-    .then((res) => {
-      if (res.data.err) return false;
-      return true;
-    })
-    .catch((err) => {
-      // setError(err.response);
-      if (err.response.status === 401) {
-        eraseCookie("jwt");
-        socket_notif.disconnect();
-      }
-      return false;
-    });
-};
+	const token = getCookie("jwt")
+	const json = JSON.stringify({ convId: data.convId, password: data.password })
+
+	return await axios({
+		method: "post",
+		url: `${baseUrl}chat/joinChannel`,
+		headers: {
+			Authorization: `Bearer ${token}`,
+			"Content-Type": "application/json",
+		},
+		data: json,
+		withCredentials: true,
+	})
+		.then((res) => {
+			if (res.data.err) return false
+			return true
+		})
+		.catch((err) => {
+			setError(err)
+			if (err.response.status === 401) {
+				eraseCookie("jwt")
+				socket_notif.disconnect()
+			}
+			return false
+		})
+}
 
 export const addMembers = async (data: any, setData: any) => {
   // POST /chat/addMembers
@@ -404,71 +402,65 @@ export const UnmuteMemberFromChnl = async (data: any) => {
 };
 
 export const checkCode2FA = async (code: string, router: NextRouter) => {
-  const token = getCookie("jwt-2fa");
-  const json = JSON.stringify({ code: code });
-  return await axios({
-    method: "post",
-    url: `${baseUrl}auth/2faLogin`,
-    data: json,
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
-    withCredentials: true,
-  })
-    .then((res) => {
-      if (res.data.err) return false;
-      router.replace("/");
-      return true;
-    })
-    .catch((err) => {
-      if (err.response.status === 401) {
-        eraseCookie("jwt-2fa");
-        socket_notif.disconnect();
-        router.replace("/");
-      }
-      return false;
-    });
-};
+	const token = getCookie("jwt-2fa")
+	const json = JSON.stringify({ code: code })
+	return await axios({
+		method: "post",
+		url: `${baseUrl}auth/2faLogin`,
+		data: json,
+		headers: {
+			Authorization: `Bearer ${token}`,
+			"Content-Type": "application/json",
+		},
+		withCredentials: true,
+	})
+		.then((res) => {
+			if (res.data.err) return false
+			// router.replace("/")
+			return true
+		})
+		.catch((err) => {
+			if (err.response.status === 401) {
+				eraseCookie("jwt-2fa")
+				socket_notif.disconnect()
+				router.replace("/")
+			}
+			return false
+		})
+}
 
-export const postChannel = async (
-  set: any,
-  router: NextRouter,
-  data: any,
-  setError: any
-) => {
-  const token = getCookie("jwt");
-  const json = JSON.stringify({
-    name: data.name,
-    type: data.type,
-    members: [...data.members],
-    password: data.password,
-  });
-  return await axios({
-    method: "post",
-    url: `${baseUrl}chat/createChannel`,
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
-    data: json,
-    withCredentials: true,
-  })
-    .then((res) => {
-      if (res.data.err !== undefined) {
-        setError(res.data.err);
-      } else {
-        setError("");
-        set(res.data);
-        if (res.data.data.membersNum > 0)
-          router.push("/chat?channel=" + res.data.data.name);
-        else router.push("/chat?login=" + res.data.data.login);
-      }
-    })
-    .catch((err) => {
-      return false;
-    });
-};
+export const postChannel = async (set: any, router: NextRouter, data: any, setError: any) => {
+	const token = getCookie("jwt")
+	const json = JSON.stringify({
+		name: data.name,
+		type: data.type,
+		members: [...data.members],
+		password: data.password,
+	})
+	return await axios({
+		method: "post",
+		url: `${baseUrl}chat/createChannel`,
+		headers: {
+			Authorization: `Bearer ${token}`,
+			"Content-Type": "application/json",
+		},
+		data: json,
+		withCredentials: true,
+	})
+		.then((res) => {
+			if (res.data.err !== undefined) {
+				setError(res.data.err)
+			} else {
+				setError("")
+				set(res.data)
+				if (res.data.data.membersNum > 0) router.push("/chat?channel=" + res.data.data.name)
+				else router.push("/chat?login=" + res.data.data.login)
+			}
+		})
+		.catch((err) => {
+			return false
+		})
+}
 
 export const changeMemberRole = async (data: any, set: any) => {
   const token = getCookie("jwt");

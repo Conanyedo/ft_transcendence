@@ -9,7 +9,7 @@ import { Server, Socket } from 'socket.io';
 import { allGames } from './classes/AllGames';
 import { GameService } from './game.service';
 
-@WebSocketGateway(5551, { cors: { origin: '*' } })
+@WebSocketGateway(5551)
 export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 	constructor (public readonly gameService: GameService) {}

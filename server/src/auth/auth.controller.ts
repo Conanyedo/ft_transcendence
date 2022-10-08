@@ -72,6 +72,11 @@ export class AuthController {
 		return { data: true };
 	}
 
+	@Get('/2faRedirect')
+	redirect2fa(@Res({ passthrough: true }) res: Response) {
+		return this.authService.redirect2fa(res);
+	}
+
 	@Post('/2faLogin')
 	@UseGuards(Jwt2faAuthGuard)
 	async login2faCode(@User() user: userParitalDto, @Body() data: codeValidate, @Res({ passthrough: true }) res: Response) {
@@ -79,8 +84,7 @@ export class AuthController {
 		if (isValid.err)
 			return isValid;
 		this.authService.setJWTCookie(user, res);
-		await this.authService.setUserAuthenticated(user);
-		return { data: true };
+		return await this.authService.setUserAuthenticated(user);
 	}
 
 }
