@@ -29,6 +29,9 @@ export class UserTypeNew {
 	achievement: number[] = [];
 	status: string = '';
 	relation: string = '';
+	constructor() {
+
+	}
 };
 
 export const EmtyUser : UserTypeNew = {
@@ -252,6 +255,5 @@ export class FriendOnline {
 export interface N_ITEMS {
 	alt: string;
 	src: any;
-	move: any;
 	ref_ctn: MutableRefObject<null> | any;
 }
