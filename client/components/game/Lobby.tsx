@@ -234,12 +234,7 @@ const Lobby = () => {
 								<Image src={Pongmania} />
 							</div>
 							<p>
-								Lorem ipsum dolor sit amet consectetur
-								adipiscing elit Ut et massa mi. Aliquam in
-								hendrerit urna. Pellentesque sit amet sapien
-								fringilla, mattis ligula consectetur, ultrices
-								mauris. Maecenas vitae mattis tellus. Nullam
-								quis.
+							Ping pong is a game played with two small bats and a small, light ball. The game is played on a table with a net stretched across the middle.<br/> Players hit the ball back and forth to each other, trying to keep it in play and score points by making the other player miss the ball.
 							</p>
 						</div>
 						<div className={classes.cardContainers}>

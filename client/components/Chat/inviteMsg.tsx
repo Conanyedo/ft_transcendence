@@ -20,7 +20,7 @@ export function InviteMsg(props: {chatMsg: any}) {
       "joinGameFriend",
       { login: me, accept: msgData?.invitation },
       (data: string) => {
-        if (data.length > 4) {
+        if (data.length > 4 && msgData?.msgId && msgData?.convId) {
           socket_notif.emit('updateInvitation', {convId: msgData?.convId, msgId: msgData?.msgId, status: 'Accepted' }, (res: any) => {
             setmsgData(res.data);
           })
@@ -32,15 +32,17 @@ export function InviteMsg(props: {chatMsg: any}) {
 
   const refuseHandler = async () => {
     socket_game.emit("refuseChallenge", msgData?.invitation);
-    socket_notif.emit('updateInvitation', {convId: msgData?.convId, msgId: msgData?.msgId, status: 'Refused' }, (res: any) => {
-      setmsgData(res.data);
-    })
+    if (msgData?.msgId && msgData?.convId)
+      socket_notif.emit('updateInvitation', {convId: msgData?.convId, msgId: msgData?.msgId, status: 'Refused' }, (res: any) => {
+        setmsgData(res.data);
+      })
   };
   const cancelHandler = () => {
     socket_game.emit("removeGameLobby", msgData?.invitation);
-    socket_notif.emit('updateInvitation', {convId: msgData?.convId, msgId: msgData?.msgId, status: 'Canceled' }, (res: any) => {
-      setmsgData(res.data);
-    })
+    if (msgData?.msgId && msgData?.convId)
+      socket_notif.emit('updateInvitation', {convId: msgData?.convId, msgId: msgData?.msgId, status: 'Canceled' }, (res: any) => {
+        setmsgData(res.data);
+      })
   };
   useEffect(() => {
     if (msgData?.sender !== '' && msgData?.sender)

@@ -46,7 +46,6 @@ export const ProtectedFormMdl: React.FC<{
         setError
       );
 
-      console.log(name, res);
       if (res) {
         await refresh();
         router.push(`/chat?channel=${name}`);
