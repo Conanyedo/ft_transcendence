@@ -227,7 +227,7 @@ export const fetchDATA = async (set: any, router: NextRouter, Path: string) => {
 		})
 		.then((res) => {
 			if (res.data.data) set(res.data.data)
-			else router.push('/profile');
+			else router.push("/profile")
 		})
 		.catch((err) => {
 			if (err.response.status === 401) {
@@ -268,15 +268,16 @@ export const JoinChannel = async (
 	const token = getCookie("jwt")
 	const json = JSON.stringify({ convId: data.convId, password: data.password })
 
-	return await axios
-		.post(`${baseUrl}chat/joinChannel`, {
-			headers: {
-				Authorization: `Bearer ${token}`,
-				"Content-Type": "application/json",
-			},
-			data: json,
-			withCredentials: true,
-		})
+	return await axios({
+		method: "post",
+		url: `${baseUrl}chat/joinChannel`,
+		headers: {
+			Authorization: `Bearer ${token}`,
+			"Content-Type": "application/json",
+		},
+		data: json,
+		withCredentials: true,
+	})
 		.then((res) => {
 			if (res.data.err) return false
 			return true
@@ -434,14 +435,13 @@ export const postChannel = async (set: any, router: NextRouter, data: any, setEr
 	})
 		.then((res) => {
 			if (res.data.err !== undefined) {
-				setError(res.data.err);
-			  } else {
-				setError("");
-				set(res.data);
-				if (res.data.data.membersNum > 0)
-				  router.push("/chat?channel=" + res.data.data.name);
-				else router.push("/chat?login=" + res.data.data.login);
-			  }
+				setError(res.data.err)
+			} else {
+				setError("")
+				set(res.data)
+				if (res.data.data.membersNum > 0) router.push("/chat?channel=" + res.data.data.name)
+				else router.push("/chat?login=" + res.data.data.login)
+			}
 		})
 		.catch((err) => {
 			return false
@@ -531,9 +531,9 @@ export const leaveChannel = async (convId: any, router: NextRouter, set: any) =>
 	})
 		.then((res) => {
 			if (res.data.err) return false
-			set(false);
-			router.push("/chat");
-			return true;
+			set(false)
+			router.push("/chat")
+			return true
 		})
 		.catch((err) => {
 			return false
@@ -576,7 +576,7 @@ export const check2FA_JWT = async (jwt: CookieValueTypes, set: any, router: Next
 		withCredentials: true,
 	})
 		.then((res) => {
-      if (res.data.err) return set(false)
+			if (res.data.err) return set(false)
 			set(true)
 		})
 		.catch((err) => {
@@ -600,8 +600,8 @@ export const checkJWT = async (router: NextRouter, set: Dispatch<SetStateAction<
 		withCredentials: true,
 	})
 		.then((res) => {
-      		if (res.data.err) return set(false)
-	  		set(true)
+			if (res.data.err) return set(false)
+			set(true)
 			eraseCookie("jwt-2fa")
 		})
 		.catch((err) => {
@@ -628,7 +628,7 @@ export const requests = async (login: string, path: string, router: NextRouter) 
 		withCredentials: true,
 	})
 		.then((res) => {
-			if (res.data.err) return false;
+			if (res.data.err) return false
 			return true
 		})
 		.catch((err) => {
