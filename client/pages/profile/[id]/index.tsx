@@ -10,14 +10,21 @@ import { userExists } from "@hooks/useFetchData";
 import { useDispatch } from "react-redux";
 
 const ProfileFriend = () => {
-	const [userId, setuserId] = useState<string>("");
 	const [isUp, setisUp] = useState(false);
+	const [userId, setuserId] = useState<string>("");
 	const route = useRouter();
 	const dispatch = useDispatch();
 	const { id } = route.query;
 	const login = id as string;
 	const owner = localStorage.getItem("owner");
 	
+	if (login === owner as string) {
+		route.replace('/profile');
+		return <LoadingElm />
+	}
+	useEffect(() => {
+		setisUp(true);
+	}, [])
 	useEffect(() => {
 		if (login && (/^(?![ _.-])(?!.*[_.-]{2})[a-zA-Z0-9 ._-]+(?<![ _.-])$/g).test(login))
 			userExists(setuserId, login, route, dispatch);
@@ -27,13 +34,6 @@ const ProfileFriend = () => {
 			setuserId('');
 		}
 	}, [login]);
-	useEffect(() => {
-		setisUp(true);
-	}, [])
-	if (login === owner as string) {
-		route.replace('/profile');
-		return <LoadingElm />
-	}
 	return (
 		<>
 			{userId && isUp &&
