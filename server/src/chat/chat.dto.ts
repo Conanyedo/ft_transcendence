@@ -10,7 +10,7 @@ export class passwordValidate {
 export class nameValidate {
 	@IsNotEmpty()
 	@IsString()
-	@Length(4, 20)
+	@Length(2, 20)
 	@Matches(/^(?=.{2,20}$)(?![ _.-])(?!.*[_.-]{2})[a-zA-Z0-9 ._-]+(?<![ _.-])$/)
 	name: string;
 };
@@ -24,7 +24,7 @@ export class memberValidate {
 	@IsNotEmpty()
 	@IsString()
 	@Length(4, 20)
-	@Matches(/^(?=.{2,20}$)(?![ _.-])(?!.*[_.-]{2})[a-zA-Z0-9 ._-]+(?<![ _.-])$/)
+	@Matches(/^(?=.{4,20}$)(?![ _.-])(?!.*[_.-]{2})[a-zA-Z0-9 ._-]+(?<![ _.-])$/)
 	member: string;
 };
 
@@ -32,7 +32,7 @@ export class membersValidate {
 	@IsArray()
 	@IsString({ each: true })
 	@Length(4, 20, { each: true })
-	@Matches(/^(?=.{2,20}$)(?![ _.-])(?!.*[_.-]{2})[a-zA-Z0-9 ._-]+(?<![ _.-])$/, { each: true })
+	@Matches(/^(?=.{4,20}$)(?![ _.-])(?!.*[_.-]{2})[a-zA-Z0-9 ._-]+(?<![ _.-])$/, { each: true })
 	members: string[];
 };
 
@@ -59,7 +59,7 @@ export class createMsgDto {
 	@IsNotEmpty()
 	@IsString()
 	@Length(4, 20)
-	@Matches(/^(?=.{2,20}$)(?![ _.-])(?!.*[_.-]{2})[a-zA-Z0-9 ._-]+(?<![ _.-])$/)
+	@Matches(/^(?=.{4,20}$)(?![ _.-])(?!.*[_.-]{2})[a-zA-Z0-9 ._-]+(?<![ _.-])$/)
 	receiver: string;
 
 	@IsOptional()
@@ -89,7 +89,7 @@ export class createChannelDto {
 
 	@IsNotEmpty()
 	@IsString()
-	@Length(4, 20)
+	@Length(2, 20)
 	@Matches(/^(?=.{2,20}$)(?![ _.-])(?!.*[_.-]{2})[a-zA-Z0-9 ._-]+(?<![ _.-])$/)
 	name: string;
 
@@ -99,8 +99,8 @@ export class createChannelDto {
 
 	@IsArray()
 	@IsString({ each: true })
-	@Length(2, 20, { each: true })
-	@Matches(/^(?=.{2,20}$)(?![ _.-])(?!.*[_.-]{2})[a-zA-Z0-9 ._-]+(?<![ _.-])$/, { each: true })
+	@Length(4, 20, { each: true })
+	@Matches(/^(?=.{4,20}$)(?![ _.-])(?!.*[_.-]{2})[a-zA-Z0-9 ._-]+(?<![ _.-])$/, { each: true })
 	members: string[];
 
 	@IsOptional()
