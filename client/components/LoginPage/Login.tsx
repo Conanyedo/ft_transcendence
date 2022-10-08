@@ -31,7 +31,7 @@ const Login = () => {
 	}
 	return (
 		<>
-			<motion.div
+			{isMounted && <motion.div
 				initial={{ y: 10, opacity: 0 }}
 				animate={{ y: 0, opacity: 1 }}
 				exit={{ y: -10, opacity: 0 }}
@@ -47,9 +47,8 @@ const Login = () => {
 					<div className={classes.pongmania_content}>
 						<object data={Pongmania.src} type="image/svg+xml"></object>
 						<p>
-							Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has
-							been the industry's standard dummy text ever since the 1500s, when an unknown printer took a
-							galley of type.
+						Our ping pong game and chat website is the perfect place to meet new people and have a great time playing ping pong. We offer a fun and friendly environment for everyone to enjoy. So come on over and join the fun!
+						Come join us for some friendly ping pong games and great conversation on our chat website. You don't need to be a professional player to enjoy a game or two of ping pong, and you're sure to make some new friends on our site. So come on over and have some fun!
 						</p>
 					</div>
 					<div className={classes.login_button} onClick={(e) => router.push(`${baseUrl}auth/login`)}>
@@ -83,7 +82,7 @@ const Login = () => {
 					<source src="luffy.mp3" type="audio/mpeg" />
 					Your browser does not support the audio element.
 				</audio>
-			</motion.div>
+			</motion.div>}
 		</>
 	)
 }
