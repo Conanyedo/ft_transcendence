@@ -33,6 +33,7 @@ const Game: React.FC<{ GameID: string }> = (props) => {
 		return () => {
 			socket_game.off("GameOnpause");
 			socket_game.off("GameOver");
+			setShowWinner('');
 		};
 	}, [props.GameID]);
 	const GoBackHandler = () => {
