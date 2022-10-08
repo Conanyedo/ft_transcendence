@@ -12,8 +12,7 @@ import LogoutSelected from "../../public/SelectedSideNav/LogoutSelected.svg";
 import Logout from "../../public/Logout.svg";
 import classes from "../../styles/sideNav.module.css";
 import { useRouter } from "next/router";
-import { MutableRefObject, useEffect, useRef, useState } from "react";
-import { getCookie } from "cookies-next";
+import { useEffect, useRef, useState } from "react";
 import { LogOut } from "../../customHooks/useFetchData";
 import socket_notif from "config/socketNotif";
 import { N_ITEMS } from "@Types/dataTypes";
@@ -25,7 +24,6 @@ const ItemsNav: React.FC<N_ITEMS> = (props) => {
 	const rout = useRouter();
 	const ref = useRef(null);
 	const moveHndler = () => {
-		props.move(props.alt);
 		rout.push(props.alt);
 		setNewMsg(false);
 	};
@@ -50,10 +48,8 @@ const ItemsNav: React.FC<N_ITEMS> = (props) => {
 };
 
 const SideNav: React.FC<{
-	onNav: (page: string) => void;
 	currentPos: string;
 }> = (props) => {
-	const token = getCookie("jwt");
 	const ref_nav = useRef(null);
 	const router = useRouter();
 	const NamePage = "/" + router.pathname.split("/")[1];
@@ -64,25 +60,21 @@ const SideNav: React.FC<{
 		{
 			alt: "/profile",
 			src: NamePage !== "/profile" ? User : UserSelected,
-			move: props.onNav,
 			ref_ctn: ref_nav,
 		},
 		{
 			alt: "/live-games",
 			src: NamePage !== "/live-games" ? LiveGame : LiveGameSelected,
-			move: props.onNav,
 			ref_ctn: ref_nav,
 		},
 		{
 			alt: "/game",
 			src: NamePage !== "/game" ? Game : GameSelected,
-			move: props.onNav,
 			ref_ctn: ref_nav,
 		},
 		{
 			alt: "/chat",
 			src: NamePage !== "/chat" ? Chat : ChatSelected,
-			move: props.onNav,
 			ref_ctn: ref_nav,
 		},
 	];
@@ -93,7 +85,6 @@ const SideNav: React.FC<{
 					{NAVITEMS.map((item) => (
 						<ItemsNav
 							key={item.alt}
-							move={item.move}
 							alt={item.alt}
 							src={item.src}
 							ref_ctn={item.ref_ctn}
