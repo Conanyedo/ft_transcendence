@@ -8,6 +8,7 @@ import { useRouter } from "next/router"
 import { getCookie } from "cookies-next"
 import { eraseCookie } from "../../customHooks/Functions"
 import OtpInput from "react-otp-input-rc-17"
+import { baseUrl } from "config/baseURL"
 
 const FactorAuth = () => {
 	const router = useRouter()
@@ -17,6 +18,7 @@ const FactorAuth = () => {
 		return <LoadingElm />
 	}
 	const [isValid, setisValid] = useState(false)
+	const [goNext, setGoNext] = useState(false)
 	const [inputValue, setInputValue] = useState("")
 	const [isError, setisError] = useState(false)
 	useEffect(() => {
@@ -24,13 +26,13 @@ const FactorAuth = () => {
 	}, [])
 	if (!isValid) return <LoadingElm />
 	const CheckHandler = async () => {
-		if (await checkCode2FA(inputValue, router)) setisError(false)
-		else setisError(true)
+		if (await checkCode2FA(inputValue, router)) {
+			setisError(false)
+		} else setisError(true)
 	}
 	const sub = (e: React.FormEvent<HTMLFormElement>) => {
-		e.preventDefault();
-		if (inputValue.length === 6)
-			CheckHandler();
+		e.preventDefault()
+		if (inputValue.length === 6) CheckHandler()
 	}
 	return (
 		<>
@@ -48,31 +50,37 @@ const FactorAuth = () => {
 						</div>
 					</div>
 					<div className={classes.inputContainer}>
-					<form onSubmit={sub}>
-						<OtpInput
-							value={inputValue}
-							numInputs={6}
-							inputStyle={{
-								width: "3rem",
-								height: "3rem",
-								margin: "0 .5rem",
-								fontSize: "1.5rem",
-								borderRadius: 4,
-								border: `1px solid ${isError ? "red" : "black"}`,
-							}}
-							onChange={(e: any) => {
-								setInputValue(e)
-							}}
-							shouldAutoFocus={true}
-							isInputNum={true}
-						/>
-						<button style={{display: 'none'}}/>
+						<form onSubmit={sub}>
+							<OtpInput
+								value={inputValue}
+								numInputs={6}
+								inputStyle={{
+									width: "3rem",
+									height: "3rem",
+									margin: "0 .5rem",
+									fontSize: "1.5rem",
+									borderRadius: 4,
+									border: `1px solid ${isError ? "red" : "black"}`,
+								}}
+								onChange={async (value: string) => {
+									setInputValue(value)
+									if (value.length === 6) {
+										if (await checkCode2FA(value, router)) {
+											setisError(false)
+											setGoNext(true)
+										} else setisError(true)
+									}
+								}}
+								shouldAutoFocus={true}
+								isInputNum={true}
+							/>
+							<button style={{ display: "none" }} />
 						</form>
 					</div>
 					<div
-						className={`${classes.btn} ${inputValue.length === 6 ? classes.btnNext : ""}`}
-						onClick={CheckHandler}>
-						Confirmer
+						className={`${classes.btn} ${goNext ? classes.btnNext : ""}`}
+						onClick={() => router.push(`${baseUrl}auth/2faRedirect`)}>
+						Next
 					</div>
 				</div>
 			</div>
