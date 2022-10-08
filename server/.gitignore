@@ -9,6 +9,8 @@
 # Uploads
 /uploads
 
+#database
+db.sql
 
 # Logs
 /logs
