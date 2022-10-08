@@ -28,16 +28,16 @@ export class UserService {
 	) { }
 
 	async registerUser(newUser: userDto): Promise<userParitalDto> {
-		const stats: Stats = new Stats();
+		let stats: Stats = new Stats();
 		stats.rank = await this.userRepository
 			.createQueryBuilder('users')
 			.getCount() + 1;
+		stats = await this.statsRepository.save(stats);
 		let user: User = new User();
 		user.login = newUser.login;
 		user.fullname = newUser.fullname;
 		user.avatar = newUser.avatar;
 		user.stats = stats;
-		this.statsRepository.save(stats);
 		user = await this.userRepository.save(user);
 		const getUser: userParitalDto = {
 			id: user.id,
