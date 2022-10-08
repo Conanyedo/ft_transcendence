@@ -401,7 +401,7 @@ export const checkCode2FA = async (code: string, router: NextRouter) => {
 	})
 		.then((res) => {
 			if (res.data.err) return false
-			router.replace("/")
+			// router.replace("/")
 			return true
 		})
 		.catch((err) => {
@@ -600,8 +600,8 @@ export const checkJWT = async (router: NextRouter, set: Dispatch<SetStateAction<
 		withCredentials: true,
 	})
 		.then((res) => {
-      if (res.data.err) return set(false)
-			router.push("/profile")
+      		if (res.data.err) return set(false)
+	  		set(true)
 			eraseCookie("jwt-2fa")
 		})
 		.catch((err) => {
