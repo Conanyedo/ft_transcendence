@@ -12,8 +12,8 @@ export const MenuDropdown = (props: { data: any; methods: any }) => {
 
   const [content, setContent] = useState<any>([]);
   const [functions, setFunctions] = useState<any>([]);
-  const { setShowCnv }  = useContext(ChatContext) as ChatContextType;
-  
+  const { setShowCnv } = useContext(ChatContext) as ChatContextType;
+
   // set conditions here
   useEffect(() => {
     if (
@@ -34,12 +34,25 @@ export const MenuDropdown = (props: { data: any; methods: any }) => {
         ,
         () => UnblockFriend(props.data.currentUser, props.methods.setRelation),
       ]);
-    } else { // TODO
-      setContent(["Update Channel", "Leave Channel"]);
-      setFunctions([() => props.methods.setModal(true), () => leaveChannel(props.data.currentUser.convId, Router, setShowCnv)]);
+    } else {
+      if (
+        props.data.currentUser.relation === "Admin" ||
+        props.data.currentUser.relation === "Owner"
+      ) {
+        setContent(["Update Channel", "Leave Channel"]);
+        setFunctions([
+          () => props.methods.setModal(true),
+          () => leaveChannel(props.data.currentUser.convId, Router, setShowCnv),
+        ]);
+      } else {
+        setContent(["Leave Channel"]);
+        setFunctions([
+          () => leaveChannel(props.data.currentUser.convId, Router, setShowCnv),
+        ]);
+      }
     }
   }, []);
-	useOutsideAlerter(menuRef, props.methods.setDropdwn);
+  useOutsideAlerter(menuRef, props.methods.setDropdwn);
   return (
     <>
       {props.data.dropdwn && (
