@@ -76,9 +76,6 @@ export class allGames {
     let game: LobbyFriends;
     if (idGame) game = this.FriendsLobby.find((game) => game.idGame == idGame);
     if (game) {
-      setTimeout(() => {
-        this.server.to(idGame).emit('gameStarted', true);
-      }, 300)
       return {
         gameID: game.idGame,
         admin: game.admin,
@@ -96,8 +93,6 @@ export class allGames {
         check: true,
         id: isfriend.idGame,
       });
-      setTimeout(() => {
-        this.FriendsLobby = this.FriendsLobby.filter((game) => GameID && game.idGame !== GameID)
         const player = new Player(isfriend.admin, isfriend.adminSocket, 'left');
         const playertwo = new Player(login, client, 'right');
         const newGame = new Game(
@@ -111,13 +106,6 @@ export class allGames {
         );
         this.countLiveGames++;
         this.FriendGames.push(newGame);
-        const time = setTimeout(() => {
-          this.server.to(newGame._ID).emit('gameStarted', true);
-          return () => {
-            clearTimeout(time);
-          };
-        }, 10);
-      }, 200);
       return GameID;
     }
   }
@@ -361,4 +349,12 @@ export class allGames {
       return game._ID;
     return null;
   }
+
+	isGameStarted(client: Socket, idGame: string) {
+		if (this.FriendGames.length && idGame) {
+			const game: Game = this.FriendGames.find(game => game._ID === idGame);
+			if (game?._ID === idGame)
+				client.emit('gameStarted', true);
+		}
+	}
 }
