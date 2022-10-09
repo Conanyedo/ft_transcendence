@@ -103,13 +103,13 @@ const Chat = () => {
               />
             }{" "}
             {show}
-            <ProtectedFormMdl
+            {/* <ProtectedFormMdl
               convId={channelData.convId}
               show={show}
               setShow={closePopup}
               refresh={refresh}
               name={channelName}
-            />
+            /> */}
           </div>
         </ChatProvider>
       )}

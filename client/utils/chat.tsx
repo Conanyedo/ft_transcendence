@@ -162,7 +162,7 @@ export async function UnblockFriend(currentUser: any, setRelation: any) {
   }
 }
 
-function errorHandler(values: any, data: any) {
+function errorHandler(values: any, data: any, oldChannel: string) {
   if (
     !RegExp(
       /^(?=.{2,20}$)(?![ _.-])(?!.*[_.-]{2})[a-zA-Z0-9 ._-]+(?<![ _.-])$/
@@ -171,7 +171,7 @@ function errorHandler(values: any, data: any) {
     return "Channel name shouldbe between 3 to 20 characters and can contain one of these: [space_.-].";
   }
   if (
-    values.type == "Protected" &&
+    ((values.type == "Protected" && oldChannel !== "Protected") || (oldChannel == "Protected" && values.password !== "")) &&
     !RegExp(
       /^(?=(.*[a-z]){1,})(?=(.*[A-Z]){1,})(?=(.*[0-9]){1,})(?=(.*[!@#$%^&*()\-__+.]){1,}).{8,}$/
     ).test(values.password)
@@ -183,21 +183,33 @@ function errorHandler(values: any, data: any) {
   return "";
 }
 
+function validatePassword(password: string) {
+
+}
+
 export function updateChannel(
   values: any,
   data: any,
   currUser: any,
   router: any,
   setshowModal: any,
-  setErrorMsg: any
+  setErrorMsg: any,
+	oldChannel: string
 ) {
-  let res = errorHandler(values, data);
+  let res = errorHandler(values, data, oldChannel);
   if (res == "") {
+
+		let setPassword: boolean = true;
     const formData = new FormData();
+		if (oldChannel == "Protected" && values.password == "") {
+			setPassword = false;
+		}
     formData.append("convId", currUser.convId);
     formData.append("name", values.cName);
-    formData.append("type", values.type);
-    if (values.type == "Protected")
+
+		if (values.type !== "Protected" || values.password !== "")
+			formData.append("type", values.type);
+    if (values.type == "Protected" && setPassword && values.password !== "")
       formData.append("password", values.password);
     if (data.avatar != "") formData.append("avatar", data.avatar);
     formData.append("oldPath", data.oldPath);

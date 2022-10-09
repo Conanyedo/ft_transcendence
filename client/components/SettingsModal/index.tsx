@@ -14,24 +14,27 @@ import { updateChannel } from "@utils/chat"
 import { Button } from "@components/Modal"
 
 const Form = ({ data, currUser, setShowSetModal }: any) => {
-    const { protectedChannel, channelMode } = useContext(ChatContext) as ChatContextType;
-
-    // Set the form validation using Yup && formik
-    const formik = useFormik({
-        initialValues: {
-            cName: currUser.name,
-            type: channelMode,
-            password: "",
-        },
-        onSubmit: values => {
-        },
-    });
+    const { protectedChannel, channelMode, setChannelMode } = useContext(ChatContext) as ChatContextType;
 
     const router = useRouter();
 
-    useEffect(() => {
-        formik.setFieldValue("type", channelMode);
-    }, [channelMode])
+		// Set the form validation using Yup && formik
+    const formik = useFormik({
+			initialValues: {
+					cName: currUser.name,
+					type: channelMode,
+					password: "",
+			},
+			onSubmit: values => {
+			},
+	});
+
+	useEffect(() => {
+		if (channelMode == "")
+			setChannelMode(currUser.type);
+		else 
+			formik.setFieldValue("type", channelMode)
+	}, [channelMode])
 
     const [errorMsg, setErrorMsg] = useState("");
     return (<>
@@ -51,11 +54,11 @@ const Form = ({ data, currUser, setShowSetModal }: any) => {
             {(channelMode === "Public") && <p>All users can find and join this channel</p>}
             {(channelMode === "Private") && <p>Only users you invited can join the channel</p>}
             {(channelMode === "Protected") && <p>All users can find the channel but only those with the provided password can join</p>}
-            {(protectedChannel && channelMode === "Protected") && <div className={Styles.inputContainer}>
+            {(channelMode === "Protected") && <div className={Styles.inputContainer}>
                 <span>Password</span>
                 <input name="password" type="password" className={Styles.usrsInpt} onChange={formik.handleChange} value={formik.values.password} />
             </div>}
-            <Button text="Update" clickHandler={(e: any) => updateChannel(formik.values, data, currUser, router, setShowSetModal, setErrorMsg)} />
+            <Button text="Update" clickHandler={(e: any) => updateChannel(formik.values, data, currUser, router, setShowSetModal, setErrorMsg, currUser.type)} />
         </form></>)
 }
 

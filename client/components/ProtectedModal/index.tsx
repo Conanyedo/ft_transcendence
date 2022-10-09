@@ -2,27 +2,27 @@ import Styles from "@styles/chat.module.css";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Cross from "@public/Cross.svg";
-import { useEffect, useRef, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { Button } from "@components/Modal";
 import { useRouter } from "next/router";
 import { JoinChannel } from "@hooks/useFetchData";
+import classes from "../../styles/Search.module.css";
 import { useOutsideAlerter } from "@hooks/Functions";
 
 export const ProtectedFormMdl: React.FC<{
   convId: string;
-  show: boolean;
-  setShow: any;
-  refresh: any;
-  name: string;
-}> = ({ convId, show, setShow, refresh, name }) => {
+  setShow: Dispatch<SetStateAction<boolean>>;
+	refresh: any
+}> = ({ convId, setShow, refresh }) => {
   const [inputVal, setInputVal] = useState("");
+  const [isMounted, setisMounted] = useState(false);
   const [error, setError] = useState("");
 
   const router = useRouter();
   const mdlRef = useRef<any>();
 
   const closePopup = async () => {
-    setShow();
+    setShow(false);
   };
 
   const handleChange = (e: any) => {
@@ -45,19 +45,21 @@ export const ProtectedFormMdl: React.FC<{
         data,
         setError
       );
-
-      if (res) {
-        await refresh();
-        router.push(`/chat?channel=${name}`);
-      }
-      // handle the case of wrong password later
+			if (res) {
+				await refresh();
+				setShow(false);
+			}
     }
   };
-
+	useEffect(() => {
+		setisMounted(true);
+	}, [])
+	useOutsideAlerter(mdlRef, setShow);
   return (
     <>
-      {show && (
-        <div ref={mdlRef}>
+      {isMounted && (
+				<div className={classes.BackGroundPassword}>
+        <div ref={mdlRef} >
           <motion.div
             className={Styles.modalbox}
             animate={{ scale: 1 }}
@@ -86,7 +88,7 @@ export const ProtectedFormMdl: React.FC<{
               <Button clickHandler={Submit} text="Join" />
             </form>
           </motion.div>
-        </div>
+        </div></div>
       )}
     </>
   );

@@ -47,7 +47,7 @@ const Login = () => {
 					<div className={classes.pongmania_content}>
 						<object data={Pongmania.src} type="image/svg+xml"></object>
 						<p>
-						Our ping pong game and chat website is the perfect place to meet new people and have a great time playing ping pong. We offer a fun and friendly environment for everyone to enjoy. So come on over and join the fun!
+						Our ping pong game and chat website is the perfect place to meet new people and have a great time playing ping pong. We offer a fun and friendly environment for everyone to enjoy. So come on over and join the fun!<br />
 						Come join us for some friendly ping pong games and great conversation on our chat website. You don't need to be a professional player to enjoy a game or two of ping pong, and you're sure to make some new friends on our site. So come on over and have some fun!
 						</p>
 					</div>

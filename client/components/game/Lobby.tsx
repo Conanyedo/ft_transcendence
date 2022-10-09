@@ -244,11 +244,11 @@ const Lobby = () => {
 									<Image src={RankStar} />
 								</div>
 								<p>
-									Lorem ipsum dolor sit amet consectetur
-									adipiscing elit Ut et massa mi. Lorem ipsum
-									dolor sit amet consectetur adipiscing elit
-									Ut et massa mi. Lorem ipsum dolor sit amet
-									consectetur adipiscing elit Ut et massa mi.
+									Ranked game is where you join a queue to play with random players.<br />
+									- You gain XP depending on your current level.<br />
+									- You gain 50 Game Points when winning.<br />
+									- You lose 25 Game Points when losing.<br />
+									- You may get achievements.<br />
 								</p>
 								<div
 									className={classes.JoinQueue}
@@ -263,11 +263,11 @@ const Lobby = () => {
 									<Image src={Classic} />
 								</div>
 								<p>
-									Lorem ipsum dolor sit amet consectetur
-									adipiscing elit Ut et massa mi. Lorem ipsum
-									dolor sit amet consectetur adipiscing elit
-									Ut et massa mi. Lorem ipsum dolor sit amet
-									consectetur adipiscing elit Ut et massa mi.
+								Friend game is where you can challenge your friends for a ping pong match.<br />
+									- You gain XP depending on your current level.<br />
+									- You can choose a table theme.<br />
+									- You may get achievements.<br />
+									- You may get achievements.<br />
 								</p>
 								<div
 									className={classes.JoinQueue}

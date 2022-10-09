@@ -34,7 +34,7 @@ export const MenuDropdown = (props: { data: any; methods: any }) => {
         ,
         () => UnblockFriend(props.data.currentUser, props.methods.setRelation),
       ]);
-    } else {
+    } else { // TODO
       setContent(["Update Channel", "Leave Channel"]);
       setFunctions([() => props.methods.setModal(true), () => leaveChannel(props.data.currentUser.convId, Router, setShowCnv)]);
     }

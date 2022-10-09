@@ -59,8 +59,7 @@ export const ChatLeft = (props: {
     const checkname = (obj: any) => obj.name == data.channelName;
     if (
       data.channelName.length == 0 ||
-      data.convType.length == 0 ||
-      data.members.length == 0
+      data.convType.length == 0
     ) {
       return "There is a missing input.";
     }

@@ -8,7 +8,7 @@ import Respond from "../public/FriendIcons/Respond.svg";
 import { motion } from "framer-motion";
 import { requests, requestsChannel } from "../customHooks/useFetchData";
 import Router, { NextRouter } from "next/router";
-import { useRef, useState } from "react";
+import { Dispatch, SetStateAction, useRef, useState } from "react";
 import { useOutsideAlerter } from "../customHooks/Functions";
 import socket_notif from "../config/socketNotif";
 
@@ -171,13 +171,15 @@ export const JoinChannel: React.FC<{
 	refresh: () => void;
 	type: string;
 	name: string;
+	set: Dispatch<SetStateAction<boolean>>
 }> = (props) => {
 	const handler = async () => {
-		if (props.type !== 'Protected')
-		await requestsChannel(props.id, "chat/joinChannel", props.router);
-		else
-			Router.push('/chat?channel=' + props.name)
-		props.refresh();
+		if (props.type !== 'Protected') {
+			await requestsChannel(props.id, "chat/joinChannel", props.router);
+			props.refresh();
+		}
+		else if (props.type === 'Protected')
+			props.set(true);
 	};
 	return (
 		<div className={classes.btnFriendADD} onClick={handler}>
