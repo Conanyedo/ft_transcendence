@@ -41,14 +41,13 @@ const Login = () => {
 					<div className={classes._1337logo}>
 						<img src={logo.src} alt="1337_official_logo" />
 					</div>
-					<div className={classes.aboutUs}>About Us</div>
+					{/* <div className={classes.aboutUs}>About Us</div> */}
 				</div>
 				<div className={classes.pongmania_container}>
 					<div className={classes.pongmania_content}>
 						<object data={Pongmania.src} type="image/svg+xml"></object>
 						<p>
-						Our ping pong game and chat website is the perfect place to meet new people and have a great time playing ping pong. We offer a fun and friendly environment for everyone to enjoy. So come on over and join the fun!<br />
-						Come join us for some friendly ping pong games and great conversation on our chat website. You don't need to be a professional player to enjoy a game or two of ping pong, and you're sure to make some new friends on our site. So come on over and have some fun!
+						Come join us for some friendly ping pong games and great conversation on our platform.<br/>You don't need to be a professional player to enjoy a game of ping pong, and you're sure to make some new friends and chat with them. So come over and have some fun!
 						</p>
 					</div>
 					<div className={classes.login_button} onClick={(e) => router.push(`${baseUrl}auth/login`)}>

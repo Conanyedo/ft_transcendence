@@ -248,7 +248,7 @@ const Lobby = () => {
 									- You gain XP depending on your current level.<br />
 									- You gain 50 Game Points when winning.<br />
 									- You lose 25 Game Points when losing.<br />
-									- You may get achievements.<br />
+									- You may get new achievements.<br />
 								</p>
 								<div
 									className={classes.JoinQueue}
@@ -266,8 +266,8 @@ const Lobby = () => {
 								Friend game is where you can challenge your friends for a ping pong match.<br />
 									- You gain XP depending on your current level.<br />
 									- You can choose a table theme.<br />
-									- You may get achievements.<br />
-									- You may get achievements.<br />
+									- You may get new achievements.<br />
+									- Enjoy with your friends.<br />
 								</p>
 								<div
 									className={classes.JoinQueue}
