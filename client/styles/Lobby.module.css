@@ -339,7 +339,7 @@
 
 /* ------------------- */
 
-@media only screen and (max-width: 1080px) {
+@media only screen and (max-width: 1200px) {
     .cardContainers {
         margin: 0;
         padding-top: 5rem;
@@ -348,7 +348,7 @@
     }
 
     .RankContainer {
-        width: 80%;
+        width: 36rem;
     }
 
     .pingPongContainer {
