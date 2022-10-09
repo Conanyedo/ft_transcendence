@@ -35,10 +35,9 @@ export class Game {
     this._matchType = matchType;
     this._PlayerLeft = first;
     this._PlayerRight = second;
-    this._ID = (gameID) ? gameID : Math.random().toString(16).slice(2);
+    this._ID = (gameID.length) ? gameID : Math.random().toString(16).slice(2);
     first.getsocket().join(this._ID);
     second.getsocket().join(this._ID);
-    socket.to(this._ID).emit('startsoon');
     const tmp = {
       id: this._ID,
       login: this._PlayerRight.getlogin(),
@@ -48,6 +47,7 @@ export class Game {
     this._PlayerRight.getsocket().emit('getCode', tmp);
     this._Ball = new Ball();
     games.gameService.startMatch(this._PlayerLeft.getlogin(), this._PlayerRight.getlogin());
+		socket.to(this._ID).emit('gameStarted', true);
     setTimeout(() => {
       this.EmitScore(socket);
     }, 5100);
@@ -109,6 +109,7 @@ export class Game {
     });
     clearInterval(this._inTerval);
     games.removeGame(this._ID);
+		games.FriendsLobby = games.FriendsLobby.filter(game => game.idGame !== this._ID)
     const gameResult: gameDto = {playerOne: this._PlayerLeft.getlogin(), playerTwo: this._PlayerRight.getlogin(), playerOneScore: this._PlayerLeft.getscore(), playerTwoScore: this._PlayerRight.getscore(), gameType: this._matchType}
     games.gameService.insertMatches(gameResult);
   }
