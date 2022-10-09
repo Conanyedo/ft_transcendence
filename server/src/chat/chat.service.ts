@@ -46,9 +46,9 @@ export class ChatService {
 			const exist = await this.memberRepository
 				.query(`select members.id, members."status" from members Join users ON members."userId" = users.id where members."conversationId" = '${conv.id}' AND users."login" = '${login}' AND members."leftDate" is null;`);
 			if (!exist.length)
-				convsList.push({ convId: conv.id, Avatar: conv.avatar, title: conv.name, type: conv.type, member: false });
-			else
-				convsList.push({ convId: conv.id, Avatar: conv.avatar, title: conv.name, type: conv.type, member: true });
+				convsList.push({ convId: conv.id, Avatar: conv.avatar, title: conv.name, type: conv.type, status: undefined });
+			else if (exist[0].status !== memberStatus.BANNED)
+				convsList.push({ convId: conv.id, Avatar: conv.avatar, title: conv.name, type: conv.type, status: exist[0].status });
 		}))
 		return { data: [...convsList] };
 	}
