@@ -28,7 +28,7 @@ services:
       - POSTGRES_USER=Conanyedo
       - POSTGRES_PASSWORD=pongmania
       - POSTGRES_DB=pongmania
-      - TZ=Africa/Casablanca
+      - TZ=GMT-1
 
 
 volumes:
