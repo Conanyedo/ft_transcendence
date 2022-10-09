@@ -21,6 +21,11 @@ const GameHeader: React.FC<{
 	const router = useRouter();
 	const [userInfo1, setUserInfo1] = useState<UserTypeNew>(EmtyUser);
 	const [userInfo2, setUserInfo2] = useState<UserTypeNew>(EmtyUser);
+	const [isMounted, setisMounted] = useState(false);
+
+	useEffect(() => {
+		setisMounted(true);
+	}, [])
 
 	useEffect(() => {
 		if (props.Fplayer)
@@ -36,7 +41,7 @@ const GameHeader: React.FC<{
 	const goToSecondProfile = () => router.push("/profile/" + userInfo2.login);
 	return (
 		<>
-			<div className={classesGameHeader.liveGameContainer}>
+			{isMounted && <div className={classesGameHeader.liveGameContainer}>
 				<div className={classesGameHeader.GameContent}>
 					<div className={classesGameHeader.UserSection}>
 						<div
@@ -82,7 +87,7 @@ const GameHeader: React.FC<{
 						</div>
 					</div>
 				</div>
-			</div>
+			</div>}
 		</>
 	);
 };
@@ -99,6 +104,8 @@ const GameLobby: React.FC<{ GameID: string }> = (props) => {
 	const [datagame, setDataGame] = useState<GameFriendType>();
 	const [startGame, setStartGame] = useState(false);
 	const [ErrorMsg, setErrorMsg] = useState(false);
+	const [isMounted, setisMounted] = useState(false);
+	const [calledPush, setCalledPush] = useState(false);
 	const ref_canvas = useRef(null);
 	const ref_span = useRef(null);
 	const router = useRouter();
@@ -109,18 +116,22 @@ const GameLobby: React.FC<{ GameID: string }> = (props) => {
 		});
 		socket_game.on("gameStarted", (data) => {
 			if (data === true) {
+				let rep: NodeJS.Timer;
 				setStartGame(true);
-				runTimer(ref_span.current);
-				const time = setTimeout(() => {
-					router.push(props.GameID);
-					return () => {
-						clearTimeout(time);
-					};
+				rep = runTimer(ref_span.current);
+				setTimeout(() => {
+					clearInterval(rep)
+					if (!calledPush) {
+					router.replace('/game/' + props.GameID);
+					setCalledPush(true);
+					}
 				}, 4000);
 			} else {
 				setErrorMsg(true);
 			}
 		});
+		socket_game.emit('isGameStarted', props.GameID);
+		setisMounted(true)
 		return () => {
 			socket_game.off("gameStarted");
 		};
@@ -139,8 +150,8 @@ const GameLobby: React.FC<{ GameID: string }> = (props) => {
 		  }
 		}, 3000);
 	  }
-	return (
-		<div className={classes.fullPage}>
+	return (<>
+		{isMounted && <div className={classes.fullPage}>
 			{ErrorMsg && (
 				<MsgSlideUp
 					msg="game refused"
@@ -186,7 +197,8 @@ const GameLobby: React.FC<{ GameID: string }> = (props) => {
 					id="pong"
 				></canvas>
 			</div>
-		</div>
+		</div>}
+		</>
 	);
 };
 

@@ -6,6 +6,7 @@ import socket_game from "../../../config/socketGameConfig";
 
 const GameHome = () => {
 	const [auth, setAuth] = useState(false);
+	const [isMounted, setisMounted] = useState(false);
 	const router = useRouter();
 	const { id } = router.query;
 	useEffect(() => {
@@ -16,16 +17,18 @@ const GameHome = () => {
 				socket_game.disconnect();
 			});
 		}
-		if (id)
+		if (id){
 			setTimeout(() => {
 				socket_game.emit("liveGames");
 				setAuth(true);
 			}, 200);
+		if (!isMounted) setisMounted(true);}
 		return () => {
 			socket_game.off("MatchNotFound");
 		};
 	}, [id]);
+
 	if (!auth) return <LoadingElm />;
-	return <>{auth && <Game GameID={id as string} />}</>;
+	return <>{auth && isMounted && <Game GameID={id as string} />}</>;
 };
 export default GameHome;

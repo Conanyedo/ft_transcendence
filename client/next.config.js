@@ -10,7 +10,13 @@ const nextConfig = {
   reactStrictMode: false,
   swcMinify: true,
   images: {
-    domains: ['robohash.org', 'cdn.intra.42.fr', 'lh3.googleusercontent.com', 'localhost', 'ui-avatarsx70.com'],
+		remotePatterns: [
+      {
+        protocol: "http",
+        hostname: "**",
+      },
+    ],
+    domains: ['robohash.org', 'cdn.intra.42.fr', 'lh3.googleusercontent.com', 'localhost', 'ui-avatarsx70.com', 'e1r7p11.1337.ma'],
     formats: ['image/avif', 'image/webp'],
   },
 }

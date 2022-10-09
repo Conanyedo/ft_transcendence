@@ -630,8 +630,8 @@ export const checkJWT = async (
   })
     .then((res) => {
       if (res.data.err) return set(false);
-      set(true);
       eraseCookie("jwt-2fa");
+      set(true);
     })
     .catch((err) => {
       if (err.response.status === 401) {

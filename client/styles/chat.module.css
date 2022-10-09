@@ -13,6 +13,12 @@
   border-radius: 15px 0 0 15px;
 }
 
+.AssetCtn {
+	width: 1rem;
+	height: fit-content;
+	text-align: right;
+}
+
 .chatRight {
   width: 70%;
   background-color: #2c2c2e;
@@ -141,6 +147,8 @@
   border-radius: 0 15px 0 0;
   padding: 18px 1.313rem;
   align-items: center;
+	z-index: 2;
+	position: sticky;
 }
 
 .flex {
@@ -195,7 +203,7 @@
   width: calc(100% - (1.313rem * 2));
   margin: 0 auto;
   position: relative;
-  margin-top: 2rem;
+  /* margin-top: 2rem; */
 }
 
 .msgsDisplay::-webkit-scrollbar {
@@ -204,6 +212,7 @@
   outline: 3px solid #2d2f31;
   padding-top: 0.5rem;
   border-radius: 5px;
+	
 }
 
 .msgsDisplay::-webkit-scrollbar-track {
@@ -365,15 +374,20 @@
   margin-top: 10px;
 }
 
-.inviteMsg>div {
-  display: flex;
-  flex-direction: column;
-  gap: 0.938rem;
-}
-
 .inviteCont {
   display: flex;
   gap: 1rem;
+}
+
+.w100 {
+	width: 100%;
+}
+
+.inviteBtn {
+	margin-top: 1rem;
+	white-space: nowrap;
+	display: flex;
+  justify-content: center;
 }
 
 .inviteUsr,
@@ -410,7 +424,10 @@
 
 .inviteBtns {
   display: flex;
-  gap: 1rem;
+  justify-content: space-between;
+	width: 100%;
+	padding: 0;
+	gap: 1rem;
 }
 
 .refuseBtn, .acceptBtn {
@@ -438,12 +455,13 @@
   color: #c6e1ff;
   font-size: 1rem;
   height: 25px;
-  width: fit-content;
-  padding: 5px 27px;
+  padding: 5px 19px;
+	width: 100%;
   background-color: transparent;
   cursor: pointer;
   display: flex;
   align-items: center;
+	justify-content: center;
 }
 
 .inviteBtn {
@@ -833,6 +851,12 @@
   }
 }
 
+@media only screen and (max-width: 728px) {
+	.chatSection {
+		top: 90px;
+	}
+}
+
 @media only screen and (max-width: 1274px) {
   .chatContainer {
     height: 92%;
@@ -896,6 +920,8 @@
     border-radius: 15px 15px 0 0;
     align-items: center;
     height: 8rem;
+		z-index: 2;
+		position: sticky;
   }
 
   .chatUserStatus {

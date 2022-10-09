@@ -37,6 +37,7 @@ interface ChatContextType {
 const ChatContext = createContext<ChatContextType | null>(null);
 
 const ChatProvider = ({ children }: any) => {
+  const [isUp, setisUp] = useState<boolean>(false);
   const [protectedChannel, setProtectedChannel] = useState(false);
   const [channelMode, setChannelMode] = useState<string>("Public");
 
@@ -52,7 +53,6 @@ const ChatProvider = ({ children }: any) => {
 
   const [currentUser, setCurrentUser] = useState<chatUser>(lastUsers[0]);
   const [showCnv, setShowCnv] = useState<boolean>(false);
-  const [isUp, setisUp] = useState<boolean>(false);
   const [initialusrData, setInitialUsrData] = useState<Array<chatUser>>([]);
   const messagesEndRef: any = useRef(null);
 
@@ -65,13 +65,13 @@ const ChatProvider = ({ children }: any) => {
   const [chatMsgs, setChatMsgs] = useState<any>([]);
 
   useEffect(() => {
-    setisUp(true);
     socket_notif.on("connect", () => {
     });
     getLastConvs(setLastUsers, setInitialUsrData);
     getFriends(setFriends);
 
     setCurrentUser(lastUsers[0]);
+    setisUp(true);
     return () => {
       socket_notif.off("connect");
     };

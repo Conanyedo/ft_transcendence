@@ -5,6 +5,7 @@ import Avatar from "@public/profile.jpg";
 import Image from "next/image";
 import TagCross from "@public/white-cross.svg";
 import Classes from "@styles/modals.module.css"
+import { getImageBySize } from "@hooks/Functions";
 
 // use datalist to show possible results
 export function CustomToggleBtn(id: any) {
@@ -75,7 +76,7 @@ export function SuggestedUsr(props: {
     <div className={Styles.sUsr}>
       <div>
         <div className={Classes.dropAvatar}>
-          <img src={props.user?.avatar} />
+          <img src={getImageBySize(props.user?.avatar, 70)} />
         </div>
         <span>{props.user.fullname}</span>
       </div>

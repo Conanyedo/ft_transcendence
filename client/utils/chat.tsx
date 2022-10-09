@@ -11,7 +11,8 @@ export const setMsg = (
   keycode: any,
   enteredMessage: string,
   currentUser: any,
-  setStopUsr: any
+  setStopUsr: any,
+	setEnteredMsg: any,
 ) => {
   if (enteredMessage !== "" && keycode == 13) {
     const data = {
@@ -19,10 +20,12 @@ export const setMsg = (
       convId: currentUser.convId,
       receiver: currentUser.login,
     };
+		
     socket_notif.emit("sendMsg", data, (response: any) => {
       if (statuses.includes(response.data.err)) {
         setStopUsr(response.data.err.toLowerCase());
       } else if (response.data !== "") {
+				setEnteredMsg("");
         if (!currentUser.convId) {
           Router.push("/chat");
           setTimeout(() => {
@@ -112,6 +115,7 @@ export const getLastUsers = async (
           "getMsgs",
           { convId: item?.convId },
           (response: any) => {
+						
             setChatMsgs(response.data);
             // run on first render only
             scrollToBottom(messagesEndRef);

@@ -85,11 +85,7 @@ export async function validation(name: string, setError: any) {
 
 export function runTimer(ref_elm: any) {
 	let start = 4;
-	const rep = setInterval(() => {
-		if (start === 0)
-		return () => {
-			clearInterval(rep);
-		}
+	return setInterval(() => {
 		start -= 1;
 		ref_elm.innerText = start.toString();
 	}, 1000)

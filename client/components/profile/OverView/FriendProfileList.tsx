@@ -20,7 +20,11 @@ const SearchFriend: React.FC<{
 		e.preventDefault();
 		props.searchHandler();
 	};
-	const ClickHandler = () => setIsOpen((value) => !value);
+	const ClickHandler = () => {
+		setIsOpen((value) => !value)
+		
+		props.ref_input?.current?.focus();
+	};
 	useOutsideAlerter(ref_form, setIsOpen);
 	return (
 		<form
@@ -39,6 +43,7 @@ const SearchFriend: React.FC<{
 				className={`${!isOpen ? classes.hideSearch : classes.search}`}
 				ref={props.ref_input}
 				onChange={props.searchHandler}
+				autoFocus={true}
 			/>
 		</form>
 	);

@@ -36,6 +36,7 @@ const Chat = () => {
   const router = useRouter();
   const [name, setName] = useState<any>("");
   const [channelName, setchannelName] = useState<any>("");
+  const [isUp, setisUp] = useState<boolean>(false);
   const { login, channel } = router.query;
 
   const refresh = async () => {
@@ -45,21 +46,21 @@ const Chat = () => {
         setchannelName(channel);
         await getLoginInfo(channel, false, setChannelData);
       }
-      if (login === undefined)
-        setShowCnv(false);
-        
+      if (login === undefined) setShowCnv(false);
+
       setName(login || channel);
     }
   };
 
   useEffect(() => {
     //upon entering execute this
-    if ((RegExp(
-      /^(?=.{2,20}$)(?![ _.-])(?!.*[_.-]{2})[a-zA-Z0-9 ._-]+(?<![ _.-])$/
-    ).test((login || channel) as string))) {
+    if (
+      RegExp(
+        /^(?=.{2,20}$)(?![ _.-])(?!.*[_.-]{2})[a-zA-Z0-9 ._-]+(?<![ _.-])$/
+      ).test((login || channel) as string)
+    ) {
       refresh();
-    } 
-    
+    }
   }, [login, channel]);
 
   if (channelData.type !== "" && channelData.type !== "Public" && !show) {
@@ -74,32 +75,45 @@ const Chat = () => {
   const closePopup = () => {
     setChannelData(new channelDataType());
     setShow(false);
-  }
+  };
+
+  useEffect(() => {
+    setisUp(true);
+  }, []);
 
   return (
-    <ChatProvider>
-      <div className={Styles.chatContainer}>
-        <ChatLeft login={name} selectedConv={selectedConv} setSelectedConv={setSelectedConv}/>
-        {
-          <ChatRight
-            setShowSetModal={setShowSetModal}
-            setSelectedConv={setSelectedConv}
-            login={
-              channelData.type !== "" && channelData.type !== "Public"
-                ? undefined
-                : name
-            }
-          />
-        } {show}
-          <ProtectedFormMdl
-            convId={channelData.convId}
-            show={show}
-            setShow={closePopup}
-            refresh={refresh}
-            name={channelName}
-          />
-      </div>
-    </ChatProvider>
+    <>
+      {isUp && (
+        <ChatProvider>
+          <div className={Styles.chatContainer}>
+            <ChatLeft
+              login={name}
+              selectedConv={selectedConv}
+              setSelectedConv={setSelectedConv}
+            />
+            {
+              <ChatRight
+                setShowSetModal={setShowSetModal}
+                setSelectedConv={setSelectedConv}
+                login={
+                  channelData.type !== "" && channelData.type !== "Public"
+                    ? undefined
+                    : name
+                }
+              />
+            }{" "}
+            {show}
+            <ProtectedFormMdl
+              convId={channelData.convId}
+              show={show}
+              setShow={closePopup}
+              refresh={refresh}
+              name={channelName}
+            />
+          </div>
+        </ChatProvider>
+      )}
+    </>
   );
 };
 export default Chat;

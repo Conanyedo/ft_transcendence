@@ -36,7 +36,7 @@ const times = [
   "7 Days",
   "1 Month",
 ];
-const seconds = [3600, 28800, 43200, 86400, 604800, 2630000];
+const seconds = [60, 28800, 43200, 86400, 604800, 2630000];
 
 async function muteMember(
   user: any,

@@ -100,6 +100,7 @@ export interface chatUser {
 
 export interface chatMsg {
 	convId: any,
+	msgId: string,
 	msgContent: string | JSX.Element, 
 	time: string,
 	type: any,

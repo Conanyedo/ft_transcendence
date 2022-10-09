@@ -7,6 +7,7 @@ import { ChatProvider } from "@contexts/chatContext";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import ContentWrapper from "../components/wrapper/appWrapper";
+import ico from '../public/favicon.ico'
 
 function MyApp({ Component, pageProps }: AppProps) {
 	const router = useRouter();
@@ -18,6 +19,7 @@ function MyApp({ Component, pageProps }: AppProps) {
 				<>
 					<Head>
 						<title>PongMania</title>
+						<link rel="shortcut icon" href={ico.src} />
 					</Head>
 					<Component {...pageProps} />
 				</>
@@ -33,7 +35,8 @@ function MyApp({ Component, pageProps }: AppProps) {
 				{typeof window === "undefined" ? null : (
 					<>
 						<Head>
-							<title>PingPong</title>
+						<title>PongMania</title>
+						<link rel="shortcut icon" href={ico.src} />
 						</Head>
 						<ContentWrapper children={ <Component {...pageProps} />} />
 					</>

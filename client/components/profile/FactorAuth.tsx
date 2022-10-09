@@ -12,6 +12,7 @@ import { baseUrl } from "config/baseURL"
 
 const FactorAuth = () => {
 	const router = useRouter()
+	const [isMounted, setisMounted] = useState(false);
 	const jwt = getCookie("jwt-2fa")
 	if (!jwt) {
 		router.push("/")
@@ -23,6 +24,7 @@ const FactorAuth = () => {
 	const [isError, setisError] = useState(false)
 	useEffect(() => {
 		if (jwt) check2FA_JWT(jwt, setisValid, router)
+		setisMounted(true);
 	}, [])
 	if (!isValid) return <LoadingElm />
 	const CheckHandler = async () => {
@@ -34,6 +36,7 @@ const FactorAuth = () => {
 		e.preventDefault()
 		if (inputValue.length === 6) CheckHandler()
 	}
+	if (!isMounted) return <></>
 	return (
 		<>
 			<div className={classes.background}>

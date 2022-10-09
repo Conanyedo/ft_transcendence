@@ -87,7 +87,7 @@ const SendMsg: React.FunctionComponent<{
 							onChange={(e) => setEnteredMsg(e.target.value)}
 							onKeyDown={(event) => {
 								if (event.keyCode !== 13) return
-								setMsg(event.keyCode, enteredMsg, currentUser, setStopUsr)
+								setMsg(event.keyCode, enteredMsg, currentUser, setStopUsr, setEnteredMsg)
 							}}
 						/>
 						{(currentUser?.type == "Dm" || relation == "friend") && (
@@ -110,7 +110,7 @@ const SendMsg: React.FunctionComponent<{
 				{stopUsr == "" && relation != "Blocker" && (
 					<div
 						onClick={(e) => {
-							setMsg(13, enteredMsg, currentUser, setStopUsr)
+							setMsg(13, enteredMsg, currentUser, setStopUsr, setEnteredMsg)
 						}}
 						className={Styles.sendCtr}>
 						{enteredMsg && <Image src={sendArrow} width={30} height={30} className={Styles.animatedBtn} />}
@@ -144,15 +144,17 @@ const ChatSection: React.FC<{
 	me,
 	messagesEndRef,
 }) => {
+  const [isMounted, setisMounted] = useState(false);
 	useEffect(() => {
 		setFConfId(convId)
 	}, [convId])
 
-	useEffect(() => {}, [fconvId])
-
+	useEffect(() => {
+		setisMounted(true)
+	}, [])
 	return (
 		<>
-			{currentUser && !profile && (
+			{isMounted && currentUser && !profile && (
 				<div className={Styles.chatSection}>
 					<div className={Styles.msgsDisplay} ref={msgsDisplayDiv}>
 						{chatMsgs.map((chatMsg: any, i: any) => (
@@ -168,7 +170,7 @@ const ChatSection: React.FC<{
 										className={Styles.msgBox}
 										style={{
 											justifyContent: chatMsg.sender == me ? "flex-end" : "flex-start",
-										}}>
+										}} ref={messagesEndRef}>
 										{(!chatMsg.invitation && (
 											<>
 												<div
@@ -179,7 +181,7 @@ const ChatSection: React.FC<{
 														borderRadius:
 															chatMsg.sender == me ? "5px 5px 0 5px" : "0 5px 5px 5px",
 													}}>
-                            {currentUser.type !== 'Dm' && <span className={Styles.senderName}>{chatMsg.sender === me ? "" : chatMsg?.fullname?.split(' ')[0] }{currentUser.type}</span>}
+                            {currentUser?.type !== 'Dm' && chatMsg?.sender !== me && <span className={Styles.senderName}>{chatMsg?.fullname}</span>}
 													{chatMsg.msg}
 												</div>
 											</>
@@ -287,7 +289,7 @@ const THeader: React.FunctionComponent<{
 			</div>
 			{!["Left", "Banned"].includes(relation) && (
 				<div className={Styles.menu} onClick={showUsrMenu}>
-					<div onClick={showHideDrop}>
+					<div onClick={showHideDrop} className={Styles.AssetCtn}>
 						<MenuAsset />
 					</div>
 					{showMenuDropdown && <MenuDropdown data={data} methods={methods} />}
@@ -357,7 +359,6 @@ export const ChatRight = (props: { setShowSetModal: any; setSelectedConv: any; l
 			setConvStatus(currentUser, setStopUsr)
 
 			if (currentUser.convId == response.data.convId) setChatMsgs([...chatMsgs, response.data] as any)
-			setEnteredMsg("")
 			// reset the conversations
 			getLastConvs(setLastUsers, () => null)
 			scrollToBottom(messagesEndRef)

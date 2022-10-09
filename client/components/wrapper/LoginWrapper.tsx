@@ -17,14 +17,14 @@ const LoginWrapper: React.FC<PropsType> = ({ children }) => {
 
 	useEffect(() => {
 		setIsMounted(true);
+		if (jwt) checkJWT(router, setIsAuth);
 	}, []);
+
 	useEffect(() => {
-		if (IsAuth) router.replace('/profile')
+		if (IsAuth && isMounted) 
+				router.push('/profile');
 	}, [IsAuth])
-	if (jwt) {
-		checkJWT(router, setIsAuth);
-		return <LoadingElm />;
-	}
+	if (jwt) return <LoadingElm />;
 	else if (jwt_2fa && router.asPath === "/") {
 		router.push("/?_2fa=true");
 		return <LoadingElm />;

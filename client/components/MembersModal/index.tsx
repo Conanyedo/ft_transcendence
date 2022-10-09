@@ -13,25 +13,25 @@ import {
 import { addMembers, getFriends } from "@hooks/useFetchData";
 import { useOutsideAlerter } from "@hooks/Functions";
 
-const Input = (props: {
-  title: string;
-  handleChange: any;
-  value: any;
-  name: string;
-}) => {
-  return (
-    <div className={`${Styles.inputContainer}`}>
-      <span>{props.title}</span>
-      <input
-        name={props.name}
-        type="text"
-        className={Styles.usrsInpt}
-        onChange={props.handleChange}
-        value={props.value}
-      />
-    </div>
-  );
-};
+// const Input = (props: {
+//   title: string;
+//   handleChange: any;
+//   value: any;
+//   name: string;
+// }) => {
+//   return (
+//     <div className={`${Styles.inputContainer}`}>
+//       <span>{props.title}</span>
+//       <input
+//         name={props.name}
+//         type="text"
+//         className={Styles.usrsInpt}
+//         onChange={props.handleChange}
+//         value={props.value}
+//       />
+//     </div>
+//   );
+// };
 
 export const MembersModal = (props: {
   refresh: any;
@@ -46,6 +46,7 @@ export const MembersModal = (props: {
   const [friends, setFriends] = useState([]);
   const [addedUsers, setAddedUsers] = useState([]);
   const [status, setStatus] = useState();
+  const [isMounted, setisMounted] = useState(false);
 
   const inputRef = useRef("");
 
@@ -71,6 +72,7 @@ export const MembersModal = (props: {
 
   useEffect(() => {
     setUsrs();
+		setisMounted(true);
   }, []);
 
   useEffect(() => {
@@ -113,7 +115,7 @@ export const MembersModal = (props: {
   const value = inputRef?.current as React.InputHTMLAttributes<HTMLInputElement>;
   return (
     <>
-      {props.showSetModal && (
+      {isMounted && props.showSetModal && (
         <>
           <div
             style={{ display: props.showSetModal ? "block" : "none" }}
