@@ -809,16 +809,14 @@
 }
 
 .avatarProps {
-  width: 76px;
-  height: 74.3px;
   display: flex;
   align-items: center;
 }
 
 .avatarProps > img {
   border-radius: 8px !important;
-  max-width: 76px;
-  min-height: 74.3px;
+  width: 76px;
+  height: 74.3px;
 }
 
 .pointer {
@@ -869,16 +867,10 @@
   .displayNone {
     display: none !important;
   }
-  
-
-  .avatarProps {
-    max-width: fit-content;
-    max-height: fit-content;
-  }
 
   .avatarProps>img {
     width: 48px;
-    min-height: 48px;
+    height: 48px;
   }
 
   .arrowAsset {
@@ -1031,6 +1023,11 @@
   gap: 14px;
   align-items: center;
   cursor: pointer;
+}
+.membersAvtr>img {
+	width: 40px;
+	height: 40px;
+	border-radius: 8px;
 }
 
 .membersAvtr > span {

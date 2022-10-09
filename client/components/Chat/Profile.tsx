@@ -270,14 +270,9 @@ const Members = (props: {
           {props?.users?.map((user: any, i: number) => (
             <div key={i}>
               <div className={Styles.membersAvtr} onClick={() => router.push(`/profile/${user.login}`)}>
-                <Image
-                  src={
-                    user?.avatar?.startsWith("https")
-                      ? user?.avatar
-                      : getImageBySize(user?.avatar, 70)
+                <img
+                  src={getImageBySize(user?.avatar, 70)
                   }
-                  width={40}
-                  height={40}
                 />
                 <span>{user.fullname}</span>
               </div>
