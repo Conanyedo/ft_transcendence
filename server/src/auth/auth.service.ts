@@ -30,16 +30,16 @@ export class AuthService {
 	redirect2fa(res: Response) {
 		res.redirect(`http://${this.configService.get('CLIENT_IP')}/`);
 	}
-	
+
 	setJWTCookie(user: userParitalDto, res: Response) {
 		const accessToken: string = this.jwtAuthService.setJwt(user);
-		res.cookie('jwt', accessToken);
+		res.cookie('jwt', accessToken, { httpOnly: true });
 		// res.cookie('jwt-2fa', '', { maxAge: 1 });
 	}
 
 	setJWT2faCookie(user: userParitalDto, res: Response) {
 		const accessToken: string = this.jwt2faAuthService.set2faJwt(user);
-		res.cookie('jwt-2fa', accessToken);
+		res.cookie('jwt-2fa', accessToken, { httpOnly: true });
 	}
 
 	async authenticateUser(user: userParitalDto, res: Response) {
