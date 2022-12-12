@@ -21,11 +21,12 @@ export class IntraStrategy extends PassportStrategy(Strategy, '42') {
 
 	async validate(accessToken: string, refreshToken: string, profile: Profile, done: verify): Promise<any> {
 
-		const { username, displayName, emails, photos } = profile;
+		const { username, displayName } = profile;
+		const { image } = profile._json;
 		const newUser: userDto = {
 			login: username,
 			fullname: displayName,
-			avatar: photos[0].value,
+			avatar: image.link,
 		};
 		const user: userParitalDto = await this.authService.checkUserExist(newUser);
 		done(null, user);
