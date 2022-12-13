@@ -144,6 +144,7 @@ export interface conversationDto {
 	status?: string;
 	membersNum?: number;
 	lastUpdate?: Date;
+	leftDate?: Date;
 }
 
 export interface createMemberDto {
