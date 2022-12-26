@@ -1,0 +1,41 @@
+
+.ChatMsgSendBoxContainer {
+    height: 4rem;
+    width: 100%;
+    padding: 0 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.ChatMsgSendBoxContainer img {
+    height: 2.5rem;
+    width: 2.5rem;
+}
+
+.ChatMsgSendBox {
+    height: 100%;
+    width: 100%;
+    padding: 0.6rem;
+    border-radius: 5px;
+    background-color: #2B2B2D;
+    display: flex;
+    justify-content: space-between;
+}
+
+.ChatMsgSendBox img {
+    height: 2.5rem;
+    width: 2.5rem;
+}
+
+.ChatMsgSendBox input {
+    height: auto;
+    background-color: transparent;
+    color: #ffffff;
+    font-weight: 500;
+    font-size: 1.4rem;
+}
+
+.ChatMsgSendBox input::placeholder {
+    color: #758293;
+}
