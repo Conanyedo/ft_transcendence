@@ -35,6 +35,7 @@
     /* border: 2px solid red; */
     width: 1.8rem;
     height: 1.8rem;
+    cursor: pointer;
 }
 
 .ConvSearch {
