@@ -20,6 +20,7 @@
 .ChatMsginfoContainer > img {
     height: 3rem;
     width: 3rem;
+    cursor: pointer;
 }
 
 .ChatMsginfo {
@@ -33,6 +34,7 @@
     display: flex;
     align-items: center;
     gap: 1.5rem;
+    cursor: pointer;
 }
 
 .ChatMsgProfile img {
@@ -56,6 +58,7 @@
 .ChatMsgSettings img {
     width: 2rem;
     height: 2rem;
+    cursor: pointer;
 }
 
 .ChatMsgList {
