@@ -1,0 +1,66 @@
+.ChatMessagesContainer {
+    width: 100%;
+    height: 100%;
+    padding: 0 0 1.25rem 0;
+    border-radius: 15px;
+    background-color: #242426;
+}
+
+.ChatMsginfoContainer {
+    height: 8rem;
+    width: 100%;
+    padding: 1.5rem;
+    background-color:#28282A;;
+    border-radius: 15px 15px 0 0;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.ChatMsginfoContainer > img {
+    height: 3rem;
+    width: 3rem;
+}
+
+.ChatMsginfo {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.ChatMsgProfile {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.ChatMsgProfile img {
+    width : 5rem;
+    height: 5rem;
+    border-radius: 5px;
+}
+
+.ChatMsgProfileName {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color : #D9D9D9;
+}
+
+.ChatMsgProfileStatus {
+    font-size: 1.5rem;
+    font-weight: 400;
+    color: #C6E1FF;
+}
+
+.ChatMsgSettings img {
+    width: 2rem;
+    height: 2rem;
+}
+
+.ChatMsgList {
+    height: calc(100% - (4rem + 8rem));
+    border: 1px solid red;
+    padding: 0 1.5rem;
+}
+
