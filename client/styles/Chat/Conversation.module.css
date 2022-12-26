@@ -1,0 +1,36 @@
+.ConversationContainer {
+    width: 100%;
+    border-radius: 5px;
+    padding: 0.75rem 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-weight: 500;
+    font-size: 1.4rem;
+    color: #C6E1FF;
+}
+
+.ConversationContainer:hover {
+    background-color: #262628;
+}
+
+.Convinfo {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #D9D9D9;
+    /* margin-left: 0.5rem; */
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+}
+
+.Convinfo img {
+    width : 4rem;
+    height: 4rem;
+    border-radius: 8px;
+}
+
+/* 
+.ConvStatus {
+    margin-right: 0.5rem;;
+} */
