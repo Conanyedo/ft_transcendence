@@ -9,8 +9,9 @@
 }
 
 .ChatMsgSendBoxContainer img {
-    height: 2.5rem;
-    width: 2.5rem;
+    height: 2.2rem;
+    width: 2.2rem;
+    cursor: pointer;
 }
 
 .ChatMsgSendBox {
@@ -20,6 +21,7 @@
     border-radius: 5px;
     background-color: #2B2B2D;
     display: flex;
+    align-items: center;
     justify-content: space-between;
 }
 
