@@ -2,6 +2,7 @@ import Styles from '@styles/Chat/ChatMessages.module.css';
 import ChatMsgSetting from '@public/Chat/ThreeDots.svg';
 import Backarrow from '@public/ArrowLeft.svg';
 import { ChatMessageInput } from './ChatMessageInput';
+import { Message } from './Message';
 
 
 const BackarrowHandleClick = () => {
@@ -12,7 +13,23 @@ const ChatMsgProfileHandleClick = () => {
     console.log('Go to User profile');
 }
 
+export interface MsgData {
+    Sender: boolean,
+    GameInvite: boolean,
+    Content: string
+    Date: string 
+};
+
 export const ChatMessages = () => {
+
+    const MsgList : MsgData[] = [
+        {Sender : true, GameInvite : false, Content : 'hello', Date:'7:00'},
+        {Sender : true, GameInvite : false, Content : 'how r u', Date:'7:00'},
+        {Sender : false, GameInvite : false, Content : 'hey wassup', Date:'7:00'},
+        {Sender : false, GameInvite : false, Content : 'im good u?', Date:'7:00'},
+        {Sender : true, GameInvite : false, Content : 'im fine thanks', Date:'7:00'},
+        {Sender : false, GameInvite : true, Content : '', Date:'7:00'},
+    ]
 
 return (
     <>
@@ -33,7 +50,10 @@ return (
                 </div>
         </div>
         <div className={Styles.ChatMsgList}>
-            MessageList
+            <Message {...MsgList[0]}></Message>
+            <Message {...MsgList[1]}></Message>
+            <Message {...MsgList[2]}></Message>
+            <Message {...MsgList[3]}></Message>
         </div>
         <ChatMessageInput></ChatMessageInput>
     </div>
