@@ -64,6 +64,9 @@
 .ChatMsgList {
     height: calc(100% - (4rem + 8rem));
     border: 1px solid red;
-    padding: 0 1.5rem;
+    padding: 0 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
 }
 
