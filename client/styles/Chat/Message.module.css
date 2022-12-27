@@ -1,0 +1,88 @@
+.right {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.left {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.MsgContainer {
+  width: fit-content;
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.MsgBox {
+  width: fit-content;
+  height: fit-content;
+  padding: 0.8rem 1rem;
+  background-color: #409cff;
+  font-weight: 600;
+  font-size: 1.5rem;
+  color: #ffffff;
+  border-radius: 5px 5px 0px 5px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.SenderMsgBox {
+    background-color :#3A3A3C;
+    border-radius: 0px 5px 5px 5px;
+}  
+
+.MsgBox > h2 {
+  font-weight: 600;
+  font-size: 1rem;
+  color: #409cff;
+}
+
+.MsgDate {
+  font-weight: 500;
+  font-size: 1rem;
+  color: #d9d9d9;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.SenderMsgDate {
+    justify-content: flex-start;
+}
+
+
+.InviteMsgBox {
+    width: fit-content;
+    height: fit-content;
+    padding: 1rem;
+    background-color: #409CFF;
+    border-radius: 5px 5px 0px 5px;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.InviteMsginfo {
+
+}
+
+.InviteMsgProfle {
+
+}
+
+.InviteMsgProfileName {
+
+}
+
+.InviteMsgStatus {
+
+}
+
+.InviteMsgButton {
+
+}
+
