@@ -1,6 +1,6 @@
 import Styles from "@styles/Chat/ChatMessageInput.module.css";
 import SendMsgIcon from "@public/Chat/send-arrow.svg";
-import InviteGameicon from "@public/Chat/Gamepad.svg";
+import InviteGameIcon from "@public/Chat/Gamepad.svg";
 import { useState } from "react";
 import { string } from "yup";
 
@@ -22,7 +22,7 @@ export const ChatMessageInput = () => {
               }
             }}
           ></input>
-          <img src={InviteGameicon.src} alt="SendMsgicon"></img>
+          <img src={InviteGameIcon.src} alt="InviteGameIcon"></img>
         </div>
         {EnteredMsg.length > 0 ? (
           <img
