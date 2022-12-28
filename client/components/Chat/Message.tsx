@@ -1,8 +1,38 @@
 import Styles from "styles/Chat/Message.module.css";
 import { MsgData } from "./ChatMessages";
 import { InviteMsg } from "./inviteMsg";
+import { useState } from "react";
 
-export const Message = ({ Sender, GameInvite, Content, Date }: MsgData) => {
+export const Message = ({ fullName,  Sender, GameInvite, Content, Date }: MsgData) => {
+  const [inviteMsgAction, setinviteMsgAction] = useState<string>("");
+
+  const MsgInvitStatus = `${
+    inviteMsgAction === "Canceled"
+    ? "Invitation has been canceled"
+    : inviteMsgAction === "Accepted"
+    ? "Invitation has been accepted"
+    : inviteMsgAction === "Refused"
+    ? "Invitation has been refused"
+    : !Sender
+        ? "You invite him to play pong game"
+        : "Invites you to play pong game"
+  }`;
+
+  const CancelInviteHandler = () => {
+    console.log("game invitation canceled");
+    setinviteMsgAction("Canceled");
+  };
+
+  const AcceptInviteHandler = () => {
+    console.log("game invitation Accepted");
+    setinviteMsgAction("Accepted");
+  };
+
+  const RefuseInviteHandler = () => {
+    console.log("game invitation Refused");
+    setinviteMsgAction("Refused");
+  };
+
   return (
     <>
       {!GameInvite ? (
@@ -11,7 +41,7 @@ export const Message = ({ Sender, GameInvite, Content, Date }: MsgData) => {
             <div
               className={`${Styles.MsgBox} ${Sender && Styles.SenderMsgBox}`}
             >
-              {/* {Channel <h2>Sender Name</h2>} */}
+              {/* <h2> Channel Sender Name</h2> */}
               {Content}
             </div>
             <div
@@ -24,23 +54,50 @@ export const Message = ({ Sender, GameInvite, Content, Date }: MsgData) => {
       ) : (
         <div className={!Sender ? Styles.right : Styles.left}>
           <div className={Styles.MsgContainer}>
-            <div className={Styles.InviteMsgBox}>
+            <div
+              className={`${Styles.InviteMsgBox} && ${
+                Sender && Styles.SenderInviteMsgBox
+              }`}
+            >
               <div className={Styles.InviteMsginfo}>
                 <img
-                  src="https://static.wikia.nocookie.net/berserk/images/4/40/Manga_V38_Guts.png/revision/latest?cb=20170919104357"
+                  src="https://pm1.narvii.com/6551/6a77c032610cade5d9dd5eac9f6a576bbe99438a_128.jpg"
                   alt="UserAvatar"
                 ></img>
                 <div className={Styles.InviteMsgProfile}>
                   <div>
                     <div className={Styles.InviteMsgProfileName}>
-                      Abdellah Belhachmi
+                    {fullName}
                     </div>
-                    <div className={Styles.InviteMsgStatus}>Status</div>
+                    <div className={Styles.InviteMsgStatus}>
+                      {MsgInvitStatus}
+                    </div>
                   </div>
                 </div>
               </div>
-              < div className={Styles.InviteMsgButton}>
-              </div>
+              {!Sender && inviteMsgAction === "" ? (
+                <div
+                  className={Styles.InviteMsgButton}
+                  onClick={CancelInviteHandler}
+                >
+                  Cancel inviation
+                </div>
+              ) : inviteMsgAction === "" ? (
+                <div className={Styles.SenderInviteMsgButton}>
+                  <div
+                    className={Styles.RefuseInvite}
+                    onClick={RefuseInviteHandler}
+                  >
+                    Refuse
+                  </div>
+                  <div
+                    className={Styles.AcceptInvite}
+                    onClick={AcceptInviteHandler}
+                  >
+                    Accept
+                  </div>
+                </div>
+              ) : null}
             </div>
             <div
               className={`${Styles.MsgDate} ${Sender && Styles.SenderMsgDate}`}
