@@ -14,22 +14,24 @@ const ChatMsgProfileHandleClick = () => {
 }
 
 export interface MsgData {
+    fullName : string
     Sender: boolean,
     GameInvite: boolean,
     Content: string
     Date: string 
 };
 
+const MsgList : MsgData[] = [
+    {fullName : "Choaib Abouelwafa", Sender : true, GameInvite : false, Content : 'hello', Date:'7:00'},
+    {fullName : "Choaib Abouelwafa", Sender : true, GameInvite : false, Content : 'how r u', Date:'7:00'},
+    {fullName : "Abdellah belhachmi", Sender : false, GameInvite : false, Content : 'hey wassup', Date:'7:00'},
+    {fullName : "Abdellah belhachmi", Sender : false, GameInvite : false, Content : 'im good u?', Date:'7:00'},
+    {fullName : "Choaib Abouelwafa", Sender : true, GameInvite : false, Content : 'im fine thanks', Date:'7:00'},
+    {fullName : "Choaib Abouelwafa", Sender : false, GameInvite : true, Content : '', Date:'7:00'},
+    {fullName : "Choaib Abouelwafa", Sender : true, GameInvite : true, Content : '', Date:'7:00'},
+]
 export const ChatMessages = () => {
 
-    const MsgList : MsgData[] = [
-        {Sender : true, GameInvite : false, Content : 'hello', Date:'7:00'},
-        {Sender : true, GameInvite : false, Content : 'how r u', Date:'7:00'},
-        {Sender : false, GameInvite : false, Content : 'hey wassup', Date:'7:00'},
-        {Sender : false, GameInvite : false, Content : 'im good u?', Date:'7:00'},
-        {Sender : true, GameInvite : false, Content : 'im fine thanks', Date:'7:00'},
-        {Sender : false, GameInvite : true, Content : '', Date:'7:00'},
-    ]
 
 return (
     <>
@@ -54,6 +56,18 @@ return (
             <Message {...MsgList[1]}></Message>
             <Message {...MsgList[2]}></Message>
             <Message {...MsgList[3]}></Message>
+            <Message {...MsgList[3]}></Message>
+            <Message {...MsgList[0]}></Message>
+            <Message {...MsgList[0]}></Message>
+            <Message {...MsgList[3]}></Message>
+            <Message {...MsgList[5]}></Message>
+            <Message {...MsgList[5]}></Message>
+            <Message {...MsgList[5]}></Message>
+            <Message {...MsgList[5]}></Message>
+            <Message {...MsgList[5]}></Message>
+            <Message {...MsgList[5]}></Message>
+            <Message {...MsgList[0]}></Message>
+            <Message {...MsgList[6]}></Message>
         </div>
         <ChatMessageInput></ChatMessageInput>
     </div>
