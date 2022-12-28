@@ -87,22 +87,22 @@ export interface achievementType {
 	disc: string,
 }
 
-export interface chatUser {
-	convId: number;
-	avatar: string;
-	name: string;
-	membersNum?: string;
-	status?: string;
-	type: any;
-	login: string;
-	relation: string;
+export interface chatUser { // Chat Page Fetched data
+	convId: number; // the id of converstaion
+	avatar: string; // path of pic
+	name: string; // name
+	membersNum?: string; // channel members
+	status?: string; // profile status
+	type: any; // ! string type of conversation  DM / Public / Protected / Private 
+	login: string; // unique login
+	relation: string; //  DM : Blocked or Friend / Banned / Muted / Left / Member
 }
 
-export interface chatMsg {
-	convId: any,
-	msgId: string,
+export interface chatMsg {  // Data for message component
+	convId: any, // the id of conversation
+	msgId: string, // Msg Id /  ! invite message cases
 	msgContent: string | JSX.Element, 
-	time: string,
+	time: string, // Date of message
 	type: any,
 	name: string;
 }
