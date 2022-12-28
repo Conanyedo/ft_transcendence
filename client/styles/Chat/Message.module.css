@@ -1,11 +1,11 @@
 .right {
-    display: flex;
-    justify-content: flex-end;
+  display: flex;
+  justify-content: flex-end;
 }
 
 .left {
-    display: flex;
-    justify-content: flex-start;
+  display: flex;
+  justify-content: flex-start;
 }
 
 .MsgContainer {
@@ -32,13 +32,13 @@
 }
 
 .SenderMsgBox {
-    background-color :#3A3A3C;
-    border-radius: 0px 5px 5px 5px;
-}  
+  background-color: #3a3a3c;
+  border-radius: 0px 5px 5px 5px;
+}
 
 .MsgBox > h2 {
   font-weight: 600;
-  font-size: 1rem;
+  font-size: 1.2rem;
   color: #409cff;
 }
 
@@ -51,38 +51,106 @@
 }
 
 .SenderMsgDate {
-    justify-content: flex-start;
+  justify-content: flex-start;
 }
 
-
 .InviteMsgBox {
-    width: fit-content;
-    height: fit-content;
-    padding: 1rem;
-    background-color: #409CFF;
-    border-radius: 5px 5px 0px 5px;
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
+  width: fit-content;
+  height: fit-content;
+  padding: 1rem 2rem;
+  background-color: #409cff;
+  border-radius: 5px 5px 0px 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.SenderInviteMsgBox {
+  background: #3a3a3c;
+  border-radius: 0px 5px 5px 5px;
 }
 
 .InviteMsginfo {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
 
+.InviteMsginfo > img {
+  width: 5rem;
+  height: 5rem;
+  border-radius: 8px;
 }
 
 .InviteMsgProfle {
-
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .InviteMsgProfileName {
-
+  font-weight: 500;
+  font-size: 1.8rem;
+  color: #ffffff;
 }
 
 .InviteMsgStatus {
-
+  font-weight: 300;
+  font-size: 1.2rem;
+  color: #ffffff;
 }
 
 .InviteMsgButton {
-
+  width: 90%;
+  border: 2px solid #c6e1ff;
+  border-radius: 5px;
+  padding: 0.6rem;
+  font-weight: 600;
+  font-size: 1.5rem;
+  color: #c6e1ff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
+.InviteMsgButton:hover {
+  color: #409cff;
+  background-color: #c6e1ff;
+}
+
+.SenderInviteMsgButton {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  font-weight: 600;
+  font-size: 1.5rem;
+}
+
+.AcceptInvite {
+  width: 45%;
+  padding: 0.6rem;
+  background-color: #409cff;
+  border: 2.5px solid #409cff;
+  border-radius: 5px;
+  color: #ffffff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.RefuseInvite {
+  width: 45%;
+  padding: 0.6rem;
+  border: 2.5px solid #758293;
+  border-radius: 5px;
+  color: #758293;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
