@@ -9,7 +9,7 @@ import { Request } from 'express';
 export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
 	constructor(protected readonly configService: ConfigService) {
 		super({
-			jwtFromRequest: ExtractJwt.fromExtractors([JwtAuthStrategy.extractJWT]),
+			jwtFromRequest: ExtractJwt.fromExtractors([JwtAuthStrategy.extractJwt]),
 			ignoreExpiration: false,
 			secretOrKey: configService.get('JWT_SECRET_KEY'),
 		});
@@ -20,7 +20,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
 		return user;
 	}
 
-	private static extractJWT(req: Request) {
+	private static extractJwt(req: Request) {
 		if (req.cookies?.jwt && req.cookies.jwt.length)
 			return req.cookies.jwt;
 		return null;
