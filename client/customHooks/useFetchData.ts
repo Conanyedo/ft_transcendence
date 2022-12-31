@@ -615,30 +615,25 @@ export const check2FA_JWT = async (
     });
 };
 
-export const checkJWT = async (
+export const isAuthorized = async (
   router: NextRouter,
-  set: Dispatch<SetStateAction<boolean>>
+  set: Dispatch<SetStateAction<number>>
 ) => {
-  const token = getCookie("jwt");
+  set(2);
   await axios({
     method: "get",
     url: `${baseUrl}auth/isAuthorized`,
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
     withCredentials: true,
   })
     .then((res) => {
-      if (res.data.err) return set(false);
-      eraseCookie("jwt-2fa");
-      set(true);
+      if (res.data.err) return set(0);
+      set(1);
     })
     .catch((err) => {
       if (err.response.status === 401) {
-        eraseCookie("jwt-2fa");
         socket_notif.disconnect();
         router.replace("/");
-        set(false);
+        set(0);
       }
     });
 };
