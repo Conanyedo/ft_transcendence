@@ -38,7 +38,7 @@ export class AuthController {
 	@Get('/isAuthorized')
 	@UseGuards(JwtAuthGuard)
 	async isAuthorized(@User() user: userParitalDto) {
-		return await this.authService.isAuthorized(user);
+		return { data: true };
 	}
 
 	@Get('/is2faAuthorized')
