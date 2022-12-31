@@ -53,6 +53,9 @@ const Login = () => {
 					<div className={classes.login_button} onClick={(e) => router.push(`${baseUrl}auth/login`)}>
 						42 Login
 					</div>
+					<div className={classes.login_button} onClick={(e) => router.push(`${baseUrl}auth/google/login`)}>
+						Google Login
+					</div>
 				</div>
 				<div className={classes.footer}>
 					<p>
@@ -60,7 +63,7 @@ const Login = () => {
 						<span className={classes.contributors}>
 							<a href="https://github.com/Conanyedo">Younes Bouddou</a> -{" "}
 							<a href="https://github.com/cabouelw">Choaib Abouelwafa</a> -{" "}
-							<a href="https://github.com/ikramkharbouch"> Ikram Kharbouch</a>
+							<a href="https://github.com/0xOd3n" title="this is your stepfather" > ilyass elmalki l2ostora</a>
 						</span>
 					</p>
 					<div className={classes.sound} onClick={setinMute}>
