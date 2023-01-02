@@ -196,7 +196,7 @@ const UserSection = () => {
 	}
 	useEffect(() => {
 		setIsMounted(true)
-		fetchDATA(setUserData, router, "user/header")
+		fetchDATA(setUserData, router, "user/header/@me")
 		return () => {
 			setUserData(EmtyUser)
 		}

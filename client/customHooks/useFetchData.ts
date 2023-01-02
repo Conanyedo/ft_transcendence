@@ -179,7 +179,7 @@ export const fetchUserInfo = async (
   setUserData: React.Dispatch<React.SetStateAction<UserTypeNew>>
 ) => {
   await axios
-    .get(`${baseUrl}user/header`, {
+    .get(`${baseUrl}user/header/@me`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -205,7 +205,7 @@ export const fetchAchievements = async (
   login: string
 ) => {
   const token = getCookie("jwt");
-  let Id: string = "";
+  let Id: string = "/@me";
   if (login) Id = "/" + login;
   await axios
     .get(`${baseUrl}user/achievements${Id}`, {
