@@ -1,0 +1,216 @@
+.CreateChannelContainer {
+  width: 95%;
+  background-color: #242426;
+  border-radius: 10px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  transition: all 2s ease-in;
+}
+
+.CreateChannelHeader {
+  font-weight: 600;
+  font-size: 2.4rem;
+  color: #c6e1ff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.CreateChannelHeader > img {
+  height: 1.8rem;
+  width: 1.8rem;
+  cursor: pointer;
+}
+
+.ChannelTxtInput {
+  font-weight: 500;
+  font-size: 2rem;
+  color: #d9d9d9;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.ChannelTxtInput > input[type="text"] {
+  height: 4rem;
+  border-radius: 5px;
+  padding: 0.5rem;
+  background-color: #3a3a3c;
+  color: #ffffff;
+  font-weight: 400;
+  font-size: 1.8rem;
+}
+
+.ChannelType {
+  font-weight: 500;
+  font-size: 2rem;
+  color: #d9d9d9;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.ChnlTypeDescription {
+  font-weight: 400;
+  font-size: 1.4rem;
+  color: #d9d9d9;
+  word-wrap: break-word;
+}
+
+.ChnlTypeContainer {
+  width: 100%;
+  height: fit-content;
+  font-size: 1.8rem;
+  font-weight: 400;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.ChnlTypeContainer input[type="radio"] {
+  height: 0;
+  width: 0;
+  visibility: hidden;
+}
+
+.Switch {
+  cursor: pointer;
+  text-indent: -9999px;
+  width: 4rem;
+  height: 2rem;
+  background: #3a3a3c;
+  display: block;
+  border-radius: 100px;
+  position: relative;
+}
+
+.Switch:after {
+  content: "";
+  position: absolute;
+  top: 0.24rem;
+  left: 0.24rem;
+  width: 1.5rem;
+  height: 1.5rem;
+  background-color: #d9d9d9;
+  border-radius: 100px;
+  transition: 0.2s;
+}
+
+.ChnlTypeContainer > input:checked + .Switch {
+  background: #409cff;
+}
+
+.ChnlTypeContainer input:checked + .Switch:after {
+  left: calc(100% - 0.24rem);
+  transform: translateX(-100%);
+}
+
+.Switch:active:after {
+  width: 3.5rem;
+}
+
+.CreateChannelContainer > input[type="submit"] {
+  height: 4.5rem;
+  font-size: 1.8rem;
+  font-weight: 500;
+  border-radius: 5px;
+  color: #ffffff;
+  background-color: #409cff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ChnlError {
+  color: #ff6482;
+  font-weight: 400;
+  font-size: 1rem;
+}
+
+.ChannelImage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.ChannelImage > input[type="file"]
+{
+  width: 0;
+  height: 0;
+  visibility: hidden;
+}
+
+.ChannelImage img {
+  height: 8rem;
+  width: 8rem;
+  border-radius: 8px;
+}
+
+
+@media only screen and (min-width: 600px) {
+  .CreateChannelContainer {
+    width: 48rem;
+  }
+
+  .ChnlTypeContainer {
+    width: fit-content;
+    height: fit-content;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .ChannelType {
+    font-weight: 500;
+    font-size: 2rem;
+    color: #d9d9d9;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 1rem;
+    /* flex-flow: wrap; */
+  }
+}
+
+@media only screen and (min-width: 600px) {
+  .Switch {
+    cursor: pointer;
+    text-indent: -9999px;
+    width: 5rem;
+    height: 2.5rem;
+    background: #3a3a3c;
+    display: block;
+    border-radius: 100px;
+    position: relative;
+  }
+
+  .Switch:after {
+    content: "";
+    position: absolute;
+    top: 0.4rem;
+    left: 0.4rem;
+    width: 1.8rem;
+    height: 1.8rem;
+    background-color: #d9d9d9;
+    border-radius: 100px;
+    transition: 0.2s;
+  }
+
+  .ChnlTypeContainer > input:checked + .Switch {
+    background: #409cff;
+  }
+
+  .ChnlTypeContainer input:checked + .Switch:after {
+    left: calc(100% - 0.4rem);
+    transform: translateX(-100%);
+  }
+
+  .Switch:active:after {
+    width: 3.5rem;
+  }
+}
