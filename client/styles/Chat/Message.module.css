@@ -9,7 +9,7 @@
 }
 
 .MsgContainer {
-  width: fit-content;
+  max-width: 90%;
   height: fit-content;
   display: flex;
   flex-direction: column;
@@ -17,8 +17,7 @@
 }
 
 .MsgBox {
-  width: fit-content;
-  height: fit-content;
+  height: inherit;
   padding: 0.8rem 1rem;
   background-color: #409cff;
   font-weight: 600;
@@ -29,6 +28,10 @@
   flex-direction: column;
   justify-content: flex-end;
   gap: 0.5rem;
+}
+
+.MsgBox > p {
+  word-wrap: break-word;
 }
 
 .SenderMsgBox {
@@ -102,7 +105,7 @@
 }
 
 .InviteMsgButton {
-  width: 90%;
+  width: 100%;
   border: 2px solid #c6e1ff;
   border-radius: 5px;
   padding: 0.6rem;
@@ -122,12 +125,12 @@
 
 .SenderInviteMsgButton {
   width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   gap: 1rem;
   font-weight: 600;
   font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .AcceptInvite {
@@ -153,4 +156,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+@media only screen and (min-width: 900px) {
+  .MsgContainer {
+    max-width: 60%;
+  }
 }
