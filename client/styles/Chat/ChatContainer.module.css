@@ -1,4 +1,4 @@
-.chatContainer {
+.ChatContainer {
     max-width: 100%;
     height: 90%;
     font-family: 'Inter';
@@ -9,3 +9,8 @@
     align-items: center;
 }
 
+@media (min-width: 600px) {
+    .ChatContainer {
+        height: 98%;    
+    }
+} 
