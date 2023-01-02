@@ -24,7 +24,7 @@ export class GoogleOauthStrategy extends PassportStrategy(Strategy, 'google') {
 
 		const { displayName, name, photos } = profile;
 		const newUser: userDto = {
-			login: name.givenName + Date.now(),
+			login: name.givenName.toLowerCase() + Date.now(),
 			fullname: displayName,
 			avatar: photos[0].value
 		};
