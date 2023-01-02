@@ -1,0 +1,78 @@
+.MuteMemberContainer {
+  width: 95%;
+  background-color: #242426;
+  border-radius: 10px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.MuteMemberHeader {
+  font-weight: 600;
+  font-size: 2.4rem;
+  color: #c6e1ff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.MuteMemberHeader > img {
+  height: 1.8rem;
+  width: 1.8rem;
+  cursor: pointer;
+}
+
+.MuteMemberDescription {
+  font-weight: 400;
+  font-size: 1.2rem;
+  color: #d9d9d9;
+  word-wrap: break-word;
+}
+
+.MuteMemberOptionsContainer {
+  font-weight: 500;
+  font-size: 1.2rem;
+  color: #d9d9d9;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.MuteMemberOption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.MuteMemberContainer > input[type="submit"] {
+  height: 4.5rem;
+  font-size: 1.8rem;
+  font-weight: 500;
+  border-radius: 5px;
+  color: #ffffff;
+  background-color: #409cff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 
+.MuteMemberOption input[type=radio]:checked ~ .check {
+  border: 5px solid #0DFF92;
+}
+
+.MuteMemberOption  input[type=radio]:checked ~ .check::before{
+  background: #0DFF92;
+}
+
+.MuteMemberOption  input[type=radio]:checked {
+  color: #0DFF92;
+} */
+
+@media only screen and (min-width : 600px)
+{
+  .MuteMemberContainer{
+    width: 48rem;
+  }
+}
