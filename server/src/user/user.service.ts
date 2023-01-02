@@ -159,7 +159,7 @@ export class UserService {
 			.createQueryBuilder('users')
 			.leftJoinAndSelect("users.stats", "stats")
 			.select(['users.id', 'stats.achievement'])
-			.where(`users.login = :id`, { login: login })
+			.where(`users.login = :login`, { login: login })
 			.getOne()
 		if (!user)
 			return { err: 'User not found' };
