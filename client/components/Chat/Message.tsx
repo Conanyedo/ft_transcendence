@@ -1,7 +1,9 @@
 import Styles from "styles/Chat/Message.module.css";
 import { MsgData } from "./ChatMessages";
 import { InviteMsg } from "./inviteMsg";
-import { useState } from "react";
+import { Dispatch, useState } from "react";
+
+interface Props {setMsg : Dispatch<MsgData>}
 
 export const Message = ({ fullName,  Sender, GameInvite, Content, Date }: MsgData) => {
   const [inviteMsgAction, setinviteMsgAction] = useState<string>("");
@@ -42,7 +44,7 @@ export const Message = ({ fullName,  Sender, GameInvite, Content, Date }: MsgDat
               className={`${Styles.MsgBox} ${Sender && Styles.SenderMsgBox}`}
             >
               {/* <h2> Channel Sender Name</h2> */}
-              {Content}
+              <p>{Content}</p>
             </div>
             <div
               className={`${Styles.MsgDate} ${Sender && Styles.SenderMsgDate}`}
@@ -75,14 +77,14 @@ export const Message = ({ fullName,  Sender, GameInvite, Content, Date }: MsgDat
                   </div>
                 </div>
               </div>
-              {!Sender && inviteMsgAction === "" ? (
+              {!Sender && !inviteMsgAction ? (
                 <div
                   className={Styles.InviteMsgButton}
                   onClick={CancelInviteHandler}
                 >
-                  Cancel inviation
+                  Cancel invitation
                 </div>
-              ) : inviteMsgAction === "" ? (
+              ) : !inviteMsgAction ? (
                 <div className={Styles.SenderInviteMsgButton}>
                   <div
                     className={Styles.RefuseInvite}
