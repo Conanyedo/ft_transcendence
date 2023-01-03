@@ -14,18 +14,17 @@
 }
 
 .InsertChnlMembersContainer > input[type="text"] {
-  /* height: inherit; */
-  /* padding: .2em 0; */
   width: 30%;
   color: #ffffff;
   font-weight: 400;
   font-size: 1.5rem;
   background-color: transparent;
-  /* flex-grow: 1; */
 }
 
+
+/* Member Tags */
+
 .MemberContainer {
-  /* width: 100%; */
   width: calc(max-content + 20%) ;
   padding: 0.5rem;
   color: #ffffff;
@@ -47,6 +46,10 @@
 .MemberContainer > p {
   width: fit-content;
 }
+
+
+
+/* list friend */
 
 .UserList {
   margin-top: 1rem;
@@ -94,20 +97,3 @@
   align-items: center;
   justify-content: center;
 }
-
-.AddUserBtn {
-  width: 8rem;
-  padding: 0.5rem;
-  border-radius: 5px;
-  border: 2px solid #409cff;
-  color: #409cff;
-  font-weight: 600;
-  font-size: 1.4rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* list friend */
-
