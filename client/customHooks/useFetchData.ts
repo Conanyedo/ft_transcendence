@@ -589,16 +589,12 @@ export const getLoginInfo = async (
 };
 
 export const check2FA_JWT = async (
-  jwt: CookieValueTypes,
   set: any,
   router: NextRouter
 ) => {
   await axios({
     method: "get",
     url: `${baseUrl}auth/is2faAuthorized`,
-    headers: {
-      Authorization: `Bearer ${jwt}`,
-    },
     withCredentials: true,
   })
     .then((res) => {
@@ -632,7 +628,6 @@ export const isAuthorized = async (
     .catch((err) => {
       if (err.response.status === 401) {
         socket_notif.disconnect();
-        router.replace("/");
         set(0);
       }
     });

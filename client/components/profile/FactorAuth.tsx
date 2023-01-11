@@ -13,17 +13,12 @@ import { baseUrl } from "config/baseURL"
 const FactorAuth = () => {
 	const router = useRouter()
 	const [isMounted, setisMounted] = useState(false);
-	const jwt = getCookie("jwt-2fa")
-	if (!jwt) {
-		router.push("/")
-		return <LoadingElm />
-	}
 	const [isValid, setisValid] = useState(false)
 	const [goNext, setGoNext] = useState(false)
 	const [inputValue, setInputValue] = useState("")
 	const [isError, setisError] = useState(false)
 	useEffect(() => {
-		if (jwt) check2FA_JWT(jwt, setisValid, router)
+		check2FA_JWT(setisValid, router)
 		setisMounted(true);
 	}, [])
 	if (!isValid) return <LoadingElm />

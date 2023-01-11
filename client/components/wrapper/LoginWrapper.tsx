@@ -10,8 +10,6 @@ type PropsType = {
 
 const LoginWrapper: React.FC<PropsType> = ({ children }) => {
 	const router = useRouter();
-	// const jwt = getCookie("jwt");
-	// const jwt_2fa = getCookie("jwt-2fa");
 	const [isMounted, setIsMounted] = useState(false);
 	const [IsAuth, setIsAuth] = useState(0);
 
