@@ -22,7 +22,7 @@ export class Jwt2faAuthStrategy extends PassportStrategy(Strategy, 'jwt-2fa') {
 
 	private static extractJwt(req: Request) {
 		if (req.cookies && req.cookies['jwt-2fa'] && req.cookies['jwt-2fa'].length)
-			return req.cookies.jwt;
+			return req.cookies['jwt-2fa'];
 		return null;
 	}
 }
