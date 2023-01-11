@@ -91,6 +91,9 @@ export class Member {
 	@Column({ default: null })
 	leftDate: Date;
 
+	@Column({ default: 0 })
+	unread: Number;
+
 	@ManyToOne(() => Conversation, (conversation) => conversation.members)
 	conversation: Conversation;
 

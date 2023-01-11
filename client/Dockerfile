@@ -10,10 +10,8 @@ RUN npm install
 
 COPY . .
 
-RUN npm run build
-
-RUN chmod 700 script.sh
-
 EXPOSE 3000
 
-CMD	sh ./script.sh
+RUN chmod +x ./script.sh
+
+CMD [ "/bin/sh", "-c", "./script.sh" ]
