@@ -10,6 +10,18 @@ import { ChatService } from './chat.service';
 export class ChatController {
 	constructor(private readonly chatService: ChatService) { }
 
+	@Get('conversations')
+	@UseGuards(JwtAuthGuard)
+	async getConversations(@User('login') login: string) {
+		return await this.chatService.getConversations(login);
+	}
+
+	@Get('conversations/:convId')
+	@UseGuards(JwtAuthGuard)
+	async getConversationById(@User('login') login: string, @Param() id: convIdValidate) {
+		return await this.chatService.getConversation(login, id.convId);
+	}
+
 	@Get('/loginInfo/:name')
 	@UseGuards(JwtAuthGuard)
 	async getUserInfo(@User('login') login: string, @Param() param: nameValidate) {
