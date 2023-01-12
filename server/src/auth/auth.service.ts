@@ -50,7 +50,7 @@ export class AuthService {
 			return res.redirect(`http://${this.configService.get('CLIENT_IP')}/?_2fa=true`);
 		}
 		this.setJWTCookie(user, res);
-		this.redirectHome(res);
+		res.redirect(`http://${this.configService.get('CLIENT_IP')}/profile`);
 	}
 
 	async generate2fa(user: userParitalDto) {
