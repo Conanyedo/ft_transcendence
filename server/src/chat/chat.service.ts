@@ -437,7 +437,7 @@ export class ChatService {
 
 	async channelProfile(login: string, convId: string) {
 		const exist = await this.memberRepository
-			.query(`select from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND users."login" = '${login}';`);
+			.query(`select members.status from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND users."login" = '${login}';`);
 		if (!exist.length)
 			return { err: 'Invalid data' };
 		const owner: Member[] = await this.memberRepository
@@ -446,7 +446,9 @@ export class ChatService {
 			.query(`select users."login", users."fullname", users."avatar", members."status" from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND members."status" = 'Admin';`);
 		const members: Member[] = await this.memberRepository
 			.query(`select users."login", users."fullname", users."avatar", members."status" from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND members."status" = 'Member';`);
-		const muted: Member[] = await this.memberRepository
+		let muted: Member[] = [];
+		if (exist[0].status === 'Owner' || exist[0].status === 'Admin')
+			muted = await this.memberRepository
 			.query(`select users."login", users."fullname", users."avatar", members."status" from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND members."status" = 'Muted';`);
 		return { data: { owner, admins, members, muted } };
 	}
