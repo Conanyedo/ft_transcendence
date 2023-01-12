@@ -10,7 +10,7 @@ import { Logger } from '@nestjs/common';
 import { UserService } from './user/user.service';
 import { userStatus } from './user/user.entity';
 
-@WebSocketGateway({ cors: { origin: '*' } })
+@WebSocketGateway()
 export class AppGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
