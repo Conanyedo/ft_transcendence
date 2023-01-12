@@ -13,8 +13,8 @@ export class WsJwtGuard implements CanActivate {
 	async canActivate(context: ExecutionContext): Promise<boolean> {	
 		try {
 			const client: Socket = context.switchToWs().getClient<Socket>();
-			let token: string = client.handshake?.headers?.authorization;
-			token = token.split(' ')[1];
+			let token: string = client.handshake?.headers?.cookie;
+			token = token.split('=')[1];
 			const payload = this.jwtService.verify(token);
 			context.switchToHttp().getRequest().user = { id: payload.id, login: payload.login };
 			context.switchToWs();
