@@ -1,0 +1,45 @@
+.AddMemberContainer {
+  width: 95%;
+  /* max-height: calc(100% - 1.5rem); */
+  background-color: #242426;
+  border-radius: 10px;
+  padding: 1.5rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.AddMemberHeader {
+  font-weight: 600;
+  font-size: 2.4rem;
+  color: #c6e1ff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.AddMemberHeader > img {
+  height: 1.8rem;
+  width: 1.8rem;
+  cursor: pointer;
+}
+
+.AddMemberBtn {
+  min-height: 4.5rem;
+  font-size: 1.8rem;
+  font-weight: 500;
+  border-radius: 5px;
+  color: #ffffff;
+  background-color: #409cff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media only screen and (min-width: 600px) {
+  .AddMemberContainer {
+    width: 48rem;
+  }
+}
