@@ -87,13 +87,35 @@ export interface achievementType {
 	disc: string,
 }
 
+export interface conversations {
+	convid: number;
+	fullName: string;
+	avatar: string;
+	membersNum?: number;
+	status?: string;
+	messages: MsgData[];
+	read: boolean;
+	login: string;
+	relation: string;
+	type: string;
+  }
+  export interface MsgData {
+	id: number;
+	avatar: string;
+	fullName: string;
+	sender: boolean;
+	gameInvite: boolean;
+	content: string;
+	date: string;
+  }
+
 export interface chatUser { // Chat Page Fetched data
 	convId: number; // the id of converstaion
 	avatar: string; // path of pic
 	name: string; // name
 	membersNum?: string; // channel members
 	status?: string; // profile status
-	type: any; // ! string type of conversation  DM / Public / Protected / Private 
+	type: any; // ! string type of conversation  DM / Public / Protected / Private
 	login: string; // unique login
 	relation: string; //  DM : Blocked or Friend / Banned / Muted / Left / Member
 }
