@@ -1,14 +1,10 @@
 import Styles from "@styles/Chat/InsertChannelMembers.module.css";
 import CloseIcon from "@public/Chat/Cross.svg";
 import { useState } from "react";
-import { words } from "lodash";
-import { composeWithDevTools } from "@reduxjs/toolkit/dist/devtoolsExtension";
-import { current } from "@reduxjs/toolkit";
-import Login from "@components/LoginPage/Login";
 
 class friend {
-  fullName: string = "";
   avatar: string = "";
+  fullName: string = "";
   login: string = "";
 }
 
@@ -42,32 +38,42 @@ const UsersList: React.FC<any> = (props) => {
   const AddMemberHandler = (user: friend) => {
     props.setMembers([...props.Members, user]);
   };
-  
+
+  const filteredList: friend[] = friends.filter((user: friend) => {
+    return (
+      (!props.Members.includes(user)) &&
+      (props.Search &&
+      user.fullName.toUpperCase().includes(props.Search.toUpperCase()))
+    );
+  });
 
   return (
-    <div className={Styles.UserList}>
-      {friends.map((user: friend) => {
-        if (user.fullName.toUpperCase().includes(props.Search.toUpperCase()))
-          return (
-            <>
-              {!props.Members.includes(user) && (
-                <div className={Styles.UserContainer}>
-                  <div className={Styles.UserInfo}>
-                    <img src={user.avatar}></img>
-                    <p>{user.fullName}</p>
+    <>
+      {filteredList.length > 0 && (
+        <div className={Styles.UserList}>
+          {filteredList.map((user: friend) => {
+            return (
+              <>
+                {
+                  <div className={Styles.UserContainer}>
+                    <div className={Styles.UserInfo}>
+                      <img src={user.avatar}></img>
+                      <p>{user.fullName}</p>
+                    </div>
+                    <div
+                      className={Styles.AddUserBtn}
+                      onClick={(e) => AddMemberHandler(user)}
+                    >
+                      Add
+                    </div>
                   </div>
-                  <div
-                    className={Styles.AddUserBtn}
-                    onClick={(e) => AddMemberHandler(user)}
-                  >
-                    Add
-                  </div>
-                </div>
-              )}
-            </>
-          );
-      })}
-    </div>
+                }
+              </>
+            );
+          })}
+        </div>
+      )}
+    </>
   );
 };
 
@@ -105,10 +111,7 @@ export const InsertChannelMembers = () => {
         <div className={Styles.InsertChnlMembersContainer}>
           {Members.map((member) => {
             return (
-              <Member
-                removeMember={RemoveMemberHandler}
-                member={member}
-              />
+              <Member removeMember={RemoveMemberHandler} member={member} />
             );
           })}
           <input
@@ -120,7 +123,7 @@ export const InsertChannelMembers = () => {
           ></input>
         </div>
       </label>
-      { <UsersList Members={Members} setMembers={setMembers} Search={Search}/>}
+      {<UsersList Members={Members} setMembers={setMembers} Search={Search} />}
     </>
   );
 };
