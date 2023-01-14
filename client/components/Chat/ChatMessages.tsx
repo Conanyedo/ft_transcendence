@@ -1,201 +1,209 @@
 import Styles from "@styles/Chat/ChatMessages.module.css";
 import ChatMsgSetting from "@public/Chat/ThreeDots.svg";
 import Backarrow from "@public/ArrowLeft.svg";
-import AddMembericon from "@public/Chat/AddMemberIcon.svg";
-import { ChatMessageInput } from "./ChatMessageInput";
-import { Message } from "./Message";
-import { ChannelMember } from "./ChannelMember";
-import { useEffect, useRef, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import { MessagesList } from "./MessagesList";
+import { ChatChnlProfile } from "./ChatChnlProfile";
+import { SettingOption } from "./SettingOption";
+import { conversations } from "@Types/dataTypes";
+import { NextRouter, useRouter } from "next/router";
+import { CreateChannel } from "./CreateChannel";
 
-export interface MsgData {
-  fullName: string;
-  Sender: boolean;
-  GameInvite: boolean;
-  Content: string;
-  Date: string;
-}
+const ChatMsgInfo: React.FC<any> = (props: {
+  convData: conversations;
+  logedInUsr: string;
+  showChnlProfile: boolean;
+  router: NextRouter;
+  setShowChnlProfile: Dispatch<SetStateAction<boolean>>;
+  setShowUpdateChannel: Dispatch<SetStateAction<boolean>>;
+}) => {
+  const [showConvSettings, setShowConvSettings] = useState<boolean>(false);
 
-const Messages: MsgData[] = [
-  {
-    fullName: "Choaib Abouelwafa",
-    Sender: true,
-    GameInvite: false,
-    Content:
-      "hellooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo",
-    Date: "7:00",
-  },
-  {
-    fullName: "Choaib Abouelwafa",
-    Sender: true,
-    GameInvite: false,
-    Content: "how r u",
-    Date: "7:00",
-  },
-  {
-    fullName: "Abdellah belhachmi",
-    Sender: false,
-    GameInvite: false,
-    Content: "hey wassup",
-    Date: "7:00",
-  },
-  {
-    fullName: "Abdellah belhachmi",
-    Sender: false,
-    GameInvite: false,
-    Content: "im good u?",
-    Date: "7:00",
-  },
-  {
-    fullName: "Choaib Abouelwafa",
-    Sender: true,
-    GameInvite: false,
-    Content: "im fine thanks",
-    Date: "7:00",
-  },
-  {
-    fullName: "Choaib Abouelwafa",
-    Sender: false,
-    GameInvite: true,
-    Content: "",
-    Date: "7:00",
-  },
-  {
-    fullName: "Choaib Abouelwafa",
-    Sender: true,
-    GameInvite: true,
-    Content: "",
-    Date: "7:00",
-  },
-  {
-    fullName: "Choaib Abouelwafa",
-    Sender: true,
-    GameInvite: true,
-    Content: "",
-    Date: "7:00",
-  },
-  {
-    fullName: "Choaib Abouelwafa",
-    Sender: true,
-    GameInvite: true,
-    Content: "",
-    Date: "7:00",
-  },
-  {
-    fullName: "Choaib Abouelwafa",
-    Sender: true,
-    GameInvite: true,
-    Content: "",
-    Date: "7:00",
-  },
-  {
-    fullName: "Choaib Abouelwafa",
-    Sender: true,
-    GameInvite: true,
-    Content: "",
-    Date: "7:00",
-  },
-  {
-    fullName: "Choaib Abouelwafa",
-    Sender: true,
-    GameInvite: true,
-    Content: "",
-    Date: "7:00",
-  },
-];
-export const ChatMessages = () => {
-  const [ChatMessages, setChatMessages] = useState(Messages);
-  const MessageRef = useRef<null | HTMLDivElement>(null);
+  // const chatMsgSettingClickHandler = () => {
+  //   if (!showConvSettings) setShowConvSettings(true);
+  //   else setShowConvSettings(false);
+  // };
 
-  const setMsg = (enteredMsg: MsgData) => {
-    Messages.push(enteredMsg);
-    setChatMessages(Messages);
+  const settingsOptClickHandler = () => {
+    props.setShowUpdateChannel(true);
+    setShowConvSettings(false);
   };
 
-  useEffect(() => {
-    MessageRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, ChatMessages);
+  const blockOptClickHandler = () => {
+    console.log("block : ", props.convData.login);
+    setShowConvSettings(false);
+  };
 
-  const BackarrowHandleClick = () => {
+  const unblockOptClickHandler = () => {
+    console.log("Unblock : ", props.convData.login);
+    setShowConvSettings(false);
+  };
+
+  const leaveChnlOptClickHandler = () => {
+    console.log("leave : ", props.convData.fullName);
+    setShowConvSettings(false);
+  };
+
+  const chatMsgProfileClickHandler = () => {
+    console.log("profile clicked");
+    if (props.convData.type === "DM")
+      props.router.push(`/profile/${props.convData.login}`);
+    else if (!props.showChnlProfile) props.setShowChnlProfile(true);
+  };
+
+  const backArrowHandleClick = () => {
     console.log("Back to Chat root");
-  };
-
-  const ChatMsgProfileHandleClick = () => {
-    console.log("Go to User profile");
-  };
-
-  const AddMemberClickHandler = () => {
-    console.log("Add Member clicked");
+    if (props.showChnlProfile) props.setShowChnlProfile(false);
+    else {
+      console.log(
+        "==========================================================="
+      );
+      props.router.replace({ pathname: "/chat" });
+    }
   };
 
   return (
     <>
-      <div className={Styles.ChatMessagesContainer}>
-        <div className={Styles.ChatMsginfoContainer}>
-          <img src={Backarrow.src} onClick={BackarrowHandleClick}></img>
-          <div className={Styles.ChatMsginfo}>
-            <div
-              className={Styles.ChatMsgProfile}
-              onClick={ChatMsgProfileHandleClick}
-            >
-              <img src="https://images.saymedia-content.com/.image/c_limit%2Ccs_srgb%2Cq_auto:eco%2Cw_700/MTczOTM5NzMzODQyMzcxNjQ4/guts-a-berserk-character-analysis.webp"></img>
-              <div>
-                <div className={Styles.ChatMsgProfileName}>
-                  Abdellah Belhachmi
-                </div>
-                <div className={Styles.ChatMsgProfileStatus}>Status</div>
+      <div className={Styles.ChatMsginfoContainer}>
+        <img
+          src={Backarrow.src}
+          style={props.showChnlProfile ? { display: "inline" } : {}}
+          onClick={backArrowHandleClick}
+        ></img>
+        <div className={Styles.ChatMsginfo}>
+          <div
+            className={Styles.ChatMsgProfile}
+            onClick={chatMsgProfileClickHandler}
+          >
+            <img src={props.convData.avatar}></img>
+            <div>
+              <div className={Styles.ChatMsgProfileName}>
+                {props.convData.fullName}
+              </div>
+              <div className={Styles.ChatMsgProfileStatus}>
+                {props.convData.type === "DM"
+                  ? props.convData.status
+                  : `${props.convData.membersNum} Members`}
               </div>
             </div>
-            <div className={Styles.ChatMsgSettings}>
-              <img src={ChatMsgSetting.src} alt="ChatMsgSetting"></img>
-            </div>
+          </div>
+
+          <div className={Styles.ChatMsgSettings}>
+            <img
+              src={ChatMsgSetting.src}
+              alt="ChatMsgSetting"
+              onClick={(e) => setShowConvSettings(!showConvSettings)}
+            ></img>
+            {showConvSettings && (
+              <motion.div
+                className={Styles.SettingContainer}
+                initial={{
+                  opacity: 0,
+                  scale: 0.1,
+                }}
+                animate={{
+                  opacity: 1,
+                  scale: 1,
+                }}
+              >
+                {props.convData.relation === "Owner" ||
+                props.convData.relation === "Admin" ? (
+                  <SettingOption
+                    name={"Settings"}
+                    optionClickHandler={settingsOptClickHandler}
+                  />
+                ) : null}
+                {props.convData.type === "DM" ? (
+                  props.convData.relation === "Friend" ? (
+                    <SettingOption
+                      name={"Block user"}
+                      optionClickHandler={blockOptClickHandler}
+                    />
+                  ) : (
+                    <SettingOption
+                      name={"Unblock user"}
+                      optionClickHandler={unblockOptClickHandler}
+                    />
+                  )
+                ) : (
+                  <SettingOption
+                    name={"Leave channel"}
+                    optionClickHandler={leaveChnlOptClickHandler}
+                  />
+                )}
+              </motion.div>
+            )}
           </div>
         </div>
-        {/* <div className={Styles.ChannelProfile}>
-          <div className={Styles.ChannelProfileHeader}>
-            Channel Profile
-            <div
-              className={Styles.AddMemberButton}
-              onClick={AddMemberClickHandler}
-            >
-              <img src={AddMembericon.src} alt="AddMemberIcon"></img>
-              <p>Add member</p>
-            </div>
-          </div>
-          <div className={Styles.MemberListContainer}>
-            Owner
-            <div className={Styles.MemberList}>
-              <ChannelMember></ChannelMember>
-            </div>
-          </div>
-          <div className={Styles.MemberListContainer}>
-            Admins
-            <div className={Styles.MemberList}>
-              <ChannelMember></ChannelMember>
-              <ChannelMember></ChannelMember>
-              <ChannelMember></ChannelMember>
-            </div>
-          </div>
-          <div className={Styles.MemberListContainer}>
-            Members
-            <div className={Styles.MemberList}>
-              <ChannelMember></ChannelMember>
-              <ChannelMember></ChannelMember>
-              <ChannelMember></ChannelMember>
-              <ChannelMember></ChannelMember>
-              <ChannelMember></ChannelMember>
-              <ChannelMember></ChannelMember>
-              <ChannelMember></ChannelMember>
-            </div>
-          </div>
-        </div> */}
-        <div className={Styles.ChatMsgList}>
-          {Messages.map((data) => {
-            return <Message {...data}></Message>;
-          })}
-          <div ref={MessageRef} />
-        </div>
-        <ChatMessageInput></ChatMessageInput>
       </div>
+    </>
+  );
+};
+
+interface Props {
+  isMobile: boolean;
+  convData: conversations;
+  router: NextRouter;
+}
+
+export const ChatMessages: React.FC<Props> = ({
+  isMobile,
+  convData,
+  router,
+}) => {
+  const [showChnlProfile, setShowChnlProfile] = useState<boolean>(false);
+  const [showUpdateChannel, setShowUpdateChannel] = useState<boolean>(false);
+  const logedInUsr = localStorage.getItem("owner");
+
+  const CloseChannelHandler = () => {
+    setShowUpdateChannel(false);
+  };
+
+  useEffect(() => {
+    if (showChnlProfile) setShowChnlProfile(false);
+  }, [convData.convid]);
+
+  return (
+    <>
+      {showUpdateChannel ? (
+        <CreateChannel
+          isUpdate={true}
+          CloseChannelHandler={CloseChannelHandler}
+        />
+      ) : null}
+      {convData.convid > 0 ? (
+        <div
+          className={Styles.ChatMessagesContainer}
+          style={
+            isMobile
+              ? convData.convid > 0
+                ? { width: "100%" }
+                : { width: "0" }
+              : {}
+          }
+        >
+          <ChatMsgInfo
+            logedInUsr={logedInUsr}
+            convData={convData}
+            showChnlProfile={showChnlProfile}
+            router={router}
+            setShowChnlProfile={setShowChnlProfile}
+            setShowUpdateChannel={setShowUpdateChannel}
+          />
+          {showChnlProfile ? (
+            <ChatChnlProfile {...convData} />
+          ) : (
+            <MessagesList {...convData} />
+          )}
+        </div>
+      ) : !isMobile ? (
+        <div
+          className={`${Styles.ChatMessagesContainer} ${Styles.StartNewCnv}`}
+        >
+          Start New Conversation
+        </div>
+      ) : null}
     </>
   );
 };
