@@ -13,46 +13,56 @@ export const MuteMember = () => {
           channel
         </p>
         <div className={Styles.MuteMemberOptionsContainer}>
-          <label className={Styles.MuteMemberOption}>
+          <div className={Styles.MuteMemberOption}>
             1 Hour
+            <label className={Styles.CustomRadioBtn}>
             <input
               type={"radio"}
               name="muteMemberOption"
               value="1Hour"
             ></input>
-          </label>
-          <label className={Styles.MuteMemberOption}>
+            </label>
+          </div>
+          <div className={Styles.MuteMemberOption}>
             8 Hour
+            <label className={Styles.CustomRadioBtn}>
             <input
               type={"radio"}
               name="muteMemberOption"
               value="8Hour"
             ></input>
-          </label>
-          <label className={Styles.MuteMemberOption}>
+            </label>
+          </div>
+          <div className={Styles.MuteMemberOption}>
             12 Hour
+            <label className={Styles.CustomRadioBtn}>
             <input
               type={"radio"}
               name="muteMemberOption"
               value="12Hour"
             ></input>
-          </label>
-          <label className={Styles.MuteMemberOption}>
+            </label>
+          </div>
+          <div className={Styles.MuteMemberOption}>
             24 Hour
+            <label className={Styles.CustomRadioBtn}>
             <input
               type={"radio"}
               name="muteMemberOption"
               value="24Hour"
             ></input>
-          </label>
-          <label className={Styles.MuteMemberOption}>
+            </label>
+          </div>
+          <div className={Styles.MuteMemberOption}>
             7 Days
+            <label className={Styles.CustomRadioBtn}>
             <input
               type={"radio"}
               name="muteMemberOption"
               value="7Days"
             ></input>
-          </label>
+            </label>
+          </div>
         </div>
         <input type="submit" value="Mute" />
       </form>
