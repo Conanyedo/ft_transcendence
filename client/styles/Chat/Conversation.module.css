@@ -1,36 +1,54 @@
 .ConversationContainer {
-    width: 100%;
-    border-radius: 5px;
-    padding: 0.75rem 0.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-weight: 500;
-    font-size: 1.4rem;
-    color: #C6E1FF;
+  width: 100%;
+  border-radius: 5px;
+  padding: 0.75rem 0.5rem;
+  font-weight: 500;
+  font-size: 1.4rem;
+  color: #c6e1ff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
-.ConversationContainer:hover {
-    background-color: #262628;
+.ConversationContainer:hover:not(.selected) {
+  background-color: #3a3a3c;
+}
+
+.selected {
+  background-color: #242426;
 }
 
 .Convinfo {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: #D9D9D9;
-    /* margin-left: 0.5rem; */
-    display: flex;
-    align-items: center;
-    gap: 1.25rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #d9d9d9;
+  /* margin-left: 0.5rem; */
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 .Convinfo img {
-    width : 4rem;
-    height: 4rem;
-    border-radius: 8px;
+  width: 4rem;
+  height: 4rem;
+  border-radius: 8px;
 }
 
-/* 
 .ConvStatus {
-    margin-right: 0.5rem;;
-} */
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.NewMsg {
+  width: 0.8rem;
+  height: 0.8rem;
+  border-radius: 50%;
+  background-color: #409cff;
+}

@@ -1,10 +1,21 @@
 .ChatMessagesContainer {
-  width: 100%;
+  width: 70%;
   height: 100%;
   padding: 0 0 1.25rem 0;
   border-radius: 15px;
   background-color: #242426;
 }
+
+.StartNewCnv {
+  color: #c6e1ff;
+  font-size: 2rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Chat Messages info Header */
 
 .ChatMsginfoContainer {
   height: 8rem;
@@ -55,31 +66,57 @@
   color: #c6e1ff;
 }
 
+.ChatMsgSettings {
+  font-size: 1.5rem;
+  color: #ffffff;
+}
+
 .ChatMsgSettings img {
+  position: relative;
   width: 2rem;
   height: 2rem;
+  margin-bottom: 0.5rem;
   cursor: pointer;
 }
 
-.ChatMsgList {
-  width: calc(100% - (0.3rem));
-  height: calc(100% - (4rem + 8rem));
-  padding: 1.5rem;
-  overflow-y: scroll;
+.SettingContainer {
+  position: absolute;
+  min-width: 10rem;
+  /* height: fit-content; */
+  z-index: 100;
+  padding: 0.5rem;
+  right: 4.5rem;
+  background: #3a3a3c;
+  border-radius: 5px;
+  box-shadow: 0px 0px 25px rgba(0, 0, 0, 0.5);
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  justify-content: center;
 }
 
-.ChatMsgList::-webkit-scrollbar {
-  width: 0.4rem;
-  height: calc(100% - (4rem + 8rem + 1.5rem));
-  border-radius: 0;
-  margin: 0;
-  padding: 0;
-  /* outline: 3px solid #2d2f31; */
-  /* outline: 0.1rem solid red; */
+/* Chat Messages Setting Option */
+
+.SettingOptionContainer {
+  width: 100%;
+  padding: 0.3rem;
+  margin-bottom: 0.3rem;
+  color: #ffffff;
+  font-size: 1rem;
+  line-height: 16px;
+  font-weight: 400;
+  border-radius: 5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
+
+.SettingOptionContainer:hover {
+  background-color: #2b2b2d;
+}
+
+
+/* Channel Profile */
 
 .ChannelProfile {
   width: calc(100% - (0.3rem));
@@ -142,6 +179,8 @@
   gap: 1.5rem;
 }
 
+/* Media */
+
 @media only screen and (min-width: 992px) {
   .ChatMessagesContainer {
     border-radius: 0 15px 15px 0;
@@ -156,9 +195,8 @@
   }
 }
 
-@media only screen and (min-width: 600px)
-{
-    .AddMemberButton > p {
-        display: block;
-      }
+@media only screen and (min-width: 600px) {
+  .AddMemberButton > p {
+    display: block;
+  }
 }

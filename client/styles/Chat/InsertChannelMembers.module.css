@@ -1,5 +1,6 @@
 .InsertChnlMembersContainer {
   max-height: 8rem;
+  min-height: 4rem;
   border-radius: 5px;
   padding: 1rem;
   background-color: #3a3a3c;
@@ -21,11 +22,10 @@
   background-color: transparent;
 }
 
-
 /* Member Tags */
 
 .MemberContainer {
-  width: calc(max-content + 20%) ;
+  width: calc(max-content + 20%);
   padding: 0.5rem;
   color: #ffffff;
   background: #2b2b2d;
@@ -47,17 +47,15 @@
   width: fit-content;
 }
 
-
-
 /* list friend */
 
 .UserList {
   margin-top: 1rem;
-  max-height: 13rem;
+  max-height: 8.5rem;
   padding: 1rem;
   border-radius: 5px;
   background-color: #3a3a3c;
-  overflow-y: scroll;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 0.8rem;
@@ -73,25 +71,26 @@
 .UserInfo {
   font-weight: 400;
   font-size: 1.4rem;
+  color: #ffff;
   display: flex;
   align-items: center;
-  gap: 0.8rem
+  gap: 0.8rem;
 }
 
 .UserInfo > img {
-  width: 4rem;
-  height: 4rem;
+  width: 3rem;
+  height: 3rem;
   border-radius: 5px;
 }
 
 .AddUserBtn {
-  width: 8rem;
+  width: 6rem;
   padding: 0.5rem;
   border-radius: 5px;
   border: 2px solid #409cff;
   color: #409cff;
   font-weight: 600;
-  font-size: 1.4rem;
+  font-size: 1.2rem;
   cursor: pointer;
   display: flex;
   align-items: center;
