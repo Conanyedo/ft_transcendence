@@ -221,7 +221,7 @@ const convs: conversations[] = [
   },
   {
     convid: 2,
-    fullName: "onepiece",
+    fullName: "Onepiece",
     avatar: "https://i.ytimg.com/vi/Fe3M_hgEDjk/maxresdefault.jpg",
     membersNum: 10,
     status: "",
