@@ -1,5 +1,18 @@
+.MuteMemberBackground {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: #0000009b;
+  z-index: 100;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .MuteMemberContainer {
-  width: 95%;
+  max-width: 35rem;
   background-color: #242426;
   border-radius: 10px;
   padding: 1.5rem;
@@ -18,8 +31,8 @@
 }
 
 .MuteMemberHeader > img {
-  height: 1.8rem;
-  width: 1.8rem;
+  height: 1.4rem;
+  width: 1.4rem;
   cursor: pointer;
 }
 
@@ -45,22 +58,22 @@
   justify-content: space-between;
 }
 
-.CustomRadioBtn {
-  width: 1.5rem;
-  height: 1.5rem;
-  border: 2px solid grey;
-
-}
-
-.CustomRadioBtn .checkmark {
-  width: 1rem;
-  height: 1rem;
-  background-color: #409cff;
+.MuteMemberOption input[type="radio"] {
   display: none;
 }
 
-.CustomRadioBtn input[type="radio"]  + .checkmark{
-  display: inline-block;
+ .MuteMemberOption label{
+  width: 1rem;
+  height: 1rem;
+  outline: 0.13rem solid #D9D9D9;
+  outline-offset: 0.156rem;
+  border-radius: 50%;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+.MuteMemberOption input[type="radio"]:checked + label {
+  background-color: #409cff;
 }
 
 .MuteMemberContainer > input[type="submit"] {
@@ -70,6 +83,7 @@
   border-radius: 5px;
   color: #ffffff;
   background-color: #409cff;
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
