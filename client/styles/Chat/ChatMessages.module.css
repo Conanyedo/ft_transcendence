@@ -49,8 +49,8 @@
 }
 
 .ChatMsgProfile img {
-  width: 5rem;
-  height: 5rem;
+  width: 4.5rem;
+  height: 4.5rem;
   border-radius: 5px;
 }
 
@@ -61,7 +61,7 @@
 }
 
 .ChatMsgProfileStatus {
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   font-weight: 400;
   color: #c6e1ff;
 }
