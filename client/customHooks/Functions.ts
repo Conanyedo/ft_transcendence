@@ -57,7 +57,7 @@ export function getRankUser(GamePoint: number): rankObj {
 }
 
 export function getImageBySize(path: string, size: number) {
-	if (!path || path.includes('cdn.intra.42.fr') || path.includes('https://ui-avatars'))
+	if (!path || path.includes('cdn.intra.42.fr') || path.includes('https://ui-avatars') || path.includes('https://lh3.googleusercontent'))
 		return path;
 	const tmppath = path.substring(0, path.lastIndexOf('.'));
 	const extenstion = path.substring(path.lastIndexOf('.'), path.length);
