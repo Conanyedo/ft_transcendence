@@ -20,11 +20,6 @@ const ChatMsgInfo: React.FC<any> = (props: {
 }) => {
   const [showConvSettings, setShowConvSettings] = useState<boolean>(false);
 
-  // const chatMsgSettingClickHandler = () => {
-  //   if (!showConvSettings) setShowConvSettings(true);
-  //   else setShowConvSettings(false);
-  // };
-
   const settingsOptClickHandler = () => {
     props.setShowUpdateChannel(true);
     setShowConvSettings(false);
@@ -46,21 +41,14 @@ const ChatMsgInfo: React.FC<any> = (props: {
   };
 
   const chatMsgProfileClickHandler = () => {
-    console.log("profile clicked");
     if (props.convData.type === "DM")
       props.router.push(`/profile/${props.convData.login}`);
     else if (!props.showChnlProfile) props.setShowChnlProfile(true);
   };
 
   const backArrowHandleClick = () => {
-    console.log("Back to Chat root");
     if (props.showChnlProfile) props.setShowChnlProfile(false);
-    else {
-      console.log(
-        "==========================================================="
-      );
-      props.router.replace({ pathname: "/chat" });
-    }
+    else props.router.replace({ pathname: "/chat" });
   };
 
   return (
