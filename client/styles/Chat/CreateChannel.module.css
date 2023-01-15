@@ -1,7 +1,7 @@
 .CreateChannelBackground {
   position: absolute;
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
   background-color: #0000009b;
   z-index: 100;
   top: 0;
@@ -12,7 +12,7 @@
 }
 
 .CreateChannelContainer {
-  width: 95%;
+  width: 100%;
   max-height: calc(100% - 1.5rem);
   background-color: #242426;
   border-radius: 10px;
@@ -54,7 +54,31 @@
   background-color: #3a3a3c;
   color: #ffffff;
   font-weight: 400;
-  font-size: 1.8rem;
+  font-size: 1.5rem;
+}
+
+.ChannelPsswdInput {
+  height: 4rem;
+  border-radius: 5px;
+  padding: 0.5rem;
+  background-color: #3a3a3c;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ChannelPsswdInput > input {
+  width: calc(100% - 3rem);
+  height: calc(100% - 0.5rem);
+  background-color: transparent;
+  color: #ffffff;
+  font-weight: 400;
+  font-size: 1.5rem;
+}
+.ChannelPsswdInput > img {
+  width: 2.5rem;
+  height: 2.5rem;
+  cursor: pointer;
 }
 
 .ChannelType {
@@ -67,6 +91,7 @@
 }
 
 .ChnlTypeDescription {
+  max-width: 70vw;
   font-weight: 400;
   font-size: 1.4rem;
   color: #d9d9d9;
@@ -249,5 +274,8 @@
 
   .Switch:active:after {
     width: 3.5rem;
+  }
+  .ChnlTypeDescription {
+    max-width: none;
   }
 }
