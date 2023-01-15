@@ -138,12 +138,14 @@ export interface conversationDto {
 	convId: string;
 	type: string;
 	relation: string;
+	unread: number;
 	name?: string;
 	login?: string;
 	avatar?: string;
 	status?: string;
 	membersNum?: number;
 	lastUpdate?: Date;
+	leftDate?: Date;
 }
 
 export interface createMemberDto {

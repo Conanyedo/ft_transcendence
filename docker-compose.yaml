@@ -4,26 +4,37 @@ version: "3.7"
 services:
   client:
     build: ./client
+    container_name: client
+    image: nextjs
     depends_on:
       - "server"
     ports:
       - "3000:3000"
+    volumes:
+      - ./client:/app
+      - /app/node_modules
 
   server:
     build: ./server
+    container_name: server
+    image: nestjs
     depends_on:
       - "db"
     ports:
       - "5000:5000"
       - "5551:5551"
+    volumes:
+      - ./server:/app
+      - /app/node_modules
 
   db:
     image: postgres
+    container_name: pg
     ports:
       - "5432:5432"
     volumes:
       - pongmania:/var/lib/postgresql/data
-      # - ./server/db.sql:/docker-entrypoint-initdb.d/db.sql
+      - ./server/db.sql:/docker-entrypoint-initdb.d/db.sql
     environment:
       - POSTGRES_USER=Conanyedo
       - POSTGRES_PASSWORD=pongmania

@@ -31,14 +31,14 @@ export class AuthController {
 	@Get('/logout')
 	@UseGuards(JwtAuthGuard)
 	logout(@User() user: userParitalDto, @Res({ passthrough: true }) res: Response) {
-		this.authService.logout(user, res);
+		res.clearCookie('jwt', { httpOnly: true });
 		return { data: true };
 	}
 
 	@Get('/isAuthorized')
 	@UseGuards(JwtAuthGuard)
-	async isAuthorized(@User() user: userParitalDto) {
-		return await this.authService.isAuthorized(user);
+	isAuthorized() {
+		return { data: true };
 	}
 
 	@Get('/is2faAuthorized')
@@ -74,7 +74,7 @@ export class AuthController {
 
 	@Get('/2faRedirect')
 	redirect2fa(@Res({ passthrough: true }) res: Response) {
-		return this.authService.redirect2fa(res);
+		return this.authService.redirectHome(res);
 	}
 
 	@Post('/2faLogin')
@@ -84,7 +84,7 @@ export class AuthController {
 		if (isValid.err)
 			return isValid;
 		this.authService.setJWTCookie(user, res);
-		return await this.authService.setUserAuthenticated(user);
+		// return await this.authService.setUserAuthenticated(user);
 	}
 
 }

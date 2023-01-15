@@ -20,26 +20,24 @@ export class AuthService {
 
 	async checkUserExist(user: userDto): Promise<userParitalDto> {
 		let getUser: userParitalDto = await this.userService.getPartialUser(user.login);
-		if (!getUser) {
+		if (!getUser)
 			getUser = await this.userService.registerUser(user);
-			return { ...getUser }
-		}
 		return { ...getUser };
 	}
 
-	redirect2fa(res: Response) {
+	redirectHome(res: Response) {
 		res.redirect(`http://${this.configService.get('CLIENT_IP')}/`);
 	}
-	
+
 	setJWTCookie(user: userParitalDto, res: Response) {
 		const accessToken: string = this.jwtAuthService.setJwt(user);
-		res.cookie('jwt', accessToken);
-		// res.cookie('jwt-2fa', '', { maxAge: 1 });
+		res.cookie('jwt', accessToken, { httpOnly: true });
+		res.clearCookie('jwt-2fa', { httpOnly: true });
 	}
 
 	setJWT2faCookie(user: userParitalDto, res: Response) {
 		const accessToken: string = this.jwt2faAuthService.set2faJwt(user);
-		res.cookie('jwt-2fa', accessToken);
+		res.cookie('jwt-2fa', accessToken, { httpOnly: true });
 	}
 
 	async authenticateUser(user: userParitalDto, res: Response) {
@@ -52,24 +50,7 @@ export class AuthService {
 			return res.redirect(`http://${this.configService.get('CLIENT_IP')}/?_2fa=true`);
 		}
 		this.setJWTCookie(user, res);
-		res.redirect(`http://${this.configService.get('CLIENT_IP')}/`);
-		this.userService.setUserAuthenticated(user.id, true);
-	}
-
-	async setUserAuthenticated(user: userParitalDto) {
-		this.userService.setUserAuthenticated(user.id, true);
-	}
-
-	logout(user: userParitalDto, res: Response) {
-		this.userService.setUserAuthenticated(user.id, false);
-		res.cookie('jwt', '', { maxAge: 1 });
-	}
-
-	async isAuthorized(user: userParitalDto) {
-		const isAuthorized: boolean = await this.userService.getIsAuthenticated(user.id);
-		if (!isAuthorized)
-			throw new UnauthorizedException('Unauthorized');
-		return { data: isAuthorized };
+		res.redirect(`http://${this.configService.get('CLIENT_IP')}/profile`);
 	}
 
 	async generate2fa(user: userParitalDto) {
@@ -82,6 +63,7 @@ export class AuthService {
 
 	async set2faEnabled(user: userParitalDto, status: boolean) {
 		await this.userService.set2faEnabled(user.id, status);
+		if (!status) await this.userService.set2faSecret(user.id, null);
 		return true;
 	}
 
@@ -94,7 +76,7 @@ export class AuthService {
 	}
 
 	async is2faEnabled(user: userParitalDto) {
-		const is2faEnabled: boolean = await this.userService.get2faEnabled(user.id);
+		const is2faEnabled: boolean = !!(await this.userService.getSecret(user.id));
 		return { data: is2faEnabled };
 	}
 }

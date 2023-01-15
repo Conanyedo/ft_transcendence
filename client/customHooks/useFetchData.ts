@@ -179,7 +179,7 @@ export const fetchUserInfo = async (
   setUserData: React.Dispatch<React.SetStateAction<UserTypeNew>>
 ) => {
   await axios
-    .get(`${baseUrl}user/header`, {
+    .get(`${baseUrl}user/header/@me`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -205,7 +205,7 @@ export const fetchAchievements = async (
   login: string
 ) => {
   const token = getCookie("jwt");
-  let Id: string = "";
+  let Id: string = "/@me";
   if (login) Id = "/" + login;
   await axios
     .get(`${baseUrl}user/achievements${Id}`, {
@@ -589,16 +589,12 @@ export const getLoginInfo = async (
 };
 
 export const check2FA_JWT = async (
-  jwt: CookieValueTypes,
   set: any,
   router: NextRouter
 ) => {
   await axios({
     method: "get",
     url: `${baseUrl}auth/is2faAuthorized`,
-    headers: {
-      Authorization: `Bearer ${jwt}`,
-    },
     withCredentials: true,
   })
     .then((res) => {
@@ -615,30 +611,24 @@ export const check2FA_JWT = async (
     });
 };
 
-export const checkJWT = async (
+export const isAuthorized = async (
   router: NextRouter,
-  set: Dispatch<SetStateAction<boolean>>
+  set: Dispatch<SetStateAction<number>>
 ) => {
-  const token = getCookie("jwt");
+  set(2);
   await axios({
     method: "get",
     url: `${baseUrl}auth/isAuthorized`,
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
     withCredentials: true,
   })
     .then((res) => {
-      if (res.data.err) return set(false);
-      eraseCookie("jwt-2fa");
-      set(true);
+      if (res.data.err) return set(0);
+      set(1);
     })
     .catch((err) => {
       if (err.response.status === 401) {
-        eraseCookie("jwt-2fa");
         socket_notif.disconnect();
-        router.replace("/");
-        set(false);
+        set(0);
       }
     });
 };

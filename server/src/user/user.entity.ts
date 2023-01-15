@@ -16,17 +16,14 @@ export class User {
 	@Column({ unique: true })
 	login: string;
 
-	@Column({ unique: true })
+	@Column()
 	fullname: string;
 
 	@Column()
 	avatar: string;
-	
+
 	@Column({ type: 'enum', enum: userStatus, default: userStatus.ONLINE })
 	status: userStatus;
-
-	@Column({ default: false })
-	isAuthenticated: boolean;
 
 	@Column({ nullable: true })
 	_2faSecret: string;

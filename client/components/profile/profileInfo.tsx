@@ -14,7 +14,7 @@ const ProfileInfo: React.FC = () => {
 	const router = useRouter();
 	const dispatch = useDispatch();
 	useEffect(() => {
-		fetchDATA(setUser, router, 'user/info');
+		fetchDATA(setUser, router, 'user/info/@me');
 		return () => {
 			setUser(EmtyUser);
 		}

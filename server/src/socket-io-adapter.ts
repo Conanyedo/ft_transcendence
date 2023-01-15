@@ -20,7 +20,7 @@ export class SocketIOAdapter extends IoAdapter {
 	createIOServer(port: number, options?: ServerOptions) {
 		const clientIP = this.configService.get<string>('CLIENT_IP');
 
-		options.cors = { origin: `http://${clientIP}` };
+		options.cors = { origin: `http://${clientIP}`, credentials: true };
 
 		const jwtAuthService = this.app.get(JwtAuthService);
 
@@ -35,7 +35,7 @@ const verifyTokenMiddleware =
 	(jwtAuthService: JwtAuthService, logger: Logger) =>
 		(socket: Socket, next) => {
 
-			const token = socket.handshake.auth.token || socket.handshake.headers.authorization.split(' ')[1];
+			const token = socket.handshake.headers.cookie.split('=')[1];
 
 			try {
 				const payload = jwtAuthService.verify(token);
