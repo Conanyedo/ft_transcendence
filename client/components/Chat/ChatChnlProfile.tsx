@@ -1,9 +1,9 @@
 import Styles from "@styles/Chat/ChatMessages.module.css";
-import { ChannelMember } from "./ChannelMember";
 import AddMembericon from "@public/Chat/AddMemberIcon.svg";
 import { conversations } from "@Types/dataTypes";
-import { string } from "yup";
-import { type } from "os";
+import { useState } from "react";
+import { ChannelMember } from "./ChannelMember";
+import { AddMembers } from "./AddMembers";
 
 export interface member {
   fullName: string;
@@ -13,9 +13,9 @@ export interface member {
 
 export interface channelMembers {
   owner: member[];
-  admins: member[];
-  members: member[];
-  mute: member[];
+  admins?: member[];
+  members?: member[];
+  mute?: member[];
 }
 
 const chnlMemberList = {
@@ -24,7 +24,7 @@ const chnlMemberList = {
       fullName: "abdellah",
       avatar:
         "https://img.assinaja.com/upl/lojas/mundosinfinitos/imagens/foto-one-piece.png",
-      login: "abbelhac",
+      login: "belhachmiabdellah98",
     },
   ],
   admins: [
@@ -58,29 +58,33 @@ const chnlMemberList = {
   ],
   mute: [
     {
-      fullName: "Othmane bounri",
+      fullName: "Abderrahmane",
       avatar: "https://i.ytimg.com/vi/oZuzXz8tuSY/maxresdefault.jpg",
-      login: "obounri",
+      login: "aerah",
     },
     {
-      fullName: "Amine El haiba",
+      fullName: "Abssi Hamdon",
       avatar: "https://i.ytimg.com/vi/oZuzXz8tuSY/maxresdefault.jpg",
-      login: "aelhaiba",
+      login: "amdon",
     },
   ],
 };
 
 export const ChatChnlProfile: React.FC<conversations> = (convData) => {
+  const [showAddMember, setShowAddMember] = useState<boolean>(false);
+
   // const loggedInUsr = localStorage.getItem("owner");
 
   const AddMemberClickHandler = () => {
     console.log("Add Member clicked");
+    setShowAddMember(true);
   };
 
   console.log("convData Chnl : ", convData.relation);
 
   return (
     <>
+      {showAddMember && <AddMembers setShowAddMember={setShowAddMember} />}
       <div className={Styles.ChannelProfile}>
         <div className={Styles.ChannelProfileHeader}>
           Channel Profile
@@ -89,7 +93,7 @@ export const ChatChnlProfile: React.FC<conversations> = (convData) => {
             onClick={AddMemberClickHandler}
           >
             <img src={AddMembericon.src} alt="AddMemberIcon"></img>
-            <p>Add member</p>
+            <p>Add members</p>
           </div>
         </div>
         {chnlMemberList.owner && (
@@ -121,21 +125,40 @@ export const ChatChnlProfile: React.FC<conversations> = (convData) => {
             </div>
           </div>
         )}
-        <div className={Styles.MemberListContainer}>
-          Members
-          <div className={Styles.MemberList}>
-            {chnlMemberList.members.map((member) => {
-              return (
-                <ChannelMember
-                  key={member.login}
-                  relation={convData.relation}
-                  role={"Admins"}
-                  member={member}
-                />
-              );
-            })}
+        {chnlMemberList.members && (
+          <div className={Styles.MemberListContainer}>
+            Members
+            <div className={Styles.MemberList}>
+              {chnlMemberList.members.map((member) => {
+                return (
+                  <ChannelMember
+                    key={member.login}
+                    relation={convData.relation}
+                    role={"Members"}
+                    member={member}
+                  />
+                );
+              })}
+            </div>
           </div>
-        </div>
+        )}
+        {chnlMemberList.mute && (
+          <div className={Styles.MemberListContainer}>
+            Muted
+            <div className={Styles.MemberList}>
+              {chnlMemberList.mute.map((member) => {
+                return (
+                  <ChannelMember
+                    key={member.login}
+                    relation={convData.relation}
+                    role={"Muted"}
+                    member={member}
+                  />
+                );
+              })}
+            </div>
+          </div>
+        )}
       </div>
     </>
   );
