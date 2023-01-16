@@ -74,7 +74,7 @@ export class AuthController {
 
 	@Get('/2faRedirect')
 	redirect2fa(@Res({ passthrough: true }) res: Response) {
-		return this.authService.redirectHome(res);
+		this.authService.redirectProfile(res);
 	}
 
 	@Post('/2faLogin')
@@ -83,8 +83,7 @@ export class AuthController {
 		const isValid = await this.authService.is2faCodeValid(user, data.code);
 		if (isValid.err)
 			return isValid;
-		this.authService.setJWTCookie(user, res);
-		// return await this.authService.setUserAuthenticated(user);
+		return this.authService.setJWTCookie(user, res);
 	}
 
 }
