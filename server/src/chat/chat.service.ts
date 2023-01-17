@@ -98,13 +98,13 @@ export class ChatService {
 		return { data: { ...userInfo, relation } };
 	}
 
-	async getChannelInfo(login: string, name: string) {
+	async getChannelInfo(login: string, id: string) {
 		const conv = await this.conversationRepository
-			.query(`select conversations.id as "convId", conversations.type, conversations.avatar, conversations.name from conversations where conversations.type != 'Dm' AND conversations.name = '${name}';`);
+			.query(`select conversations.id as "convId", conversations.type, conversations.avatar, conversations.name from conversations where conversations.type != 'Dm' AND conversations.id = '${id}';`);
 		if (!conv.length)
 			return { err: 'Channel not found' };
 		const member = await this.memberRepository
-			.query(`select members.id from members Join users ON members."userId" = users.id Join conversations ON members."conversationId" = conversations.id where users."login" = '${login}' AND conversations.name = '${name}';`);
+			.query(`select members.id from members Join users ON members."userId" = users.id Join conversations ON members."conversationId" = conversations.id where users."login" = '${login}' AND conversations.id = '${id}';`);
 		if (member.length)
 			return { data: true };
 		if (conv[0].type === 'Private')
