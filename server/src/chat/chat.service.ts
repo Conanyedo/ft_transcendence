@@ -44,8 +44,8 @@ export class ChatService {
 		const convsList = [];
 		await Promise.all(convs.map(async (conv) => {
 			const exist = await this.memberRepository
-				.query(`select members.id, members."status" from members Join users ON members."userId" = users.id where members."conversationId" = '${conv.id}' AND users."login" = '${login}' AND members."leftDate" is null;`);
-			if (!exist.length)
+				.query(`select members.id, members."status" from members Join users ON members."userId" = users.id where members."conversationId" = '${conv.id}' AND users."login" = '${login}';`);
+			if (!exist.length || exist[0].status === memberStatus.LEFT)
 				convsList.push({ convId: conv.id, Avatar: conv.avatar, title: conv.name, type: conv.type, status: undefined });
 			else if (exist[0].status !== memberStatus.BANNED)
 				convsList.push({ convId: conv.id, Avatar: conv.avatar, title: conv.name, type: conv.type, status: exist[0].status });
@@ -109,7 +109,7 @@ export class ChatService {
 			return { data: true };
 		if (conv[0].type === 'Private')
 			return { err: 'Channel not found' };
-		return { data: { convId: conv[0].convId, type: conv[0].type } };
+		return { data: { ...conv[0]} };
 	}
 
 	async blockUser(login: string, user: string) {
