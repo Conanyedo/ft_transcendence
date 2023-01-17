@@ -34,6 +34,17 @@ export class FriendshipService {
 		return friendship.relation;
 	}
 
+	async getChatRelation(user: string, friend: string) {
+		const friendship: Friendship = await this.friendshipRepository
+			.createQueryBuilder('friendships')
+			.select(['friendships.user', 'friendships.friend', 'friendships.relation'])
+			.where('friendships.user = :user AND friendships.friend = :friend', { user: user, friend: friend })
+			.getOne();
+		if (!friendship || friendship.relation !== userRelation.BLOCKED)
+			return userRelation.NONE;
+		return friendship.relation;
+	}
+
 	async getOnlineFriends(login: string) {
 		const friends: Friendship[] = await this.friendshipRepository
 			.createQueryBuilder('friendships')
