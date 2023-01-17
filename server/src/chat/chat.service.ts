@@ -155,7 +155,7 @@ export class ChatService {
 			const relation = await this.friendshipService.getChatRelation(login, users.login);
 			convInfo.name = users[0].fullname;
 			convInfo.login = users[0].login;
-			convInfo.status = (relation === 'blocked') ? 'Blocked' : users[0].status;
+			convInfo.status = (relation === 'blocked') ? 'Blocker' : users[0].status;
 			convInfo.avatar = users[0].avatar;
 		}
 		else {
@@ -350,6 +350,7 @@ export class ChatService {
 		const avatar: string = `https://ui-avatars.com/api/?name=${data.name}&size=220&background=2C2C2E&color=409CFF&length=1`;
 		const newConv: createConvDto = { type: data.type, name: data.name, avatar: avatar, password: data.password };
 		data.members.unshift(owner);
+		data.members = [...new Set(data.members)];
 		const newMembers: createMemberDto[] = data.members.map((mem) => {
 			if (mem === owner)
 				return { status: memberStatus.OWNER, login: owner };
@@ -375,7 +376,7 @@ export class ChatService {
 			if (!match) return { err: 'Invalid password' };
 		}
 		const memberExist = await this.memberRepository
-			.query(`select members.id, members."leftDate" from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND users."login" = '${login}';`);
+			.query(`select members.id, members."leftDate", members."status" from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND users."login" = '${login}';`);
 		const ownerExist = await this.memberRepository
 			.query(`select members.id from members where members."conversationId" = '${convId}' AND members.status = 'Owner';`);
 		let status: memberStatus = memberStatus.MEMBER;
@@ -388,7 +389,7 @@ export class ChatService {
 			member.user = await this.userService.getUser(login);
 			await this.memberRepository.save(member);
 		}
-		else if (memberExist[0].leftDate) {
+		else if ((memberExist[0].leftDate && owner) || (memberExist[0].leftDate && memberExist[0].status !== memberStatus.BANNED)) {
 			await this.memberRepository
 				.query(`update members set "leftDate" = null, "status" = '${status}' FROM users where members."userId" = users.id AND members."conversationId" = '${convId}' AND users."login" = '${login}';`);
 		}
@@ -467,6 +468,7 @@ export class ChatService {
 			.query(`select from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND users."login" = '${login}' AND (members."status" = 'Owner' OR members."status" = 'Admin');`);
 		if (!exist.length)
 			return { err: 'Invalid data' };
+		members = [...new Set(members)];
 		members.forEach(async (mem) => {
 			await this.joinChannel(mem, convId, undefined, true);
 		})
