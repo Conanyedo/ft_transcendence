@@ -148,22 +148,21 @@ export class ChatService {
 
 	async getConvInfo(login: string, conv: conversationDto) {
 		conv.lastUpdate = conv.leftDate ? conv.leftDate : conv.lastUpdate;
-		const convInfo: conversationDto = { ...conv }
+		const {leftDate, ...convInfo}: conversationDto = { ...conv }
 		if (conv.type === 'Dm') {
 			const users = await this.memberRepository
 				.query(`select users.login, users.fullname, users.status, users.avatar, members."unread" from members Join users ON members."userId" = users.id where members."conversationId" = '${conv.convId}' AND users.login != '${login}';`);
+			const relation = await this.friendshipService.getChatRelation(login, users.login);
 			convInfo.name = users[0].fullname;
 			convInfo.login = users[0].login;
-			convInfo.status = users[0].status;
+			convInfo.status = (relation === 'blocked') ? 'Blocked' : users[0].status;
 			convInfo.avatar = users[0].avatar;
-			convInfo.relation = conv.status;
 		}
 		else {
 			const membersNum = await this.memberRepository
 				.query(`select COUNT(*) from members where members."conversationId" = '${convInfo.convId}' AND members."leftDate" is null;`);
 			convInfo.login = convInfo.name;
-			convInfo.membersNum = membersNum[0].count;
-			convInfo.relation = conv.status;
+			convInfo.membersNum = +membersNum[0].count;
 		}
 		return convInfo;
 	}
@@ -178,7 +177,7 @@ export class ChatService {
 
 	async getConversations(login: string) {
 		const convs: conversationDto[] = await this.memberRepository
-			.query(`select conversations.id as "convId", conversations.type, conversations.avatar, conversations.name, conversations."lastUpdate", members.status, members."leftDate" from members Join users ON members."userId" = users.id Join conversations ON members."conversationId" = conversations.id where users."login" = '${login}' order by conversations."lastUpdate" DESC;`);
+			.query(`select conversations.id as "convId", conversations.type, conversations.avatar, conversations.name, conversations."lastUpdate", members.status, members."leftDate", members."unread" from members Join users ON members."userId" = users.id Join conversations ON members."conversationId" = conversations.id where users."login" = '${login}' order by conversations."lastUpdate" DESC;`);
 		const conversations: conversationDto[] = await Promise.all(convs.map(async (conv) => (this.getConvInfo(login, conv))));
 		conversations.sort((a: conversationDto, b: conversationDto) => {
 			const right: number = a.lastUpdate.getTime();

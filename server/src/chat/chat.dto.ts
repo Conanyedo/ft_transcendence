@@ -137,7 +137,6 @@ export class updateChannelDto {
 export interface conversationDto {
 	convId: string;
 	type: string;
-	relation: string;
 	unread: number;
 	name?: string;
 	login?: string;
