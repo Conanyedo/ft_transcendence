@@ -44,8 +44,8 @@ export class ChatService {
 		const convsList = [];
 		await Promise.all(convs.map(async (conv) => {
 			const exist = await this.memberRepository
-				.query(`select members.id, members."status" from members Join users ON members."userId" = users.id where members."conversationId" = '${conv.id}' AND users."login" = '${login}' AND members."leftDate" is null;`);
-			if (!exist.length)
+				.query(`select members.id, members."status" from members Join users ON members."userId" = users.id where members."conversationId" = '${conv.id}' AND users."login" = '${login}';`);
+			if (!exist.length || exist[0].status === memberStatus.LEFT)
 				convsList.push({ convId: conv.id, Avatar: conv.avatar, title: conv.name, type: conv.type, status: undefined });
 			else if (exist[0].status !== memberStatus.BANNED)
 				convsList.push({ convId: conv.id, Avatar: conv.avatar, title: conv.name, type: conv.type, status: exist[0].status });
@@ -98,18 +98,18 @@ export class ChatService {
 		return { data: { ...userInfo, relation } };
 	}
 
-	async getChannelInfo(login: string, name: string) {
+	async getChannelInfo(login: string, id: string) {
 		const conv = await this.conversationRepository
-			.query(`select conversations.id as "convId", conversations.type, conversations.avatar, conversations.name from conversations where conversations.type != 'Dm' AND conversations.name = '${name}';`);
+			.query(`select conversations.id as "convId", conversations.type, conversations.avatar, conversations.name from conversations where conversations.type != 'Dm' AND conversations.id = '${id}';`);
 		if (!conv.length)
 			return { err: 'Channel not found' };
 		const member = await this.memberRepository
-			.query(`select members.id from members Join users ON members."userId" = users.id Join conversations ON members."conversationId" = conversations.id where users."login" = '${login}' AND conversations.name = '${name}';`);
+			.query(`select members.id from members Join users ON members."userId" = users.id Join conversations ON members."conversationId" = conversations.id where users."login" = '${login}' AND conversations.id = '${id}';`);
 		if (member.length)
 			return { data: true };
 		if (conv[0].type === 'Private')
 			return { err: 'Channel not found' };
-		return { data: { convId: conv[0].convId, type: conv[0].type } };
+		return { data: { ...conv[0]} };
 	}
 
 	async blockUser(login: string, user: string) {

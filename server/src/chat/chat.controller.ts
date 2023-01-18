@@ -28,10 +28,10 @@ export class ChatController {
 		return await this.chatService.getUserInfo(login, param.name);
 	}
 
-	@Get('/channelInfo/:name')
+	@Get('/channelInfo/:convId')
 	@UseGuards(JwtAuthGuard)
-	async getChannelInfo(@User('login') login: string, @Param() param: nameValidate) {
-		return await this.chatService.getChannelInfo(login, param.name);
+	async getChannelInfo(@User('login') login: string, @Param() param: convIdValidate) {
+		return await this.chatService.getChannelInfo(login, param.convId);
 	}
 
 	@Post('/createChannel')
