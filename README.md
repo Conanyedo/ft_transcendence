@@ -15,6 +15,7 @@ The goal is to create a web app to play Ping Pong, and socialize with other user
 
 ---
 
+- rename `server/.env.sample` file to `server/.env`
 - run `docker-compose up -d`
 - go to `http://localhost:3000/`
 
@@ -31,10 +32,13 @@ The project was built using these tools.
 
 ### Front-end
 
+- [NextJs](https://nextjs.org/)
 - [Socket.io](https://socket.io/)
 
 ### Back-end
 
+- [NestJS](https://nestjs.com/)
+- [PostgreSQL](https://www.postgresql.org/)
 - [TypeORM](https://typeorm.io/)
 - [PassportJS](https://www.passportjs.org/)
 - [Socket.io](https://socket.io/)
@@ -46,6 +50,18 @@ The project was built using these tools.
 - Docker-compose
 
 ## Previews
+
+![Login](https://github.com/cabouelw/ft_transcendence/blob/main/pongmaniaScreenshots/login.png)
+![profile](https://github.com/cabouelw/ft_transcendence/blob/main/pongmaniaScreenshots/profile.png)
+![friendlist](https://github.com/cabouelw/ft_transcendence/blob/main/pongmaniaScreenshots/friendlist.png)
+![directMsg](https://github.com/cabouelw/ft_transcendence/blob/main/pongmaniaScreenshots/directMsg.png)
+![channel](https://github.com/cabouelw/ft_transcendence/blob/main/pongmaniaScreenshots/channel.png)
+![inviteFriendToGame](https://github.com/cabouelw/ft_transcendence/blob/main/pongmaniaScreenshots/inviteFriendToGame.png)
+![inviteToGameFromChat](https://github.com/cabouelw/ft_transcendence/blob/main/pongmaniaScreenshots/inviteToGameFromChat.png)
+![playRandomGame](https://github.com/cabouelw/ft_transcendence/blob/main/pongmaniaScreenshots/playRandomGame.png)
+![game](https://github.com/cabouelw/ft_transcendence/blob/main/pongmaniaScreenshots/game.png)
+![watchLiveGames](https://github.com/cabouelw/ft_transcendence/blob/main/pongmaniaScreenshots/watchLiveGames.png)
+![winner](https://github.com/cabouelw/ft_transcendence/blob/main/pongmaniaScreenshots/winner.png)
 
 ---
 
