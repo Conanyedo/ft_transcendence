@@ -1,22 +1,85 @@
 import Styles from "@styles/Chat/ChatMessageInput.module.css";
 import SendMsgIcon from "@public/Chat/send-arrow.svg";
 import InviteGameIcon from "@public/Chat/Gamepad.svg";
-import { useState } from "react";
-import { string } from "yup";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import { conversations, MsgData } from "@Types/dataTypes";
+import socket_notif from "config/socketNotif";
 
-export const ChatMessageInput = (props: { type: string; relation: string }) => {
+interface sendMsg {
+  convId?: string;
+  receiver?: string;
+  login?: string;
+  msg: string;
+}
+
+interface Props {
+  convData: conversations;
+  setChatMessages: Dispatch<SetStateAction<MsgData[]>>;
+}
+
+export const ChatMessageInput: React.FC<Props> = ({
+  convData,
+  setChatMessages,
+}) => {
   const [EnteredMsg, setEnteredMsg] = useState<string>("");
+  const [sendMsg, setSendMsg] = useState<sendMsg | undefined>(undefined);
+
+  // send message
 
   const inputStatus: string =
-    props.relation === "Left"
+    convData.status === "Left"
       ? "You left this channel"
-      : props.relation === "Blocked"
+      : convData.status === "Blocker"
       ? "You blocked this user"
-      : props.relation === "Banned"
+      : convData.status === "Banned"
       ? "You have been banned from this channel"
-      : props.relation === "Muted"
+      : convData.status === "Muted"
       ? "You have been muted from this channel"
       : "";
+
+  const inputOnChangeHandler = (event: any) => {
+    setEnteredMsg(event.target.value);
+
+    // sendMsgHandler();
+  };
+
+  const sendMsgHandler = () => {
+    if (EnteredMsg.length > 0) {
+      setSendMsg({
+        convId: convData.convId,
+        receiver: convData.login,
+        login: convData.login,
+        msg: EnteredMsg,
+      });
+    }
+  };
+
+  const inputonKeyHandler = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter") {
+      if (EnteredMsg.length > 0)
+        setSendMsg({
+          convId: convData.convId,
+          receiver: convData.login,
+          login: convData.login,
+          msg: EnteredMsg,
+        });
+    }
+  };
+
+  // send msg
+
+  useEffect(() => {
+    if (EnteredMsg.length > 0) {
+      socket_notif.emit("sendMsg", sendMsg, (response: any) => {
+        console.log("emit message");
+        setEnteredMsg("");
+      });
+    }
+    return () => {
+      socket_notif.off("sendMsg");
+    };
+  }, [sendMsg]);
 
   return (
     <>
@@ -26,26 +89,31 @@ export const ChatMessageInput = (props: { type: string; relation: string }) => {
             <input
               type={"text"}
               placeholder="Message"
+              onChange={inputOnChangeHandler}
+              onKeyDown={inputonKeyHandler}
               value={EnteredMsg}
-              onChange={(e) => setEnteredMsg(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.keyCode === 13) {
-                  console.log("Enter key is pressed");
-                }
-              }}
             ></input>
-            {props.type === "DM" ? (
+            {convData.type === "Dm" ? (
               <img src={InviteGameIcon.src} alt="InviteGameIcon"></img>
             ) : null}
           </div>
           {EnteredMsg.length > 0 ? (
-            <img
-              src={SendMsgIcon.src}
-              alt="SendMsgIcon"
-              onClick={(e) => {
-                if (EnteredMsg.length > 1) console.log("send mssg");
+            <motion.div
+              initial={{
+                opacity: 0,
+                scale: 0,
               }}
-            ></img>
+              animate={{
+                opacity: 1,
+                scale: 1,
+              }}
+            >
+              <img
+                src={SendMsgIcon.src}
+                alt="SendMsgIcon"
+                onClick={sendMsgHandler}
+              />
+            </motion.div>
           ) : null}
         </div>
       ) : (
