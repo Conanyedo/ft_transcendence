@@ -1,21 +1,48 @@
 import Styles from "styles/Chat/MessagesList.module.css";
 import { conversations, MsgData } from "@Types/dataTypes";
 import { InviteMsg } from "./inviteMsg";
-import { Dispatch, useState, useEffect, useRef } from "react";
+import { Dispatch, useState, useEffect, useRef, useLayoutEffect } from "react";
 import { ChatMessageInput } from "./ChatMessageInput";
+import socket_notif from "config/socketNotif";
 
-// interface Props {setMsg : Dispatch<MsgData>}
+const formatAMPM = (date: Date) => {
+  let hours = new Date(date).getHours();
+  let minutes: number | string = new Date(date).getMinutes();
+  const ampm = hours >= 12 ? "PM" : "AM";
 
-const Message: React.FC<MsgData> = ({
-  fullName,
+  hours %= 12;
+  hours = hours || 12;
+  minutes = minutes < 10 ? `0${minutes}` : minutes;
+
+  const strTime = `${hours}:${minutes} ${ampm}`;
+  return strTime;
+};
+interface MsgProps {
+  avatar?: string;
+  msg: string;
+  sender: string;
+  fullname?: string;
+  invitation?: string;
+  status: string;
+  date: Date;
+  convId?: string;
+  msgId?: string;
+  type: string;
+}
+
+const Message: React.FC<MsgProps> = ({
   avatar,
+  msg,
   sender,
-  gameInvite,
-  content,
+  fullname,
+  invitation,
+  status,
+  type,
   date,
 }) => {
-  const [inviteMsgAction, setinviteMsgAction] = useState<string>("");
-
+  const [inviteMsgAction, setinviteMsgAction] = useState<string>(status);
+  const msgTime = formatAMPM(date);
+  const logedInUsr = localStorage.getItem("owner");
   const MsgInvitStatus = `${
     inviteMsgAction === "Canceled"
       ? "Invitation has been canceled"
@@ -23,7 +50,7 @@ const Message: React.FC<MsgData> = ({
       ? "Invitation has been accepted"
       : inviteMsgAction === "Refused"
       ? "Invitation has been refused"
-      : !sender
+      : sender === logedInUsr
       ? "You invite him to play pong game"
       : "Invites you to play pong game"
   }`;
@@ -45,39 +72,42 @@ const Message: React.FC<MsgData> = ({
 
   return (
     <>
-      {!gameInvite ? (
-        <div className={!sender ? Styles.right : Styles.left}>
+      {!invitation ? (
+        <div className={sender === logedInUsr ? Styles.right : Styles.left}>
           <div className={Styles.MsgContainer}>
             <div
-              className={`${Styles.MsgBox} ${sender && Styles.SenderMsgBox}`}
+              className={`${Styles.MsgBox} ${
+                sender !== logedInUsr && Styles.SenderMsgBox
+              }`}
             >
-              {/* <h2> Channel Sender Name</h2> */}
-              <p>{content}</p>
+              {type !== "Dm" && sender !== logedInUsr ? (
+                <h2>{fullname}</h2>
+              ) : null}
+              <p>{msg}</p>
             </div>
             <div
-              className={`${Styles.MsgDate} ${sender && Styles.SenderMsgDate}`}
+              className={`${Styles.MsgDate} ${
+                sender !== logedInUsr && Styles.SenderMsgDate
+              }`}
             >
-              {date}
+              {msgTime}
             </div>
           </div>
         </div>
       ) : (
-        <div className={!sender ? Styles.right : Styles.left}>
+        <div className={sender === logedInUsr ? Styles.right : Styles.left}>
           <div className={Styles.MsgContainer}>
             <div
               className={`${Styles.InviteMsgBox} && ${
-                sender && Styles.SenderInviteMsgBox
+                sender !== logedInUsr && Styles.SenderInviteMsgBox
               }`}
             >
               <div className={Styles.InviteMsginfo}>
-                <img
-                  src={avatar}
-                  alt="UserAvatar"
-                ></img>
+                <img src={avatar} alt="UserAvatar"></img>
                 <div className={Styles.InviteMsgProfile}>
                   <div>
                     <div className={Styles.InviteMsgProfileName}>
-                      {fullName}
+                      {fullname}
                     </div>
                     <div className={Styles.InviteMsgStatus}>
                       {MsgInvitStatus}
@@ -85,14 +115,14 @@ const Message: React.FC<MsgData> = ({
                   </div>
                 </div>
               </div>
-              {!sender && !inviteMsgAction ? (
+              {sender === logedInUsr && inviteMsgAction === "Sent" ? (
                 <div
                   className={Styles.InviteMsgButton}
                   onClick={CancelInviteHandler}
                 >
                   Cancel invitation
                 </div>
-              ) : !inviteMsgAction ? (
+              ) : inviteMsgAction === "Sent" ? (
                 <div className={Styles.SenderInviteMsgButton}>
                   <div
                     className={Styles.RefuseInvite}
@@ -110,9 +140,11 @@ const Message: React.FC<MsgData> = ({
               ) : null}
             </div>
             <div
-              className={`${Styles.MsgDate} ${sender && Styles.SenderMsgDate}`}
+              className={`${Styles.MsgDate} ${
+                sender !== logedInUsr && Styles.SenderMsgDate
+              }`}
             >
-              {date}
+              {msgTime}
             </div>
           </div>
         </div>
@@ -121,37 +153,64 @@ const Message: React.FC<MsgData> = ({
   );
 };
 
-export const MessagesList: React.FC<conversations>  = (convData) => {
-  const [chatMessages, setchatMessages] = useState<MsgData[]>([]);
+interface MsglistProps {
+  convData : conversations;
+  updateConversations : (msgConvId : string) => void;
+}
+
+export const MessagesList: React.FC<MsglistProps> = ({convData, updateConversations}) => {
+  const [chatMessages, setChatMessages] = useState<MsgData[]>([]);
   const MessageRef = useRef<null | HTMLDivElement>(null);
-  const convid = { convData }
-  const setMsg = (enteredMsg: MsgData) => {
-    convData.messages.push(enteredMsg);
-    setchatMessages(convData.messages);
-  };
-  // fetch messages
 
   useEffect(() => {
-    // tmp
-    setchatMessages(convData.messages);
-  }, [convid]);
+    socket_notif.emit(
+      "getMsgs",
+      { convId: convData.convId },
+      (response: any) => {
+        setChatMessages(response.data);
+      }
+    );
+  }, [convData.convId]);
+
+  /* -------------------------------------------------------------------------- */
+  /*            listen on new msg while been on the same conversation           */
+  /* -------------------------------------------------------------------------- */
 
   useEffect(() => {
-    MessageRef.current?.scrollIntoView({ behavior: "smooth" });
+    socket_notif.on("newMsg", (response : any) => {
+      {
+        if (response.data.convId === convData.convId)
+        {
+          setChatMessages((previous) => [...previous, response.data]);
+        }
+        updateConversations(response.data.convId);
+      }
+    });
+    return () => {
+      socket_notif.off("newMsg");
+    };
+  }, [convData]);
+
+  useEffect(() => {
+    MessageRef.current?.scrollIntoView();
   }, [chatMessages, convData]);
 
   return (
     <>
       <div className={Styles.ChatMsgList}>
         {chatMessages.map((msg) => {
-          return <Message key={msg.id} {...msg} />;
+          return (
+            <Message
+              key={msg.msgId}
+              {...msg}
+              avatar={msg.invitation ? convData.avatar : undefined}
+              type={convData.type}
+            />
+          );
         })}
         <div ref={MessageRef} />
       </div>
-      <ChatMessageInput
-        type={convData.type}
-        relation={convData.relation}
-      />
+      <ChatMessageInput convData={convData} setChatMessages={setChatMessages} />
     </>
   );
 };
