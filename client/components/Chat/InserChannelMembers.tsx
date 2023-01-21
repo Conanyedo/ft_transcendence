@@ -1,6 +1,6 @@
 import Styles from "@styles/Chat/InsertChannelMembers.module.css";
 import CloseIcon from "@public/Chat/Cross.svg";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 class friend {
   avatar: string = "";
@@ -36,14 +36,14 @@ const friends: friend[] = [
 
 const UsersList: React.FC<any> = (props) => {
   const AddMemberHandler = (user: friend) => {
-    props.setMembers([...props.Members, user]);
+    props.setMembers([...props.members, user]);
   };
 
   const filteredList: friend[] = friends.filter((user: friend) => {
     return (
-      (!props.Members.includes(user)) &&
-      (props.Search &&
-      user.fullName.toUpperCase().includes(props.Search.toUpperCase()))
+      !props.members.includes(user) &&
+      props.Search &&
+      user.fullName.toUpperCase().includes(props.Search.toUpperCase())
     );
   });
 
@@ -89,9 +89,14 @@ const Member: React.FC<any> = (props) => {
   );
 };
 
-export const InsertChannelMembers = () => {
+interface Props {
+  state: any;
+  dispatch: (action: any) => void;
+}
+
+export const InsertChannelMembers: React.FC<Props> = ({ state, dispatch }) => {
   const [Search, setSearch] = useState<string>("");
-  const [Members, setMembers] = useState<friend[]>([]);
+  const [members, setMembers] = useState<friend[]>([]);
 
   const SearchinputHandler = (event: any) => {
     setSearch(event.target.value);
@@ -105,13 +110,22 @@ export const InsertChannelMembers = () => {
     );
   };
 
+  useEffect(() => {
+    const newMembers = members.map((user) => user.login);
+    dispatch({ type: "members", members: newMembers });
+  }, [members]);
+
   return (
     <>
       <label htmlFor="inputAddMember">
         <div className={Styles.InsertChnlMembersContainer}>
-          {Members.map((member) => {
+          {members.map((member) => {
             return (
-              <Member removeMember={RemoveMemberHandler} member={member} />
+              <Member
+                key={member.login}
+                removeMember={RemoveMemberHandler}
+                member={member}
+              />
             );
           })}
           <input
@@ -123,7 +137,7 @@ export const InsertChannelMembers = () => {
           ></input>
         </div>
       </label>
-      {<UsersList Members={Members} setMembers={setMembers} Search={Search} />}
+      {<UsersList members={members} setMembers={setMembers} Search={Search} />}
     </>
   );
 };
