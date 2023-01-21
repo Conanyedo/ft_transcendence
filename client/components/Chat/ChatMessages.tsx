@@ -1,7 +1,7 @@
 import Styles from "@styles/Chat/ChatMessages.module.css";
 import ChatMsgSetting from "@public/Chat/ThreeDots.svg";
 import Backarrow from "@public/ArrowLeft.svg";
-import { Dispatch, SetStateAction, useEffect, useLayoutEffect, useState } from "react";
+import { Dispatch, SetStateAction, useLayoutEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { MessagesList } from "./MessagesList";
 import { ChatChnlProfile } from "./ChatChnlProfile";
