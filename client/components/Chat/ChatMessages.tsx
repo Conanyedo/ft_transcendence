@@ -1,54 +1,59 @@
 import Styles from "@styles/Chat/ChatMessages.module.css";
 import ChatMsgSetting from "@public/Chat/ThreeDots.svg";
 import Backarrow from "@public/ArrowLeft.svg";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useLayoutEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { MessagesList } from "./MessagesList";
 import { ChatChnlProfile } from "./ChatChnlProfile";
 import { SettingOption } from "./SettingOption";
-import { conversations } from "@Types/dataTypes";
-import { NextRouter, useRouter } from "next/router";
+import { conversations, MsgData } from "@Types/dataTypes";
+import { useRouter } from "next/router";
 import { CreateChannel } from "./CreateChannel";
 
-const ChatMsgInfo: React.FC<any> = (props: {
+interface MsgInfoProps {
   convData: conversations;
-  logedInUsr: string;
   showChnlProfile: boolean;
-  router: NextRouter;
   setShowChnlProfile: Dispatch<SetStateAction<boolean>>;
   setShowUpdateChannel: Dispatch<SetStateAction<boolean>>;
+}
+
+const ChatMsgInfo: React.FC<MsgInfoProps> = ({
+  convData,
+  showChnlProfile,
+  setShowChnlProfile,
+  setShowUpdateChannel,
 }) => {
   const [showConvSettings, setShowConvSettings] = useState<boolean>(false);
-
+  const router = useRouter();
   const settingsOptClickHandler = () => {
-    props.setShowUpdateChannel(true);
+    setShowUpdateChannel(true);
     setShowConvSettings(false);
   };
 
   const blockOptClickHandler = () => {
-    console.log("block : ", props.convData.login);
+    console.log("block : ", convData.login);
     setShowConvSettings(false);
   };
 
   const unblockOptClickHandler = () => {
-    console.log("Unblock : ", props.convData.login);
+    console.log("Unblock : ", convData.login);
     setShowConvSettings(false);
   };
 
   const leaveChnlOptClickHandler = () => {
-    console.log("leave : ", props.convData.fullName);
+    console.log("leave : ", convData.name);
     setShowConvSettings(false);
   };
 
   const chatMsgProfileClickHandler = () => {
-    if (props.convData.type === "DM")
-      props.router.push(`/profile/${props.convData.login}`);
-    else if (!props.showChnlProfile) props.setShowChnlProfile(true);
+    if (convData.type === "Dm")
+      router.push(`/profile/${convData.login}`);
+    else if (!showChnlProfile) setShowChnlProfile(true);
   };
 
   const backArrowHandleClick = () => {
-    if (props.showChnlProfile) props.setShowChnlProfile(false);
-    else props.router.replace({ pathname: "/chat" });
+    if (showChnlProfile) setShowChnlProfile(false);
+    else router.push({ pathname: "/chat" });
   };
 
   return (
@@ -56,7 +61,7 @@ const ChatMsgInfo: React.FC<any> = (props: {
       <div className={Styles.ChatMsginfoContainer}>
         <img
           src={Backarrow.src}
-          style={props.showChnlProfile ? { display: "inline" } : {}}
+          style={showChnlProfile ? { display: "inline" } : {}}
           onClick={backArrowHandleClick}
         ></img>
         <div className={Styles.ChatMsginfo}>
@@ -64,15 +69,15 @@ const ChatMsgInfo: React.FC<any> = (props: {
             className={Styles.ChatMsgProfile}
             onClick={chatMsgProfileClickHandler}
           >
-            <img src={props.convData.avatar}></img>
+            <img src={convData.avatar}></img>
             <div>
               <div className={Styles.ChatMsgProfileName}>
-                {props.convData.fullName}
+                {convData.name}
               </div>
               <div className={Styles.ChatMsgProfileStatus}>
-                {props.convData.type === "DM"
-                  ? props.convData.status
-                  : `${props.convData.membersNum} Members`}
+                {convData.type === "Dm"
+                  ? convData.status
+                  : `${convData.membersNum} Members`}
               </div>
             </div>
           </div>
@@ -95,23 +100,23 @@ const ChatMsgInfo: React.FC<any> = (props: {
                   scale: 1,
                 }}
               >
-                {props.convData.relation === "Owner" ||
-                props.convData.relation === "Admin" ? (
+                {convData.status === "Owner" ||
+                convData.status === "Admin" ? (
                   <SettingOption
                     name={"Settings"}
                     optionClickHandler={settingsOptClickHandler}
                   />
                 ) : null}
-                {props.convData.type === "DM" ? (
-                  props.convData.relation === "Friend" ? (
-                    <SettingOption
-                      name={"Block user"}
-                      optionClickHandler={blockOptClickHandler}
-                    />
-                  ) : (
+                {convData.type === "Dm" ? (
+                  convData.status === "Blocker" ? (
                     <SettingOption
                       name={"Unblock user"}
                       optionClickHandler={unblockOptClickHandler}
+                    />
+                    ) : (
+                    <SettingOption
+                      name={"Block user"}
+                      optionClickHandler={blockOptClickHandler}
                     />
                   )
                 ) : (
@@ -132,57 +137,55 @@ const ChatMsgInfo: React.FC<any> = (props: {
 interface Props {
   isMobile: boolean;
   convData: conversations;
-  router: NextRouter;
+  updateConversations : (msgConvId : string) => void;
 }
 
 export const ChatMessages: React.FC<Props> = ({
   isMobile,
   convData,
-  router,
+  updateConversations
 }) => {
   const [showChnlProfile, setShowChnlProfile] = useState<boolean>(false);
   const [showUpdateChannel, setShowUpdateChannel] = useState<boolean>(false);
-  const logedInUsr = localStorage.getItem("owner");
 
   const CloseChannelHandler = () => {
     setShowUpdateChannel(false);
   };
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (showChnlProfile) setShowChnlProfile(false);
-  }, [convData.convid]);
+  }, [convData.convId]);
 
   return (
     <>
       {showUpdateChannel ? (
         <CreateChannel
           isUpdate={true}
+          initialChnlState={{avatar : convData.avatar, name : convData.name, type : convData.type}}
           CloseChannelHandler={CloseChannelHandler}
         />
       ) : null}
-      {convData.convid > 0 ? (
+      {convData.convId !== "0" ? (
         <div
           className={Styles.ChatMessagesContainer}
           style={
             isMobile
-              ? convData.convid > 0
+              ? convData.convId !== "0"
                 ? { width: "100%" }
                 : { width: "0" }
               : {}
           }
         >
           <ChatMsgInfo
-            logedInUsr={logedInUsr}
             convData={convData}
             showChnlProfile={showChnlProfile}
-            router={router}
             setShowChnlProfile={setShowChnlProfile}
             setShowUpdateChannel={setShowUpdateChannel}
           />
           {showChnlProfile ? (
             <ChatChnlProfile {...convData} />
           ) : (
-            <MessagesList {...convData} />
+            <MessagesList convData={convData}  updateConversations={updateConversations}/>
           )}
         </div>
       ) : !isMobile ? (
