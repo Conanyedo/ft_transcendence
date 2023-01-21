@@ -2,10 +2,9 @@ import Styles from "@styles/Chat/ChannelMember.module.css";
 import ThreeDots from "@public/Chat/ThreeDots.svg";
 import { SettingOption } from "./SettingOption";
 import { useState } from "react";
-import { member } from "./ChatChnlProfile";
 import { motion } from "framer-motion";
 import { MuteMember } from "./MuteMember";
-import { AddMembers } from "./AddMembers";
+import { member } from "@Types/dataTypes";
 interface Props {
   relation: string;
   role: string;
@@ -39,16 +38,13 @@ export const ChannelMember: React.FC<Props> = ({ relation, role, member }) => {
     console.log("Remove Member");
   };
 
-  console.log("relation member :", relation);
-  console.log("role member :", role);
-
   return (
     <>
       {showMuteMember && <MuteMember setShowMuteMember={setShowMuteMember}/>}
       <div className={Styles.ChannelMemberContainer}>
         <div className={Styles.ChannelMemberProfile}>
           <img src={member.avatar}></img>
-          {loggedInUsr === member.login ? "You" : member.fullName}
+          {loggedInUsr === member.login ? "You" : member.fullname}
         </div>
 
         {(relation === "Owner" && role !== "Owners") ||
