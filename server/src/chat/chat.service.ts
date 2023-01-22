@@ -109,7 +109,7 @@ export class ChatService {
 			return { data: true };
 		if (conv[0].type === 'Private')
 			return { err: 'Channel not found' };
-		return { data: { ...conv[0]} };
+		return { data: { ...conv[0] } };
 	}
 
 	async blockUser(login: string, user: string) {
@@ -148,11 +148,11 @@ export class ChatService {
 
 	async getConvInfo(login: string, conv: conversationDto) {
 		conv.lastUpdate = conv.leftDate ? conv.leftDate : conv.lastUpdate;
-		const {leftDate, ...convInfo}: conversationDto = { ...conv }
+		const { leftDate, ...convInfo }: conversationDto = { ...conv }
 		if (conv.type === 'Dm') {
 			const users = await this.memberRepository
 				.query(`select users.login, users.fullname, users.status, users.avatar, members."unread" from members Join users ON members."userId" = users.id where members."conversationId" = '${conv.convId}' AND users.login != '${login}';`);
-			const relation = await this.friendshipService.getChatRelation(login, users.login);
+			const relation = await this.friendshipService.getChatRelation(login, users[0].login);
 			convInfo.name = users[0].fullname;
 			convInfo.login = users[0].login;
 			convInfo.status = (relation === 'blocked') ? 'Blocker' : users[0].status;
@@ -449,7 +449,7 @@ export class ChatService {
 		let muted: Member[] = [];
 		if (exist[0].status === 'Owner' || exist[0].status === 'Admin')
 			muted = await this.memberRepository
-			.query(`select users."login", users."fullname", users."avatar", members."status" from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND members."status" = 'Muted';`);
+				.query(`select users."login", users."fullname", users."avatar", members."status" from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND members."status" = 'Muted';`);
 		return { data: { owner, admins, members, muted } };
 	}
 
