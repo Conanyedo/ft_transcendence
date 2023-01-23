@@ -28,7 +28,6 @@ export class GoogleOauthStrategy extends PassportStrategy(Strategy, 'google') {
 			fullname: displayName,
 			avatar: `https://ui-avatars.com/api/?name=${displayName}&size=220&background=2C2C2E&color=409CFF&length=1`
 		};
-		console.log('user: ', newUser);
 		const user: userParitalDto = await this.authService.checkUserExist(newUser);
 		done(null, user);
 	}
