@@ -3,7 +3,13 @@ import { InsertChannelMembers } from "./InserChannelMembers";
 import CloseIcon from "@public/Cross.svg";
 import { Dispatch, SetStateAction, useReducer } from "react";
 import { motion } from "framer-motion";
+import { fetchAddChnlMembers } from "@hooks/useFetchData";
 
+interface Props {
+  setShowAddMember: Dispatch<SetStateAction<boolean>>;
+  setIsSuccess:  Dispatch<SetStateAction<boolean>>;
+  convId?: string;
+}
 
 const reducer = (state: any, action: any) => {
   switch (action.type) {
@@ -12,18 +18,24 @@ const reducer = (state: any, action: any) => {
   }
 };
 
-
-export const AddMembers = (props: {
-  setShowAddMember: Dispatch<SetStateAction<boolean>>;
-}) => {
+export const AddMembers : React.FC<Props> = ({setShowAddMember, setIsSuccess, convId}) => {
   const [state, dispatch] = useReducer(reducer, []);
+
   const closeAddMemberHandler = () => {
     console.log("close add member");
-    props.setShowAddMember(false);
+    setShowAddMember(false);
   };
 
-  const addMemberclickHandler = () => {
-    console.log("add member");
+  const addMemberclickHandler = async () => {
+    console.log("add member : ", state.members);
+    if (convId){
+      if( await fetchAddChnlMembers(state.members, convId)){
+        console.log("aded member : ", state.members);
+        setIsSuccess(true);
+        setShowAddMember(false);
+    }
+
+    }
   };
 
   return (
@@ -52,7 +64,7 @@ export const AddMembers = (props: {
             Add Member
             <img src={CloseIcon.src} onClick={closeAddMemberHandler}></img>
           </div>
-          <InsertChannelMembers state={state} dispatch={dispatch}/>
+          <InsertChannelMembers state={state} dispatch={dispatch} />
           <div className={Styles.AddMemberBtn} onClick={addMemberclickHandler}>
             Add
           </div>
