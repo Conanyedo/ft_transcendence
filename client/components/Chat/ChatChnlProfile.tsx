@@ -35,17 +35,25 @@ export const ChatChnlProfile: React.FC<conversations> = (convData) => {
 
   return (
     <>
-      {showAddMember && <AddMembers setShowAddMember={setShowAddMember} />}
+      {showAddMember && (
+        <AddMembers
+          setShowAddMember={setShowAddMember}
+          setIsSuccess={setIsSuccess}
+          convId={convData.convId}
+        />
+      )}
       <div className={Styles.ChannelProfile}>
         <div className={Styles.ChannelProfileHeader}>
           Channel Profile
-          <div
-            className={Styles.AddMemberButton}
-            onClick={AddMemberClickHandler}
-          >
-            <img src={AddMembericon.src} alt="AddMemberIcon"></img>
-            <p>Add members</p>
-          </div>
+          {(convData.status === "Owner" || convData.status === "Admin") && (
+            <div
+              className={Styles.AddMemberButton}
+              onClick={AddMemberClickHandler}
+            >
+              <img src={AddMembericon.src} alt="AddMemberIcon"></img>
+              <p>Add members</p>
+            </div>
+          )}
         </div>
         {chnlMemberList.owner.length > 0 && (
           <div className={Styles.MemberListContainer}>
