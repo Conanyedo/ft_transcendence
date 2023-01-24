@@ -97,7 +97,7 @@ export const CreateChannel: React.FC<Props> = ({
   };
 
   useEffect(() => {
-    if (chnlConvId) {
+    if (chnlConvId && ChnlError.length === 0) {
       updateConversations(chnlConvId);
       router.push({ pathname: "/chat", query: { channel: chnlConvId } });
       CloseChannelHandler();
