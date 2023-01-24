@@ -4,45 +4,21 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { friend } from "@Types/dataTypes";
 import { fetchDATA } from "@hooks/useFetchData";
 import { useRouter } from "next/router";
-
-const friends: friend[] = [
-  {
-    fullname: "Roronoa Zoro",
-    avatar: "https://i.ytimg.com/vi/Fe3M_hgEDjk/maxresdefault.jpg",
-    login: "zoro",
-    status: "Online",
-  },
-  {
-    fullname: "Sakazuki Akaino",
-    avatar:
-      "https://i.pinimg.com/originals/2e/94/a0/2e94a0d1a109f506d542decca10af75e.jpg",
-    login: "akainu",
-    status: "Online",
-  },
-  {
-    fullname: "Monkey D Luffy",
-    avatar:
-      "https://img.assinaja.com/upl/lojas/mundosinfinitos/imagens/foto-one-piece.png",
-    login: "luffy",
-    status: "Online",
-  },
-  {
-    fullname: "Kozuki Oden",
-    avatar:
-      "https://nintendoeverything.com/wp-content/uploads/OPPW4-DLC_12-10-20.jpg",
-    login: "oden",
-    status: "Online",
-  },
-];
+import { getImageBySize } from "@hooks/Functions";
 
 interface userListProps {
-  members : friend[];
-  friends : friend[];
-  setMembers : Dispatch<SetStateAction<friend[]>>;
-  Search : string;
+  members: friend[];
+  friends: friend[];
+  setMembers: Dispatch<SetStateAction<friend[]>>;
+  Search: string;
 }
 
-const UsersList: React.FC<userListProps> = ({members, friends, setMembers, Search}) => {
+const UsersList: React.FC<userListProps> = ({
+  members,
+  friends,
+  setMembers,
+  Search,
+}) => {
   const AddMemberHandler = (user: friend) => {
     setMembers([...members, user]);
   };
@@ -61,22 +37,18 @@ const UsersList: React.FC<userListProps> = ({members, friends, setMembers, Searc
         <div className={Styles.UserList}>
           {filteredList.map((user: friend) => {
             return (
-              <>
-                {
-                  <div className={Styles.UserContainer}>
-                    <div className={Styles.UserInfo}>
-                      <img src={user.avatar}></img>
-                      <p>{user.fullname}</p>
-                    </div>
-                    <div
-                      className={Styles.AddUserBtn}
-                      onClick={(e) => AddMemberHandler(user)}
-                    >
-                      Add
-                    </div>
-                  </div>
-                }
-              </>
+              <div key={user.login} className={Styles.UserContainer}>
+                <div className={Styles.UserInfo}>
+                  <img src={getImageBySize(user.avatar, 70)} />
+                  <p>{user.fullname}</p>
+                </div>
+                <div
+                  className={Styles.AddUserBtn}
+                  onClick={(e) => AddMemberHandler(user)}
+                >
+                  Add
+                </div>
+              </div>
             );
           })}
         </div>
@@ -85,14 +57,14 @@ const UsersList: React.FC<userListProps> = ({members, friends, setMembers, Searc
   );
 };
 
-const Member: React.FC<any> = (props) => {
+const Member: React.FC<{
+  member: friend;
+  removeMember: (user: friend) => void;
+}> = ({ member, removeMember }) => {
   return (
     <div className={Styles.MemberContainer}>
-      {props.member.fullname}
-      <img
-        src={CloseIcon.src}
-        onClick={(e) => props.removeMember(props.member)}
-      ></img>
+      {member.fullname}
+      <img src={CloseIcon.src} onClick={(e) => removeMember(member)} />
     </div>
   );
 };
@@ -109,6 +81,7 @@ export const InsertChannelMembers: React.FC<Props> = ({ state, dispatch }) => {
   const router = useRouter();
 
   const SearchinputHandler = (event: any) => {
+    console.log("onchange");
     setSearch(event.target.value);
   };
 
@@ -121,13 +94,14 @@ export const InsertChannelMembers: React.FC<Props> = ({ state, dispatch }) => {
   };
 
   useEffect(() => {
+    fetchDATA(setFriendList, router, "friendship/friends");
+  }, []);
+
+  useEffect(() => {
+    setSearch("");
     const newMembers = members.map((user) => user.login);
     dispatch({ type: "members", members: newMembers });
   }, [members]);
-
-  useEffect(() => {
-    fetchDATA(setFriendList, router, "friendship/friends");
-  },[]);
 
   return (
     <>
@@ -145,13 +119,21 @@ export const InsertChannelMembers: React.FC<Props> = ({ state, dispatch }) => {
           <input
             id="inputAddMember"
             type={"text"}
+            value={Search}
             name="channelMembers"
             placeholder="Add User"
             onChange={SearchinputHandler}
           ></input>
         </div>
       </label>
-      {<UsersList friends={friendList} members={members} setMembers={setMembers} Search={Search} />}
+      {
+        <UsersList
+          friends={friendList}
+          members={members}
+          setMembers={setMembers}
+          Search={Search}
+        />
+      }
     </>
   );
 };
