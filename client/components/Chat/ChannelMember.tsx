@@ -1,49 +1,98 @@
 import Styles from "@styles/Chat/ChannelMember.module.css";
 import ThreeDots from "@public/Chat/ThreeDots.svg";
 import { SettingOption } from "./SettingOption";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { motion } from "framer-motion";
 import { MuteMember } from "./MuteMember";
 import { member } from "@Types/dataTypes";
+import { getImageBySize } from "@hooks/Functions";
+import {
+  fetchBanMember,
+  fetchChangeMemberStatus,
+  fetchUnmuteMmeber,
+} from "@hooks/useFetchData";
+
 interface Props {
+  convId?: string;
   relation: string;
   role: string;
   member: member;
+  setIsSuccess: Dispatch<SetStateAction<boolean>>;
 }
 
-export const ChannelMember: React.FC<Props> = ({ relation, role, member }) => {
+export const ChannelMember: React.FC<Props> = ({
+  convId,
+  relation,
+  role,
+  member,
+  setIsSuccess,
+}) => {
   const [showChnlMemberSettings, setShowChnlMemberSettings] =
     useState<boolean>(false);
   const [showMuteMember, setShowMuteMember] = useState<boolean>(false);
   const loggedInUsr = localStorage.getItem("owner");
 
-  const dismissAdminClickHandler = () => {
-    console.log("Dismiss Admin ");
+  const dismissAdminClickHandler = async () => {
+    console.log("Dismiss Admin ", member.login);
+    if (convId) {
+      if (
+        await fetchChangeMemberStatus(
+          { member: member.login, status: "Member" },
+          convId
+        )
+      )
+        setIsSuccess(true);
+    }
   };
 
-  const makeAdminClickHandler = () => {
-    console.log("Make admin");
+  const makeAdminClickHandler = async () => {
+    console.log("Make admin : ", member.login);
+    if (convId) {
+      if (
+        await fetchChangeMemberStatus(
+          { member: member.login, status: "Admin" },
+          convId
+        )
+      )
+        setIsSuccess(true);
+    }
   };
 
   const muteMemberClickHandler = () => {
-    console.log("Mute Member");
     setShowMuteMember(true);
   };
 
-  const unmuteMemberClickHandler = () => {
-    console.log("Unmute Member");
+  const unmuteMemberClickHandler = async () => {
+    if (convId) {
+      if (await fetchUnmuteMmeber({ member: member.login }, convId)) {
+        console.log("Unmute Member");
+        setIsSuccess(true);
+      }
+    }
   };
 
-  const removeMemberClickHandler = () => {
-    console.log("Remove Member");
+  const banMemberClickHandler = async () => {
+    if (convId) {
+      if (await fetchBanMember({ member: member.login }, convId)) {
+        console.log("Remove Member");
+        setIsSuccess(true);
+      }
+    }
   };
 
   return (
     <>
-      {showMuteMember && <MuteMember setShowMuteMember={setShowMuteMember}/>}
+      {showMuteMember && (
+        <MuteMember
+          setShowMuteMember={setShowMuteMember}
+          setIsSuccess={setIsSuccess}
+          convId={convId}
+          member={member}
+        />
+      )}
       <div className={Styles.ChannelMemberContainer}>
         <div className={Styles.ChannelMemberProfile}>
-          <img src={member.avatar}></img>
+          <img src={getImageBySize(member.avatar, 70)} />
           {loggedInUsr === member.login ? "You" : member.fullname}
         </div>
 
@@ -89,8 +138,8 @@ export const ChannelMember: React.FC<Props> = ({ relation, role, member }) => {
                   />
                 )}
                 <SettingOption
-                  name="Remove member"
-                  optionClickHandler={removeMemberClickHandler}
+                  name="Ban member"
+                  optionClickHandler={banMemberClickHandler}
                 />
               </motion.div>
             )}

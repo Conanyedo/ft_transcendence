@@ -155,12 +155,17 @@ const Message: React.FC<MsgProps> = ({
 
 interface MsglistProps {
   convData : conversations;
+  isDirectMsg: boolean;
   updateConversations : (msgConvId : string) => void;
 }
 
-export const MessagesList: React.FC<MsglistProps> = ({convData, updateConversations}) => {
+export const MessagesList: React.FC<MsglistProps> = ({convData, isDirectMsg, updateConversations}) => {
   const [chatMessages, setChatMessages] = useState<MsgData[]>([]);
   const MessageRef = useRef<null | HTMLDivElement>(null);
+
+/* -------------------------------------------------------------------------- */
+/*                             fetch Messages List                            */
+/* -------------------------------------------------------------------------- */
 
   useEffect(() => {
     socket_notif.emit(
@@ -170,10 +175,13 @@ export const MessagesList: React.FC<MsglistProps> = ({convData, updateConversati
         setChatMessages(response.data);
       }
     );
+    return () => {
+      socket_notif.off("getMsgs");
+    };
   }, [convData.convId]);
 
   /* -------------------------------------------------------------------------- */
-  /*            listen on new msg while been on the same conversation           */
+  /*                              listen on new msg                             */
   /* -------------------------------------------------------------------------- */
 
   useEffect(() => {
@@ -210,7 +218,7 @@ export const MessagesList: React.FC<MsglistProps> = ({convData, updateConversati
         })}
         <div ref={MessageRef} />
       </div>
-      <ChatMessageInput convData={convData} setChatMessages={setChatMessages} />
+      <ChatMessageInput convData={convData} isDirectMsg={isDirectMsg} setChatMessages={setChatMessages} />
     </>
   );
 };

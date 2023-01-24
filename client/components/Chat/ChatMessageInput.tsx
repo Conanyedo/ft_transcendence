@@ -15,11 +15,13 @@ interface sendMsg {
 
 interface Props {
   convData: conversations;
+  isDirectMsg: boolean;
   setChatMessages: Dispatch<SetStateAction<MsgData[]>>;
 }
 
 export const ChatMessageInput: React.FC<Props> = ({
   convData,
+  isDirectMsg,
   setChatMessages,
 }) => {
   const [EnteredMsg, setEnteredMsg] = useState<string>("");
@@ -93,7 +95,7 @@ export const ChatMessageInput: React.FC<Props> = ({
               onKeyDown={inputonKeyHandler}
               value={EnteredMsg}
             ></input>
-            {convData.type === "Dm" ? (
+            {(convData.type === "Dm" && !isDirectMsg)? (
               <img src={InviteGameIcon.src} alt="InviteGameIcon"></img>
             ) : null}
           </div>

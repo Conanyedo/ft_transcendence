@@ -256,7 +256,7 @@ export class ChatService {
 		await Promise.all(msgs.map(async (msg) => {
 			const newDate: Date = new Date(msg.createDate.getTime() - new Date().getTimezoneOffset() * 120000);
 			const msgSent: msgDto = { msg: msg.msg, sender: msg.sender, invitation: msg.invitation, status: msg.status, date: newDate, convId: conv.id, msgId: msg.id }
-			if (conv.type === convType.DM)
+			if (conv.type === convType.Dm)
 				newMsgs.push(msgSent);
 			else {
 				const relation = await this.friendshipService.getRelation(login, msg.sender);
@@ -298,7 +298,7 @@ export class ChatService {
 			data.convId = exist[0].id;
 			return await this.createNewMessage(client.data.login, data);
 		}
-		const newConv: createConvDto = { type: convType.DM };
+		const newConv: createConvDto = { type: convType.Dm };
 		const newMembers: createMemberDto[] = [
 			{ status: memberStatus.MEMBER, login: client.data.login },
 			{ status: memberStatus.MEMBER, login: data.receiver }
@@ -338,7 +338,7 @@ export class ChatService {
 	}
 
 	async createChannel(owner: string, data: createChannelDto) {
-		if (data.type !== convType.DM) {
+		if (data.type !== convType.Dm) {
 			const exist = await this.conversationRepository
 				.query(`SELECT FROM conversations where conversations.name = '${data.name}';`);
 			if (exist.length)

@@ -1,3 +1,4 @@
+import { ChatConversations } from "@components/Chat/ChatConversations";
 import { MutableRefObject } from "react";
 import { allRanks } from "../config/baseURL";
 import unranked from "../public/Tiers/Unranked.svg";
@@ -83,6 +84,33 @@ export interface achievementType {
   title: string;
   disc: string;
 }
+
+export class friend {
+  avatar: string = "";
+  fullname: string = "";
+  login: string = "";
+  status: string = "";
+}
+
+/* -------------------------------------------------------------------------- */
+/*                             Chat Channel Types                             */
+/* -------------------------------------------------------------------------- */
+
+export interface ChannelData {
+  avatar?: string;
+  name: string;
+  type: string;
+  password?: string;
+  members?: string[];
+}
+
+export const initialChnlState: ChannelData = {
+  avatar: "",
+  name: "",
+  type: "Public",
+  password: "",
+  members: [],
+};
 export interface member {
   login: string;
   fullname: string;
@@ -96,6 +124,10 @@ export interface channelMembers {
   members?: member[];
   muted?: member[];
 }
+
+/* -------------------------------------------------------------------------- */
+/*                        Chat ChatConversations Types                        */
+/* -------------------------------------------------------------------------- */
 
 export const initialconv: conversations = {
   convId: "0",
@@ -119,6 +151,10 @@ export interface conversations {
   unread: number;
   login: string;
 }
+
+/* -------------------------------------------------------------------------- */
+/*                             Chat Messages types                            */
+/* -------------------------------------------------------------------------- */
 export interface MsgData {
   msg: string;
   sender: string;
@@ -129,15 +165,6 @@ export interface MsgData {
   convId: string;
   msgId: string;
 }
-
-export interface ChannelData {
-  avatar?: string;
-  name: string;
-  type: string;
-  password?: string;
-  members?: string[];
-}
-
 export interface chatUser {
   // Chat Page Fetched data
   convId: number; // the id of converstaion

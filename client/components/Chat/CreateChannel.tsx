@@ -4,17 +4,12 @@ import UploadIcon from "../../public/FriendIcons/UploadIcon.svg";
 import Eye from "@public/Chat/Eye.svg";
 import CloseEye from "@public/Chat/Eye-closed.svg";
 import { InsertChannelMembers } from "./InserChannelMembers";
-import { useState, useReducer } from "react";
+import { useState, useReducer, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ChannelData } from "@Types/dataTypes";
-
-const initialChnlState: ChannelData = {
-  avatar: "",
-  name: "",
-  type: "Public",
-  password: "",
-  members: [],
-};
+import { fetchCreateChannel } from "@hooks/useFetchData";
+import { useRouter } from "next/router";
+import { getImageBySize } from "@hooks/Functions";
 
 const reducer = (state: any, action: any) => {
   switch (action.type) {
@@ -37,18 +32,25 @@ const validPassword = RegExp(
 
 interface Props {
   isUpdate: boolean;
+  convId?: string;
   initialChnlState: ChannelData;
   CloseChannelHandler: () => void;
+  updateConversations: (msgConvId: string) => void;
 }
 
 export const CreateChannel: React.FC<Props> = ({
   isUpdate,
+  convId,
   initialChnlState,
   CloseChannelHandler,
+  updateConversations,
 }) => {
   const [state, dispatch] = useReducer(reducer, initialChnlState);
+  const [chnlConvId, setChnlConvId] = useState<string>("");
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [ChnlError, setChnlError] = useState<string[]>(["", ""]);
+  const [ChnlError, setChnlError] = useState<string[]>([]);
+  const [responseError, setResponseError] = useState<string>("");
+  const router = useRouter();
 
   const chnltypeDescription: string = `${
     state.type === "Public"
@@ -62,7 +64,9 @@ export const CreateChannel: React.FC<Props> = ({
     if (state.name.length < 4)
       setChnlError(["channelName", "invalid Channel Name"]);
     else if (
-      (!isUpdate && state.type === "Protected" && !validPassword.test(state.password)) ||
+      (!isUpdate &&
+        state.type === "Protected" &&
+        !validPassword.test(state.password)) ||
       (isUpdate &&
         state.type === "Protected" &&
         state.password.length > 0 &&
@@ -77,12 +81,28 @@ export const CreateChannel: React.FC<Props> = ({
         "channelMembers",
         "invalid channel members (at least 1 member)",
       ]);
+    else setChnlError([]);
   };
 
   const FormSubmitHandler = (event: any) => {
     event.preventDefault();
     checkIsValidForm();
+    if (ChnlError.length === 0) {
+      {
+        !isUpdate
+          ? fetchCreateChannel(setChnlConvId, router, state, setResponseError)
+          : console.log("update channel fetch");
+      }
+    }
   };
+
+  useEffect(() => {
+    if (chnlConvId) {
+      updateConversations(chnlConvId);
+      router.push({ pathname: "/chat", query: { channel: chnlConvId } });
+      CloseChannelHandler();
+    }
+  }, [chnlConvId]);
 
   return (
     <>
@@ -116,7 +136,7 @@ export const CreateChannel: React.FC<Props> = ({
             {isUpdate && (
               <label className={Styles.ChannelImage} htmlFor="channelImage">
                 <img
-                  src="https://otsukai.com/public/item/41345/5f3e27993c0ce.png?operation=resize&w=960"
+                  src={getImageBySize(state.avatar, 70)}
                   alt="channelImage"
                 />
                 <input
@@ -230,6 +250,9 @@ export const CreateChannel: React.FC<Props> = ({
                   <p className={Styles.ChnlError}>{ChnlError[1]}</p>
                 )}
               </div>
+            )}
+            {responseError.length > 0 && ChnlError.length === 0 && (
+              <p className={Styles.ChnlError}>{responseError}</p>
             )}
             <input type="submit" value={!isUpdate ? "Create" : "Update"} />
           </form>

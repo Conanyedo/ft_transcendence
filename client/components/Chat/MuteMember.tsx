@@ -2,21 +2,48 @@ import Styles from "@styles/Chat/MuteMember.module.css";
 import CloseIcon from "@public/Cross.svg";
 import { Dispatch, SetStateAction } from "react";
 import { motion } from "framer-motion";
+import { member } from "@Types/dataTypes";
+import { fetchMuteMember } from "@hooks/useFetchData";
 
+const durations: { [key: string]: number } = {
+  "10 Seconds": 10,
+  "1 Hour": 3600,
+  "8 Hours": 8 * 3600,
+  "12 Hours": 12 * 3600,
+  "24 Hours": 24 * 3600,
+  "7 Days": 7 * 24 * 3600,
+  "1 Month": 30 * 24 * 3600,
+};
 interface Props {
   setShowMuteMember: Dispatch<SetStateAction<boolean>>;
+  setIsSuccess: Dispatch<SetStateAction<boolean>>;
+  convId?: string;
+  member: member;
 }
 
-export const MuteMember: React.FC<Props> = ({ setShowMuteMember }) => {
+export const MuteMember: React.FC<Props> = ({
+  setShowMuteMember,
+  setIsSuccess,
+  convId,
+  member,
+}) => {
   const closeMuteMember = () => {
     setShowMuteMember(false);
   };
 
-  const formSubmitHandler = (event : any) => {
+  const formSubmitHandler = async (event: any) => {
     event.preventDefault();
-    console.log("submit mute member");
-
-  }
+    const duration = durations[event.target.muteMemberOption.value];
+    if (
+      await fetchMuteMember({
+        member: member.login,
+        duration: duration,
+      }, convId)
+    ) {
+      setIsSuccess(true);
+      closeMuteMember();
+    }
+  };
 
   return (
     <>
@@ -39,7 +66,10 @@ export const MuteMember: React.FC<Props> = ({ setShowMuteMember }) => {
             scale: 1,
           }}
         >
-          <form className={Styles.MuteMemberContainer} onSubmit={(e) => formSubmitHandler(e)}>
+          <form
+            className={Styles.MuteMemberContainer}
+            onSubmit={(e) => formSubmitHandler(e)}
+          >
             <div className={Styles.MuteMemberHeader}>
               <div> Mute Member</div>
               <img src={CloseIcon.src} onClick={closeMuteMember} />
@@ -48,7 +78,19 @@ export const MuteMember: React.FC<Props> = ({ setShowMuteMember }) => {
               The member won’t be able to send and receive any message from the
               channel
             </p>
+            
             <div className={Styles.MuteMemberOptionsContainer}>
+            <div className={Styles.MuteMemberOption}>
+                10 Seconds
+                <input
+                  type={"radio"}
+                  name="muteMemberOption"
+                  id="10 Seconds"
+                  value="10 Seconds"
+                  defaultChecked
+                ></input>
+                <label htmlFor="10 Seconds"></label>
+              </div>
               <div className={Styles.MuteMemberOption}>
                 1 Hour
                 <input

@@ -1,3 +1,4 @@
+import { getImageBySize } from "@hooks/Functions";
 import { Dispatch, SetStateAction, useState } from "react";
 import { ConsoleView } from "react-device-detect";
 import Styles from "../../styles/Chat/Conversation.module.css";
@@ -37,11 +38,11 @@ export const Conversation: React.FC<Props> = ({
       onClick={convClickHandler}
     >
       <div className={Styles.Convinfo}>
-        <img src={avatar}></img>
+        <img src={getImageBySize(avatar, 70)}></img>
         <span>{name}</span>
       </div>
       <div className={Styles.ConvStatus}>
-        {type !== "Dm" ? `${membersNum} Members` : status}
+        {type !== "Dm" ? `${membersNum} Members` : status !== "Blocker" && status}
         {unread ? <div className={Styles.NewMsg}></div> : null}
       </div>
     </div>

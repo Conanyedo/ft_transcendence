@@ -61,6 +61,7 @@ const Chat = () => {
           isMobile={isMobile}
           convs={convs}
           setConvData={setConvData}
+          updateConversations={updateConversations}
         />
         <ChatMessages
           isMobile={isMobile}

@@ -6,66 +6,6 @@ import { ChannelMember } from "./ChannelMember";
 import { AddMembers } from "./AddMembers";
 import { fetchChannelMembers } from "@hooks/useFetchData";
 
-// const chnlMemberList = {
-//   owner: [
-//     {
-//       fullname: "abdellah",
-//       avatar:
-//         "https://img.assinaja.com/upl/lojas/mundosinfinitos/imagens/foto-one-piece.png",
-//       status : "Owner",
-//         login: "belhachmiabdellah98",
-//     },
-//   ],
-//   admins: [
-//     {
-//       fullname: "Choiab Aboulewafa",
-//       avatar: "https://i.ytimg.com/vi/oZuzXz8tuSY/maxresdefault.jpg",
-//       status : "Admin",
-//       login: "cabouelw",
-//     },
-//   ],
-//   members: [
-//     {
-//       fullname: "Hatim Mzah",
-//       avatar: "https://i.ytimg.com/vi/oZuzXz8tuSY/maxresdefault.jpg",
-//       status : "Member",
-//       login: "mza7a",
-//     },
-//     {
-//       fullname: "Ismail Mannoucha",
-//       avatar: "https://i.ytimg.com/vi/oZuzXz8tuSY/maxresdefault.jpg",
-//       status : "Member",
-//       login: "imannouc",
-//     },
-//     {
-//       fullname: "Othmane bounri",
-//       avatar: "https://i.ytimg.com/vi/oZuzXz8tuSY/maxresdefault.jpg",
-//       status : "Member",
-//       login: "obounri",
-//     },
-//     {
-//       fullname: "Amine El haiba",
-//       avatar: "https://i.ytimg.com/vi/oZuzXz8tuSY/maxresdefault.jpg",
-//       status : "Member",
-//       login: "aelhaiba",
-//     },
-//   ],
-//   muted: [
-//     {
-//       fullname: "Abderrahmane",
-//       avatar: "https://i.ytimg.com/vi/oZuzXz8tuSY/maxresdefault.jpg",
-//       status : "Mute",
-//       login: "aerah",
-//     },
-//     {
-//       fullname: "Abssi Hamdon",
-//       avatar: "https://i.ytimg.com/vi/oZuzXz8tuSY/maxresdefault.jpg",
-//       status : "Mute",
-//       login: "amdon",
-//     },
-//   ],
-// };
-
 const initialMemberList: channelMembers = {
   owner: [],
   admins: [],
@@ -75,6 +15,7 @@ const initialMemberList: channelMembers = {
 
 export const ChatChnlProfile: React.FC<conversations> = (convData) => {
   const [showAddMember, setShowAddMember] = useState<boolean>(false);
+  const [isSuccess, setIsSuccess] = useState<boolean>(false);
   const [chnlMemberList, setChnlMemberList] =
     useState<channelMembers>(initialMemberList);
 
@@ -86,11 +27,11 @@ export const ChatChnlProfile: React.FC<conversations> = (convData) => {
   useEffect(() => {
     if (convData.convId)
       fetchChannelMembers(convData.convId, setChnlMemberList);
-  }, [convData.convId]);
-
-  useEffect(() => {
-    console.log("here member : ", chnlMemberList.owner);
-  }, [chnlMemberList]);
+    return () => {
+      setChnlMemberList(initialMemberList);
+      setIsSuccess(false);
+    };
+  }, [convData.convId, isSuccess]);
 
   return (
     <>
@@ -111,9 +52,11 @@ export const ChatChnlProfile: React.FC<conversations> = (convData) => {
             Owner
             <div className={Styles.MemberList}>
               <ChannelMember
+                convId={convData.convId}
                 relation={convData.status}
                 role={"Owners"}
                 member={chnlMemberList.owner[0]}
+                setIsSuccess={setIsSuccess}
               />
             </div>
           </div>
@@ -127,9 +70,11 @@ export const ChatChnlProfile: React.FC<conversations> = (convData) => {
                   return (
                     <ChannelMember
                       key={member.login}
+                      convId={convData.convId}
                       relation={convData.status}
                       role={"Admins"}
                       member={member}
+                      setIsSuccess={setIsSuccess}
                     />
                   );
                 })}
@@ -145,9 +90,11 @@ export const ChatChnlProfile: React.FC<conversations> = (convData) => {
                   return (
                     <ChannelMember
                       key={member.login}
+                      convId={convData.convId}
                       relation={convData.status}
                       role={"Members"}
                       member={member}
+                      setIsSuccess={setIsSuccess}
                     />
                   );
                 })}
@@ -163,9 +110,11 @@ export const ChatChnlProfile: React.FC<conversations> = (convData) => {
                   return (
                     <ChannelMember
                       key={member.login}
+                      convId={convData.convId}
                       relation={convData.status}
                       role={"Muted"}
                       member={member}
+                      setIsSuccess={setIsSuccess}
                     />
                   );
                 })}

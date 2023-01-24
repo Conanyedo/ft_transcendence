@@ -9,19 +9,26 @@ import { SettingOption } from "./SettingOption";
 import { conversations, MsgData } from "@Types/dataTypes";
 import { useRouter } from "next/router";
 import { CreateChannel } from "./CreateChannel";
+import { getImageBySize } from "@hooks/Functions";
+import { fetchBlockUnblockUser, fetchLeaveChannel } from "@hooks/useFetchData";
+import { update } from "lodash";
 
 interface MsgInfoProps {
   convData: conversations;
+  isDirectMsg:boolean;
   showChnlProfile: boolean;
+  updateConversations: (ConvId: string) => void;
   setShowChnlProfile: Dispatch<SetStateAction<boolean>>;
   setShowUpdateChannel: Dispatch<SetStateAction<boolean>>;
 }
 
 const ChatMsgInfo: React.FC<MsgInfoProps> = ({
   convData,
+  isDirectMsg,
   showChnlProfile,
   setShowChnlProfile,
   setShowUpdateChannel,
+  updateConversations,
 }) => {
   const [showConvSettings, setShowConvSettings] = useState<boolean>(false);
   const router = useRouter();
@@ -30,24 +37,39 @@ const ChatMsgInfo: React.FC<MsgInfoProps> = ({
     setShowConvSettings(false);
   };
 
-  const blockOptClickHandler = () => {
-    console.log("block : ", convData.login);
-    setShowConvSettings(false);
+  const blockOptClickHandler = async () => {
+    if (convData.convId) {
+      console.log("block : ", convData.login);
+      if (await fetchBlockUnblockUser(convData.login, "friendship/blockUser")) {
+        console.log("blocked : ", convData.login);
+        updateConversations(convData.convId);
+        setShowConvSettings(false);
+      }
+    }
   };
 
-  const unblockOptClickHandler = () => {
-    console.log("Unblock : ", convData.login);
-    setShowConvSettings(false);
+  const unblockOptClickHandler = async () => {
+    if (convData.convId) {
+      console.log("unblock : ", convData.login);
+      if (await fetchBlockUnblockUser(convData.login, "friendship/unblock")) {
+        console.log("unblocked : ", convData.login);
+        updateConversations(convData.convId);
+        setShowConvSettings(false);
+      }
+    }
   };
 
-  const leaveChnlOptClickHandler = () => {
-    console.log("leave : ", convData.name);
-    setShowConvSettings(false);
+  const leaveChnlOptClickHandler = async () => {
+    if (convData.convId)
+      if (await fetchLeaveChannel(convData.convId)) {
+        console.log("leave : ", convData.name);
+        updateConversations(convData.convId);
+        setShowConvSettings(false);
+      }
   };
 
   const chatMsgProfileClickHandler = () => {
-    if (convData.type === "Dm")
-      router.push(`/profile/${convData.login}`);
+    if (convData.type === "Dm") router.push(`/profile/${convData.login}`);
     else if (!showChnlProfile) setShowChnlProfile(true);
   };
 
@@ -69,25 +91,25 @@ const ChatMsgInfo: React.FC<MsgInfoProps> = ({
             className={Styles.ChatMsgProfile}
             onClick={chatMsgProfileClickHandler}
           >
-            <img src={convData.avatar}></img>
+            <img src={getImageBySize(convData.avatar, 70)}></img>
             <div>
-              <div className={Styles.ChatMsgProfileName}>
-                {convData.name}
-              </div>
+              <div className={Styles.ChatMsgProfileName}>{convData.name}</div>
               <div className={Styles.ChatMsgProfileStatus}>
-                {convData.type === "Dm"
-                  ? convData.status
-                  : `${convData.membersNum} Members`}
+                {convData.type !== "Dm"
+                  ? `${convData.membersNum} Members`
+                  : convData.status !== "Blocker" && convData.status}
               </div>
             </div>
           </div>
 
           <div className={Styles.ChatMsgSettings}>
-            <img
-              src={ChatMsgSetting.src}
-              alt="ChatMsgSetting"
-              onClick={(e) => setShowConvSettings(!showConvSettings)}
-            ></img>
+            { (convData.status !== "Left" && !isDirectMsg) &&
+              <img
+                src={ChatMsgSetting.src}
+                alt="ChatMsgSetting"
+                onClick={(e) => setShowConvSettings(!showConvSettings)}
+              />
+            }
             {showConvSettings && (
               <motion.div
                 className={Styles.SettingContainer}
@@ -100,8 +122,7 @@ const ChatMsgInfo: React.FC<MsgInfoProps> = ({
                   scale: 1,
                 }}
               >
-                {convData.status === "Owner" ||
-                convData.status === "Admin" ? (
+                {convData.status === "Owner" || convData.status === "Admin" ? (
                   <SettingOption
                     name={"Settings"}
                     optionClickHandler={settingsOptClickHandler}
@@ -113,7 +134,7 @@ const ChatMsgInfo: React.FC<MsgInfoProps> = ({
                       name={"Unblock user"}
                       optionClickHandler={unblockOptClickHandler}
                     />
-                    ) : (
+                  ) : (
                     <SettingOption
                       name={"Block user"}
                       optionClickHandler={blockOptClickHandler}
@@ -137,13 +158,15 @@ const ChatMsgInfo: React.FC<MsgInfoProps> = ({
 interface Props {
   isMobile: boolean;
   convData: conversations;
-  updateConversations : (msgConvId : string) => void;
+  isDirectMsg: boolean;
+  updateConversations: (msgConvId: string) => void;
 }
 
 export const ChatMessages: React.FC<Props> = ({
   isMobile,
   convData,
-  updateConversations
+  isDirectMsg,
+  updateConversations,
 }) => {
   const [showChnlProfile, setShowChnlProfile] = useState<boolean>(false);
   const [showUpdateChannel, setShowUpdateChannel] = useState<boolean>(false);
@@ -156,12 +179,20 @@ export const ChatMessages: React.FC<Props> = ({
     if (showChnlProfile) setShowChnlProfile(false);
   }, [convData.convId]);
 
+  console.log("conv data: ", convData);
+
   return (
     <>
       {showUpdateChannel ? (
         <CreateChannel
           isUpdate={true}
-          initialChnlState={{avatar : convData.avatar, name : convData.name, type : convData.type}}
+          convId={convData.convId}
+          initialChnlState={{
+            avatar: convData.avatar,
+            name: convData.name,
+            type: convData.type,
+          }}
+          updateConversations={updateConversations}
           CloseChannelHandler={CloseChannelHandler}
         />
       ) : null}
@@ -178,14 +209,20 @@ export const ChatMessages: React.FC<Props> = ({
         >
           <ChatMsgInfo
             convData={convData}
+            isDirectMsg={isDirectMsg}
             showChnlProfile={showChnlProfile}
             setShowChnlProfile={setShowChnlProfile}
             setShowUpdateChannel={setShowUpdateChannel}
+            updateConversations={updateConversations}
           />
           {showChnlProfile ? (
             <ChatChnlProfile {...convData} />
           ) : (
-            <MessagesList convData={convData}  updateConversations={updateConversations}/>
+            <MessagesList
+            isDirectMsg={isDirectMsg}
+              convData={convData}
+              updateConversations={updateConversations}
+            />
           )}
         </div>
       ) : !isMobile ? (
