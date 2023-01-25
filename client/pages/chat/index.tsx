@@ -49,6 +49,7 @@ const Chat = () => {
       setselectedConv(id);
     } else {
       setselectedConv("0");
+      setConvData(initialconv);
     }
   }, [router.query]);
 
@@ -94,6 +95,7 @@ const Chat = () => {
   /* -------------------------------------------------------------------------- */
 
   useLayoutEffect(() => {
+    
     if (convs.length > 0 && selectedConv !== "0") {
       let foundconv = convs.find(
         (conv) => conv.convId === selectedConv || conv.login === selectedConv
