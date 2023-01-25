@@ -52,8 +52,6 @@ export const ChatConversations: React.FC<Props> = ({
     setshowAddChannel(false);
   };
 
-  console.log("selected conv in hcat cnv ", selectedConv);
-
   return (
     <>
       {showAddChannel && (

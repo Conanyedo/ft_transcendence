@@ -39,7 +39,6 @@ const validPassword = RegExp(
 interface Props {
   isUpdate: boolean;
   convId?: string;
-  oldType: string;
   initialChnlState: ChannelData;
   CloseChannelHandler: () => void;
   updateConversations: (msgConvId: string) => void;
@@ -47,7 +46,6 @@ interface Props {
 
 export const CreateChannel: React.FC<Props> = ({
   isUpdate,
-  oldType,
   convId,
   initialChnlState,
   CloseChannelHandler,
@@ -114,7 +112,6 @@ export const CreateChannel: React.FC<Props> = ({
         else if (convId) {
           await fetchUpdateChannel(
             state,
-            oldType,
             convId,
             imageFileRef,
             setResponseError

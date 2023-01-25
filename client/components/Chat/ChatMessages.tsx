@@ -1,7 +1,7 @@
 import Styles from "@styles/Chat/ChatMessages.module.css";
 import ChatMsgSetting from "@public/Chat/ThreeDots.svg";
 import Backarrow from "@public/ArrowLeft.svg";
-import { Dispatch, SetStateAction, useLayoutEffect, useState } from "react";
+import React, { Dispatch, SetStateAction, useLayoutEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { MessagesList } from "./MessagesList";
 import { ChatChnlProfile } from "./ChatChnlProfile";
@@ -11,7 +11,7 @@ import { useRouter } from "next/router";
 import { CreateChannel } from "./CreateChannel";
 import { getImageBySize } from "@hooks/Functions";
 import { fetchBlockUnblockUser, fetchLeaveChannel } from "@hooks/useFetchData";
-import { update } from "lodash";
+import Loading from "@components/loading/loading";
 
 interface MsgInfoProps {
   convData: conversations;
@@ -163,7 +163,7 @@ interface Props {
   updateConversations: (msgConvId: string) => void;
 }
 
-export const ChatMessages: React.FC<Props> = ({
+const ChatMessages: React.FC<Props> = ({
   isMobile,
   convData,
   isDirectMsg,
@@ -171,6 +171,7 @@ export const ChatMessages: React.FC<Props> = ({
 }) => {
   const [showChnlProfile, setShowChnlProfile] = useState<boolean>(false);
   const [showUpdateChannel, setShowUpdateChannel] = useState<boolean>(false);
+  const { login, channel } = useRouter().query;
 
   const CloseChannelHandler = () => {
     setShowUpdateChannel(false);
@@ -179,13 +180,15 @@ export const ChatMessages: React.FC<Props> = ({
   useLayoutEffect(() => {
     if (showChnlProfile) setShowChnlProfile(false);
   }, [convData.convId]);
-
+  // console.log(convData.convId, login, channel);
+  
+  if (login && login !== convData.convId || channel && channel !== convData.convId)
+    return <Loading />
   return (
     <>
       {showUpdateChannel && (
         <CreateChannel
           isUpdate={true}
-          oldType={convData.type}
           convId={convData.convId}
           initialChnlState={{
             avatar: convData.avatar,
@@ -238,3 +241,5 @@ export const ChatMessages: React.FC<Props> = ({
     </>
   );
 };
+
+export default React.memo(ChatMessages);

@@ -1,224 +1,222 @@
-import Styles from "styles/Chat/MessagesList.module.css";
-import { conversations, MsgData } from "@Types/dataTypes";
-import { InviteMsg } from "./inviteMsg";
-import { Dispatch, useState, useEffect, useRef, useLayoutEffect } from "react";
-import { ChatMessageInput } from "./ChatMessageInput";
-import socket_notif from "config/socketNotif";
+import Styles from "styles/Chat/MessagesList.module.css"
+import { conversations, MsgData } from "@Types/dataTypes"
+import { useState, useEffect, useRef } from "react"
+import { ChatMessageInput } from "./ChatMessageInput"
+import socket_notif from "config/socketNotif"
+import socket_game from "config/socketGameConfig"
+import { useRouter } from "next/router"
+import { getImageBySize } from "@hooks/Functions"
 
 const formatAMPM = (date: Date) => {
-  let hours = new Date(date).getHours();
-  let minutes: number | string = new Date(date).getMinutes();
-  const ampm = hours >= 12 ? "PM" : "AM";
+	let hours = new Date(date).getHours()
+	let minutes: number | string = new Date(date).getMinutes()
+	const ampm = hours >= 12 ? "PM" : "AM"
 
-  hours %= 12;
-  hours = hours || 12;
-  minutes = minutes < 10 ? `0${minutes}` : minutes;
+	hours %= 12
+	hours = hours || 12
+	minutes = minutes < 10 ? `0${minutes}` : minutes
 
-  const strTime = `${hours}:${minutes} ${ampm}`;
-  return strTime;
-};
+	const strTime = `${hours}:${minutes} ${ampm}`
+	return strTime
+}
 interface MsgProps {
-  avatar?: string;
-  msg: string;
-  sender: string;
-  fullname?: string;
-  invitation?: string;
-  status: string;
-  date: Date;
-  convId?: string;
-  msgId?: string;
-  type: string;
+	avatar?: string
+	msg: string
+	sender: string
+	fullname?: string
+	invitation?: string
+	status: string
+	date: Date
+	convId?: string
+	msgId?: string
+	type: string
+	UpdateInvitMsg: (msgId: string, status: string) => void
 }
 
 const Message: React.FC<MsgProps> = ({
-  avatar,
-  msg,
-  sender,
-  fullname,
-  invitation,
-  status,
-  type,
-  date,
+	avatar,
+	msg,
+	sender,
+	fullname,
+	invitation,
+	status,
+	type,
+	date,
+	msgId,
+	convId,
+	UpdateInvitMsg,
 }) => {
-  const [inviteMsgAction, setinviteMsgAction] = useState<string>(status);
-  const msgTime = formatAMPM(date);
-  const logedInUsr = localStorage.getItem("owner");
-  const MsgInvitStatus = `${
-    inviteMsgAction === "Canceled"
-      ? "Invitation has been canceled"
-      : inviteMsgAction === "Accepted"
-      ? "Invitation has been accepted"
-      : inviteMsgAction === "Refused"
-      ? "Invitation has been refused"
-      : sender === logedInUsr
-      ? "You invite him to play pong game"
-      : "Invites you to play pong game"
-  }`;
+	const msgTime = formatAMPM(date)
+	const me = localStorage.getItem("owner")
+	const MsgInvitStatus = `${
+		status === "Canceled"
+			? "Invitation has been canceled"
+			: status === "Accepted"
+			? "Invitation has been accepted"
+			: status === "Refused"
+			? "Invitation has been refused"
+			: sender === me
+			? "You invite him to play pong game"
+			: "Invites you to play pong game"
+	}`
+	const router = useRouter()
+	const NewPath = getImageBySize(avatar?.length ? avatar : "", 70)
 
-  const CancelInviteHandler = () => {
-    console.log("game invitation canceled");
-    setinviteMsgAction("Canceled");
-  };
+	const AcceptInviteHandler = async () => {
+		socket_game.emit("joinGameFriend", { login: me, accept: invitation }, (data: string) => {
+			if (data.length > 4 && msgId && convId) {
+				socket_notif.emit(
+					"updateInvitation",
+					{
+						convId: convId,
+						msgId: msgId,
+						status: "Accepted",
+					},
+					(res: any) => {
+						UpdateInvitMsg(msgId, "Accepted")
+						router.push("/game/lobby?gameID=" + data)
+					}
+				)
+			}
+		})
+	}
 
-  const AcceptInviteHandler = () => {
-    console.log("game invitation Accepted");
-    setinviteMsgAction("Accepted");
-  };
+	const RefuseInviteHandler = async () => {
+		socket_game.emit("refuseChallenge", invitation)
+		if (msgId && convId)
+			socket_notif.emit("updateInvitation", { convId: convId, msgId: msgId, status: "Refused" }, (res: any) => {
+				UpdateInvitMsg(msgId, "Refused")
+			})
+	}
+	const CancelInviteHandler = () => {
+		console.log("msgId:", msgId, convId)
+		socket_game.emit("removeGameLobby", invitation)
+		if (msgId && convId)
+			socket_notif.emit("updateInvitation", { convId: convId, msgId: msgId, status: "Canceled" }, (res: any) => {
+				UpdateInvitMsg(msgId, "Canceled")
+			})
+	}
 
-  const RefuseInviteHandler = () => {
-    console.log("game invitation Refused");
-    setinviteMsgAction("Refused");
-  };
-
-  return (
-    <>
-      {!invitation ? (
-        <div className={sender === logedInUsr ? Styles.right : Styles.left}>
-          <div className={Styles.MsgContainer}>
-            <div
-              className={`${Styles.MsgBox} ${
-                sender !== logedInUsr && Styles.SenderMsgBox
-              }`}
-            >
-              {type !== "Dm" && sender !== logedInUsr ? (
-                <h2>{fullname}</h2>
-              ) : null}
-              <p>{msg}</p>
-            </div>
-            <div
-              className={`${Styles.MsgDate} ${
-                sender !== logedInUsr && Styles.SenderMsgDate
-              }`}
-            >
-              {msgTime}
-            </div>
-          </div>
-        </div>
-      ) : (
-        <div className={sender === logedInUsr ? Styles.right : Styles.left}>
-          <div className={Styles.MsgContainer}>
-            <div
-              className={`${Styles.InviteMsgBox} && ${
-                sender !== logedInUsr && Styles.SenderInviteMsgBox
-              }`}
-            >
-              <div className={Styles.InviteMsginfo}>
-                <img src={avatar} alt="UserAvatar"></img>
-                <div className={Styles.InviteMsgProfile}>
-                  <div>
-                    <div className={Styles.InviteMsgProfileName}>
-                      {fullname}
-                    </div>
-                    <div className={Styles.InviteMsgStatus}>
-                      {MsgInvitStatus}
-                    </div>
-                  </div>
-                </div>
-              </div>
-              {sender === logedInUsr && inviteMsgAction === "Sent" ? (
-                <div
-                  className={Styles.InviteMsgButton}
-                  onClick={CancelInviteHandler}
-                >
-                  Cancel invitation
-                </div>
-              ) : inviteMsgAction === "Sent" ? (
-                <div className={Styles.SenderInviteMsgButton}>
-                  <div
-                    className={Styles.RefuseInvite}
-                    onClick={RefuseInviteHandler}
-                  >
-                    Refuse
-                  </div>
-                  <div
-                    className={Styles.AcceptInvite}
-                    onClick={AcceptInviteHandler}
-                  >
-                    Accept
-                  </div>
-                </div>
-              ) : null}
-            </div>
-            <div
-              className={`${Styles.MsgDate} ${
-                sender !== logedInUsr && Styles.SenderMsgDate
-              }`}
-            >
-              {msgTime}
-            </div>
-          </div>
-        </div>
-      )}
-    </>
-  );
-};
-
-interface MsglistProps {
-  convData : conversations;
-  isDirectMsg: boolean;
-  updateConversations : (msgConvId : string) => void;
+	return (
+		<>
+			{!invitation ? (
+				<div className={sender === me ? Styles.right : Styles.left}>
+					<div className={Styles.MsgContainer}>
+						<div className={`${Styles.MsgBox} ${sender !== me && Styles.SenderMsgBox}`}>
+							{type !== "Dm" && sender !== me ? <h2>{fullname}</h2> : null}
+							<p>{msg}</p>
+						</div>
+						<div className={`${Styles.MsgDate} ${sender !== me && Styles.SenderMsgDate}`}>{msgTime}</div>
+					</div>
+				</div>
+			) : (
+				<div className={sender === me ? Styles.right : Styles.left}>
+					<div className={Styles.MsgContainer}>
+						<div className={`${Styles.InviteMsgBox} && ${sender !== me && Styles.SenderInviteMsgBox}`}>
+							<div className={Styles.InviteMsginfo}>
+								<img src={NewPath} alt={fullname}></img>
+								<div className={Styles.InviteMsgProfile}>
+									<div>
+										<div className={Styles.InviteMsgProfileName}>{fullname}</div>
+										<div className={Styles.InviteMsgStatus}>{MsgInvitStatus}</div>
+									</div>
+								</div>
+							</div>
+							{sender === me && status === "Sent" ? (
+								<div className={Styles.InviteMsgButton} onClick={CancelInviteHandler}>
+									Cancel invitation
+								</div>
+							) : status === "Sent" ? (
+								<div className={Styles.SenderInviteMsgButton}>
+									<div className={Styles.RefuseInvite} onClick={RefuseInviteHandler}>
+										Refuse
+									</div>
+									<div className={Styles.AcceptInvite} onClick={AcceptInviteHandler}>
+										Accept
+									</div>
+								</div>
+							) : null}
+						</div>
+						<div className={`${Styles.MsgDate} ${sender !== me && Styles.SenderMsgDate}`}>{msgTime}</div>
+					</div>
+				</div>
+			)}
+		</>
+	)
 }
 
-export const MessagesList: React.FC<MsglistProps> = ({convData, isDirectMsg, updateConversations}) => {
-  const [chatMessages, setChatMessages] = useState<MsgData[]>([]);
-  const MessageRef = useRef<null | HTMLDivElement>(null);
+interface MsglistProps {
+	convData: conversations
+	isDirectMsg: boolean
+	updateConversations: (msgConvId: string) => void
+}
 
-/* -------------------------------------------------------------------------- */
-/*                             fetch Messages List                            */
-/* -------------------------------------------------------------------------- */
+export const MessagesList: React.FC<MsglistProps> = ({ convData, isDirectMsg, updateConversations }) => {
+	const [chatMessages, setChatMessages] = useState<MsgData[]>([])
+	const MessageRef = useRef<null | HTMLDivElement>(null)
 
-  useEffect(() => {
-    socket_notif.emit(
-      "getMsgs",
-      { convId: convData.convId },
-      (response: any) => {
-        setChatMessages(response.data);
-      }
-    );
-    return () => {
-      socket_notif.off("getMsgs");
-    };
-  }, [convData.convId]);
+	/* -------------------------------------------------------------------------- */
+	/*                             fetch Messages List                            */
+	/* -------------------------------------------------------------------------- */
 
-  /* -------------------------------------------------------------------------- */
-  /*                              listen on new msg                             */
-  /* -------------------------------------------------------------------------- */
+	useEffect(() => {
+		socket_notif.emit("getMsgs", { convId: convData.convId }, (response: any) => {
+			setChatMessages(response.data)
+		})
+		return () => {}
+	}, [convData.convId])
 
-  useEffect(() => {
-    socket_notif.on("newMsg", (response : any) => {
-      {
-        if (response.data.convId === convData.convId)
-        {
-          setChatMessages((previous) => [...previous, response.data]);
-        }
-        updateConversations(response.data.convId);
-      }
-    });
-    return () => {
-      socket_notif.off("newMsg");
-    };
-  }, [convData]);
+	/* -------------------------------------------------------------------------- */
+	/*                              listen on new msg                             */
+	/* -------------------------------------------------------------------------- */
 
-  useEffect(() => {
-    MessageRef.current?.scrollIntoView();
-  }, [chatMessages, convData]);
+	useEffect(() => {
+		socket_notif.on("newMsg", (response: any) => {
+			{
+				if (response.data.convId === convData.convId) {
+					setChatMessages((previous) => [...previous, response.data])
+				}
+				updateConversations(response.data.convId)
+			}
+		})
+		return () => {
+			socket_notif.off("newMsg")
+		}
+	}, [convData])
 
-  return (
-    <>
-      <div className={Styles.ChatMsgList}>
-        {chatMessages.map((msg) => {
-          return (
-            <Message
-              key={msg.msgId}
-              {...msg}
-              avatar={msg.invitation ? convData.avatar : undefined}
-              type={convData.type}
-            />
-          );
-        })}
-        <div ref={MessageRef} />
-      </div>
-      <ChatMessageInput convData={convData} isDirectMsg={isDirectMsg} setChatMessages={setChatMessages} />
-    </>
-  );
-};
+	useEffect(() => {
+		MessageRef.current?.scrollIntoView({ behavior: "auto" })
+	}, [chatMessages, convData])
+
+	const UpdateInvitMsg = (msgId: string, status: string) => {
+		let msgs: MsgData[] = []
+		chatMessages.map((msg) => {
+			if (msg.msgId === msgId) {
+				msg.status = status
+			}
+			msgs.push(msg)
+		})
+		setChatMessages(msgs)
+	}
+	// console.log("jadid: ", chatMessages, chatMessages[0]?.convId)
+
+	return (
+		<>
+			<div className={Styles.ChatMsgList}>
+				{chatMessages.map((msg) => {
+					return (
+						<Message
+							key={msg.msgId}
+							{...msg}
+							avatar={msg.invitation ? convData.avatar : undefined}
+							type={convData.type}
+							UpdateInvitMsg={UpdateInvitMsg}
+						/>
+					)
+				})}
+				<div ref={MessageRef} />
+			</div>
+			<ChatMessageInput convData={convData} isDirectMsg={isDirectMsg} setChatMessages={setChatMessages} />
+		</>
+	)
+}

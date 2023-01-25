@@ -5,6 +5,11 @@ import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { conversations, MsgData } from "@Types/dataTypes";
 import socket_notif from "config/socketNotif";
+import { useDispatch } from "react-redux";
+import socket_game from "config/socketGameConfig";
+import { ShowErrorGameMsg } from "@store/UI-Slice";
+import SettingGame from "@components/game/settingGame";
+import { useRouter } from "next/router";
 
 interface sendMsg {
   convId?: string;
@@ -26,6 +31,9 @@ export const ChatMessageInput: React.FC<Props> = ({
 }) => {
   const [EnteredMsg, setEnteredMsg] = useState<string>("");
   const [sendMsg, setSendMsg] = useState<sendMsg | undefined>(undefined);
+  const [settingGames, ShowSettingGames] = useState(false);
+  const dispatch = useDispatch();
+  const me = localStorage.getItem("owner");
 
   // send message
 
@@ -78,13 +86,47 @@ export const ChatMessageInput: React.FC<Props> = ({
         setEnteredMsg("");
       });
     }
-    return () => {
-      socket_notif.off("sendMsg");
-    };
+    return () => {};
   }, [sendMsg]);
+  const sendInvitGame = () => {
+    console.log(convData);
+    socket_game.emit(
+      "checkLobby",
+      { admin: me, login: convData.login },
+      (data: boolean) => {
+        if (!data) {
+          ShowSettingGames(true);
+        } else {
+          dispatch(ShowErrorGameMsg());
+        }
+      }
+    );
+  }
 
+  function sendGame(gameID: string) {
+    let data = {
+      sender: me,
+      invitation: gameID,
+      convId: convData.convId,
+      receiver: convData.login,
+    };
+    socket_notif.emit("sendMsg", data, (response: any) => {
+      console.log("res ", response);
+    });
+    ShowSettingGames(false);
+  }
+  const HideSetting = () => {
+    ShowSettingGames(false);
+  };
   return (
     <>
+    {settingGames && (
+        <SettingGame
+          sendGame={sendGame}
+          login={convData?.login}
+          Hide={HideSetting}
+        />
+      )}
       {!inputStatus ? (
         <div className={Styles.ChatMsgSendBoxContainer}>
           <div className={Styles.ChatMsgSendBox}>
@@ -96,7 +138,7 @@ export const ChatMessageInput: React.FC<Props> = ({
               value={EnteredMsg}
             ></input>
             {(convData.type === "Dm" && !isDirectMsg)? (
-              <img src={InviteGameIcon.src} alt="InviteGameIcon"></img>
+              <img src={InviteGameIcon.src} alt="InviteGameIcon" onClick={sendInvitGame}></img>
             ) : null}
           </div>
           {EnteredMsg.length > 0 ? (
