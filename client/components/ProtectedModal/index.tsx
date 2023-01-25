@@ -40,8 +40,6 @@ export const ProtectedFormMdl: React.FC<{
     else {
       let data = { password: inputVal, convId: convId };
       const res: boolean = await JoinChannel(
-        () => null,
-        router,
         data,
         setError
       );
