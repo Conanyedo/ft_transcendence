@@ -41,6 +41,12 @@ export class ChatGateway {
 	}
 
 	@UseGuards(WsJwtGuard)
+	@SubscribeMessage('setMsgsAsRead')
+	async setMsgsAsRead(@User('login') login: string, @MessageBody(ValidationPipe) data: convIdValidate) {
+		return await this.chatService.updateUnreadMsgs(login, data.convId, false);
+	}
+
+	@UseGuards(WsJwtGuard)
 	@SubscribeMessage('sendMsg')
 	async sendMsg(@User('login') login: string, @ConnectedSocket() client: Socket, @MessageBody(ValidationPipe) data: createMsgDto) {
 		let msg: msgDto;
