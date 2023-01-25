@@ -8,7 +8,12 @@ import Router, { NextRouter } from "next/router";
 import { Dispatch, SetStateAction } from "react";
 import { baseUrl } from "../config/baseURL";
 import socket_notif from "../config/socketNotif";
-import { ChannelData, channelMembers, conversations, UserTypeNew } from "../Types/dataTypes";
+import {
+  ChannelData,
+  channelMembers,
+  conversations,
+  UserTypeNew,
+} from "../Types/dataTypes";
 import { eraseCookie } from "./Functions";
 
 export const getQRcodeOrdisableCode = async (
@@ -318,13 +323,14 @@ export const fetchAddChnlMembers = async (data: string[], convId: string) => {
     },
     data: json,
     withCredentials: true,
-  }).then((response) => {
-    if (response.data.err) return false;
-    return true;
   })
-  .catch((err) => {
-    return false;
-  });
+    .then((response) => {
+      if (response.data.err) return false;
+      return true;
+    })
+    .catch((err) => {
+      return false;
+    });
 };
 
 export const banMemberFromChannel = async (data: any) => {
@@ -456,25 +462,36 @@ export const updateChnlInfo = async (
 };
 
 export const fetchUpdateChannel = async (
-  formData: any,
-  router: any,
-  login: any
+  data: ChannelData,
+  convId: string,
+  imgFileRef: React.MutableRefObject<any>,
+  setResponseError: Dispatch<SetStateAction<string>>
 ) => {
-  const token = getCookie("jwt");
-  return await axios({
-    method: "post",
-    url: `${baseUrl}chat/updateChannel`,
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-    data: formData,
-    withCredentials: true,
-  })
+  const params = new FormData();
+  params.append("name", data.name);
+  if (data.password && data.password?.length > 0)
+    params.append("type", data.type);
+  if (data.password)
+  params.append("password", data.password);
+  const imgFile = imgFileRef.current.files;
+  if (data.avatar && imgFile.length > 0) {
+    params.append("oldPath", data.avatar);
+    params.append("avatar", imgFile[0]);
+  }
+  await axios
+    .post(`${baseUrl}chat/updateChannel/${convId}`, params, {
+      headers: {
+      },
+      withCredentials: true,
+    })
     .then((res) => {
-      if (res.data.data == true) {
-        router.push(`/chat?channel=${login}`);
+      if (res.data.err !== undefined){
+        setResponseError(res.data.err);
       }
-      return true;
+      else {
+        setResponseError("");
+        return true;
+      }
     })
     .catch((err) => {
       return false;
@@ -483,7 +500,6 @@ export const fetchUpdateChannel = async (
 
 export const fetchCreateChannel = async (
   set: Dispatch<SetStateAction<string>>,
-  router: NextRouter,
   data: any,
   setResponseError: Dispatch<SetStateAction<string>>
 ) => {
@@ -511,6 +527,7 @@ export const fetchCreateChannel = async (
       } else {
         setResponseError("");
         set(res.data.data.convId);
+        return true;
       }
     })
     .catch((err) => {
@@ -830,7 +847,7 @@ export const fetchLoginInfo = async (login: string | string[]) => {
   const token = getCookie("jwt");
   return await axios({
     method: "get",
-    url: `${baseUrl}chat/Info/${login}`,
+    url: `${baseUrl}chat/loginInfo/${login}`,
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -838,13 +855,12 @@ export const fetchLoginInfo = async (login: string | string[]) => {
   })
     .then((res) => {
       if (res.data.err) return undefined;
-      else 
-          return res.data.data;
+      else return res.data.data;
     })
     .catch((err) => {
       return false;
     });
-}
+};
 
 export const getLoginInfo = async (
   login: any,
