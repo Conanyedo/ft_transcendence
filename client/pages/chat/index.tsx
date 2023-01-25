@@ -1,10 +1,11 @@
 import styles from "@styles/Chat/ChatContainer.module.css";
 import { ChatConversations } from "@components/Chat/ChatConversations";
-import { ChatMessages } from "@components/Chat/ChatMessages";
+import ChatMessages from "@components/Chat/ChatMessages";
 import { useEffect, useLayoutEffect, useState } from "react";
 import { conversations, initialconv, MsgData } from "@Types/dataTypes";
 import { fetchDATA, fetchLoginInfo } from "@hooks/useFetchData";
 import { useRouter } from "next/router";
+import Loading from "@components/loading/loading";
 
 const Chat = () => {
   const [isMobile, setIsMobile] = useState<boolean>(true);
@@ -59,24 +60,6 @@ const Chat = () => {
 
   useEffect(() => {
     fetchDATA(setConvs, router, "chat/conversations");
-  }, []);
-
-  useEffect(() => {
-    const convlist = convs.filter((conv) => {
-      return conv.convId !== newConv?.convId;
-    });
-    setConvs([newConv, ...convlist]);
-    if (isDirectMsg && newConv.convId) {
-      setselectedConv(newConv.convId);
-      setIsDirectMsg(false);
-    }
-  }, [newConv]);
-
-  /* -------------------------------------------------------------------------- */
-  /*                        detect if is a Mobile screen                        */
-  /* -------------------------------------------------------------------------- */
-
-  useEffect(() => {
     const checkMobile = () => {
       const mql = window.matchMedia("(max-width : 1024px)");
       if (mql.matches) {
@@ -89,6 +72,17 @@ const Chat = () => {
     checkMobile();
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
+
+  useEffect(() => {
+    const convlist = convs.filter((conv) => {
+      return conv.convId !== newConv?.convId;
+    });
+    setConvs([newConv, ...convlist]);
+    if (isDirectMsg && newConv.convId) {
+      setselectedConv(newConv.convId);
+      setIsDirectMsg(false);
+    }
+  }, [newConv]);
 
   /* -------------------------------------------------------------------------- */
   /*                             check if conv exist                            */
@@ -124,7 +118,7 @@ const Chat = () => {
             pathname: `/chat`,
             query: { channel: selectedConv },
           });
-  }, [convData]);
+  }, [convData.convId]);
 
   return (
     <>
