@@ -53,14 +53,19 @@ export class ChatService {
 		return { data: [...convsList] };
 	}
 
-	async updateUnreadMsgs(login: string, convId: string) {
+	async updateUnreadMsgs(login: string, convId: string, status: boolean) {
 		const exist = await this.memberRepository
 			.query(`select members.id, members."unread" from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND users."login" = '${login}' AND members."leftDate" is null;`);
-		if (!exist.length) return;
+		if (!exist.length) return { err: 'Invalid conversation' };
 		console.log('unread: ', exist[0]);
 		const unread: number = +exist[0].unread;
-		await this.memberRepository
-			.query(`update members set unread = '${unread + 1}' where members."id" = '${exist[0].id}';`);
+		if (status)
+			await this.memberRepository
+				.query(`update members set unread = '${unread + 1}' where members."id" = '${exist[0].id}';`);
+		else
+			await this.memberRepository
+				.query(`update members set unread = '${0}' where members."id" = '${exist[0].id}';`);
+		return { data: true };
 	}
 
 	async getRoomSockets(login: string, room: string) {
@@ -69,7 +74,7 @@ export class ChatService {
 		await Promise.all(sockets.map(async (socket) => {
 			const relation = await this.friendshipService.getRelation(login, socket.data.login);
 			if (relation !== 'blocked') {
-				if (socket.data.login !== login) await this.updateUnreadMsgs(socket.data.login, room)
+				if (socket.data.login !== login) await this.updateUnreadMsgs(socket.data.login, room, true)
 				newSockets.push(socket.id);
 			}
 		}))
