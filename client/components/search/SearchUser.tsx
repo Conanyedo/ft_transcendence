@@ -24,6 +24,7 @@ const User: React.FC<types> = (props) => {
 	const [option, setOption] = useState(false);
 	const TaggleHandler = () => setOption(!option);
 	const goToChat = () => router.push("/chat?login=" + props.login);
+	const goToprofile = () => router.push("/profile/" + props.login);
 	const wrapperRef = useRef(null);
 	const BlockHandler = async () => {
 		await requests(props.login, "friendship/blockUser", router);
@@ -33,7 +34,7 @@ const User: React.FC<types> = (props) => {
 	const pathImage = getImageBySize(props.avatar, 70);
 	return (
 		<div className={classes.friend}>
-			<div className={classes.Avatar_name}>
+			<div className={classes.Avatar_name} onClick={goToprofile}>
 				<div className={classes.avatar}>
 					<img src={pathImage} />
 				</div>
