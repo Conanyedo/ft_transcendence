@@ -15,7 +15,7 @@ import { update } from "lodash";
 
 interface MsgInfoProps {
   convData: conversations;
-  isDirectMsg:boolean;
+  isDirectMsg: boolean;
   showChnlProfile: boolean;
   updateConversations: (ConvId: string) => void;
   setShowChnlProfile: Dispatch<SetStateAction<boolean>>;
@@ -32,6 +32,8 @@ const ChatMsgInfo: React.FC<MsgInfoProps> = ({
 }) => {
   const [showConvSettings, setShowConvSettings] = useState<boolean>(false);
   const router = useRouter();
+  const avatar = getImageBySize(convData.avatar, 70);
+  
   const settingsOptClickHandler = () => {
     setShowUpdateChannel(true);
     setShowConvSettings(false);
@@ -62,7 +64,6 @@ const ChatMsgInfo: React.FC<MsgInfoProps> = ({
   const leaveChnlOptClickHandler = async () => {
     if (convData.convId)
       if (await fetchLeaveChannel(convData.convId)) {
-        console.log("leave : ", convData.name);
         updateConversations(convData.convId);
         setShowConvSettings(false);
       }
@@ -91,7 +92,7 @@ const ChatMsgInfo: React.FC<MsgInfoProps> = ({
             className={Styles.ChatMsgProfile}
             onClick={chatMsgProfileClickHandler}
           >
-            <img src={getImageBySize(convData.avatar, 70)}></img>
+            <img src={avatar}></img>
             <div>
               <div className={Styles.ChatMsgProfileName}>{convData.name}</div>
               <div className={Styles.ChatMsgProfileStatus}>
@@ -103,13 +104,13 @@ const ChatMsgInfo: React.FC<MsgInfoProps> = ({
           </div>
 
           <div className={Styles.ChatMsgSettings}>
-            { (convData.status !== "Left" && !isDirectMsg) &&
+            {convData.status !== "Left" && !isDirectMsg && (
               <img
                 src={ChatMsgSetting.src}
                 alt="ChatMsgSetting"
                 onClick={(e) => setShowConvSettings(!showConvSettings)}
               />
-            }
+            )}
             {showConvSettings && (
               <motion.div
                 className={Styles.SettingContainer}
@@ -179,23 +180,23 @@ export const ChatMessages: React.FC<Props> = ({
     if (showChnlProfile) setShowChnlProfile(false);
   }, [convData.convId]);
 
-  console.log("conv data: ", convData);
-
   return (
     <>
-      {showUpdateChannel ? (
+      {showUpdateChannel && (
         <CreateChannel
           isUpdate={true}
+          oldType={convData.type}
           convId={convData.convId}
           initialChnlState={{
             avatar: convData.avatar,
             name: convData.name,
             type: convData.type,
+            password: ""
           }}
           updateConversations={updateConversations}
           CloseChannelHandler={CloseChannelHandler}
         />
-      ) : null}
+      )}
       {convData.convId !== "0" ? (
         <div
           className={Styles.ChatMessagesContainer}
@@ -219,19 +220,21 @@ export const ChatMessages: React.FC<Props> = ({
             <ChatChnlProfile {...convData} />
           ) : (
             <MessagesList
-            isDirectMsg={isDirectMsg}
+              isDirectMsg={isDirectMsg}
               convData={convData}
               updateConversations={updateConversations}
             />
           )}
         </div>
-      ) : !isMobile ? (
-        <div
-          className={`${Styles.ChatMessagesContainer} ${Styles.StartNewCnv}`}
-        >
-          Start New Conversation
-        </div>
-      ) : null}
+      ) : (
+        !isMobile && (
+          <div
+            className={`${Styles.ChatMessagesContainer} ${Styles.StartNewCnv}`}
+          >
+            Start New Conversation
+          </div>
+        )
+      )}
     </>
   );
 };
