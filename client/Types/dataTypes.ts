@@ -1,4 +1,3 @@
-import { ChatConversations } from "@components/Chat/ChatConversations";
 import { MutableRefObject } from "react";
 import { allRanks } from "../config/baseURL";
 import unranked from "../public/Tiers/Unranked.svg";
@@ -97,6 +96,7 @@ export class friend {
 /* -------------------------------------------------------------------------- */
 
 export interface ChannelData {
+  oldPath?: string;
   avatar?: string;
   name: string;
   type: string;
