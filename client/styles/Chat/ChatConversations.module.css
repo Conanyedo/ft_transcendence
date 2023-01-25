@@ -69,18 +69,20 @@
     flex-direction: column;
     gap: 0.5rem;
     overflow: hidden;
+    scrollbar-color: #282829 #2B2B2D;
     overflow-y: auto;
 }
 
 /* .Conversationlist::-webkit-scrollbar {
     background: #2d2f31;
-    width: 5px;
+    width: 2px;
     outline: 3px solid #2d2f31;
     border-radius: 4px;
   }
 
   .bottomSection::-webkit-scrollbar-thumb {
+    width: 1px;
     background: #242426;
     border-radius: 4px;
-  }
-   */
+  } */
+  

@@ -181,7 +181,7 @@
 
 /* Media */
 
-@media only screen and (min-width: 992px) {
+@media only screen and (min-width: 1024px) {
   .ChatMessagesContainer {
     border-radius: 0 15px 15px 0;
     /* border: 1px solid red; */
