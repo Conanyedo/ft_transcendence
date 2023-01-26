@@ -1,10 +1,5 @@
 import Styles from "@styles/Chat/ChatConversations.module.css";
-import {
-  useState,
-  Dispatch,
-  SetStateAction,
-  useLayoutEffect,
-} from "react";
+import { useState } from "react";
 import Searchicon from "../../public/SearchIcon.svg";
 import Addchannel from "../../public/Chat/AddChannel.svg";
 import Addchannelselected from "../../public/Chat/AddChannelSelected.svg";
@@ -25,9 +20,6 @@ interface Props {
   isMobile: boolean;
   convs: conversations[];
   selectedConv: string | string[];
-  setIsDirectMsg: Dispatch<SetStateAction<boolean>>;
-  setConvData: Dispatch<SetStateAction<conversations>>;
-  setselectedConv: Dispatch<SetStateAction<string | string[]>>;
   updateConversations: (msgConvId: string) => void;
 }
 
@@ -35,10 +27,7 @@ export const ChatConversations: React.FC<Props> = ({
   isMobile,
   convs,
   selectedConv,
-  setConvData,
   updateConversations,
-  setselectedConv,
-  setIsDirectMsg,
 }) => {
   const [showAddChannel, setshowAddChannel] = useState<boolean>(false);
   const [searchConv, setsearchConv] = useState<string>("");
@@ -111,7 +100,6 @@ export const ChatConversations: React.FC<Props> = ({
                       selectedConv === conv.convId ||
                       selectedConv === conv.login
                     }
-                    setSelectedConv={setselectedConv}
                   />
                 );
             })
