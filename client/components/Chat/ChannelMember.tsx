@@ -1,11 +1,11 @@
 import Styles from "@styles/Chat/ChannelMember.module.css";
 import ThreeDots from "@public/Chat/ThreeDots.svg";
 import { SettingOption } from "./SettingOption";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { MuteMember } from "./MuteMember";
 import { member } from "@Types/dataTypes";
-import { getImageBySize } from "@hooks/Functions";
+import { getImageBySize, useOutsideAlerter } from "@hooks/Functions";
 import {
   fetchBanMember,
   fetchChangeMemberStatus,
@@ -30,6 +30,7 @@ export const ChannelMember: React.FC<Props> = ({
   const [showChnlMemberSettings, setShowChnlMemberSettings] =
     useState<boolean>(false);
   const [showMuteMember, setShowMuteMember] = useState<boolean>(false);
+  const refOption = useRef(null);
   const loggedInUsr = localStorage.getItem("owner");
 
   const dismissAdminClickHandler = async () => {
@@ -80,6 +81,16 @@ export const ChannelMember: React.FC<Props> = ({
     }
   };
 
+const chnlMemberSettingsClickHandler = () => {
+    setShowChnlMemberSettings(!showChnlMemberSettings);
+}
+
+  const closeOptions = (v: boolean) => {
+    setShowChnlMemberSettings(v);
+  };
+
+  useOutsideAlerter(refOption, closeOptions);
+
   return (
     <>
       {showMuteMember && (
@@ -98,10 +109,11 @@ export const ChannelMember: React.FC<Props> = ({
 
         {(relation === "Owner" && role !== "Owners") ||
         (relation === "Admin" && (role === "Members" || role === "Muted")) ? (
-          <div className={Styles.ChatMsgSettings}>
+          <div className={Styles.ChatMsgSettings}
+                ref={refOption}>
             <img
               src={ThreeDots.src}
-              onClick={() => setShowChnlMemberSettings(!showChnlMemberSettings)}
+              onClick={chnlMemberSettingsClickHandler}
             />
             {showChnlMemberSettings && (
               <motion.div
@@ -114,6 +126,7 @@ export const ChannelMember: React.FC<Props> = ({
                   opacity: 1,
                   scale: 1,
                 }}
+                
               >
                 {role === "Admins" ? (
                   <SettingOption

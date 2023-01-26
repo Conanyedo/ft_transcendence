@@ -1,9 +1,10 @@
 import Styles from "@styles/Chat/MuteMember.module.css";
 import CloseIcon from "@public/Cross.svg";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useRef } from "react";
 import { motion } from "framer-motion";
 import { member } from "@Types/dataTypes";
 import { fetchMuteMember } from "@hooks/useFetchData";
+import { useOutsideAlerter } from "@hooks/Functions";
 
 const durations: { [key: string]: number } = {
   "10 Seconds": 10,
@@ -27,6 +28,8 @@ export const MuteMember: React.FC<Props> = ({
   convId,
   member,
 }) => {
+  const refOption = useRef(null);
+
   const closeMuteMember = () => {
     setShowMuteMember(false);
   };
@@ -45,6 +48,12 @@ export const MuteMember: React.FC<Props> = ({
     }
   };
 
+  const closeOptions = (v: boolean) => {
+    setShowMuteMember(v);
+  };
+
+  useOutsideAlerter(refOption, closeOptions);
+
   return (
     <>
       <motion.div
@@ -55,7 +64,7 @@ export const MuteMember: React.FC<Props> = ({
         animate={{
           opacity: 1,
         }}
-      >
+        >
         <motion.div
           initial={{
             opacity: 0,
@@ -65,6 +74,7 @@ export const MuteMember: React.FC<Props> = ({
             opacity: 1,
             scale: 1,
           }}
+          ref={refOption}
         >
           <form
             className={Styles.MuteMemberContainer}

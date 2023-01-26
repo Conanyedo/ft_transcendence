@@ -1,9 +1,10 @@
 import Styles from "@styles/Chat/AddMembers.module.css";
 import { InsertChannelMembers } from "./InserChannelMembers";
 import CloseIcon from "@public/Cross.svg";
-import { Dispatch, SetStateAction, useReducer } from "react";
+import { Dispatch, SetStateAction, useReducer, useRef } from "react";
 import { motion } from "framer-motion";
 import { fetchAddChnlMembers } from "@hooks/useFetchData";
+import { useOutsideAlerter } from "@hooks/Functions";
 
 interface Props {
   setShowAddMember: Dispatch<SetStateAction<boolean>>;
@@ -20,9 +21,9 @@ const reducer = (state: any, action: any) => {
 
 export const AddMembers : React.FC<Props> = ({setShowAddMember, setIsSuccess, convId}) => {
   const [state, dispatch] = useReducer(reducer, []);
+  const refOption = useRef(null);
 
   const closeAddMemberHandler = () => {
-    console.log("close add member");
     setShowAddMember(false);
   };
 
@@ -34,9 +35,14 @@ export const AddMembers : React.FC<Props> = ({setShowAddMember, setIsSuccess, co
         setIsSuccess(true);
         setShowAddMember(false);
     }
-
     }
   };
+
+  const closeOptions = (v: boolean) => {
+    setShowAddMember(v);
+  };
+
+  useOutsideAlerter(refOption, closeOptions);
 
   return (
     <>
@@ -59,6 +65,7 @@ export const AddMembers : React.FC<Props> = ({setShowAddMember, setIsSuccess, co
             opacity: 1,
             scale: 1,
           }}
+          ref={refOption}
         >
           <div className={Styles.AddMemberHeader}>
             Add Member
