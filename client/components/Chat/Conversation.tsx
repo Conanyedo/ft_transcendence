@@ -1,6 +1,5 @@
 import { getImageBySize } from "@hooks/Functions";
-import { Dispatch, SetStateAction, useState } from "react";
-import { ConsoleView } from "react-device-detect";
+import { useRouter } from "next/router";
 import Styles from "../../styles/Chat/Conversation.module.css";
 
 interface Props {
@@ -12,7 +11,6 @@ interface Props {
   unread: number;
   type: string;
   selected: boolean;
-  setSelectedConv: Dispatch<SetStateAction<string | string[]>>;
 }
 
 export const Conversation: React.FC<Props> = ({
@@ -24,10 +22,11 @@ export const Conversation: React.FC<Props> = ({
   unread,
   type,
   selected,
-  setSelectedConv,
 }) => {
+  const router = useRouter();
   const convClickHandler = () => {
-    if (convId) setSelectedConv(convId);
+    if (convId && type === "Dm") router.push("/chat?login=" + convId);
+    else router.push("/chat?channel=" + convId);
   };
 
   return (
@@ -39,12 +38,14 @@ export const Conversation: React.FC<Props> = ({
     >
       <div className={Styles.Convinfo}>
         <img src={getImageBySize(avatar, 70)}></img>
-        <span>{name}</span>
+        <div className={Styles.ConvStatus}>
+          <div className={Styles.userName}>{name}</div>
+          {type !== "Dm"
+            ? `${membersNum} Members`
+            : status !== "Blocker" && status}
+        </div>
       </div>
-      <div className={Styles.ConvStatus}>
-        {type !== "Dm" ? `${membersNum} Members` : status !== "Blocker" && status}
-        {unread ? <div className={Styles.NewMsg}></div> : null}
-      </div>
+      {unread ? <div className={Styles.NewMsg}>{unread}</div> : null}
     </div>
   );
 };
