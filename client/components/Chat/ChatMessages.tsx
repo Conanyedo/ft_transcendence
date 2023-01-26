@@ -1,21 +1,25 @@
 import Styles from "@styles/Chat/ChatMessages.module.css";
 import ChatMsgSetting from "@public/Chat/ThreeDots.svg";
 import Backarrow from "@public/ArrowLeft.svg";
-import React, { Dispatch, SetStateAction, useLayoutEffect, useState } from "react";
+import React, {
+  Dispatch,
+  SetStateAction,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import { motion } from "framer-motion";
 import { MessagesList } from "./MessagesList";
 import { ChatChnlProfile } from "./ChatChnlProfile";
 import { SettingOption } from "./SettingOption";
-import { conversations, MsgData } from "@Types/dataTypes";
+import { conversations } from "@Types/dataTypes";
 import { useRouter } from "next/router";
 import { CreateChannel } from "./CreateChannel";
-import { getImageBySize } from "@hooks/Functions";
+import { getImageBySize, useOutsideAlerter } from "@hooks/Functions";
 import { fetchBlockUnblockUser, fetchLeaveChannel } from "@hooks/useFetchData";
-import Loading from "@components/loading/loading";
 
 interface MsgInfoProps {
   convData: conversations;
-  isDirectMsg: boolean;
   showChnlProfile: boolean;
   updateConversations: (ConvId: string) => void;
   setShowChnlProfile: Dispatch<SetStateAction<boolean>>;
@@ -24,7 +28,6 @@ interface MsgInfoProps {
 
 const ChatMsgInfo: React.FC<MsgInfoProps> = ({
   convData,
-  isDirectMsg,
   showChnlProfile,
   setShowChnlProfile,
   setShowUpdateChannel,
@@ -33,7 +36,8 @@ const ChatMsgInfo: React.FC<MsgInfoProps> = ({
   const [showConvSettings, setShowConvSettings] = useState<boolean>(false);
   const router = useRouter();
   const avatar = getImageBySize(convData.avatar, 70);
-  
+  const refOption = useRef(null);
+
   const settingsOptClickHandler = () => {
     setShowUpdateChannel(true);
     setShowConvSettings(false);
@@ -79,6 +83,12 @@ const ChatMsgInfo: React.FC<MsgInfoProps> = ({
     else router.push({ pathname: "/chat" });
   };
 
+  const closeOptions = (v: boolean) => {
+    setShowConvSettings(v);
+  };
+
+  useOutsideAlerter(refOption, closeOptions);
+
   return (
     <>
       <div className={Styles.ChatMsginfoContainer}>
@@ -103,8 +113,8 @@ const ChatMsgInfo: React.FC<MsgInfoProps> = ({
             </div>
           </div>
 
-          <div className={Styles.ChatMsgSettings}>
-            {convData.status !== "Left" && !isDirectMsg && (
+          <div className={Styles.ChatMsgSettings} ref={refOption}>
+            {convData.status !== "Left" && (
               <img
                 src={ChatMsgSetting.src}
                 alt="ChatMsgSetting"
@@ -159,19 +169,16 @@ const ChatMsgInfo: React.FC<MsgInfoProps> = ({
 interface Props {
   isMobile: boolean;
   convData: conversations;
-  isDirectMsg: boolean;
   updateConversations: (msgConvId: string) => void;
 }
 
 const ChatMessages: React.FC<Props> = ({
   isMobile,
   convData,
-  isDirectMsg,
   updateConversations,
 }) => {
   const [showChnlProfile, setShowChnlProfile] = useState<boolean>(false);
   const [showUpdateChannel, setShowUpdateChannel] = useState<boolean>(false);
-  const { login, channel } = useRouter().query;
 
   const CloseChannelHandler = () => {
     setShowUpdateChannel(false);
@@ -180,10 +187,7 @@ const ChatMessages: React.FC<Props> = ({
   useLayoutEffect(() => {
     if (showChnlProfile) setShowChnlProfile(false);
   }, [convData.convId]);
-  // console.log(convData.convId, login, channel);
-  
-  if (login && login !== convData.convId || channel && channel !== convData.convId)
-    return <Loading />
+
   return (
     <>
       {showUpdateChannel && (
@@ -194,7 +198,7 @@ const ChatMessages: React.FC<Props> = ({
             avatar: convData.avatar,
             name: convData.name,
             type: convData.type,
-            password: ""
+            password: "",
           }}
           updateConversations={updateConversations}
           CloseChannelHandler={CloseChannelHandler}
@@ -213,7 +217,6 @@ const ChatMessages: React.FC<Props> = ({
         >
           <ChatMsgInfo
             convData={convData}
-            isDirectMsg={isDirectMsg}
             showChnlProfile={showChnlProfile}
             setShowChnlProfile={setShowChnlProfile}
             setShowUpdateChannel={setShowUpdateChannel}
@@ -223,7 +226,6 @@ const ChatMessages: React.FC<Props> = ({
             <ChatChnlProfile {...convData} />
           ) : (
             <MessagesList
-              isDirectMsg={isDirectMsg}
               convData={convData}
               updateConversations={updateConversations}
             />
@@ -241,5 +243,7 @@ const ChatMessages: React.FC<Props> = ({
     </>
   );
 };
+
+////// ......... //////////
 
 export default React.memo(ChatMessages);
