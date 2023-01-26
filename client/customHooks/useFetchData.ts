@@ -51,6 +51,8 @@ export const Is2FAEnaled = (set: any, setP: any, route: NextRouter) => {
       withCredentials: true,
     })
     .then((result) => {
+      console.log(result.data);
+      
       if (result.data.err) return;
       set(result.data.data);
       setP(result.data.data);
@@ -786,7 +788,7 @@ export const leaveChannel = async (
     });
 };
 
-export const fetchLoginInfo = async (login: string | string[]) => {
+export const fetchLoginInfo = async (login: string) => {
   
   return await axios({
     method: "get",
