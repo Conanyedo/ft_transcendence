@@ -97,7 +97,7 @@ export const ChatMessageInput: React.FC<Props> = ({ convData }) => {
   };
 
   useLayoutEffect(() => {
-    setEnteredMsg("");
+    if (EnteredMsg.length > 0) setEnteredMsg("");
   }, [router.query]);
 
   return (
