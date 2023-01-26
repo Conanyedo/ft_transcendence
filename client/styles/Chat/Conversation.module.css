@@ -2,9 +2,6 @@
   width: 100%;
   border-radius: 5px;
   padding: 0.75rem 0.5rem;
-  font-weight: 500;
-  font-size: 1.2rem;
-  color: #c6e1ff;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -20,34 +17,42 @@
 }
 
 .Convinfo {
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: #d9d9d9;
   display: flex;
   align-items: center;
   gap: 1.25rem;
-  /* -webkit-user-select: none;
-  -webkit-touch-callout: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none; */
 } 
 
 .Convinfo img {
-  width: 4rem;
-  height: 4rem;
+  width: 4.5rem;
+  height: 4.5rem;
   border-radius: 8px;
 }
 
 .ConvStatus {
+  font-weight: 400;
+  font-size: 1rem;
+  color: #c6e1ff;
   display: flex;
-  align-items: center;
-  gap: 2rem;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.userName {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #d9d9d9;
 }
 
 .NewMsg {
-  width: 0.8rem;
-  height: 0.8rem;
+  width: 1.5rem;
+  height: 1.5rem;
+  font-weight: 400;
+  font-size: 0.8rem;
+  color: #ffffff;
   border-radius: 50%;
+  margin-right: 0.5rem;
   background-color: #409cff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
