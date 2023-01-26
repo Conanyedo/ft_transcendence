@@ -5,15 +5,12 @@ import { useEffect, useLayoutEffect, useState } from "react";
 import { conversations, initialconv, MsgData } from "@Types/dataTypes";
 import { fetchDATA, fetchLoginInfo } from "@hooks/useFetchData";
 import { useRouter } from "next/router";
-import Loading from "@components/loading/loading";
 
 const Chat = () => {
   const [isMobile, setIsMobile] = useState<boolean>(true);
   const [convs, setConvs] = useState<conversations[]>([]);
   const [convData, setConvData] = useState<conversations>(initialconv);
   const [newConv, setNewConv] = useState<conversations>(initialconv);
-  const [isDirectMsg, setIsDirectMsg] = useState<boolean>(false);
-  const [selectedConv, setselectedConv] = useState<string | string[]>("0");
   const router = useRouter();
 
   /* -------------------------------------------------------------------------- */
@@ -28,31 +25,20 @@ const Chat = () => {
   /*                              check login info                              */
   /* -------------------------------------------------------------------------- */
 
+  const getSelectConvId = () => {
+    if (router.query.login)
+      return router.query.login as string;
+    else if (router.query.channel)
+      return router.query.channel as string;
+    else
+      return "0";
+  }
   const checkLoginInfo = async () => {
-    const loginInfo = await fetchLoginInfo(selectedConv);
-    if (loginInfo) {
-      setIsDirectMsg(true);
+    const loginInfo = await fetchLoginInfo(getSelectConvId());
+    if (loginInfo)
       setConvData({ name: loginInfo.fullname, type: "Dm", ...loginInfo });
-    }
-    // } else setConvData(initialconv);
   };
 
-  /* -------------------------------------------------------------------------- */
-  /*                      get the query from route if exist                     */
-  /* -------------------------------------------------------------------------- */
-
-  useLayoutEffect(() => {
-    if (router.query.login) {
-      const id = router.query.login;
-      setselectedConv(id); // id type string | string[]
-    } else if (router.query.channel) {
-      const id = router.query.channel;
-      setselectedConv(id);
-    } else {
-      setselectedConv("0");
-      setConvData(initialconv);
-    }
-  }, [router.query]);
 
   /* -------------------------------------------------------------------------- */
   /*                             fetch conversation                             */
@@ -74,13 +60,11 @@ const Chat = () => {
   }, []);
 
   useEffect(() => {
-    const convlist = convs.filter((conv) => {
-      return conv.convId !== newConv?.convId;
-    });
-    setConvs([newConv, ...convlist]);
-    if (isDirectMsg && newConv.convId) {
-      setselectedConv(newConv.convId);
-      setIsDirectMsg(false);
+    if (newConv.convId !== "0") {
+      const convlist = convs.filter((conv) => {
+        return conv.convId !== newConv?.convId;
+      });
+      setConvs([newConv, ...convlist]);
     }
   }, [newConv]);
 
@@ -89,36 +73,18 @@ const Chat = () => {
   /* -------------------------------------------------------------------------- */
 
   useLayoutEffect(() => {
-    
-    if (convs.length > 0 && selectedConv !== "0") {
+    const convId = getSelectConvId();
+    if (convs.length > 0 && convId !== "0") {
       let foundconv = convs.find(
-        (conv) => conv.convId === selectedConv || conv.login === selectedConv
+        (conv) => conv.convId === convId || conv.login === convId
       );
       if (foundconv) {
         setConvData(foundconv);
       } else {
-        console.log("conv not exist");
         checkLoginInfo();
       }
     }
-  }, [selectedConv, convs]);
-
-  /* -------------------------------------------------------------------------- */
-  /*                    change route depends on selected conv                   */
-  /* -------------------------------------------------------------------------- */
-
-  useEffect(() => {
-    if (selectedConv !== "0")
-      convData.type === "Dm"
-        ? router.replace({
-            pathname: `/chat`,
-            query: { login: selectedConv },
-          })
-        : router.replace({
-            pathname: `/chat`,
-            query: { channel: selectedConv },
-          });
-  }, [convData.convId]);
+  }, [router.query, convs]);
 
   return (
     <>
@@ -126,16 +92,12 @@ const Chat = () => {
         <ChatConversations
           isMobile={isMobile}
           convs={convs}
-          setConvData={setConvData}
-          setIsDirectMsg={setIsDirectMsg}
-          selectedConv={selectedConv}
+          selectedConv={getSelectConvId()}
           updateConversations={updateConversations}
-          setselectedConv={setselectedConv}
         />
         <ChatMessages
           isMobile={isMobile}
           convData={convData}
-          isDirectMsg={isDirectMsg}
           updateConversations={updateConversations}
         />
       </div>
