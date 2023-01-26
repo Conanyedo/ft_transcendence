@@ -147,11 +147,10 @@ const Message: React.FC<MsgProps> = ({
 
 interface MsglistProps {
 	convData: conversations
-	isDirectMsg: boolean
 	updateConversations: (msgConvId: string) => void
 }
 
-export const MessagesList: React.FC<MsglistProps> = ({ convData, isDirectMsg, updateConversations }) => {
+export const MessagesList: React.FC<MsglistProps> = ({ convData, updateConversations }) => {
 	const [chatMessages, setChatMessages] = useState<MsgData[]>([])
 	const MessageRef = useRef<null | HTMLDivElement>(null)
 
@@ -185,7 +184,7 @@ export const MessagesList: React.FC<MsglistProps> = ({ convData, isDirectMsg, up
 	}, [convData])
 
 	useEffect(() => {
-		MessageRef.current?.scrollIntoView({ behavior: "auto" })
+		MessageRef.current?.scrollIntoView({ behavior: "smooth" })
 	}, [chatMessages, convData])
 
 	const UpdateInvitMsg = (msgId: string, status: string) => {
@@ -216,7 +215,7 @@ export const MessagesList: React.FC<MsglistProps> = ({ convData, isDirectMsg, up
 				})}
 				<div ref={MessageRef} />
 			</div>
-			<ChatMessageInput convData={convData} isDirectMsg={isDirectMsg} setChatMessages={setChatMessages} />
+			<ChatMessageInput convData={convData} />
 		</>
 	)
 }
