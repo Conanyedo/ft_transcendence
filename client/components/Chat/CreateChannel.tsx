@@ -15,7 +15,7 @@ import { ChannelMember } from "./ChannelMember";
 
 const chnlError: { [key: string]: string } = {
   channelName: "invalid Channel Name",
-  channelPassword: "invalid Password (minimum 8 characters long)",
+  channelPassword: "invalid Password (minimum 8 characters long)here",
   channelMembers: "invalid channel members (at least 1 member)",
 };
 
@@ -51,7 +51,7 @@ export const CreateChannel: React.FC<Props> = ({
   convId,
   initialChnlState,
   CloseChannelHandler,
-  updateConversations
+  updateConversations,
 }) => {
   const [state, dispatch] = useReducer(reducer, initialChnlState);
   const [chnlConvId, setChnlConvId] = useState<string>("");
@@ -76,11 +76,14 @@ export const CreateChannel: React.FC<Props> = ({
     if (isUpdate) {
       if (state.name.length < 4 || state.name.length > 20) return "channelName";
       else if (
-        state?.password?.length > 0 ||
-        (initialChnlState.type !== "Protected" &&
-          state.type === "Protected" &&
-          !validPassword.test(state.password))
+        (state?.password?.length > 0 ||
+          (initialChnlState.type !== "Protected" &&
+            state.type === "Protected")) &&
+        !validPassword.test(state.password)
       ) {
+        console.log("init : ", initialChnlState.type);
+        console.log("state : ", state.type);
+
         return "channelPassword";
       }
     } else {
@@ -273,7 +276,11 @@ export const CreateChannel: React.FC<Props> = ({
             {!isUpdate && (
               <div className={Styles.ChannelTxtInput}>
                 Add members
-                <InsertChannelMembers state={state} dispatch={dispatch} chnlMembers={[]}/>
+                <InsertChannelMembers
+                  state={state}
+                  dispatch={dispatch}
+                  chnlMembers={[]}
+                />
                 {errorKey[0] === "channelMembers" && (
                   <p className={Styles.ChnlError}>{chnlError[errorKey]}</p>
                 )}
