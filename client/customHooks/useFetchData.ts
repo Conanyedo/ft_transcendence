@@ -1,20 +1,16 @@
 import { AnyAction } from "@reduxjs/toolkit";
 import { ShowErrorMsg } from "@store/UI-Slice";
-import { filterCnvs } from "@utils/chat";
 import axios from "axios";
 import socket_game from "config/socketGameConfig";
-import { CookieValueTypes, getCookie } from "cookies-next";
-import Router, { NextRouter } from "next/router";
+import { NextRouter } from "next/router";
 import { Dispatch, SetStateAction } from "react";
 import { baseUrl } from "../config/baseURL";
 import socket_notif from "../config/socketNotif";
 import {
   ChannelData,
   channelMembers,
-  conversations,
   UserTypeNew,
 } from "../Types/dataTypes";
-import { eraseCookie } from "./Functions";
 
 export const getQRcodeOrdisableCode = async (
   status: string,
@@ -36,7 +32,6 @@ export const getQRcodeOrdisableCode = async (
     })
     .catch((err) => {
       if (err.response.status === 401) {
-        eraseCookie("jwt");
         socket_notif.disconnect();
         route.replace("/");
       }
@@ -57,7 +52,6 @@ export const Is2FAEnaled = (set: any, setP: any, route: NextRouter) => {
     })
     .catch((err) => {
       if (err.response.status === 401) {
-        eraseCookie("jwt");
         socket_notif.disconnect();
         route.replace("/");
       }
@@ -84,7 +78,6 @@ export const check2FACode = async (
     })
     .catch((err) => {
       if (err.response.status === 401) {
-        eraseCookie("jwt");
         socket_notif.disconnect();
         route.replace("/");
       }
@@ -105,7 +98,6 @@ export const LogOut = (route: NextRouter) => {
       route.replace("/");
     })
     .catch((err) => {
-      eraseCookie("jwt");
       socket_notif.disconnect();
       socket_game.disconnect();
       route.replace("/");
@@ -115,8 +107,7 @@ export const LogOut = (route: NextRouter) => {
 export const updateUserInfo = async (
   nameRef: React.MutableRefObject<any>,
   ImageRef: React.MutableRefObject<any>,
-  OldData: { name: string; image: string },
-  token: CookieValueTypes
+  OldData: { name: string; image: string }
 ) => {
   const params = new FormData();
   const currentName = nameRef.current;
@@ -137,7 +128,6 @@ export const updateUserInfo = async (
     })
     .catch((err) => {
       if (err.response.status === 401) {
-        eraseCookie("jwt");
         socket_notif.disconnect();
       }
     });
@@ -145,7 +135,6 @@ export const updateUserInfo = async (
 
 export const fetchUserInfo = async (
   OldData: { name: string; image: string },
-  token: CookieValueTypes,
   router: NextRouter,
   setUserData: React.Dispatch<React.SetStateAction<UserTypeNew>>
 ) => {
@@ -163,7 +152,6 @@ export const fetchUserInfo = async (
     })
     .catch((err) => {
       if (err.response.status === 401) {
-        eraseCookie("jwt");
         socket_notif.disconnect();
         router.replace("/");
       }
@@ -188,7 +176,6 @@ export const fetchAchievements = async (
     })
     .catch((err) => {
       if (err.response.status === 401) {
-        eraseCookie("jwt");
         socket_notif.disconnect();
         router.replace("/");
       }
@@ -208,7 +195,6 @@ export const fetchDATA = async (set: any, router: NextRouter, Path: string) => {
     })
     .catch((err) => {
       if (err.response.status === 401) {
-        eraseCookie("jwt");
         socket_notif.disconnect();
         router.replace("/");
       }
@@ -231,7 +217,6 @@ export const fetchUserLogin = async (
     })
     .catch((err) => {
       if (err.response.status === 401) {
-        eraseCookie("jwt");
         socket_notif.disconnect();
         router.replace("/");
       }
@@ -261,7 +246,6 @@ export const JoinChannel = async (
     .catch((err) => {
       setError(err);
       if (err.response.status === 401) {
-        eraseCookie("jwt");
         socket_notif.disconnect();
       }
       return false;
@@ -395,7 +379,6 @@ export const checkCode2FA = async (code: string, router: NextRouter) => {
     })
     .catch((err) => {
       if (err.response.status === 401) {
-        eraseCookie("jwt-2fa");
         socket_notif.disconnect();
         router.replace("/");
       }
@@ -844,7 +827,6 @@ export const check2FA_JWT = async (set: any, router: NextRouter) => {
     })
     .catch((err) => {
       if (err.response.status === 401) {
-        eraseCookie("jwt-2fa");
         socket_notif.disconnect();
         router.replace("/");
         set(false);
@@ -896,7 +878,6 @@ export const requests = async (
     })
     .catch((err) => {
       if (err.response.status === 401) {
-        eraseCookie("jwt");
         socket_notif.disconnect();
         router.replace("/");
       }
@@ -926,7 +907,6 @@ export const requestsChannel = async (
     })
     .catch((err) => {
       if (err.response.status === 401) {
-        eraseCookie("jwt");
         socket_notif.disconnect();
         router.replace("/");
       }
@@ -960,7 +940,6 @@ export const userExists = async (
     })
     .catch((err) => {
       if (err.response.status === 401) {
-        eraseCookie("jwt");
         socket_notif.disconnect();
         router.replace("/");
       }

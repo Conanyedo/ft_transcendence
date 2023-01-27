@@ -5,8 +5,6 @@ import { useEffect, useState } from "react"
 import LoadingElm from "../loading/Loading_elm"
 import { check2FA_JWT, checkCode2FA } from "../../customHooks/useFetchData"
 import { useRouter } from "next/router"
-import { getCookie } from "cookies-next"
-import { eraseCookie } from "../../customHooks/Functions"
 import OtpInput from "react-otp-input-rc-17"
 import { baseUrl } from "config/baseURL"
 
@@ -41,7 +39,6 @@ const FactorAuth = () => {
 						<div
 							className={classes.cross}
 							onClick={() => {
-								eraseCookie("jwt-2fa")
 								router.replace("/")
 							}}>
 							<Image src={CrossIcon} width="72" height="72" />

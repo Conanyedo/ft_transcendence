@@ -33,7 +33,7 @@ const BlockedUser: React.FC<types> = (props) => {
 };
 
 const BlockList: React.FC<{ search: string }> = (props) => {
-	const [listblock, setListblock] = useState<UserTypeNew[] | null>(null);
+	const [listblock, setListblock] = useState<UserTypeNew[]>([]);
 	const [isUp, SetIsUp] = useState(false);
 	const router = useRouter();
 	const refresh = () => fetchDATA(setListblock, router, "friendship/blocked");
@@ -41,7 +41,7 @@ const BlockList: React.FC<{ search: string }> = (props) => {
 		fetchDATA(setListblock, router, "friendship/blocked");
 		SetIsUp(true);
 		return () => {
-			setListblock(null);
+			setListblock([]);
 		};
 	}, []);
 
@@ -57,7 +57,7 @@ const BlockList: React.FC<{ search: string }> = (props) => {
 		<>
 			{isUp && (
 				<div className={classes.listFriends}>
-					{(listblock?.length &&
+					{(listblock?.length > 0 &&
 						listblock?.map((user) => {
 							if (props.search === "")
 								return (
