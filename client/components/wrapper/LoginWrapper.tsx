@@ -21,7 +21,7 @@ const LoginWrapper: React.FC<PropsType> = ({ children }) => {
 		if (IsAuth === 1 && isMounted) 
 			router.push('/profile');
 	}, [IsAuth])
-	if (IsAuth !== 1) return <LoadingElm />;
+	if (IsAuth === 2) return <LoadingElm />;
 
 	return <>{isMounted && children}</>;
 };

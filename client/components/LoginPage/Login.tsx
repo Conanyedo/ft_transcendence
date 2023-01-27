@@ -63,7 +63,7 @@ const Login = () => {
 						<span className={classes.contributors}>
 							<a href="https://github.com/Conanyedo">Younes Bouddou</a> -{" "}
 							<a href="https://github.com/cabouelw">Choaib Abouelwafa</a> -{" "}
-							<a href="https://github.com/0xOd3n" title="this is your stepfather" > ilyass elmalki l2ostora</a>
+							<a href="https://github.com/0xOd3n" > Abdellah Belhachmi</a>
 						</span>
 					</p>
 					<div className={classes.sound} onClick={setinMute}>
