@@ -1,4 +1,4 @@
-import { ExecutionContext, Injectable } from '@nestjs/common';
+import { ExecutionContext, HttpCode, HttpStatus, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AuthGuard } from '@nestjs/passport';
 
@@ -11,10 +11,11 @@ export class IntraAuthGuard extends AuthGuard('42') {
 	}
 
 	handleRequest<TUser = any>(err: any, user: any, info: any, context: ExecutionContext, status?: any): TUser {
-		if (err || !user) {
+		if (err && !user) {
 			const ctx = context.switchToHttp();
 			const response = ctx.getResponse();
 			response.redirect(`http://${this.configService.get('CLIENT_IP')}`)
+			return response.status(HttpStatus.UNAUTHORIZED).send();
 		}
 		return user;
 	}
