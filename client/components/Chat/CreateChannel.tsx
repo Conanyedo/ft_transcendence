@@ -10,6 +10,8 @@ import { ChannelData } from "@Types/dataTypes";
 import { fetchCreateChannel, fetchUpdateChannel } from "@hooks/useFetchData";
 import { useRouter } from "next/router";
 import { getImageBySize, useOutsideAlerter } from "@hooks/Functions";
+import { type } from "os";
+import { ChannelMember } from "./ChannelMember";
 
 const chnlError: { [key: string]: string } = {
   channelName: "invalid Channel Name",
@@ -49,7 +51,7 @@ export const CreateChannel: React.FC<Props> = ({
   convId,
   initialChnlState,
   CloseChannelHandler,
-  updateConversations,
+  updateConversations
 }) => {
   const [state, dispatch] = useReducer(reducer, initialChnlState);
   const [chnlConvId, setChnlConvId] = useState<string>("");
@@ -61,25 +63,34 @@ export const CreateChannel: React.FC<Props> = ({
   const refOption = useRef(null);
   const router = useRouter();
   const ImgPath = getImageBySize(state.avatar, 70);
-  
+
   const chnltypeDescription: string = `${
     state.type === "Public"
-    ? "All users can find and join this channel"
-    : state.type === "Private"
-    ? "Only users you invited can join the channel"
-    : "All users can find the channel but only those with the provided password can join"
+      ? "All users can find and join this channel"
+      : state.type === "Private"
+      ? "Only users you invited can join the channel"
+      : "All users can find the channel but only those with the provided password can join"
   }`;
 
   const checkIsValidForm = () => {
     if (isUpdate) {
-      if (state.name.length < 4 || state.name.length > 20) return ("channelName");
-      else if (state?.password?.length > 0 && !validPassword.test(state.password)) {
-        console.log(state.password);
-        return ("channelPassword")}
-    } else {   
-      if (state.name.length < 4) return ("channelName");
-      else if (state.type === "Protected" && !validPassword.test(state.password)) return ("channelPassword");
-      else if (state.members.length < 1) return ("channelMembers");
+      if (state.name.length < 4 || state.name.length > 20) return "channelName";
+      else if (
+        state?.password?.length > 0 ||
+        (initialChnlState.type !== "Protected" &&
+          state.type === "Protected" &&
+          !validPassword.test(state.password))
+      ) {
+        return "channelPassword";
+      }
+    } else {
+      if (state.name.length < 4) return "channelName";
+      else if (
+        state.type === "Protected" &&
+        !validPassword.test(state.password)
+      )
+        return "channelPassword";
+      else if (state.members.length < 1) return "channelMembers";
     }
     return "";
   };
@@ -89,17 +100,12 @@ export const CreateChannel: React.FC<Props> = ({
     let err = checkIsValidForm();
     console.log(err);
     if (err?.length === 0) {
-        if (!isUpdate)
-          await fetchCreateChannel(setChnlConvId, state, setResponseError);
-        else if (convId) {
-          await fetchUpdateChannel(
-            state,
-            convId,
-            imageFileRef,
-            setResponseError
-          );
-          updateConversations(convId);
-          CloseChannelHandler();
+      if (!isUpdate)
+        await fetchCreateChannel(setChnlConvId, state, setResponseError);
+      else if (convId) {
+        await fetchUpdateChannel(state, convId, imageFileRef, setResponseError);
+        updateConversations(convId);
+        CloseChannelHandler();
       }
     }
     setErrorKey(err);
@@ -267,7 +273,7 @@ export const CreateChannel: React.FC<Props> = ({
             {!isUpdate && (
               <div className={Styles.ChannelTxtInput}>
                 Add members
-                <InsertChannelMembers state={state} dispatch={dispatch} />
+                <InsertChannelMembers state={state} dispatch={dispatch} chnlMembers={[]}/>
                 {errorKey[0] === "channelMembers" && (
                   <p className={Styles.ChnlError}>{chnlError[errorKey]}</p>
                 )}
