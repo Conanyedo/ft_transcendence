@@ -15,14 +15,12 @@
     font-size: 1.8rem;
     font-weight: 700;
     color: #C6E1FF;
-    /* margin-bottom: 2rem; */
     display: flex;
     align-items: center;
     justify-content: space-between;
 }
 
 .AddChannelicn img{
-    /* border: 2px solid red; */
     width: 1.8rem;
     height: 1.8rem;
     cursor: pointer;
@@ -53,12 +51,18 @@
     height: calc(100% - 12rem);
     margin-top: 1.5rem;
     padding: 0 1.25rem;
-    /* border: 1px solid red   ; */
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
     overflow: hidden;
-    /* scrollbar-color: #282829 #2B2B2D; */
     overflow-y: auto;
 }
-  
+
+.ChatConversations > p {
+    font-size: 1.8rem;
+    font-weight: 400;
+    color: #92a7be;
+    width: 100%;
+    text-align: center;
+    padding-top: 10%;
+}
