@@ -34,7 +34,7 @@ export class Conversation {
 	@Column({ default: null })
 	name: string;
 
-	@UpdateDateColumn()
+	@Column()
 	lastUpdate: Date;
 
 	@Column({ type: 'enum', enum: convType, default: convType.Dm })

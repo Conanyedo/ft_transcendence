@@ -3,6 +3,7 @@ import {
 	Catch,
 	ArgumentsHost,
 	HttpException,
+	HttpStatus,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Response } from 'express';
@@ -13,11 +14,10 @@ export class HttpExceptionFilter implements ExceptionFilter {
 		private readonly configService: ConfigService
 	) { }
 	catch(exception: HttpException, host: ArgumentsHost) {
-		console.log("exception : ", exception);
-
 		const ctx = host.switchToHttp();
 		const response = ctx.getResponse<Response>();
 
 		response.redirect(`http://${this.configService.get('CLIENT_IP')}`)
+		return response.status(HttpStatus.UNAUTHORIZED).send();
 	}
 }
