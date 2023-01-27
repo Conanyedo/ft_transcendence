@@ -82,9 +82,9 @@ export const ChatConversations: React.FC<Props> = ({
             onChange={(e) => setsearchConv(e.target.value)}
           ></input>
         </div>
-        <div className={Styles.Conversationlist}>
-          {convs.length > 0 ? (
-            convs.map((conv: conversations) => {
+        {convs.length > 0 ? (
+          <div className={Styles.Conversationlist}>
+            {convs.map((conv: conversations) => {
               if (conv.name.toUpperCase().includes(searchConv.toUpperCase()))
                 return (
                   <Conversation
@@ -102,11 +102,11 @@ export const ChatConversations: React.FC<Props> = ({
                     }
                   />
                 );
-            })
-          ) : (
-            <h1>No Conversations</h1>
-          )}
-        </div>
+            })}
+          </div>
+        ) : (
+          <p>No Conversations</p>
+        )}
       </div>
     </>
   );
