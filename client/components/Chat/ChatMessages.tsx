@@ -4,6 +4,7 @@ import Backarrow from "@public/ArrowLeft.svg";
 import React, {
   Dispatch,
   SetStateAction,
+  useEffect,
   useLayoutEffect,
   useRef,
   useState,
@@ -243,7 +244,5 @@ const ChatMessages: React.FC<Props> = ({
     </>
   );
 };
-
-////// ......... //////////
 
 export default React.memo(ChatMessages);
