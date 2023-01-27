@@ -11,8 +11,10 @@ import {
   fetchChangeMemberStatus,
   fetchUnmuteMmeber,
 } from "@hooks/useFetchData";
+import { useRouter } from "next/router";
 
 interface Props {
+  login : string;
   convId?: string;
   relation: string;
   role: string;
@@ -21,6 +23,7 @@ interface Props {
 }
 
 export const ChannelMember: React.FC<Props> = ({
+  login,
   convId,
   relation,
   role,
@@ -31,6 +34,7 @@ export const ChannelMember: React.FC<Props> = ({
     useState<boolean>(false);
   const [showMuteMember, setShowMuteMember] = useState<boolean>(false);
   const refOption = useRef(null);
+  const router = useRouter();
   const loggedInUsr = localStorage.getItem("owner");
 
   const dismissAdminClickHandler = async () => {
@@ -81,6 +85,10 @@ export const ChannelMember: React.FC<Props> = ({
     }
   };
 
+const memberImageOnclickHandler = () => {
+  router.push(`/profile/${login}`);
+}
+
 const chnlMemberSettingsClickHandler = () => {
     setShowChnlMemberSettings(!showChnlMemberSettings);
 }
@@ -103,7 +111,7 @@ const chnlMemberSettingsClickHandler = () => {
       )}
       <div className={Styles.ChannelMemberContainer}>
         <div className={Styles.ChannelMemberProfile}>
-          <img src={getImageBySize(member.avatar, 70)} />
+          <img src={getImageBySize(member.avatar, 70)}  onClick={memberImageOnclickHandler}/>
           {loggedInUsr === member.login ? "You" : member.fullname}
         </div>
 
