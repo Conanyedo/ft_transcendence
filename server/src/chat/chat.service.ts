@@ -152,7 +152,8 @@ export class ChatService {
 	}
 
 	async getConvInfo(login: string, conv: conversationDto) {
-		conv.lastUpdate = conv.leftDate ? conv.leftDate : conv.lastUpdate;
+		if (conv.leftDate && conv.leftDate < conv.lastUpdate)
+			conv.lastUpdate = conv.leftDate;
 		const { leftDate, ...convInfo }: conversationDto = { ...conv }
 		if (conv.type === 'Dm') {
 			const users = await this.memberRepository
