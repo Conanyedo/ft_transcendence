@@ -57,7 +57,6 @@ export class ChatService {
 		const exist = await this.memberRepository
 			.query(`select members.id, members."unread" from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND users."login" = '${login}' AND members."leftDate" is null;`);
 		if (!exist.length) return { err: 'Invalid conversation' };
-		console.log('unread: ', exist[0]);
 		const unread: number = +exist[0].unread;
 		if (status)
 			await this.memberRepository
