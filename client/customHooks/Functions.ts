@@ -14,6 +14,8 @@ export function useOutsideAlerter(ref: any, setToggle: (t: boolean) => void) {
 			if (ref.current && !ref.current.contains(event.target)) {
 				setToggle(false);
 			}
+			// console.log(event.target);
+			
 		}
 		document.addEventListener("mousedown", handleClickOutside);
 		return () => {

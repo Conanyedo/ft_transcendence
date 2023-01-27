@@ -50,6 +50,12 @@
   justify-content: center;
 }
 
+.AddMemberContainer > p {
+  color: #ff6482;
+  font-weight: 400;
+  font-size: 1rem;
+}
+
 @media only screen and (min-width: 600px) {
   .AddMemberContainer {
     width: 48rem;

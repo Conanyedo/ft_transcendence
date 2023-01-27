@@ -7,9 +7,9 @@
 }
 
 .StartNewCnv {
-  color: #c6e1ff;
-  font-size: 2rem;
-  font-weight: 600;
+  color: #92a7be;
+  font-size: 1.8rem;
+  font-weight: 400;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -82,7 +82,6 @@
 .SettingContainer {
   position: absolute;
   min-width: 10rem;
-  /* height: fit-content; */
   z-index: 100;
   padding: 0.5rem;
   right: 4.5rem;
@@ -184,7 +183,6 @@
 @media only screen and (min-width: 1024px) {
   .ChatMessagesContainer {
     border-radius: 0 15px 15px 0;
-    /* border: 1px solid red; */
   }
   .ChatMsginfoContainer {
     border-radius: 0 15px 0 0;

@@ -9,7 +9,9 @@ import { motion } from "framer-motion";
 import { ChannelData } from "@Types/dataTypes";
 import { fetchCreateChannel, fetchUpdateChannel } from "@hooks/useFetchData";
 import { useRouter } from "next/router";
-import { getImageBySize } from "@hooks/Functions";
+import { getImageBySize, useOutsideAlerter } from "@hooks/Functions";
+import { type } from "os";
+import { ChannelMember } from "./ChannelMember";
 
 const chnlError: { [key: string]: string } = {
   channelName: "invalid Channel Name",
@@ -49,7 +51,7 @@ export const CreateChannel: React.FC<Props> = ({
   convId,
   initialChnlState,
   CloseChannelHandler,
-  updateConversations,
+  updateConversations
 }) => {
   const [state, dispatch] = useReducer(reducer, initialChnlState);
   const [chnlConvId, setChnlConvId] = useState<string>("");
@@ -58,6 +60,7 @@ export const CreateChannel: React.FC<Props> = ({
   const [responseError, setResponseError] = useState<string>("");
   const avatarRef = useRef<any>(null);
   const imageFileRef = useRef<any>(null);
+  const refOption = useRef(null);
   const router = useRouter();
   const ImgPath = getImageBySize(state.avatar, 70);
 
@@ -71,35 +74,25 @@ export const CreateChannel: React.FC<Props> = ({
 
   const checkIsValidForm = () => {
     if (isUpdate) {
-      if (state.name.length < 4 || state.name.length > 20) return ("channelName");
-      else if (state?.password?.length > 0 && !validPassword.test(state.password)) {
-        console.log(state.password);
-        return ("channelPassword")}
-    } else {   
-      if (state.name.length < 4) return ("channelName");
-      else if (state.type === "Protected" && !validPassword.test(state.password)) return ("channelPassword");
-      else if (state.members.length < 1) return ("channelMembers");
+      if (state.name.length < 4 || state.name.length > 20) return "channelName";
+      else if (
+        state?.password?.length > 0 ||
+        (initialChnlState.type !== "Protected" &&
+          state.type === "Protected" &&
+          !validPassword.test(state.password))
+      ) {
+        return "channelPassword";
+      }
+    } else {
+      if (state.name.length < 4) return "channelName";
+      else if (
+        state.type === "Protected" &&
+        !validPassword.test(state.password)
+      )
+        return "channelPassword";
+      else if (state.members.length < 1) return "channelMembers";
     }
     return "";
-    // if (state.name.length < 4) setErrorKey("channelName");
-    // else if (
-    //   (!isUpdate &&0
-    //     state.type === "Protected" &&
-    //     !validPassword.test(state.password))
-    //   (isUpdate &&
-    //     (state.type === "Protected" &&
-    //     oldType === "Protected" &&
-    //     state.password.length > 0)  || (state.type === "Protected" && state.password.length > 0) &&
-    //     !validPassword!.test(state.password))
-    // )
-    //   setErrorKey("channelPassword");
-    // else if (!isUpdate && state.members.length < 1)
-    //   setErrorKey("channelMembers");
-    // else {
-    //   setErrorKey("");
-    //   return true;
-    // }
-    // return false;
   };
 
   const formSubmitHandler = async (event: any) => {
@@ -107,17 +100,12 @@ export const CreateChannel: React.FC<Props> = ({
     let err = checkIsValidForm();
     console.log(err);
     if (err?.length === 0) {
-        if (!isUpdate)
-          await fetchCreateChannel(setChnlConvId, state, setResponseError);
-        else if (convId) {
-          await fetchUpdateChannel(
-            state,
-            convId,
-            imageFileRef,
-            setResponseError
-          );
-          updateConversations(convId);
-          CloseChannelHandler();
+      if (!isUpdate)
+        await fetchCreateChannel(setChnlConvId, state, setResponseError);
+      else if (convId) {
+        await fetchUpdateChannel(state, convId, imageFileRef, setResponseError);
+        updateConversations(convId);
+        CloseChannelHandler();
       }
     }
     setErrorKey(err);
@@ -139,6 +127,11 @@ export const CreateChannel: React.FC<Props> = ({
     }
   }, [chnlConvId]);
 
+  const closeOptions = (v: boolean) => {
+    CloseChannelHandler();
+  };
+
+  useOutsideAlerter(refOption, closeOptions);
   return (
     <>
       <motion.div
@@ -159,6 +152,7 @@ export const CreateChannel: React.FC<Props> = ({
             opacity: 1,
             scale: 1,
           }}
+          ref={refOption}
         >
           <form
             className={Styles.CreateChannelContainer}
@@ -279,7 +273,7 @@ export const CreateChannel: React.FC<Props> = ({
             {!isUpdate && (
               <div className={Styles.ChannelTxtInput}>
                 Add members
-                <InsertChannelMembers state={state} dispatch={dispatch} />
+                <InsertChannelMembers state={state} dispatch={dispatch} chnlMembers={[]}/>
                 {errorKey[0] === "channelMembers" && (
                   <p className={Styles.ChnlError}>{chnlError[errorKey]}</p>
                 )}

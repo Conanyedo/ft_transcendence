@@ -41,11 +41,12 @@ export const getQRcodeOrdisableCode = async (
 export const Is2FAEnaled = (set: any, setP: any, route: NextRouter) => {
   axios
     .get(`${baseUrl}auth/is2faEnabled`, {
-      headers: {
-      },
+      headers: {},
       withCredentials: true,
     })
     .then((result) => {
+      console.log(result.data);
+
       if (result.data.err) return;
       set(result.data.data);
       setP(result.data.data);
@@ -88,8 +89,7 @@ export const check2FACode = async (
 export const LogOut = (route: NextRouter) => {
   axios
     .get(`${baseUrl}auth/logout`, {
-      headers: {
-      },
+      headers: {},
       withCredentials: true,
     })
     .then(() => {
@@ -121,9 +121,7 @@ export const updateUserInfo = async (
   }
   await axios
     .post(`${baseUrl}user/editProfile`, params, {
-      headers: {
-
-      },
+      headers: {},
       withCredentials: true,
     })
     .catch((err) => {
@@ -140,9 +138,7 @@ export const fetchUserInfo = async (
 ) => {
   await axios
     .get(`${baseUrl}user/header/@me`, {
-      headers: {
-
-      },
+      headers: {},
       withCredentials: true,
     })
     .then((res) => {
@@ -167,8 +163,7 @@ export const fetchAchievements = async (
   if (login) Id = "/" + login;
   await axios
     .get(`${baseUrl}user/achievements${Id}`, {
-      headers: {
-      },
+      headers: {},
       withCredentials: true,
     })
     .then((res) => {
@@ -185,8 +180,7 @@ export const fetchAchievements = async (
 export const fetchDATA = async (set: any, router: NextRouter, Path: string) => {
   await axios
     .get(`${baseUrl}${Path}`, {
-      headers: {
-      },
+      headers: {},
       withCredentials: true,
     })
     .then((res) => {
@@ -208,8 +202,7 @@ export const fetchUserLogin = async (
 ) => {
   await axios
     .get(`${baseUrl}chat/loginInfo/${login}`, {
-      headers: {
-      },
+      headers: {},
       withCredentials: true,
     })
     .then((res) => {
@@ -394,8 +387,7 @@ export const updateChnlInfo = async (
   return await axios({
     method: "post",
     url: `${baseUrl}chat/updateChannel`,
-    headers: {
-    },
+    headers: {},
     data: formData,
     withCredentials: true,
   })
@@ -418,10 +410,9 @@ export const fetchUpdateChannel = async (
 ) => {
   const params = new FormData();
   params.append("name", data.name);
-  if (data.password && data.password?.length > 0)
+  if (data.type !== "Protected" || (data.password && data.password?.length > 0))
     params.append("type", data.type);
-  if (data.password)
-  params.append("password", data.password);
+  if (data.password) params.append("password", data.password);
   const imgFile = imgFileRef?.current?.files;
   if (data.avatar && imgFile.length > 0) {
     params.append("oldPath", data.avatar);
@@ -429,15 +420,13 @@ export const fetchUpdateChannel = async (
   }
   await axios
     .post(`${baseUrl}chat/updateChannel/${convId}`, params, {
-      headers: {
-      },
+      headers: {},
       withCredentials: true,
     })
     .then((res) => {
-      if (res.data.err !== undefined){
+      if (res.data.err !== undefined) {
         setResponseError(res.data.err);
-      }
-      else {
+      } else {
         setResponseError("");
         return true;
       }
@@ -679,7 +668,6 @@ export const getChannelProfile = async (convId: string, set: any) => {
 };
 
 export const fetchChangeMemberStatus = async (data: any, convId: string) => {
-  
   const json = JSON.stringify(data);
 
   return await axios({
@@ -701,7 +689,6 @@ export const fetchChangeMemberStatus = async (data: any, convId: string) => {
 };
 
 export const changeMemberRole = async (data: any, set: any) => {
-  
   const json = JSON.stringify(data);
 
   return await axios({
@@ -723,12 +710,10 @@ export const changeMemberRole = async (data: any, set: any) => {
 };
 
 export const getFriends = async (setInitialState: any) => {
-  
   return await axios({
     method: "get",
     url: `${baseUrl}friendship/friends`,
-    headers: {
-    },
+    headers: {},
     withCredentials: true,
   })
     .then((res) => {
@@ -748,7 +733,6 @@ export const leaveChannel = async (
 ) => {
   const json = JSON.stringify({ convId: convId });
 
-  
   return await axios({
     method: "post",
     url: `${baseUrl}chat/leaveChannel`,
@@ -769,13 +753,11 @@ export const leaveChannel = async (
     });
 };
 
-export const fetchLoginInfo = async (login: string | string[]) => {
-  
+export const fetchLoginInfo = async (login: string) => {
   return await axios({
     method: "get",
     url: `${baseUrl}chat/loginInfo/${login}`,
-    headers: {
-    },
+    headers: {},
     withCredentials: true,
   })
     .then((res) => {
@@ -792,12 +774,10 @@ export const getLoginInfo = async (
   user: boolean,
   setChnlData: any
 ) => {
-  
   return await axios({
     method: "get",
     url: `${baseUrl}chat/channelInfo/${login}`,
-    headers: {
-    },
+    headers: {},
     withCredentials: true,
   })
     .then((res) => {
@@ -861,7 +841,6 @@ export const requests = async (
   path: string,
   router: NextRouter
 ) => {
-  
   const json = JSON.stringify({ login: login });
   return await axios({
     method: "post",
@@ -890,7 +869,6 @@ export const requestsChannel = async (
   path: string,
   router: NextRouter
 ) => {
-  
   const json = JSON.stringify({ convId: convId });
   return await axios({
     method: "post",
@@ -920,7 +898,6 @@ export const userExists = async (
   router: NextRouter,
   dispatch: Dispatch<AnyAction>
 ) => {
-  
   const json = JSON.stringify({ login: login });
   const res = await axios({
     method: "post",

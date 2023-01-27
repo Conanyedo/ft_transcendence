@@ -120,9 +120,9 @@ export interface member {
 
 export interface channelMembers {
   owner: member[];
-  admins?: member[];
-  members?: member[];
-  muted?: member[];
+  admins: member[];
+  members: member[];
+  muted: member[];
 }
 
 /* -------------------------------------------------------------------------- */

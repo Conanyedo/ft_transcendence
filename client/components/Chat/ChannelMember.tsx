@@ -1,18 +1,20 @@
 import Styles from "@styles/Chat/ChannelMember.module.css";
 import ThreeDots from "@public/Chat/ThreeDots.svg";
 import { SettingOption } from "./SettingOption";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { MuteMember } from "./MuteMember";
 import { member } from "@Types/dataTypes";
-import { getImageBySize } from "@hooks/Functions";
+import { getImageBySize, useOutsideAlerter } from "@hooks/Functions";
 import {
   fetchBanMember,
   fetchChangeMemberStatus,
   fetchUnmuteMmeber,
 } from "@hooks/useFetchData";
+import { useRouter } from "next/router";
 
 interface Props {
+  login : string;
   convId?: string;
   relation: string;
   role: string;
@@ -21,6 +23,7 @@ interface Props {
 }
 
 export const ChannelMember: React.FC<Props> = ({
+  login,
   convId,
   relation,
   role,
@@ -30,6 +33,8 @@ export const ChannelMember: React.FC<Props> = ({
   const [showChnlMemberSettings, setShowChnlMemberSettings] =
     useState<boolean>(false);
   const [showMuteMember, setShowMuteMember] = useState<boolean>(false);
+  const refOption = useRef(null);
+  const router = useRouter();
   const loggedInUsr = localStorage.getItem("owner");
 
   const dismissAdminClickHandler = async () => {
@@ -80,6 +85,20 @@ export const ChannelMember: React.FC<Props> = ({
     }
   };
 
+const memberImageOnclickHandler = () => {
+  router.push(`/profile/${login}`);
+}
+
+const chnlMemberSettingsClickHandler = () => {
+    setShowChnlMemberSettings(!showChnlMemberSettings);
+}
+
+  const closeOptions = (v: boolean) => {
+    setShowChnlMemberSettings(v);
+  };
+
+  useOutsideAlerter(refOption, closeOptions);
+
   return (
     <>
       {showMuteMember && (
@@ -92,16 +111,17 @@ export const ChannelMember: React.FC<Props> = ({
       )}
       <div className={Styles.ChannelMemberContainer}>
         <div className={Styles.ChannelMemberProfile}>
-          <img src={getImageBySize(member.avatar, 70)} />
+          <img src={getImageBySize(member.avatar, 70)}  onClick={memberImageOnclickHandler}/>
           {loggedInUsr === member.login ? "You" : member.fullname}
         </div>
 
         {(relation === "Owner" && role !== "Owners") ||
         (relation === "Admin" && (role === "Members" || role === "Muted")) ? (
-          <div className={Styles.ChatMsgSettings}>
+          <div className={Styles.ChatMsgSettings}
+                ref={refOption}>
             <img
               src={ThreeDots.src}
-              onClick={() => setShowChnlMemberSettings(!showChnlMemberSettings)}
+              onClick={chnlMemberSettingsClickHandler}
             />
             {showChnlMemberSettings && (
               <motion.div
@@ -114,6 +134,7 @@ export const ChannelMember: React.FC<Props> = ({
                   opacity: 1,
                   scale: 1,
                 }}
+                
               >
                 {role === "Admins" ? (
                   <SettingOption
