@@ -45,11 +45,10 @@ const ChatMsgInfo: React.FC<MsgInfoProps> = ({
   };
 
   const blockOptClickHandler = async () => {
-    if (convData.convId) {
-      console.log("block : ", convData.login);
+    if (convData.login) {
       if (await fetchBlockUnblockUser(convData.login, "friendship/blockUser")) {
-        console.log("blocked : ", convData.login);
-        updateConversations(convData.convId);
+        if (convData.convId) updateConversations(convData.convId);
+        else router.push("/chat");
         setShowConvSettings(false);
       }
     }
@@ -57,21 +56,17 @@ const ChatMsgInfo: React.FC<MsgInfoProps> = ({
 
   const unblockOptClickHandler = async () => {
     if (convData.convId) {
-      console.log("unblock : ", convData.login);
-      if (await fetchBlockUnblockUser(convData.login, "friendship/unblock")) {
-        console.log("unblocked : ", convData.login);
+      if (await fetchBlockUnblockUser(convData.login, "friendship/unblock"))
         updateConversations(convData.convId);
         setShowConvSettings(false);
-      }
     }
   };
 
   const leaveChnlOptClickHandler = async () => {
     if (convData.convId)
-      if (await fetchLeaveChannel(convData.convId)) {
+      if (await fetchLeaveChannel(convData.convId))
         updateConversations(convData.convId);
         setShowConvSettings(false);
-      }
   };
 
   const chatMsgProfileClickHandler = () => {
@@ -81,7 +76,7 @@ const ChatMsgInfo: React.FC<MsgInfoProps> = ({
 
   const backArrowHandleClick = () => {
     if (showChnlProfile) setShowChnlProfile(false);
-    else router.push({ pathname: "/chat" });
+    else router.push("/chat");
   };
 
   const closeOptions = (v: boolean) => {
