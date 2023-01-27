@@ -83,7 +83,9 @@ const Chat = () => {
       } else {
         checkLoginInfo();
       }
-    }
+    } 
+    else if (convId === "0")
+      setConvData(initialconv);
   }, [router.query, convs]);
 
   return (
