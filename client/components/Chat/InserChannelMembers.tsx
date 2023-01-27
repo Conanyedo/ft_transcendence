@@ -1,16 +1,17 @@
 import Styles from "@styles/Chat/InsertChannelMembers.module.css";
 import CloseIcon from "@public/Chat/Cross.svg";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { friend } from "@Types/dataTypes";
+import { friend, member } from "@Types/dataTypes";
 import { fetchDATA } from "@hooks/useFetchData";
 import { useRouter } from "next/router";
 import { getImageBySize } from "@hooks/Functions";
 
 interface userListProps {
-  members: friend[];
-  friends: friend[];
-  setMembers: Dispatch<SetStateAction<friend[]>>;
+  members: member[];
+  friends: member[];
+  setMembers: Dispatch<SetStateAction<member[]>>;
   Search: string;
+  chnlMembers: string[];
 }
 
 const UsersList: React.FC<userListProps> = ({
@@ -18,24 +19,28 @@ const UsersList: React.FC<userListProps> = ({
   friends,
   setMembers,
   Search,
+  chnlMembers,
 }) => {
-  const AddMemberHandler = (user: friend) => {
+  const AddMemberHandler = (user: member) => {
     setMembers([...members, user]);
   };
 
-  const filteredList: friend[] = friends.filter((user: friend) => {
-    return (
+  const filteredList: member[] = friends.filter(
+    (user: member) =>
       !members.includes(user) &&
+      !chnlMembers.includes(user.login) &&
       Search &&
       user.fullname.toUpperCase().includes(Search.toUpperCase())
-    );
-  });
+  );
+
+  console.log(chnlMembers);
+  
 
   return (
     <>
       {filteredList.length > 0 && (
         <div className={Styles.UserList}>
-          {filteredList.map((user: friend) => {
+          {filteredList.map((user: member) => {
             return (
               <div key={user.login} className={Styles.UserContainer}>
                 <div className={Styles.UserInfo}>
@@ -58,8 +63,8 @@ const UsersList: React.FC<userListProps> = ({
 };
 
 const Member: React.FC<{
-  member: friend;
-  removeMember: (user: friend) => void;
+  member: member;
+  removeMember: (user: member) => void;
 }> = ({ member, removeMember }) => {
   return (
     <div className={Styles.MemberContainer}>
@@ -72,20 +77,24 @@ const Member: React.FC<{
 interface Props {
   state: any;
   dispatch: (action: any) => void;
+  chnlMembers: string[];
 }
 
-export const InsertChannelMembers: React.FC<Props> = ({ state, dispatch }) => {
+export const InsertChannelMembers: React.FC<Props> = ({
+  state,
+  dispatch,
+  chnlMembers,
+}) => {
   const [Search, setSearch] = useState<string>("");
-  const [friendList, setFriendList] = useState<friend[]>([]);
-  const [members, setMembers] = useState<friend[]>([]);
+  const [friendList, setFriendList] = useState<member[]>([]);
+  const [members, setMembers] = useState<member[]>([]);
   const router = useRouter();
 
   const SearchinputHandler = (event: any) => {
-    console.log("onchange");
     setSearch(event.target.value);
   };
 
-  const RemoveMemberHandler = (user: friend) => {
+  const RemoveMemberHandler = (user: member) => {
     setMembers((current) =>
       current.filter((member) => {
         return member.fullname !== user.fullname;
@@ -102,7 +111,7 @@ export const InsertChannelMembers: React.FC<Props> = ({ state, dispatch }) => {
     const newMembers = members.map((user) => user.login);
     dispatch({ type: "members", members: newMembers });
   }, [members]);
-
+  
   return (
     <>
       <label htmlFor="inputAddMember">
@@ -129,6 +138,7 @@ export const InsertChannelMembers: React.FC<Props> = ({ state, dispatch }) => {
       {
         <UsersList
           friends={friendList}
+          chnlMembers={chnlMembers}
           members={members}
           setMembers={setMembers}
           Search={Search}
