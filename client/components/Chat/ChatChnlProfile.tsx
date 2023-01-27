@@ -1,6 +1,6 @@
 import Styles from "@styles/Chat/ChatMessages.module.css";
 import AddMembericon from "@public/Chat/AddMemberIcon.svg";
-import { channelMembers, conversations } from "@Types/dataTypes";
+import { channelMembers, conversations, member } from "@Types/dataTypes";
 import { useEffect, useState } from "react";
 import { ChannelMember } from "./ChannelMember";
 import { AddMembers } from "./AddMembers";
@@ -33,6 +33,21 @@ export const ChatChnlProfile: React.FC<conversations> = (convData) => {
     };
   }, [convData.convId, isSuccess]);
 
+  function insertMembersLogin()
+  {
+    let members = [
+      ...chnlMemberList.admins,
+      ...chnlMemberList.members,
+      ...chnlMemberList.owner,
+      ...chnlMemberList.muted,
+    ];
+    return members.map((member) => member.login);
+  }
+
+
+
+
+
   return (
     <>
       {showAddMember && (
@@ -40,6 +55,7 @@ export const ChatChnlProfile: React.FC<conversations> = (convData) => {
           setShowAddMember={setShowAddMember}
           setIsSuccess={setIsSuccess}
           convId={convData.convId}
+          chnlMembers={insertMembersLogin()}
         />
       )}
       <div className={Styles.ChannelProfile}>
@@ -61,6 +77,7 @@ export const ChatChnlProfile: React.FC<conversations> = (convData) => {
             <div className={Styles.MemberList}>
               <ChannelMember
                 convId={convData.convId}
+                login={chnlMemberList.owner[0].login}
                 relation={convData.status}
                 role={"Owners"}
                 member={chnlMemberList.owner[0]}
@@ -78,6 +95,7 @@ export const ChatChnlProfile: React.FC<conversations> = (convData) => {
                   return (
                     <ChannelMember
                       key={member.login}
+                      login={member.login}
                       convId={convData.convId}
                       relation={convData.status}
                       role={"Admins"}
@@ -98,6 +116,7 @@ export const ChatChnlProfile: React.FC<conversations> = (convData) => {
                   return (
                     <ChannelMember
                       key={member.login}
+                      login={member.login}
                       convId={convData.convId}
                       relation={convData.status}
                       role={"Members"}
@@ -118,6 +137,7 @@ export const ChatChnlProfile: React.FC<conversations> = (convData) => {
                   return (
                     <ChannelMember
                       key={member.login}
+                      login={member.login}
                       convId={convData.convId}
                       relation={convData.status}
                       role={"Muted"}
