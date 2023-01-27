@@ -76,7 +76,7 @@ export class AuthService {
 	}
 
 	async is2faEnabled(user: userParitalDto) {
-		const is2faEnabled: boolean = !!(await this.userService.getSecret(user.id));
+		const is2faEnabled: boolean = await this.userService.get2faEnabled(user.id);
 		return { data: is2faEnabled };
 	}
 }
