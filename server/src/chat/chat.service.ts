@@ -12,6 +12,7 @@ import { CronJob } from 'cron';
 import { FriendshipService } from 'src/friendship/friendship.service';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
+import { exit } from 'process';
 
 @Injectable()
 export class ChatService {
@@ -53,18 +54,35 @@ export class ChatService {
 		return { data: [...convsList] };
 	}
 
-	async updateUnreadMsgs(login: string, convId: string, status: boolean) {
-		const exist = await this.memberRepository
+	async getAllUnreads(login: string) {
+		const members: Member[] = await this.memberRepository
+			.query(`select members.id, members."unread" from members Join users ON members."userId" = users.id where users."login" = '${login}' AND members."leftDate" is null;`);
+		if (!members.length) return { data: false };
+		const member: Member = members.find((member) => (member.unread > 0))
+		if (!member)
+			return { data: false };
+		return { data: true }
+	}
+
+	async setMsgsAsRead(login: string, convId: string) {
+		const member = await this.memberRepository
 			.query(`select members.id, members."unread" from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND users."login" = '${login}' AND members."leftDate" is null;`);
-		if (!exist.length) return { err: 'Invalid conversation' };
-		const unread: number = +exist[0].unread;
-		if (status)
-			await this.memberRepository
-				.query(`update members set unread = '${unread + 1}' where members."id" = '${exist[0].id}';`);
-		else
-			await this.memberRepository
-				.query(`update members set unread = '${0}' where members."id" = '${exist[0].id}';`);
+		if (!member.length) return { err: 'Invalid conversation' };
+		await this.memberRepository
+			.query(`update members set unread = '${0}' where members."id" = '${member[0].id}';`);
 		return { data: true };
+	}
+
+	async updateUnreadMsgs(login: string, convId: string) {
+		const members = await this.memberRepository
+			.query(`select members.id, members."unread", users.login from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND members."leftDate" is null;`);
+		if (!members.length) return;
+		await Promise.all(members.map(async (member) => {
+			const unread: number = +member.unread;
+			if (login !== member.login)
+				await this.memberRepository
+					.query(`update members set unread = '${unread + 1}' where members."id" = '${member.id}';`);
+		}))
 	}
 
 	async getRoomSockets(login: string, room: string) {
@@ -72,12 +90,10 @@ export class ChatService {
 		const newSockets: string[] = [];
 		await Promise.all(sockets.map(async (socket) => {
 			const relation = await this.friendshipService.getRelation(login, socket.data.login);
-			if (relation !== 'blocked') {
-				if (socket.data.login !== login) await this.updateUnreadMsgs(socket.data.login, room, true)
+			if (relation !== 'blocked')
 				newSockets.push(socket.id);
-			}
 		}))
-		return [...newSockets];
+		return newSockets;
 	}
 
 	async joinConversations(client: Socket) {

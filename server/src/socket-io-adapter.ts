@@ -35,7 +35,10 @@ const verifyTokenMiddleware =
 	(jwtAuthService: JwtAuthService, logger: Logger) =>
 		(socket: Socket, next) => {
 
-			const token = socket.handshake.headers.cookie.split('=')[1];
+			const token = socket.handshake.headers.cookie
+				?.split(';')
+				?.find((cookie: string) => cookie.includes('jwt='))
+				?.split('=')[1];
 
 			try {
 				const payload = jwtAuthService.verify(token);

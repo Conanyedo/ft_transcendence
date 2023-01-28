@@ -127,10 +127,10 @@ export class FriendshipService {
 	async addFriend(user: string, friend: string) {
 		const exist: Friendship = await this.friendshipRepository
 			.createQueryBuilder('friendships')
-			.where(`((friendships.user = '${user}' AND friendships.friend = '${friend}') OR (friendships.user = '${friend}' AND friendships.friend = '${user}')) AND friendships.relation = '${userRelation.FRIEND}'`)
+			.where(`((friendships.user = '${user}' AND friendships.friend = '${friend}') OR (friendships.user = '${friend}' AND friendships.friend = '${user}'))`)
 			.getOne();
 		if (exist)
-			return { err: 'Friendship already exist' };
+			return { err: 'Relation already exist' };
 		const friendship: Friendship = new Friendship();
 		friendship.user = user;
 		friendship.friend = friend;

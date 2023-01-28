@@ -1,3 +1,4 @@
+import { UseGuards } from '@nestjs/common';
 import {
 	OnGatewayConnection,
 	OnGatewayDisconnect,
@@ -6,13 +7,15 @@ import {
 	WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
+import { WsJwtGuard } from 'src/2fa-jwt/jwt/jwt-ws.guard';
 import { allGames } from './classes/AllGames';
 import { GameService } from './game.service';
 
+@UseGuards(WsJwtGuard)
 @WebSocketGateway(5551)
 export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
-	constructor (public readonly gameService: GameService) {}
+	constructor(public readonly gameService: GameService) { }
 	@WebSocketServer()
 	server: Server;
 	allGames: allGames;
@@ -27,11 +30,11 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	}
 	@SubscribeMessage('resumeGame')
 	handleEventResumeGame(client: Socket, login: string): void {
-        this.allGames.clientConnected(client, login);
+		this.allGames.clientConnected(client, login);
 	}
 	@SubscribeMessage('joinGame')
 	handleEventJoinGame(client: Socket, login: string): void {
-        this.allGames.joinRankLobby(client, login);
+		this.allGames.joinRankLobby(client, login);
 	}
 	@SubscribeMessage('newFriendGame')
 	newFriendGame(client: Socket, data: any) {
@@ -86,7 +89,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		this.allGames.removeGameLobby(client, gameID);
 	}
 	@SubscribeMessage('checkLobby')
-	checkLobby(client: Socket, data: {admin:string, login: string}) {
+	checkLobby(client: Socket, data: { admin: string, login: string }) {
 		return this.allGames.checkLobby(client, data);
 	}
 	@SubscribeMessage('getGameId')

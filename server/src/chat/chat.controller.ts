@@ -34,6 +34,12 @@ export class ChatController {
 		return await this.chatService.getChannelInfo(login, id.convId);
 	}
 
+	@Get('/unreadMsgs')
+	@UseGuards(JwtAuthGuard)
+	async getUnreadMsgs(@User('login') login: string) {
+		return await this.chatService.getAllUnreads(login);
+	}
+
 	@Post('/createChannel')
 	@UseGuards(JwtAuthGuard)
 	async createChannel(@User('login') login: string, @Body() data: createChannelDto) {
