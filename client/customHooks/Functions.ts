@@ -11,30 +11,8 @@ import { rankObj } from "../Types/dataTypes";
 export function useOutsideAlerter(ref: any, setToggle: (t: boolean) => void) {
 	useEffect(() => {
 		function handleClickOutside(event: any) {
-			if (ref.current && !ref.current.contains(event.target)) {
+			if (ref.current && !ref.current.contains(event.target))
 				setToggle(false);
-			}
-			// console.log(event.target);
-			
-		}
-		document.addEventListener("mousedown", handleClickOutside);
-		return () => {
-			document.removeEventListener("mousedown", handleClickOutside);
-		};
-	}, [ref]);
-}
-
-export function useInSideAlerter(
-	ref: any,
-	setToggle: (t: boolean) => void,
-	move: () => void
-) {
-	useEffect(() => {
-		function handleClickOutside(event: any) {
-			if (ref.current && ref.current.contains(event.target)) {
-				move();
-				setToggle(false);
-			}
 		}
 		document.addEventListener("mousedown", handleClickOutside);
 		return () => {
