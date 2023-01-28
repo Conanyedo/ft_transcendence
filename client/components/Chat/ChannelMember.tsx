@@ -14,7 +14,7 @@ import {
 import { useRouter } from "next/router";
 
 interface Props {
-  login : string;
+  login: string;
   convId?: string;
   relation: string;
   role: string;
@@ -38,7 +38,6 @@ export const ChannelMember: React.FC<Props> = ({
   const loggedInUsr = localStorage.getItem("owner");
 
   const dismissAdminClickHandler = async () => {
-    console.log("Dismiss Admin ", member.login);
     if (convId) {
       if (
         await fetchChangeMemberStatus(
@@ -51,7 +50,6 @@ export const ChannelMember: React.FC<Props> = ({
   };
 
   const makeAdminClickHandler = async () => {
-    console.log("Make admin : ", member.login);
     if (convId) {
       if (
         await fetchChangeMemberStatus(
@@ -70,7 +68,6 @@ export const ChannelMember: React.FC<Props> = ({
   const unmuteMemberClickHandler = async () => {
     if (convId) {
       if (await fetchUnmuteMmeber({ member: member.login }, convId)) {
-        console.log("Unmute Member");
         setIsSuccess(true);
       }
     }
@@ -79,19 +76,18 @@ export const ChannelMember: React.FC<Props> = ({
   const banMemberClickHandler = async () => {
     if (convId) {
       if (await fetchBanMember({ member: member.login }, convId)) {
-        console.log("Remove Member");
         setIsSuccess(true);
       }
     }
   };
 
-const memberImageOnclickHandler = () => {
-  router.push(`/profile/${login}`);
-}
+  const memberImageOnclickHandler = () => {
+    router.push(`/profile/${login}`);
+  };
 
-const chnlMemberSettingsClickHandler = () => {
+  const chnlMemberSettingsClickHandler = () => {
     setShowChnlMemberSettings(!showChnlMemberSettings);
-}
+  };
 
   const closeOptions = (v: boolean) => {
     setShowChnlMemberSettings(v);
@@ -111,18 +107,17 @@ const chnlMemberSettingsClickHandler = () => {
       )}
       <div className={Styles.ChannelMemberContainer}>
         <div className={Styles.ChannelMemberProfile}>
-          <img src={getImageBySize(member.avatar, 70)}  onClick={memberImageOnclickHandler}/>
+          <img
+            src={getImageBySize(member.avatar, 70)}
+            onClick={memberImageOnclickHandler}
+          />
           {loggedInUsr === member.login ? "You" : member.fullname}
         </div>
 
         {(relation === "Owner" && role !== "Owners") ||
         (relation === "Admin" && (role === "Members" || role === "Muted")) ? (
-          <div className={Styles.ChatMsgSettings}
-                ref={refOption}>
-            <img
-              src={ThreeDots.src}
-              onClick={chnlMemberSettingsClickHandler}
-            />
+          <div className={Styles.ChatMsgSettings} ref={refOption}>
+            <img src={ThreeDots.src} onClick={chnlMemberSettingsClickHandler} />
             {showChnlMemberSettings && (
               <motion.div
                 className={Styles.SettingContainer}
@@ -134,7 +129,6 @@ const chnlMemberSettingsClickHandler = () => {
                   opacity: 1,
                   scale: 1,
                 }}
-                
               >
                 {role === "Admins" ? (
                   <SettingOption
