@@ -71,8 +71,10 @@ const ChatMsgInfo: React.FC<MsgInfoProps> = ({
 
   const chatMsgProfileClickHandler = () => {
     if (convData.type === "Dm") router.push(`/profile/${convData.login}`);
-    else if (!showChnlProfile && convData.status !== "Left")
+    else if (!showChnlProfile && convData.status !== "Left") {
+      if (convData.convId) updateConversations(convData.convId);
       setShowChnlProfile(true);
+    }
   };
 
   const backArrowHandleClick = () => {
@@ -104,7 +106,8 @@ const ChatMsgInfo: React.FC<MsgInfoProps> = ({
               <div className={Styles.ChatMsgProfileName}>{convData.name}</div>
               <div className={Styles.ChatMsgProfileStatus}>
                 {convData.type !== "Dm"
-                  ? `${convData.membersNum} Members`
+                  ? convData.status !== "Left" &&
+                    `${convData.membersNum} Members`
                   : convData.status !== "Blocker" && convData.status}
               </div>
             </div>
