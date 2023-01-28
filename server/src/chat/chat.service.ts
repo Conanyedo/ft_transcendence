@@ -12,6 +12,7 @@ import { CronJob } from 'cron';
 import { FriendshipService } from 'src/friendship/friendship.service';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
+import { exit } from 'process';
 
 @Injectable()
 export class ChatService {
@@ -51,6 +52,16 @@ export class ChatService {
 				convsList.push({ convId: conv.id, Avatar: conv.avatar, title: conv.name, type: conv.type, status: exist[0].status });
 		}))
 		return { data: [...convsList] };
+	}
+
+	async getAllUnreads(login: string) {
+		const members: Member[] = await this.memberRepository
+			.query(`select members.id, members."unread" from members Join users ON members."userId" = users.id where users."login" = '${login}' AND members."leftDate" is null;`);
+		if (!members.length) return { data: false };
+		const member: Member = members.find((member) => (member.unread > 0))
+		if (!member)
+			return { data: false };
+		return { data: true }
 	}
 
 	async updateUnreadMsgs(login: string, convId: string, status: boolean) {
