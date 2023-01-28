@@ -26,19 +26,15 @@ const Chat = () => {
   /* -------------------------------------------------------------------------- */
 
   const getSelectConvId = () => {
-    if (router.query.login)
-      return router.query.login as string;
-    else if (router.query.channel)
-      return router.query.channel as string;
-    else
-      return "0";
-  }
+    if (router.query.login) return router.query.login as string;
+    else if (router.query.channel) return router.query.channel as string;
+    else return "0";
+  };
   const checkLoginInfo = async () => {
     const loginInfo = await fetchLoginInfo(getSelectConvId());
     if (loginInfo)
       setConvData({ name: loginInfo.fullname, type: "Dm", ...loginInfo });
   };
-
 
   /* -------------------------------------------------------------------------- */
   /*                             fetch conversation                             */
@@ -60,11 +56,24 @@ const Chat = () => {
   }, []);
 
   useEffect(() => {
+    const convlist: conversations[] = [];
     if (newConv.convId !== "0") {
-      const convlist = convs.filter((conv) => {
-        return conv.convId !== newConv?.convId;
-      });
-      setConvs([newConv, ...convlist]);
+      const oldConv = convs.find((conv) => conv.convId === newConv.convId);
+      if (
+        newConv.status === "Blocker" ||
+        (oldConv?.status === "Blocker" && newConv.status !== "Blocker")
+      ) {
+        convs.map((conv) => {
+          if (conv.convId === newConv?.convId) convlist.push(newConv);
+          else convlist.push(conv);
+        });
+        setConvs(convlist);
+      } else {
+        convs.map((conv) => {
+          if (conv.convId !== newConv?.convId) convlist.push(conv);
+        });
+        setConvs([newConv, ...convlist]);
+      }
     }
   }, [newConv]);
 
@@ -74,20 +83,16 @@ const Chat = () => {
 
   useLayoutEffect(() => {
     const convId = getSelectConvId();
-    if (convs.length > 0 && convId !== "0") {
+    if (convs.length > 0 || convId !== "0") {
       let foundconv = convs.find(
         (conv) => conv.convId === convId || conv.login === convId
       );
-      if (foundconv) {
-        setConvData(foundconv);
-      } else {
-        checkLoginInfo();
-      }
-    } 
-    else if (convId === "0")
-      setConvData(initialconv);
-  }, [router.query, convs]);
+      if (foundconv) setConvData(foundconv);
+      else checkLoginInfo();
+    } else if (convId === "0") setConvData(initialconv);
 
+  }, [router.query, convs]);
+  
   return (
     <>
       <div className={styles.ChatContainer}>
