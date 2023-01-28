@@ -51,7 +51,6 @@ The project was built using these tools.
 
 ## Previews
 
-<<<<<<< HEAD
 ![Login](https://github.com/Conanyedo/ft_transcendence/blob/main/pongmaniaScreenshots/login.png)
 ![profile](https://github.com/Conanyedo/ft_transcendence/blob/main/pongmaniaScreenshots/profile.png)
 ![friendlist](https://github.com/Conanyedo/ft_transcendence/blob/main/pongmaniaScreenshots/friendlist.png)
@@ -63,19 +62,6 @@ The project was built using these tools.
 ![game](https://github.com/Conanyedo/ft_transcendence/blob/main/pongmaniaScreenshots/game.png)
 ![watchLiveGames](https://github.com/Conanyedo/ft_transcendence/blob/main/pongmaniaScreenshots/watchLiveGames.png)
 ![winner](https://github.com/Conanyedo/ft_transcendence/blob/main/pongmaniaScreenshots/winner.png)
-=======
-![Login](https://github.com/cabouelw/ft_transcendence/blob/main/pongmaniaScreenshots/login.png)
-![profile](https://github.com/cabouelw/ft_transcendence/blob/main/pongmaniaScreenshots/profile.png)
-![friendlist](https://github.com/cabouelw/ft_transcendence/blob/main/pongmaniaScreenshots/friendlist.png)
-![directMsg](https://github.com/cabouelw/ft_transcendence/blob/main/pongmaniaScreenshots/directMsg.png)
-![channel](https://github.com/cabouelw/ft_transcendence/blob/main/pongmaniaScreenshots/channel.png)
-![inviteFriendToGame](https://github.com/cabouelw/ft_transcendence/blob/main/pongmaniaScreenshots/inviteFriendToGame.png)
-![inviteToGameFromChat](https://github.com/cabouelw/ft_transcendence/blob/main/pongmaniaScreenshots/inviteToGameFromChat.png)
-![playRandomGame](https://github.com/cabouelw/ft_transcendence/blob/main/pongmaniaScreenshots/playRandomGame.png)
-![game](https://github.com/cabouelw/ft_transcendence/blob/main/pongmaniaScreenshots/game.png)
-![watchLiveGames](https://github.com/cabouelw/ft_transcendence/blob/main/pongmaniaScreenshots/watchLiveGames.png)
-![winner](https://github.com/cabouelw/ft_transcendence/blob/main/pongmaniaScreenshots/winner.png)
->>>>>>> dev
 
 ---
 
