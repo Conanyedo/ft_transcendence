@@ -76,6 +76,7 @@ export class AuthController {
 	}
 
 	@Get('/2faRedirect')
+	@UseGuards(JwtAuthGuard)
 	redirect2fa(@Res({ passthrough: true }) res: Response) {
 		this.authService.redirectProfile(res);
 	}
