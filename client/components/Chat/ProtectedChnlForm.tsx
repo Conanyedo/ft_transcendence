@@ -21,7 +21,6 @@ export const ProtectedChnlForm: React.FC<{ convId: string; closeForm: Dispatch<S
 
 	const formOnsubmithandler = async (event: any) => {
 		event.preventDefault()
-      console.log(convId, enteredPasswd);
 		if (validPassword.test(enteredPasswd)) {
 			const res: boolean = await joinChannel(convId, enteredPasswd)
 			if (!res) setFormError("Wrong password!")
