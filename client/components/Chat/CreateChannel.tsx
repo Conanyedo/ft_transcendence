@@ -37,7 +37,9 @@ export const validPassword = RegExp(
   /^(?=(.*[a-z]){1,})(?=(.*[A-Z]){1,})(?=(.*[0-9]){1,})(?=(.*[!@#$%^&*()\-__+.]){1,}).{8,}$/
 );
 
-export const validName = RegExp(/^(?=.{2,}$)(?![ _.-])(?!.*[_.-]{2})[a-zA-Z0-9 ._-]+(?<![ _.-])$/);
+export const validName = RegExp(
+  /^(?=.{2,}$)(?![ _.-])(?!.*[_.-]{2})[a-zA-Z0-9 ._-]+(?<![ _.-])$/
+);
 
 interface Props {
   isUpdate: boolean;
@@ -163,17 +165,20 @@ export const CreateChannel: React.FC<Props> = ({
               <img src={CloseIcon.src} onClick={CloseChannelHandler} />
             </div>
             {isUpdate && (
-              <label className={Styles.ChannelImage} htmlFor="channelImage">
-                <img src={ImgPath} alt="channelImage" ref={avatarRef} />
-                <input
-                  type={"file"}
-                  id="channelImage"
-                  name="channelImage"
-                  accept=".png, .jpg, .jpeg"
-                  ref={imageFileRef}
-                ></input>
-                <label className={Styles.Overlay}>
-                  <img src={UploadIcon.src} />
+              <label className={Styles.ImgContainer}>
+                <label className={Styles.avatar} htmlFor="channelImage">
+                  <img src={ImgPath} alt="channelImage" ref={avatarRef} />
+                  <input
+                    type={"file"}
+                    className={`${Styles.toggle} ${Styles.inputHide}`}
+                    id="channelImage"
+                    name="channelImage"
+                    accept=".png, .jpg, .jpeg"
+                    ref={imageFileRef}
+                  ></input>
+                  <label className={Styles.toggle}>
+                    <img src={UploadIcon.src} />
+                  </label>
                 </label>
               </label>
             )}
