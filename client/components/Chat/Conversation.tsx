@@ -45,7 +45,7 @@ export const Conversation: React.FC<Props> = ({
     if (convId === router.query.login || convId === router.query.channel)
       setUnRead(0);
   }, [router.query]);
-
+  
   return (
     <div
       className={`${Styles.ConversationContainer} ${
@@ -58,7 +58,7 @@ export const Conversation: React.FC<Props> = ({
         <div className={Styles.ConvStatus}>
           <div className={Styles.userName}>{name}</div>
           {type !== "Dm"
-            ? `${membersNum} Members`
+            ? status !== "Left" && `${membersNum} Members`
             : status !== "Blocker" && status}
         </div>
       </div>
