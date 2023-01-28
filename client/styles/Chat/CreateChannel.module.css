@@ -13,6 +13,7 @@
 
 .CreateChannelContainer {
   width: 100%;
+  min-width: 34rem;
   max-height: calc(100% - 1.5rem);
   background-color: #242426;
   border-radius: 10px;
@@ -170,50 +171,43 @@
   font-size: 1rem;
 }
 
-.ChannelImage {
+.ImgContainer {
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
 }
 
-.ChannelImage > input[type="file"]
-{
-  width: 0;
-  height: 0;
-  opacity: 0;
-  /* visibility: hidden; */
-}
-
-.ChannelImage img {
+.avatar {
   position: relative;
+  width: 7rem;
+  height: 7rem;
+  margin-bottom: 1.6rem;
+  cursor: pointer;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.toggle {
+  position: absolute;
   top: 0;
-  left: 0;
-  height: 8rem;
-  width: 8rem;
-  border-radius: 8px;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  transition: all 0.2s ease-in-out;
 }
 
-.Uploadimg {
-	cursor: pointer;
-	z-index: 3;
-	opacity: 0 !important;
+.inputHide {
+  cursor: pointer;
+  z-index: 3;
+  opacity: 0 !important;
 }
 
-.Overlay {
-	position: absolute;
-	height: 8rem;
-	width: 8rem;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	opacity: 0;
-	transition: all .2s ease-in-out;
-}
-
-.Overlay:hover {
-	opacity: 1;
-	transition: all .2s ease-in-out;
+.avatar:hover > .toggle {
+  opacity: 1;
+  transition: all 0.2s ease-in-out;
 }
 
 @media only screen and (min-width: 600px) {
@@ -237,7 +231,6 @@
     flex-direction: row;
     justify-content: space-between;
     gap: 1rem;
-    /* flex-flow: wrap; */
   }
 
   .Switch {

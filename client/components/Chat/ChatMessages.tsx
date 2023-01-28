@@ -45,11 +45,10 @@ const ChatMsgInfo: React.FC<MsgInfoProps> = ({
   };
 
   const blockOptClickHandler = async () => {
-    if (convData.convId) {
-      console.log("block : ", convData.login);
+    if (convData.login) {
       if (await fetchBlockUnblockUser(convData.login, "friendship/blockUser")) {
-        console.log("blocked : ", convData.login);
-        updateConversations(convData.convId);
+        if (convData.convId) updateConversations(convData.convId);
+        else router.push("/chat");
         setShowConvSettings(false);
       }
     }
@@ -57,31 +56,30 @@ const ChatMsgInfo: React.FC<MsgInfoProps> = ({
 
   const unblockOptClickHandler = async () => {
     if (convData.convId) {
-      console.log("unblock : ", convData.login);
-      if (await fetchBlockUnblockUser(convData.login, "friendship/unblock")) {
-        console.log("unblocked : ", convData.login);
+      if (await fetchBlockUnblockUser(convData.login, "friendship/unblock"))
         updateConversations(convData.convId);
-        setShowConvSettings(false);
-      }
+      setShowConvSettings(false);
     }
   };
 
   const leaveChnlOptClickHandler = async () => {
     if (convData.convId)
-      if (await fetchLeaveChannel(convData.convId)) {
+      if (await fetchLeaveChannel(convData.convId))
         updateConversations(convData.convId);
-        setShowConvSettings(false);
-      }
+    setShowConvSettings(false);
   };
 
   const chatMsgProfileClickHandler = () => {
     if (convData.type === "Dm") router.push(`/profile/${convData.login}`);
-    else if (!showChnlProfile) setShowChnlProfile(true);
+    else if (!showChnlProfile && convData.status !== "Left") {
+      if (convData.convId) updateConversations(convData.convId);
+      setShowChnlProfile(true);
+    }
   };
 
   const backArrowHandleClick = () => {
     if (showChnlProfile) setShowChnlProfile(false);
-    else router.push({ pathname: "/chat" });
+    else router.push("/chat");
   };
 
   const closeOptions = (v: boolean) => {
@@ -108,7 +106,8 @@ const ChatMsgInfo: React.FC<MsgInfoProps> = ({
               <div className={Styles.ChatMsgProfileName}>{convData.name}</div>
               <div className={Styles.ChatMsgProfileStatus}>
                 {convData.type !== "Dm"
-                  ? `${convData.membersNum} Members`
+                  ? convData.status !== "Left" &&
+                    `${convData.membersNum} Members`
                   : convData.status !== "Blocker" && convData.status}
               </div>
             </div>

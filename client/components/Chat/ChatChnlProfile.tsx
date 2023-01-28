@@ -20,7 +20,6 @@ export const ChatChnlProfile: React.FC<conversations> = (convData) => {
     useState<channelMembers>(initialMemberList);
 
   const AddMemberClickHandler = () => {
-    console.log("Add Member clicked");
     setShowAddMember(true);
   };
 
@@ -33,8 +32,7 @@ export const ChatChnlProfile: React.FC<conversations> = (convData) => {
     };
   }, [convData.convId, isSuccess]);
 
-  function insertMembersLogin()
-  {
+  function insertMembersLogin() {
     let members = [
       ...chnlMemberList.admins,
       ...chnlMemberList.members,
@@ -43,10 +41,6 @@ export const ChatChnlProfile: React.FC<conversations> = (convData) => {
     ];
     return members.map((member) => member.login);
   }
-
-
-
-
 
   return (
     <>

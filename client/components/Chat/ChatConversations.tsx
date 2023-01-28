@@ -31,7 +31,6 @@ export const ChatConversations: React.FC<Props> = ({
 }) => {
   const [showAddChannel, setshowAddChannel] = useState<boolean>(false);
   const [searchConv, setsearchConv] = useState<string>("");
-  const router = useRouter();
 
   const AddChannelClickHandler = () => {
     setshowAddChannel(true);
@@ -40,6 +39,7 @@ export const ChatConversations: React.FC<Props> = ({
   const CloseChannelHandler = () => {
     setshowAddChannel(false);
   };
+  
 
   return (
     <>

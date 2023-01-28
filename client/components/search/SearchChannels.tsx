@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { fetchDATA } from "@hooks/useFetchData";
 import { getImageBySize } from "@hooks/Functions";
-import { ProtectedFormMdl } from "@components/ProtectedModal";
+import { ProtectedChnlForm } from "@components/Chat/ProtectedChnlForm";
 
 interface ChannelDataType {
   Avatar: string;
@@ -53,7 +53,7 @@ const Channel: React.FC<ChannelDataType> = (props) => {
           />
         )}
       </div>
-			{ShowProtectCard && <ProtectedFormMdl setShow={setShowProtectCard}  convId={props.convId} refresh={props.refresh} />}
+			{ShowProtectCard && <ProtectedChnlForm closeForm={setShowProtectCard}  convId={props.convId} refresh={props.refresh} />}
     </>
   );
 };

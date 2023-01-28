@@ -1,5 +1,7 @@
 import { getImageBySize } from "@hooks/Functions";
+import socket_notif from "config/socketNotif";
 import { useRouter } from "next/router";
+import { useLayoutEffect, useState } from "react";
 import Styles from "../../styles/Chat/Conversation.module.css";
 
 interface Props {
@@ -24,11 +26,26 @@ export const Conversation: React.FC<Props> = ({
   selected,
 }) => {
   const router = useRouter();
+  const [unRead, setUnRead] = useState<number>(unread);
   const convClickHandler = () => {
+    socket_notif.emit(
+      "setMsgsAsRead",
+      { convId: convId },
+      (response: any) => {}
+    );
     if (convId && type === "Dm") router.push("/chat?login=" + convId);
     else router.push("/chat?channel=" + convId);
   };
 
+  useLayoutEffect(() => {
+    setUnRead(unread);
+  }, [unread]);
+
+  useLayoutEffect(() => {
+    if (convId === router.query.login || convId === router.query.channel)
+      setUnRead(0);
+  }, [router.query]);
+  
   return (
     <div
       className={`${Styles.ConversationContainer} ${
@@ -41,11 +58,11 @@ export const Conversation: React.FC<Props> = ({
         <div className={Styles.ConvStatus}>
           <div className={Styles.userName}>{name}</div>
           {type !== "Dm"
-            ? `${membersNum} Members`
+            ? status !== "Left" && `${membersNum} Members`
             : status !== "Blocker" && status}
         </div>
       </div>
-      {unread ? <div className={Styles.NewMsg}>{unread}</div> : null}
+      {unRead > 0 ? <div className={Styles.NewMsg}>{unRead}</div> : null}
     </div>
   );
 };
