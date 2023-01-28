@@ -1,0 +1,53 @@
+.ChannelMemberContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ChannelMemberContainer > img {
+  width: 2rem;
+  height: 2rem;
+}
+
+.ChannelMemberProfile {
+  font-weight: 500;
+  font-size: 1.5rem;
+  color: #d9d9d9;
+  display: flex;
+  align-items: center;
+  gap: 1.4rem;
+}
+
+.ChannelMemberProfile > img {
+  width: 4rem;
+  height: 4rem;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.ChatMsgSettings {
+  position: relative;
+  font-size: 1.5rem;
+  color: #ffffff;
+}
+
+.ChatMsgSettings > img {
+  width: 1.5rem;
+  height: 1.5rem;
+  margin-bottom: 0.5rem;
+  cursor: pointer;
+}
+
+.SettingContainer {
+  position: absolute;
+  min-width: 10rem;
+  z-index: 1;
+  right: 0.4rem;
+  padding: 0.5rem;
+  background: #3a3a3c;
+  border-radius: 5px;
+  box-shadow: 0px 0px 25px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}

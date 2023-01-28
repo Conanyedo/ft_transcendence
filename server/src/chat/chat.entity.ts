@@ -13,7 +13,7 @@ export enum memberStatus {
 }
 
 export enum convType {
-	DM = "Dm",
+	Dm = "Dm",
 	PUBLIC = "Public",
 	PROTECTED = "Protected",
 	PRIVATE = "Private",
@@ -37,7 +37,7 @@ export class Conversation {
 	@UpdateDateColumn()
 	lastUpdate: Date;
 
-	@Column({ type: 'enum', enum: convType, default: convType.DM })
+	@Column({ type: 'enum', enum: convType, default: convType.Dm })
 	type: convType;
 
 	@Column({ default: null })
@@ -90,6 +90,9 @@ export class Member {
 
 	@Column({ default: null })
 	leftDate: Date;
+
+	@Column({ default: 0 })
+	unread: Number;
 
 	@ManyToOne(() => Conversation, (conversation) => conversation.members)
 	conversation: Conversation;

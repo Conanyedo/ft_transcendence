@@ -48,17 +48,11 @@ export class UserService {
 	}
 
 	async editProfile(id: string, fullname: string, avatar: string, oldPath: string) {
-		if (fullname) {
-			const exist = await this.userRepository.query(`SELECT FROM users where users.fullname = '${fullname}' AND users.id != '${id}';`);
-			if (exist.length)
-				return { err: 'Nickname already in use' };
+		if (fullname)
 			await this.setName(id, fullname);
-		}
-		if (avatar)
-			avatar = await isFileValid('users', avatar);
-		if (avatar && oldPath)
-			deleteOldAvatar('users', oldPath);
+		if (avatar) avatar = await isFileValid('users', avatar);
 		if (avatar) {
+			if (oldPath) deleteOldAvatar('users', oldPath);
 			await this.setAvatar(id, `http://${this.configService.get('SERVER_IP')}/uploads/users/${avatar}`);
 			resizeAvatar('users', avatar);
 		}
@@ -121,16 +115,8 @@ export class UserService {
 		return user?.is2faEnabled;
 	}
 
-	async getIsAuthenticated(id: string) {
-		const user: User = await this.userRepository
-			.createQueryBuilder('users')
-			.select(['users.isAuthenticated'])
-			.where('users.id = :id', { id: id })
-			.getOne();
-		return user?.isAuthenticated;
-	}
-
-	async getUserHeader(login: string) {
+	async getUserHeader(currLogin: string, login: string) {
+		if (login === '@me') login = currLogin;
 		const user: User = await this.userRepository
 			.createQueryBuilder('users')
 			.leftJoinAndSelect("users.stats", "stats")
@@ -142,35 +128,38 @@ export class UserService {
 		return { data: { ...user } };
 	}
 
-	async getUserInfo(login: string, id: string) {
+	async getUserInfo(currLogin: string, login: string) {
+		if (login === '@me') login = currLogin;
 		let relation: userRelation = userRelation.NONE;
 		const user: User = await this.userRepository
 			.createQueryBuilder('users')
 			.leftJoinAndSelect("users.stats", "stats")
 			.select(['users.login', 'users.fullname', 'users.avatar', 'users.status', 'stats.XP', 'stats.GP', 'stats.rank'])
-			.where(`users.login = :id`, { id: id })
+			.where(`users.login = :login`, { login: login })
 			.getOne();
 		if (!user)
 			return { err: 'User not found' };
-		if (login !== id)
-			relation = await this.friendshipService.getRelation(login, id);
+		if (currLogin !== login)
+			relation = await this.friendshipService.getRelation(currLogin, login);
 		return { data: { ...user, relation } };
 	}
 
-	async getUserStats(id: string, by: string) {
+	async getUserStats(currLogin: string, login: string) {
+		if (login === '@me') login = currLogin;
 		const stats: Stats[] = await this.userRepository.query(`SELECT stats."numGames", stats."gamesWon" FROM users
-		JOIN stats ON users."statsId" = stats.id where users.${by} = '${id}';`);
+		JOIN stats ON users."statsId" = stats.id where users.login = '${login}';`);
 		if (!stats.length)
 			return { err: 'User not found' };
 		return { data: { numGames: stats[0].numGames, gamesWon: stats[0].gamesWon } };
 	}
 
-	async getAchievements(id: string, by: string) {
+	async getAchievements(currLogin: string, login: string) {
+		if (login === '@me') login = currLogin;
 		const user: User = await this.userRepository
 			.createQueryBuilder('users')
 			.leftJoinAndSelect("users.stats", "stats")
 			.select(['users.id', 'stats.achievement'])
-			.where(`users.${by} = :id`, { id: id })
+			.where(`users.login = :login`, { login: login })
 			.getOne()
 		if (!user)
 			return { err: 'User not found' };
@@ -271,15 +260,6 @@ export class UserService {
 		await this.statsRepository
 			.createQueryBuilder('stats')
 			.update({ achievement: achievements })
-			.where('id = :id', { id: id })
-			.execute();
-	}
-
-	async setUserAuthenticated(id: string, state: boolean) {
-		const status: userStatus = (state) ? userStatus.ONLINE : userStatus.OFFLINE;
-		return await this.userRepository
-			.createQueryBuilder('users')
-			.update({ isAuthenticated: state, status: status })
 			.where('id = :id', { id: id })
 			.execute();
 	}

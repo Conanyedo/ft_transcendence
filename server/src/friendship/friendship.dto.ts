@@ -3,8 +3,7 @@ import { IsNotEmpty, IsString, Length, Matches } from "class-validator";
 export class loginValidate {
 	@IsNotEmpty()
 	@IsString()
-	@Length(4, 20)
-	@Matches(/^(?=.{2,20}$)(?![ _.-])(?!.*[_.-]{2})[a-zA-Z0-9 ._-]+(?<![ _.-])$/)
+	@Matches(/^((?=.{2,20}$)(?![ _.-])(?!.*[_.-]{2})[a-zA-Z0-9 ._]+(?<![ _.-])|(\@me))$/)
 	login: string;
 };
 

@@ -1,0 +1,63 @@
+.AddMemberBackground {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: #0000009b;
+  z-index: 100;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.AddMemberContainer {
+  width: 85%;
+  background-color: #242426;
+  border-radius: 10px;
+  padding: 1.5rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.AddMemberHeader {
+  font-weight: 600;
+  font-size: 2rem;
+  color: #c6e1ff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.AddMemberHeader > img {
+  height: 1.5rem;
+  width: 1.5rem;
+  cursor: pointer;
+}
+
+.AddMemberBtn {
+  min-height: 4rem;
+  font-size: 1.6rem;
+  font-weight: 500;
+  border-radius: 5px;
+  color: #ffffff;
+  background-color: #409cff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.AddMemberContainer > p {
+  color: #ff6482;
+  font-weight: 400;
+  font-size: 1rem;
+}
+
+@media only screen and (min-width: 600px) {
+  .AddMemberContainer {
+    width: 48rem;
+  }
+}

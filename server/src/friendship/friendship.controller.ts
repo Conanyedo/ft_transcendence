@@ -76,14 +76,14 @@ export class FriendshipController {
 	@Post('/blockUser')
 	@UseGuards(JwtAuthGuard)
 	async blockUser(@User() user: userParitalDto, @Body() data: loginValidate) {
-		const result = this.friendshipService.blockUser(user.login, data.login);
+		const result = await this.friendshipService.blockUser(user.login, data.login);
 		return { data: result };
 	}
 
 	@Post('/unblock')
 	@UseGuards(JwtAuthGuard)
 	async unblock(@User() user: userParitalDto, @Body() data: loginValidate) {
-		const result = this.friendshipService.unblock(user.login, data.login);
+		const result = await this.friendshipService.unblock(user.login, data.login);
 		return { data: result };
 	}
 }

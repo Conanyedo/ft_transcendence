@@ -1,118 +1,108 @@
-import Styles from "@styles/chat.module.css";
-import { useState, useEffect, useContext } from "react";
-import {
-  ChatContext,
-  ChatContextType,
-  ChatProvider,
-} from "@contexts/chatContext";
+import styles from "@styles/Chat/ChatContainer.module.css";
+import { ChatConversations } from "@components/Chat/ChatConversations";
+import ChatMessages from "@components/Chat/ChatMessages";
+import { useEffect, useLayoutEffect, useState } from "react";
+import { conversations, initialconv, MsgData } from "@Types/dataTypes";
+import { fetchDATA, fetchLoginInfo } from "@hooks/useFetchData";
 import { useRouter } from "next/router";
-import { getLoginInfo } from "@hooks/useFetchData";
-import { ChatRight } from "@components/Chat/chatRight";
-import { ChatLeft } from "@components/Chat/chatLeft";
-import { ProtectedFormMdl } from "@components/ProtectedModal";
-
-class channelDataType {
-  type: string;
-  convId: string;
-  constructor() {
-    this.type = "";
-    this.convId = "";
-  }
-}
 
 const Chat = () => {
-  // Setting local state
-  const [showSetModal, setShowSetModal] = useState(false);
-  const [show, setShow] = useState(false);
-  const [channelData, setChannelData] = useState<channelDataType>(
-    new channelDataType()
-  );
-
-  const [selectedConv, setSelectedConv] = useState<string>();
-
-  const { showCnv, setShowCnv, lastUsers, setLastUsers, setInitialUsrData } =
-    useContext(ChatContext) as ChatContextType;
-
+  const [isMobile, setIsMobile] = useState<boolean>(true);
+  const [convs, setConvs] = useState<conversations[]>([]);
+  const [convData, setConvData] = useState<conversations>(initialconv);
+  const [newConv, setNewConv] = useState<conversations>(initialconv);
   const router = useRouter();
-  const [name, setName] = useState<any>("");
-  const [channelName, setchannelName] = useState<any>("");
-  const [isUp, setisUp] = useState<boolean>(false);
-  const { login, channel } = router.query;
 
-  const refresh = async () => {
-    if (router.isReady) {
-      // get login info first
-      if (channel != undefined) {
-        setchannelName(channel);
-        await getLoginInfo(channel, false, setChannelData);
-      }
-      if (login === undefined) setShowCnv(false);
+  /* -------------------------------------------------------------------------- */
+  /*                             update conversation                            */
+  /* -------------------------------------------------------------------------- */
 
-      setName(login || channel);
-    }
+  const updateConversations = (msgConvId: string) => {
+    fetchDATA(setNewConv, router, `chat/conversations/${msgConvId}`);
   };
 
-  useEffect(() => {
-    //upon entering execute this
-    if (
-      RegExp(
-        /^(?=.{2,20}$)(?![ _.-])(?!.*[_.-]{2})[a-zA-Z0-9 ._-]+(?<![ _.-])$/
-      ).test((login || channel) as string)
-    ) {
-      refresh();
-    }
-  }, [login, channel]);
+  /* -------------------------------------------------------------------------- */
+  /*                              check login info                              */
+  /* -------------------------------------------------------------------------- */
 
-  if (channelData.type !== "" && channelData.type !== "Public" && !show) {
-    setShow(true);
-  } else if (
-    (channelData.type === "" || channelData.type == "Public") &&
-    show
-  ) {
-    setShow(false);
+  const getSelectConvId = () => {
+    if (router.query.login)
+      return router.query.login as string;
+    else if (router.query.channel)
+      return router.query.channel as string;
+    else
+      return "0";
   }
-
-  const closePopup = () => {
-    setChannelData(new channelDataType());
-    setShow(false);
+  const checkLoginInfo = async () => {
+    const loginInfo = await fetchLoginInfo(getSelectConvId());
+    if (loginInfo)
+      setConvData({ name: loginInfo.fullname, type: "Dm", ...loginInfo });
   };
 
+
+  /* -------------------------------------------------------------------------- */
+  /*                             fetch conversation                             */
+  /* -------------------------------------------------------------------------- */
+
   useEffect(() => {
-    setisUp(true);
+    fetchDATA(setConvs, router, "chat/conversations");
+    const checkMobile = () => {
+      const mql = window.matchMedia("(max-width : 1024px)");
+      if (mql.matches) {
+        setIsMobile(true);
+      } else {
+        setIsMobile(false);
+      }
+    };
+    window.addEventListener("resize", checkMobile);
+    checkMobile();
+    return () => window.removeEventListener("resize", checkMobile);
   }, []);
+
+  useEffect(() => {
+    if (newConv.convId !== "0") {
+      const convlist = convs.filter((conv) => {
+        return conv.convId !== newConv?.convId;
+      });
+      setConvs([newConv, ...convlist]);
+    }
+  }, [newConv]);
+
+  /* -------------------------------------------------------------------------- */
+  /*                             check if conv exist                            */
+  /* -------------------------------------------------------------------------- */
+
+  useLayoutEffect(() => {
+    const convId = getSelectConvId();
+    if (convs.length > 0 && convId !== "0") {
+      let foundconv = convs.find(
+        (conv) => conv.convId === convId || conv.login === convId
+      );
+      if (foundconv) {
+        setConvData(foundconv);
+      } else {
+        checkLoginInfo();
+      }
+    } 
+    else if (convId === "0")
+      setConvData(initialconv);
+  }, [router.query, convs]);
 
   return (
     <>
-      {isUp && (
-        <ChatProvider>
-          <div className={Styles.chatContainer}>
-            <ChatLeft
-              login={name}
-              selectedConv={selectedConv}
-              setSelectedConv={setSelectedConv}
-            />
-            {
-              <ChatRight
-                setShowSetModal={setShowSetModal}
-                setSelectedConv={setSelectedConv}
-                login={
-                  channelData.type !== "" && channelData.type !== "Public"
-                    ? undefined
-                    : name
-                }
-              />
-            }{" "}
-            {show}
-            {/* <ProtectedFormMdl
-              convId={channelData.convId}
-              show={show}
-              setShow={closePopup}
-              refresh={refresh}
-              name={channelName}
-            /> */}
-          </div>
-        </ChatProvider>
-      )}
+      <div className={styles.ChatContainer}>
+        <ChatConversations
+          isMobile={isMobile}
+          convs={convs}
+          selectedConv={getSelectConvId()}
+          updateConversations={updateConversations}
+        />
+        <ChatMessages
+          isMobile={isMobile}
+          convData={convData}
+          updateConversations={updateConversations}
+        />
+      </div>
     </>
   );
 };

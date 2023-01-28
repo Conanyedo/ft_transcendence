@@ -1,0 +1,200 @@
+.ChatMessagesContainer {
+  width: 70%;
+  height: 100%;
+  padding: 0 0 1.25rem 0;
+  border-radius: 15px;
+  background-color: #242426;
+}
+
+.StartNewCnv {
+  color: #92a7be;
+  font-size: 1.8rem;
+  font-weight: 400;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Chat Messages info Header */
+
+.ChatMsginfoContainer {
+  height: 8rem;
+  width: 100%;
+  padding: 1.5rem;
+  background-color: #28282a;
+  border-radius: 15px 15px 0 0;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.ChatMsginfoContainer > img {
+  height: 3rem;
+  width: 3rem;
+  cursor: pointer;
+}
+
+.ChatMsginfo {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ChatMsgProfile {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  cursor: pointer;
+}
+
+.ChatMsgProfile img {
+  width: 4.5rem;
+  height: 4.5rem;
+  border-radius: 5px;
+}
+
+.ChatMsgProfileName {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #d9d9d9;
+}
+
+.ChatMsgProfileStatus {
+  font-size: 1.2rem;
+  font-weight: 400;
+  color: #c6e1ff;
+}
+
+.ChatMsgSettings {
+  font-size: 1.5rem;
+  color: #ffffff;
+}
+
+.ChatMsgSettings img {
+  position: relative;
+  width: 2rem;
+  height: 2rem;
+  margin-bottom: 0.5rem;
+  cursor: pointer;
+}
+
+.SettingContainer {
+  position: absolute;
+  min-width: 10rem;
+  z-index: 100;
+  padding: 0.5rem;
+  right: 4.5rem;
+  background: #3a3a3c;
+  border-radius: 5px;
+  box-shadow: 0px 0px 25px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* Chat Messages Setting Option */
+
+.SettingOptionContainer {
+  width: 100%;
+  padding: 0.3rem;
+  margin-bottom: 0.3rem;
+  color: #ffffff;
+  font-size: 1rem;
+  line-height: 16px;
+  font-weight: 400;
+  border-radius: 5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.SettingOptionContainer:hover {
+  background-color: #2b2b2d;
+}
+
+
+/* Channel Profile */
+
+.ChannelProfile {
+  width: calc(100% - (0.3rem));
+  height: calc(100% - (8rem));
+  padding: 1.5rem 1.5rem 0 1.5rem;
+  overflow-y: scroll;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.ChannelProfileHeader {
+  color: #c6e1ff;
+  font-size: 1.8rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.AddMemberButton {
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: #409cff;
+  padding: 0.4rem;
+  border: 2px solid #409cff;
+  border-radius: 5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.AddMemberButton > img {
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+.AddMemberButton > p {
+  display: none;
+}
+
+.MemberListContainer {
+  padding: 1.5rem;
+  border-radius: 5px;
+  background-color: #2c2c2e;
+  font-weight: 400;
+  font-size: 1.8rem;
+  color: #c6e1ff;
+  display: flex;
+  flex-direction: column;
+  gap: 1.8rem;
+}
+
+.MemberList {
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Media */
+
+@media only screen and (min-width: 1024px) {
+  .ChatMessagesContainer {
+    border-radius: 0 15px 15px 0;
+  }
+  .ChatMsginfoContainer {
+    border-radius: 0 15px 0 0;
+  }
+
+  .ChatMsginfoContainer > img {
+    display: none;
+  }
+}
+
+@media only screen and (min-width: 600px) {
+  .AddMemberButton > p {
+    display: block;
+  }
+}
