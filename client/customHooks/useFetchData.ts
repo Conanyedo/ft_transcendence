@@ -3,14 +3,11 @@ import { ShowErrorMsg } from "@store/UI-Slice";
 import axios from "axios";
 import socket_game from "config/socketGameConfig";
 import { NextRouter } from "next/router";
+import path from "path";
 import { Dispatch, SetStateAction } from "react";
 import { baseUrl } from "../config/baseURL";
 import socket_notif from "../config/socketNotif";
-import {
-  ChannelData,
-  channelMembers,
-  UserTypeNew,
-} from "../Types/dataTypes";
+import { ChannelData, channelMembers, UserTypeNew } from "../Types/dataTypes";
 
 export const getQRcodeOrdisableCode = async (
   status: string,
@@ -45,8 +42,6 @@ export const Is2FAEnaled = (set: any, setP: any, route: NextRouter) => {
       withCredentials: true,
     })
     .then((result) => {
-      console.log(result.data);
-
       if (result.data.err) return;
       set(result.data.data);
       setP(result.data.data);
@@ -216,6 +211,25 @@ export const fetchUserLogin = async (
     });
 };
 
+export const joinChannel = async (convId: string, password: string) => {
+  const data = { password: password } || {};
+  const json = JSON.stringify(data);
+  axios
+    .post(`${baseUrl}chat/JoinChannel/${convId}`, json, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      withCredentials: true,
+    })
+    .then((res) => {
+      if (res.data.err) return false;
+      return true;
+    })
+    .catch((err) => {
+      return false;
+    });
+};
+
 export const JoinChannel = async (
   data: any,
   setError: Dispatch<SetStateAction<string>>
@@ -245,29 +259,6 @@ export const JoinChannel = async (
     });
 };
 
-export const addMembers = async (data: any, setData: any) => {
-  // POST /chat/addMembers
-  const json = JSON.stringify({ convId: data.convId, members: data.members });
-
-  return await axios({
-    method: "post",
-    url: `${baseUrl}chat/addMembers`,
-    headers: {
-      "Content-Type": "application/json",
-    },
-    data: json,
-    withCredentials: true,
-  })
-    .then((res) => {
-      if (res.data.err) return false;
-      setData(res.data.data);
-      return true;
-    })
-    .catch((err) => {
-      return false;
-    });
-};
-
 export const fetchAddChnlMembers = async (data: string[], convId: string) => {
   const json = JSON.stringify({ members: data });
   return await axios({
@@ -288,72 +279,6 @@ export const fetchAddChnlMembers = async (data: string[], convId: string) => {
     });
 };
 
-export const banMemberFromChannel = async (data: any) => {
-  const json = JSON.stringify({ convId: data.convId, member: data.member });
-
-  return await axios({
-    method: "post",
-    url: `${baseUrl}chat/banMember`,
-    headers: {
-      "Content-Type": "application/json",
-    },
-    data: json,
-    withCredentials: true,
-  })
-    .then((res) => {
-      if (res.data.err) return false;
-      return true;
-    })
-    .catch((err) => {
-      return false;
-    });
-};
-
-export const muteMemberFromChnl = async (data: any) => {
-  const json = JSON.stringify({
-    convId: data.convId,
-    member: data.member,
-    seconds: data.seconds,
-  });
-  return await axios({
-    method: "post",
-    url: `${baseUrl}chat/muteMember`,
-    headers: {
-      "Content-Type": "application/json",
-    },
-    data: json,
-    withCredentials: true,
-  })
-    .then((res) => {
-      if (res.data.err) return false;
-      return true;
-    })
-    .catch((err) => {
-      return false;
-    });
-};
-
-export const UnmuteMemberFromChnl = async (data: any) => {
-  // /chat/banMember
-  const json = JSON.stringify({ convId: data.convId, member: data.member });
-  return await axios({
-    method: "post",
-    url: `${baseUrl}chat/unmuteMember`,
-    headers: {
-      "Content-Type": "application/json",
-    },
-    data: json,
-    withCredentials: true,
-  })
-    .then((res) => {
-      if (res.data.err) return false;
-      return true;
-    })
-    .catch((err) => {
-      return false;
-    });
-};
-
 export const checkCode2FA = async (code: string, router: NextRouter) => {
   const json = JSON.stringify({ code: code });
   return await axios({
@@ -367,7 +292,7 @@ export const checkCode2FA = async (code: string, router: NextRouter) => {
   })
     .then((res) => {
       if (res.data.err) return false;
-      // router.replace("/")
+      router.replace("/");
       return true;
     })
     .catch((err) => {
@@ -375,29 +300,6 @@ export const checkCode2FA = async (code: string, router: NextRouter) => {
         socket_notif.disconnect();
         router.replace("/");
       }
-      return false;
-    });
-};
-
-export const updateChnlInfo = async (
-  formData: any,
-  router: any,
-  login: any
-) => {
-  return await axios({
-    method: "post",
-    url: `${baseUrl}chat/updateChannel`,
-    headers: {},
-    data: formData,
-    withCredentials: true,
-  })
-    .then((res) => {
-      if (res.data.data == true) {
-        router.push(`/chat?channel=${login}`);
-      }
-      return true;
-    })
-    .catch((err) => {
       return false;
     });
 };
@@ -609,43 +511,6 @@ export const fetchBlockUnblockUser = async (login: string, path: string) => {
     });
 };
 
-export const postChannel = async (
-  set: any,
-  router: NextRouter,
-  data: any,
-  setError: any
-) => {
-  const json = JSON.stringify({
-    name: data.name,
-    type: data.type,
-    members: [...data.members],
-    password: data.password,
-  });
-  return await axios({
-    method: "post",
-    url: `${baseUrl}chat/createChannel`,
-    headers: {
-      "Content-Type": "application/json",
-    },
-    data: json,
-    withCredentials: true,
-  })
-    .then((res) => {
-      if (res.data.err !== undefined) {
-        setError(res.data.err);
-      } else {
-        setError("");
-        set(res.data);
-        if (res.data.data.membersNum > 0)
-          router.push("/chat?channel=" + res.data.data.name);
-        else router.push("/chat?login=" + res.data.data.login);
-      }
-    })
-    .catch((err) => {
-      return false;
-    });
-};
-
 export const getChannelProfile = async (convId: string, set: any) => {
   const json = JSON.stringify({ convId: convId });
 
@@ -763,32 +628,6 @@ export const fetchLoginInfo = async (login: string) => {
     .then((res) => {
       if (res.data.err) return undefined;
       else return res.data.data;
-    })
-    .catch((err) => {
-      return false;
-    });
-};
-
-export const getLoginInfo = async (
-  login: any,
-  user: boolean,
-  setChnlData: any
-) => {
-  return await axios({
-    method: "get",
-    url: `${baseUrl}chat/channelInfo/${login}`,
-    headers: {},
-    withCredentials: true,
-  })
-    .then((res) => {
-      if (res.data.err) return false;
-      else {
-        if (res.data?.data === true) {
-          setChnlData({ type: "", convId: "" });
-        } else {
-          setChnlData(res.data.data);
-        }
-      }
     })
     .catch((err) => {
       return false;
