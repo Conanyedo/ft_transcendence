@@ -75,12 +75,13 @@ export class ChatService {
 
 	async updateUnreadMsgs(login: string, convId: string) {
 		const members = await this.memberRepository
-			.query(`select members.id, members."unread", user.login from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND members."leftDate" is null;`);
+			.query(`select members.id, members."unread", users.login from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND members."leftDate" is null;`);
 		if (!members.length) return;
 		await Promise.all(members.map(async (member) => {
 			const unread: number = +member.unread;
-			await this.memberRepository
-				.query(`update members set unread = '${unread + 1}' where members."id" = '${member.id}';`);
+			if (login !== member.login)
+				await this.memberRepository
+					.query(`update members set unread = '${unread + 1}' where members."id" = '${member.id}';`);
 		}))
 	}
 
