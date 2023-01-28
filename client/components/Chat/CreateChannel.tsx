@@ -10,13 +10,12 @@ import { ChannelData } from "@Types/dataTypes";
 import { fetchCreateChannel, fetchUpdateChannel } from "@hooks/useFetchData";
 import { useRouter } from "next/router";
 import { getImageBySize, useOutsideAlerter } from "@hooks/Functions";
-import { type } from "os";
-import { ChannelMember } from "./ChannelMember";
 
 const chnlError: { [key: string]: string } = {
   channelName: "invalid Channel Name",
-  channelPassword: "invalid Password (minimum 8 characters long)here",
-  channelMembers: "invalid channel members (at least 1 member)",
+  channelPassword:
+    "Password must contain at least 8 characters.At least one number, one uppercase letter and one special character",
+  channelMembers: "Channel Members must contain at least 1 member",
 };
 
 const reducer = (state: any, action: any) => {
@@ -34,9 +33,11 @@ const reducer = (state: any, action: any) => {
   }
 };
 
-const validPassword = RegExp(
+export const validPassword = RegExp(
   /^(?=(.*[a-z]){1,})(?=(.*[A-Z]){1,})(?=(.*[0-9]){1,})(?=(.*[!@#$%^&*()\-__+.]){1,}).{8,}$/
 );
+
+export const validName = RegExp(/^(?=.{2,}$)(?![ _.-])(?!.*[_.-]{2})[a-zA-Z0-9 ._-]+(?<![ _.-])$/);
 
 interface Props {
   isUpdate: boolean;
@@ -81,13 +82,10 @@ export const CreateChannel: React.FC<Props> = ({
             state.type === "Protected")) &&
         !validPassword.test(state.password)
       ) {
-        console.log("init : ", initialChnlState.type);
-        console.log("state : ", state.type);
-
         return "channelPassword";
       }
     } else {
-      if (state.name.length < 4) return "channelName";
+      if (!validName.test(state.name)) return "channelName";
       else if (
         state.type === "Protected" &&
         !validPassword.test(state.password)
@@ -101,11 +99,10 @@ export const CreateChannel: React.FC<Props> = ({
   const formSubmitHandler = async (event: any) => {
     event.preventDefault();
     let err = checkIsValidForm();
-    console.log(err);
     if (err?.length === 0) {
-      if (!isUpdate)
+      if (!isUpdate) {
         await fetchCreateChannel(setChnlConvId, state, setResponseError);
-      else if (convId) {
+      } else if (convId) {
         await fetchUpdateChannel(state, convId, imageFileRef, setResponseError);
         updateConversations(convId);
         CloseChannelHandler();
@@ -281,12 +278,12 @@ export const CreateChannel: React.FC<Props> = ({
                   dispatch={dispatch}
                   chnlMembers={[]}
                 />
-                {errorKey[0] === "channelMembers" && (
+                {errorKey === "channelMembers" && (
                   <p className={Styles.ChnlError}>{chnlError[errorKey]}</p>
                 )}
               </div>
             )}
-            {responseError.length > 0 && errorKey.length === 0 && (
+            {responseError.length > 0 && (
               <p className={Styles.ChnlError}>{responseError}</p>
             )}
             <input type="submit" value={!isUpdate ? "Create" : "Update"} />
