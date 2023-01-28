@@ -33,9 +33,6 @@ const UsersList: React.FC<userListProps> = ({
       user.fullname.toUpperCase().includes(Search.toUpperCase())
   );
 
-  console.log(chnlMembers);
-  
-
   return (
     <>
       {filteredList.length > 0 && (
@@ -111,7 +108,7 @@ export const InsertChannelMembers: React.FC<Props> = ({
     const newMembers = members.map((user) => user.login);
     dispatch({ type: "members", members: newMembers });
   }, [members]);
-  
+
   return (
     <>
       <label htmlFor="inputAddMember">
