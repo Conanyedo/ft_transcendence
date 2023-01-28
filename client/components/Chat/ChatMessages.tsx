@@ -58,7 +58,7 @@ const ChatMsgInfo: React.FC<MsgInfoProps> = ({
     if (convData.convId) {
       if (await fetchBlockUnblockUser(convData.login, "friendship/unblock"))
         updateConversations(convData.convId);
-        setShowConvSettings(false);
+      setShowConvSettings(false);
     }
   };
 
@@ -66,12 +66,13 @@ const ChatMsgInfo: React.FC<MsgInfoProps> = ({
     if (convData.convId)
       if (await fetchLeaveChannel(convData.convId))
         updateConversations(convData.convId);
-        setShowConvSettings(false);
+    setShowConvSettings(false);
   };
 
   const chatMsgProfileClickHandler = () => {
     if (convData.type === "Dm") router.push(`/profile/${convData.login}`);
-    else if (!showChnlProfile) setShowChnlProfile(true);
+    else if (!showChnlProfile && convData.status !== "Left")
+      setShowChnlProfile(true);
   };
 
   const backArrowHandleClick = () => {
