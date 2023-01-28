@@ -66,7 +66,7 @@ const Stats: React.FC = () => {
 	const router = useRouter()
 	const login = router.query?.id
 	useEffect(() => {
-		fetchDATA(setUser, router, `user/stats${login ? "/" + login : ""}`)
+		fetchDATA(setUser, router, `user/stats${login ? "/" + login : "/@me"}`)
 		SetIsUp(true)
 		return () => {
 			setUser(EmtyUser);

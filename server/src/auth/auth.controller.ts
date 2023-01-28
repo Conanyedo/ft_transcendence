@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Res, UseGuards, Body } from '@nestjs/common';
+import { Controller, Get, Post, Res, UseGuards, Body, UseFilters } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { Response } from 'express';
 import { IntraAuthGuard } from './intra-auth.guard';
@@ -8,6 +8,7 @@ import { Jwt2faAuthGuard } from 'src/2fa-jwt/2fa/2fa-auth.guard';
 import { User } from 'src/user/user.decorator';
 import { userParitalDto } from 'src/user/user.dto';
 import { codeValidate, is2faEnabledValidate } from './auth.dto';
+import { HttpExceptionFilter } from './exception.filter';
 
 
 @Controller('auth')
@@ -18,12 +19,14 @@ export class AuthController {
 
 	@Get('/login')
 	@UseGuards(IntraAuthGuard)
+	@UseFilters(HttpExceptionFilter)
 	async login(@User() user: userParitalDto, @Res({ passthrough: true }) res: Response) {
 		return await this.authService.authenticateUser(user, res);
 	}
 
-	@UseGuards(GoogleOauthGuard)
 	@Get('/google/login')
+	@UseGuards(GoogleOauthGuard)
+	@UseFilters(HttpExceptionFilter)
 	async googleLogin(@User() user: userParitalDto, @Res({ passthrough: true }) res: Response) {
 		return await this.authService.authenticateUser(user, res);
 	}
@@ -31,14 +34,14 @@ export class AuthController {
 	@Get('/logout')
 	@UseGuards(JwtAuthGuard)
 	logout(@User() user: userParitalDto, @Res({ passthrough: true }) res: Response) {
-		this.authService.logout(user, res);
+		res.clearCookie('jwt', { httpOnly: true });
 		return { data: true };
 	}
 
 	@Get('/isAuthorized')
 	@UseGuards(JwtAuthGuard)
-	async isAuthorized(@User() user: userParitalDto) {
-		return await this.authService.isAuthorized(user);
+	isAuthorized() {
+		return { data: true };
 	}
 
 	@Get('/is2faAuthorized')
@@ -74,7 +77,7 @@ export class AuthController {
 
 	@Get('/2faRedirect')
 	redirect2fa(@Res({ passthrough: true }) res: Response) {
-		return this.authService.redirect2fa(res);
+		this.authService.redirectProfile(res);
 	}
 
 	@Post('/2faLogin')
@@ -83,8 +86,7 @@ export class AuthController {
 		const isValid = await this.authService.is2faCodeValid(user, data.code);
 		if (isValid.err)
 			return isValid;
-		this.authService.setJWTCookie(user, res);
-		return await this.authService.setUserAuthenticated(user);
+		return this.authService.setJWTCookie(user, res);
 	}
 
 }

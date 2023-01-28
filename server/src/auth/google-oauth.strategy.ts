@@ -22,11 +22,11 @@ export class GoogleOauthStrategy extends PassportStrategy(Strategy, 'google') {
 
 	async validate(accessToken: string, refreshToken: string, profile: Profile, done: VerifyCallback): Promise<any> {
 
-		const { name, emails, photos } = profile;
+		const { displayName, emails } = profile;
 		const newUser: userDto = {
-			login: emails[0].value.slice(0, emails[0].value.indexOf('@')),
-			fullname: name.givenName,
-			avatar: photos[0].value
+			login: `${emails[0].value.split('@')[0]}G`,
+			fullname: displayName,
+			avatar: `https://ui-avatars.com/api/?name=${displayName}&size=220&background=2C2C2E&color=409CFF&length=1`
 		};
 		const user: userParitalDto = await this.authService.checkUserExist(newUser);
 		done(null, user);

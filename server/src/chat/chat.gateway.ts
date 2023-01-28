@@ -41,6 +41,12 @@ export class ChatGateway {
 	}
 
 	@UseGuards(WsJwtGuard)
+	@SubscribeMessage('setMsgsAsRead')
+	async setMsgsAsRead(@User('login') login: string, @MessageBody(ValidationPipe) data: convIdValidate) {
+		return await this.chatService.setMsgsAsRead(login, data.convId);
+	}
+
+	@UseGuards(WsJwtGuard)
 	@SubscribeMessage('sendMsg')
 	async sendMsg(@User('login') login: string, @ConnectedSocket() client: Socket, @MessageBody(ValidationPipe) data: createMsgDto) {
 		let msg: msgDto;
@@ -52,6 +58,7 @@ export class ChatGateway {
 			return msg;
 		if (typeof msg === "string")
 			return { err: msg };
+		await this.chatService.updateUnreadMsgs(login, msg.convId);
 		const sockets: string[] = await this.chatService.getRoomSockets(login, msg.convId);
 		sockets.forEach((socket) => (this.server.to(socket).emit('newMsg', { data: msg })))
 		return { data: msg.convId };

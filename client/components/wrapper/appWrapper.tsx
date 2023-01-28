@@ -1,4 +1,3 @@
-import { getCookie } from "cookies-next"
 import { useRouter } from "next/router"
 import { useEffect, useState } from "react"
 import classesNav from "../../styles/sideNav.module.css"
@@ -33,7 +32,6 @@ const ContentWrapper: React.FC<PropsType> = ({ children }) => {
 	const displaymsg = useSelector(Settings)
 	const dispatch = useDispatch()
 	const router = useRouter()
-	const jwt = getCookie("jwt")
 	const [posIndicator, setPosIndicator] = useState(classesNav.hide)
 	const ShowError = useSelector(ToggleErrorValue)
 	const ShowErrorGame = useSelector(ToggleErrorGameValue)
@@ -72,18 +70,14 @@ const ContentWrapper: React.FC<PropsType> = ({ children }) => {
 		})
 	}
 	useEffect(() => {
-		if (jwt) fetchDATA(setIsAuth, router, "auth/isAuthorized")
+		fetchDATA(setIsAuth, router, "auth/isAuthorized")
 	}, [])
 	useEffect(() => {
 		navBarHandler(Path)
 	}, [Path])
 	if (!socket_notif.id) socket_notif.on("connect", () => {})
-	if (!jwt) {
-		router.replace("/")
+	if (!isAuth)
 		return <LoadingElm />
-	} else if (!isAuth) {
-		return <LoadingElm />
-	}
 	const toggleHandler = () => dispatch(Toggle())
 
 	return (

@@ -1,7 +1,5 @@
 import { motion } from "framer-motion";
 import classes from "../../styles/Search.module.css";
-import Image from "next/image";
-import profile from "../../public/AvatarChannel.png";
 import { JoinChannel, LeaveChannel } from "../buttons";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -29,7 +27,7 @@ const Channel: React.FC<ChannelDataType> = (props) => {
   };
 	const push = () => {
 		if (status.find((stat) => props.status === stat))
-			router.push('/chat?channel=' + props.title);
+			router.push('/chat?channel=' + props.convId);
 	}
   const pathImage = getImageBySize(props.Avatar, 70);
   return (

@@ -66,6 +66,7 @@
     justify-content: space-between;
     width: 45%;
 }
+
 .UserSectionSecond {
     display: flex;
     align-items: center;
@@ -225,23 +226,34 @@
     border-radius: 10px;
 }
 
+.listLiveGames > p {
+    color: #C6E1FF;
+    font-weight: 500;
+    font-size: 2rem;
+}
+
 @media only screen and (max-width: 1230px) {
+
     .tierContainerSecond,
     .tierContainer {
         display: none;
     }
+
     .vs {
         padding: 0;
         margin: 0 .5rem;
     }
+
     .Button {
         padding: 1rem;
     }
+
     .WatchGame,
     .vs,
     .Score {
         font-size: 2.1rem;
     }
+
     .secondUserName,
     .userName {
         font-size: 1.7rem;
@@ -249,14 +261,17 @@
         margin: 0;
         width: auto;
     }
+
     .avatar,
     .secondavatar {
         width: 5rem;
         height: 5rem;
     }
+
     .avatar {
         margin-right: .6rem;
     }
+
     .secondavatar {
         margin-left: .6rem;
     }
@@ -267,6 +282,7 @@
         font-size: 1.5rem;
         margin-bottom: .5rem;
     }
+
     .WatchGame,
     .vs,
     .Score {
@@ -274,18 +290,22 @@
         padding: 0;
         margin: 0;
     }
+
     .vs {
         margin: 0 1rem;
     }
+
     .Score {
         margin: 0;
     }
+
     .secondUserName,
     .userName {
         font-size: 1.2rem;
         padding: 0;
         margin: 0;
     }
+
     .avatar,
     .secondavatar {
         width: 4rem;
@@ -294,6 +314,7 @@
 }
 
 @media only screen and (max-width: 500px) {
+
     .secondUserName,
     .userName {
         overflow: hidden;

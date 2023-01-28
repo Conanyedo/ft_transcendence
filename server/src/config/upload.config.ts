@@ -34,7 +34,7 @@ export const uploadChannelConfig: MulterOptions = {
 		destination: './uploads/channels',
 		filename: (req, file, callback) => {
 			const ext = path.extname(file.originalname);
-			const fileName = `${req.body.convId + Date.now()}` + ext;
+			const fileName = `${req.params.convId + Date.now()}` + ext;
 			callback(null, fileName);
 		},
 	}),

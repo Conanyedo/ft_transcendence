@@ -12,6 +12,7 @@ import { CronJob } from 'cron';
 import { FriendshipService } from 'src/friendship/friendship.service';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
+import { exit } from 'process';
 
 @Injectable()
 export class ChatService {
@@ -44,13 +45,44 @@ export class ChatService {
 		const convsList = [];
 		await Promise.all(convs.map(async (conv) => {
 			const exist = await this.memberRepository
-				.query(`select members.id, members."status" from members Join users ON members."userId" = users.id where members."conversationId" = '${conv.id}' AND users."login" = '${login}' AND members."leftDate" is null;`);
-			if (!exist.length)
+				.query(`select members.id, members."status" from members Join users ON members."userId" = users.id where members."conversationId" = '${conv.id}' AND users."login" = '${login}';`);
+			if (!exist.length || exist[0].status === memberStatus.LEFT)
 				convsList.push({ convId: conv.id, Avatar: conv.avatar, title: conv.name, type: conv.type, status: undefined });
 			else if (exist[0].status !== memberStatus.BANNED)
 				convsList.push({ convId: conv.id, Avatar: conv.avatar, title: conv.name, type: conv.type, status: exist[0].status });
 		}))
 		return { data: [...convsList] };
+	}
+
+	async getAllUnreads(login: string) {
+		const members: Member[] = await this.memberRepository
+			.query(`select members.id, members."unread" from members Join users ON members."userId" = users.id where users."login" = '${login}' AND members."leftDate" is null;`);
+		if (!members.length) return { data: false };
+		const member: Member = members.find((member) => (member.unread > 0))
+		if (!member)
+			return { data: false };
+		return { data: true }
+	}
+
+	async setMsgsAsRead(login: string, convId: string) {
+		const member = await this.memberRepository
+			.query(`select members.id, members."unread" from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND users."login" = '${login}' AND members."leftDate" is null;`);
+		if (!member.length) return { err: 'Invalid conversation' };
+		await this.memberRepository
+			.query(`update members set unread = '${0}' where members."id" = '${member[0].id}';`);
+		return { data: true };
+	}
+
+	async updateUnreadMsgs(login: string, convId: string) {
+		const members = await this.memberRepository
+			.query(`select members.id, members."unread", users.login from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND members."leftDate" is null;`);
+		if (!members.length) return;
+		await Promise.all(members.map(async (member) => {
+			const unread: number = +member.unread;
+			if (login !== member.login)
+				await this.memberRepository
+					.query(`update members set unread = '${unread + 1}' where members."id" = '${member.id}';`);
+		}))
 	}
 
 	async getRoomSockets(login: string, room: string) {
@@ -61,7 +93,7 @@ export class ChatService {
 			if (relation !== 'blocked')
 				newSockets.push(socket.id);
 		}))
-		return [...newSockets];
+		return newSockets;
 	}
 
 	async joinConversations(client: Socket) {
@@ -86,18 +118,18 @@ export class ChatService {
 		return { data: { ...userInfo, relation } };
 	}
 
-	async getChannelInfo(login: string, name: string) {
+	async getChannelInfo(login: string, id: string) {
 		const conv = await this.conversationRepository
-			.query(`select conversations.id as "convId", conversations.type, conversations.avatar, conversations.name from conversations where conversations.type != 'Dm' AND conversations.name = '${name}';`);
+			.query(`select conversations.id as "convId", conversations.type, conversations.avatar, conversations.name from conversations where conversations.type != 'Dm' AND conversations.id = '${id}';`);
 		if (!conv.length)
 			return { err: 'Channel not found' };
 		const member = await this.memberRepository
-			.query(`select members.id from members Join users ON members."userId" = users.id Join conversations ON members."conversationId" = conversations.id where users."login" = '${login}' AND conversations.name = '${name}';`);
+			.query(`select members.id from members Join users ON members."userId" = users.id Join conversations ON members."conversationId" = conversations.id where users."login" = '${login}' AND conversations.id = '${id}';`);
 		if (member.length)
 			return { data: true };
 		if (conv[0].type === 'Private')
 			return { err: 'Channel not found' };
-		return { data: { convId: conv[0].convId, type: conv[0].type } };
+		return { data: { ...conv[0] } };
 	}
 
 	async blockUser(login: string, user: string) {
@@ -134,29 +166,40 @@ export class ChatService {
 		return await bcrypt.compare(input, password);
 	}
 
+	async getConvInfo(login: string, conv: conversationDto) {
+		if (conv.leftDate && conv.leftDate < conv.lastUpdate)
+			conv.lastUpdate = conv.leftDate;
+		const { leftDate, ...convInfo }: conversationDto = { ...conv }
+		if (conv.type === 'Dm') {
+			const users = await this.memberRepository
+				.query(`select users.login, users.fullname, users.status, users.avatar, members."unread" from members Join users ON members."userId" = users.id where members."conversationId" = '${conv.convId}' AND users.login != '${login}';`);
+			const relation = await this.friendshipService.getChatRelation(login, users[0].login);
+			convInfo.name = users[0].fullname;
+			convInfo.login = users[0].login;
+			convInfo.status = (relation === 'blocked') ? 'Blocker' : users[0].status;
+			convInfo.avatar = users[0].avatar;
+		}
+		else {
+			const membersNum = await this.memberRepository
+				.query(`select COUNT(*) from members where members."conversationId" = '${convInfo.convId}' AND members."leftDate" is null;`);
+			convInfo.login = convInfo.name;
+			convInfo.membersNum = +membersNum[0].count;
+		}
+		return convInfo;
+	}
+
+	async getConversation(login: string, convId: string) {
+		const convs: conversationDto[] = await this.memberRepository
+			.query(`select conversations.id as "convId", conversations.type, conversations.avatar, conversations.name, conversations."lastUpdate", members.status, members."leftDate", members."unread" from members Join users ON members."userId" = users.id Join conversations ON members."conversationId" = conversations.id where users."login" = '${login}' AND members."conversationId" = '${convId}';`);
+		if (!convs.length) return { err: 'Conversation not found!' };
+		const conversation: conversationDto = await this.getConvInfo(login, convs[0]);
+		return { data: { ...conversation } };
+	}
+
 	async getConversations(login: string) {
 		const convs: conversationDto[] = await this.memberRepository
-			.query(`select conversations.id as "convId", conversations.type, conversations.avatar, conversations.name, conversations."lastUpdate", members.status from members Join users ON members."userId" = users.id Join conversations ON members."conversationId" = conversations.id where users."login" = '${login}' order by conversations."lastUpdate" DESC;`);
-		const conversations: conversationDto[] = await Promise.all(convs.map(async (conv) => {
-			const convInfo: conversationDto = { ...conv }
-			if (conv.type === 'Dm') {
-				const users = await this.memberRepository
-					.query(`select users.login, users.fullname, users.status, users.avatar from members Join users ON members."userId" = users.id where members."conversationId" = '${conv.convId}' AND users.login != '${login}';`);
-				convInfo.name = users[0].fullname;
-				convInfo.login = users[0].login;
-				convInfo.status = users[0].status;
-				convInfo.avatar = users[0].avatar;
-				convInfo.relation = conv.status;
-			}
-			else {
-				const membersNum = await this.memberRepository
-					.query(`select COUNT(*) from members where members."conversationId" = '${convInfo.convId}' AND members."leftDate" is null;`);
-				convInfo.login = convInfo.name;
-				convInfo.membersNum = membersNum[0].count;
-				convInfo.relation = conv.status;
-			}
-			return convInfo;
-		}))
+			.query(`select conversations.id as "convId", conversations.type, conversations.avatar, conversations.name, conversations."lastUpdate", members.status, members."leftDate", members."unread" from members Join users ON members."userId" = users.id Join conversations ON members."conversationId" = conversations.id where users."login" = '${login}' order by conversations."lastUpdate" DESC;`);
+		const conversations: conversationDto[] = await Promise.all(convs.map(async (conv) => (this.getConvInfo(login, conv))));
 		conversations.sort((a: conversationDto, b: conversationDto) => {
 			const right: number = a.lastUpdate.getTime();
 			const left: number = b.lastUpdate.getTime();
@@ -234,7 +277,7 @@ export class ChatService {
 		await Promise.all(msgs.map(async (msg) => {
 			const newDate: Date = new Date(msg.createDate.getTime() - new Date().getTimezoneOffset() * 120000);
 			const msgSent: msgDto = { msg: msg.msg, sender: msg.sender, invitation: msg.invitation, status: msg.status, date: newDate, convId: conv.id, msgId: msg.id }
-			if (conv.type === convType.DM)
+			if (conv.type === convType.Dm)
 				newMsgs.push(msgSent);
 			else {
 				const relation = await this.friendshipService.getRelation(login, msg.sender);
@@ -276,7 +319,7 @@ export class ChatService {
 			data.convId = exist[0].id;
 			return await this.createNewMessage(client.data.login, data);
 		}
-		const newConv: createConvDto = { type: convType.DM };
+		const newConv: createConvDto = { type: convType.Dm };
 		const newMembers: createMemberDto[] = [
 			{ status: memberStatus.MEMBER, login: client.data.login },
 			{ status: memberStatus.MEMBER, login: data.receiver }
@@ -316,18 +359,13 @@ export class ChatService {
 	}
 
 	async createChannel(owner: string, data: createChannelDto) {
-		if (data.type !== convType.DM) {
-			const exist = await this.conversationRepository
-				.query(`SELECT FROM conversations where conversations.name = '${data.name}';`);
-			if (exist.length)
-				return { err: 'Name already in use' };
-		}
 		if (data.type === convType.PROTECTED && !data.password?.length)
 			return { err: 'Please provide password' };
 		if (data.type !== convType.PROTECTED) data.password = undefined;
 		const avatar: string = `https://ui-avatars.com/api/?name=${data.name}&size=220&background=2C2C2E&color=409CFF&length=1`;
 		const newConv: createConvDto = { type: data.type, name: data.name, avatar: avatar, password: data.password };
 		data.members.unshift(owner);
+		data.members = [...new Set(data.members)];
 		const newMembers: createMemberDto[] = data.members.map((mem) => {
 			if (mem === owner)
 				return { status: memberStatus.OWNER, login: owner };
@@ -353,7 +391,7 @@ export class ChatService {
 			if (!match) return { err: 'Invalid password' };
 		}
 		const memberExist = await this.memberRepository
-			.query(`select members.id, members."leftDate" from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND users."login" = '${login}';`);
+			.query(`select members.id, members."leftDate", members."status" from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND users."login" = '${login}';`);
 		const ownerExist = await this.memberRepository
 			.query(`select members.id from members where members."conversationId" = '${convId}' AND members.status = 'Owner';`);
 		let status: memberStatus = memberStatus.MEMBER;
@@ -366,7 +404,7 @@ export class ChatService {
 			member.user = await this.userService.getUser(login);
 			await this.memberRepository.save(member);
 		}
-		else if (memberExist[0].leftDate) {
+		else if ((memberExist[0].leftDate && owner) || (memberExist[0].leftDate && memberExist[0].status !== memberStatus.BANNED)) {
 			await this.memberRepository
 				.query(`update members set "leftDate" = null, "status" = '${status}' FROM users where members."userId" = users.id AND members."conversationId" = '${convId}' AND users."login" = '${login}';`);
 		}
@@ -414,7 +452,7 @@ export class ChatService {
 
 	async channelProfile(login: string, convId: string) {
 		const exist = await this.memberRepository
-			.query(`select from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND users."login" = '${login}';`);
+			.query(`select members.status from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND users."login" = '${login}';`);
 		if (!exist.length)
 			return { err: 'Invalid data' };
 		const owner: Member[] = await this.memberRepository
@@ -423,8 +461,10 @@ export class ChatService {
 			.query(`select users."login", users."fullname", users."avatar", members."status" from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND members."status" = 'Admin';`);
 		const members: Member[] = await this.memberRepository
 			.query(`select users."login", users."fullname", users."avatar", members."status" from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND members."status" = 'Member';`);
-		const muted: Member[] = await this.memberRepository
-			.query(`select users."login", users."fullname", users."avatar", members."status" from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND members."status" = 'Muted';`);
+		let muted: Member[] = [];
+		if (exist[0].status === 'Owner' || exist[0].status === 'Admin')
+			muted = await this.memberRepository
+				.query(`select users."login", users."fullname", users."avatar", members."status" from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND members."status" = 'Muted';`);
 		return { data: { owner, admins, members, muted } };
 	}
 
@@ -443,6 +483,7 @@ export class ChatService {
 			.query(`select from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND users."login" = '${login}' AND (members."status" = 'Owner' OR members."status" = 'Admin');`);
 		if (!exist.length)
 			return { err: 'Invalid data' };
+		members = [...new Set(members)];
 		members.forEach(async (mem) => {
 			await this.joinChannel(mem, convId, undefined, true);
 		})
@@ -515,15 +556,8 @@ export class ChatService {
 			deleteAvatar('channels', data.avatar);
 			return { err: 'Please provide password' };
 		}
-		if (data.name) {
-			const exist = await this.conversationRepository
-				.query(`SELECT FROM conversations where conversations.name = '${data.name}' AND conversations.id != '${convId}';`);
-			if (exist.length) {
-				deleteAvatar('channels', data.avatar);
-				return { err: 'Name already in use' };
-			}
+		if (data.name)
 			await this.setChannelName(convId, data.name);
-		}
 		if (data.avatar) {
 			data.avatar = await isFileValid('channels', data.avatar);
 			if (!data.avatar)

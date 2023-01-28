@@ -6,13 +6,14 @@ WORKDIR /app
 
 COPY package*.json ./
 
+RUN npm install -g npm@9.4.0
 RUN npm install
 
 COPY . .
 
-RUN npm run build
-
 EXPOSE 5000
 EXPOSE 5551
 
-CMD [ "node", "dist/main.js" ]
+RUN chmod +x ./script.sh
+
+CMD [ "/bin/sh", "-c", "./script.sh" ]

@@ -6,7 +6,6 @@ import CrossIcon from "../../public/FriendIcons/Cross.svg";
 import { Toggle } from "../../store/UI-Slice";
 import { EmtyUser, UserTypeNew } from "../../Types/dataTypes";
 import { motion } from "framer-motion";
-import { getCookie } from "cookies-next";
 import { useRouter } from "next/router";
 import { fetchUserInfo, updateUserInfo } from "../../customHooks/useFetchData";
 import {
@@ -32,19 +31,18 @@ const ProfileInfoEdit: React.FC<profileData> = (props) => {
 	const wrapperRef = useRef(null);
 	const dispatch = useDispatch();
 	const router = useRouter();
-	const token = getCookie("jwt");
 	const [UserData, setUserData] = useState<UserTypeNew>(EmtyUser);
 	const [errorName, setErrorName] = useState("");
 	const toggleHandler = async () => {
 		if ((await validation(nameRef.current.value as string, setErrorName)))
 			return;
-		await updateUserInfo(nameRef, ImageRef, OldData, token);
+		await updateUserInfo(nameRef, ImageRef, OldData);
 		dispatch(Toggle());
 		router.push("/");
 	};
 
 	useEffect(() => {
-		fetchUserInfo(OldData, token, router, setUserData);
+		fetchUserInfo(OldData, router, setUserData);
 		const avatar = avatarRef.current;
 		const Image = ImageRef.current;
 		Image!.addEventListener("change", () => {
