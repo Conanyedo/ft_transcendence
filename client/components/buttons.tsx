@@ -6,8 +6,8 @@ import Pending from "../public/FriendIcons/Pending.svg";
 import AddFriend from "../public/FriendIcons/ADDFriend.svg";
 import Respond from "../public/FriendIcons/Respond.svg";
 import { motion } from "framer-motion";
-import { requests, requestsChannel } from "../customHooks/useFetchData";
-import Router, { NextRouter } from "next/router";
+import { fetchLeaveChannel, joinChannel, requests } from "../customHooks/useFetchData";
+import { NextRouter } from "next/router";
 import { Dispatch, SetStateAction, useRef, useState } from "react";
 import { useOutsideAlerter } from "../customHooks/Functions";
 import socket_notif from "../config/socketNotif";
@@ -148,7 +148,7 @@ export const LeaveChannel: React.FC<{
 	refresh: () => void;
 }> = (props) => {
 	const handler = async () => {
-		await requestsChannel(props.id, "chat/leaveChannel", props.router);
+		await fetchLeaveChannel(props.id)
 		props.refresh();
 	};
 	return (
@@ -175,7 +175,7 @@ export const JoinChannel: React.FC<{
 }> = (props) => {
 	const handler = async () => {
 		if (props.type !== 'Protected') {
-			await requestsChannel(props.id, "chat/joinChannel", props.router);
+			await joinChannel(props.id);
 			props.refresh();
 		}
 		else if (props.type === 'Protected')

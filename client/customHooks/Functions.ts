@@ -11,30 +11,8 @@ import { rankObj } from "../Types/dataTypes";
 export function useOutsideAlerter(ref: any, setToggle: (t: boolean) => void) {
 	useEffect(() => {
 		function handleClickOutside(event: any) {
-			if (ref.current && !ref.current.contains(event.target)) {
+			if (ref.current && !ref.current.contains(event.target))
 				setToggle(false);
-			}
-			// console.log(event.target);
-			
-		}
-		document.addEventListener("mousedown", handleClickOutside);
-		return () => {
-			document.removeEventListener("mousedown", handleClickOutside);
-		};
-	}, [ref]);
-}
-
-export function useInSideAlerter(
-	ref: any,
-	setToggle: (t: boolean) => void,
-	move: () => void
-) {
-	useEffect(() => {
-		function handleClickOutside(event: any) {
-			if (ref.current && ref.current.contains(event.target)) {
-				move();
-				setToggle(false);
-			}
 		}
 		document.addEventListener("mousedown", handleClickOutside);
 		return () => {
@@ -75,7 +53,7 @@ export async function validation(name: string, setError: any) {
 	if (!name)
 		setError('NickName is Required');
 	else if (!(/^(?=.{4,20}$)(?![ _.-])(?!.*[_.-]{2})[a-zA-Z0-9 ._-]+(?<![ _.-])$/g).test(name))
-		setError('must be start|end with charactaire');
+		setError('Invalid NickName');
 	else if (name.length > 20)
 		setError('Too Long!!');
 	else if (name.length < 4)

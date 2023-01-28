@@ -59,10 +59,10 @@
 }
 
 .ChatConversations > p {
-    font-size: 1.8rem;
-    font-weight: 400;
-    color: #92a7be;
     width: 100%;
+    font-weight: 500;
+    font-size: 2rem;
+    color: #C6E1FF;
     text-align: center;
     padding-top: 10%;
 }

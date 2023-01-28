@@ -11,12 +11,6 @@ import { ShowErrorGameMsg } from "@store/UI-Slice";
 import SettingGame from "@components/game/settingGame";
 import { useRouter } from "next/router";
 
-// interface sendMsg {
-//   convId?: string;
-//   receiver?: string;
-//   login?: string;
-//   msg: string;
-// }
 interface Props {
   convData: conversations;
 }
@@ -50,7 +44,6 @@ export const ChatMessageInput: React.FC<Props> = ({ convData }) => {
         {
           convId: convData.convId,
           receiver: convData.login,
-          login: convData.login,
           msg: EnteredMsg,
         },
         (response: any) => {
@@ -67,7 +60,6 @@ export const ChatMessageInput: React.FC<Props> = ({ convData }) => {
   };
 
   const sendInvitGame = () => {
-    console.log(convData);
     socket_game.emit(
       "checkLobby",
       { admin: me, login: convData.login },

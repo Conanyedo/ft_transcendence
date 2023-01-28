@@ -97,7 +97,6 @@ const Message: React.FC<MsgProps> = ({
       );
   };
   const CancelInviteHandler = () => {
-    console.log("msgId:", msgId, convId);
     socket_game.emit("removeGameLobby", invitation);
     if (msgId && convId)
       socket_notif.emit(
@@ -201,7 +200,7 @@ export const MessagesList: React.FC<MsglistProps> = ({
 }) => {
   const [chatMessages, setChatMessages] = useState<MsgData[]>([]);
   const MessageRef = useRef<null | HTMLDivElement>(null);
-  const router = useRouter();
+  const logedInUsr = localStorage.getItem("owner");
 
   /* -------------------------------------------------------------------------- */
   /*                             fetch Messages List                            */
@@ -209,15 +208,15 @@ export const MessagesList: React.FC<MsglistProps> = ({
 
   useEffect(() => {
     if (convData.convId !== undefined) {
-		socket_notif.emit(
+      socket_notif.emit(
         "getMsgs",
         { convId: convData.convId },
         (response: any) => {
           setChatMessages(response.data);
         }
       );
-	}
-      
+    }
+
     return () => {};
   }, [convData.convId]);
 
@@ -227,12 +226,16 @@ export const MessagesList: React.FC<MsglistProps> = ({
 
   useEffect(() => {
     socket_notif.on("newMsg", (response: any) => {
-      {
-        if (response.data.convId === convData.convId) {
-          setChatMessages((previous) => [...previous, response.data]);
-        }
-        updateConversations(response.data.convId);
-      }
+      if (response.data.convId === convData.convId) {
+        socket_notif.emit(
+          "setMsgsAsRead",
+          { convId: convData.convId },
+          (responseEmit: any) => {
+            updateConversations(response.data.convId);
+          }
+        );
+        setChatMessages((previous) => [...previous, response.data]);
+      } else updateConversations(response.data.convId);
     });
     return () => {
       socket_notif.off("newMsg");
@@ -253,7 +256,6 @@ export const MessagesList: React.FC<MsglistProps> = ({
     });
     setChatMessages(msgs);
   };
-  // console.log("jadid: ", chatMessages, chatMessages[0]?.convId)
 
   return (
     <>
