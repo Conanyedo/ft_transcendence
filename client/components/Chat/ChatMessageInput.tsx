@@ -44,7 +44,6 @@ export const ChatMessageInput: React.FC<Props> = ({ convData }) => {
         {
           convId: convData.convId,
           receiver: convData.login,
-          login: convData.login,
           msg: EnteredMsg,
         },
         (response: any) => {

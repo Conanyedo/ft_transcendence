@@ -211,10 +211,10 @@ export const fetchUserLogin = async (
     });
 };
 
-export const joinChannel = async (convId: string, password: string) => {
+export const joinChannel = async (convId: string, password?: string) => {
   const data = { password: password } || {};
   const json = JSON.stringify(data);
-  axios
+  return await axios
     .post(`${baseUrl}chat/JoinChannel/${convId}`, json, {
       headers: {
         "Content-Type": "application/json",
