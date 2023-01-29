@@ -43,10 +43,12 @@ export const ChatMessageInput: React.FC<Props> = ({ convData }) => {
         "sendMsg",
         {
           convId: convData.convId,
-          receiver: convData.login,
+          receiver: convData.type === "Dm" ? convData.login : undefined,
           msg: EnteredMsg,
         },
         (response: any) => {
+          if (convData.convId !== response.data)
+            router.push("/chat?login=" + response.data);
           setEnteredMsg("");
         }
       );
