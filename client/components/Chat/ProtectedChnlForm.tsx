@@ -1,5 +1,5 @@
 import Styles from "@styles/Chat/ProtectedChnlForm.module.css"
-import { joinChannel, JoinChannel } from "@hooks/useFetchData"
+import { joinChannel } from "@hooks/useFetchData"
 import CloseIcon from "@public/Cross.svg"
 import React, { Dispatch, SetStateAction, useRef, useState } from "react"
 import { validPassword } from "./CreateChannel"
