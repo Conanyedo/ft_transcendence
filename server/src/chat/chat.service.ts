@@ -138,8 +138,7 @@ export class ChatService {
 		if (!conv.length)
 			return null;
 		let currDate = new Date(Date.now()).toLocaleString("en-US", { timeZone: "CET" });
-		currDate = new Date(currDate).toISOString()
-		console.log('block currDate: ', currDate);
+		currDate = new Date(currDate).toISOString();
 		await this.memberRepository
 			.query(`update members set status = 'Blocker', "leftDate" = '${currDate}' FROM users where members."userId" = users.id AND members."conversationId" = '${conv[0].id}' AND users."login" = '${login}';`);
 		const sockets = await this.chatGateway.server.fetchSockets();
@@ -264,8 +263,6 @@ export class ChatService {
 			return { err: 'Invalid data' };
 		const joinDate: string = new Date(dates[0].joinDate).toISOString();
 		const leftDate: string = (!dates[0].leftDate) ? dates[0].leftDate : new Date(dates[0].leftDate).toISOString();
-		console.log('joinDate: ', joinDate);
-		console.log('leftDate: ', leftDate);
 		let msgs: Message[] = [];
 		if (leftDate)
 			msgs = await this.messageRepository
@@ -329,7 +326,6 @@ export class ChatService {
 		];
 		const conv: Conversation = await this.createConv(newConv, newMembers);
 		const newMsg: Message = await this.storeMsg(data.msg, client.data.login, data.invitation, conv);
-		console.log('new DM message: ', newMsg);
 		const sockets = await this.chatGateway.server.fetchSockets();
 		const clients = sockets.filter((socket) => (socket.data.login === client.data.login));
 		clients.forEach((client) => (client.join(conv.id)));
@@ -355,7 +351,6 @@ export class ChatService {
 			return status;
 		const newMsg: Message = await this.storeMsg(data.msg, login, data.invitation, conv);
 		await this.updateConvDate(conv.id, newMsg.createDate);
-		console.log('new message: ', newMsg);
 		const fullname = await this.memberRepository
 			.query(`select users."fullname" from members Join users ON members."userId" = users.id where users.login = '${login}';`);
 		const msg: msgDto = { msg: data.msg, sender: login, fullname: fullname[0].fullname, invitation: newMsg.invitation, status: newMsg.status, date: newMsg.createDate, convId: conv.id, msgId: newMsg.id };

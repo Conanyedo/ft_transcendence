@@ -50,7 +50,6 @@ const Message: React.FC<MsgProps> = ({
   UpdateInvitMsg,
 }) => {
   const msgTime = formatAMPM(date);
-	console.log('msgTime: ', msgTime);
   const me = localStorage.getItem("owner");
   const MsgInvitStatus = `${
     status === "Canceled"
