@@ -87,7 +87,8 @@ export class AuthController {
 		const isValid = await this.authService.is2faCodeValid(user, data.code);
 		if (isValid.err)
 			return isValid;
-		return this.authService.setJWTCookie(user, res);
+		this.authService.setJWTCookie(user, res);
+		return { data: true };
 	}
 
 }
