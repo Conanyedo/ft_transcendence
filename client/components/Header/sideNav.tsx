@@ -13,7 +13,7 @@ import Logout from "../../public/Logout.svg"
 import classes from "../../styles/sideNav.module.css"
 import { useRouter } from "next/router"
 import { useEffect, useRef, useState } from "react"
-import { fetchDATA, LogOut } from "../../customHooks/useFetchData"
+import { fetchDATA, fetchUnreadMessage, LogOut } from "../../customHooks/useFetchData"
 import socket_notif from "config/socketNotif"
 import { N_ITEMS } from "@Types/dataTypes"
 
@@ -22,6 +22,7 @@ const ItemsNav: React.FC<N_ITEMS> = (props) => {
 	const [isMounted, setisMounted] = useState(false)
 	const rout = useRouter()
 	const ref = useRef(null)
+  const owner = localStorage.getItem("owner");
 
 	const moveHndler = () => {
 		setNewMsg(false)
@@ -30,16 +31,16 @@ const ItemsNav: React.FC<N_ITEMS> = (props) => {
 
 	useEffect(() => {
 		if (props.alt === "/chat") {
-			socket_notif.on("newMsg", () => {
-				if (!rout.asPath.includes("/chat")) setNewMsg(true)
+			socket_notif.on("newMsgNotif", (res) => {
+				if (!rout.asPath.includes("/chat") && res.data.sender !==  owner) setNewMsg(true)
 			})
-      if (!rout.asPath.includes("/chat")) fetchDATA(setNewMsg, rout, "chat/unreadMsgs")
+      if (!rout.asPath.includes("/chat")) fetchUnreadMessage(setNewMsg, rout, "chat/unreadMsgs")
 		}
 		setisMounted(true)
 		return () => {
-			if (props.alt === "/chat") socket_notif.off("newMsg")
+			socket_notif.off("newMsgNotif")
 		}
-	}, [])
+	}, [rout.asPath])
 
 	return (
 		<>
