@@ -22,14 +22,13 @@ const ProfileFriend = () => {
 		route.replace('/profile');
 		return <LoadingElm />
 	}
+	
 	useEffect(() => {
 		setisUp(true);
 	}, [])
 	useEffect(() => {
 		if (login && (/^(?![ _.-])(?!.*[_.-]{2})[a-zA-Z0-9 ._-]+(?<![ _.-])$/g).test(login))
 			userExists(setuserId, login, route, dispatch);
-		else
-			route.replace('/profile');
 		return () => {
 			setuserId('');
 		}
