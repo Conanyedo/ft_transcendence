@@ -8,13 +8,16 @@ import { useRouter } from "next/router";
 import { getImageBySize } from "@hooks/Functions";
 
 const formatAMPM = (date: Date) => {
-  let hours = new Date(date).getHours();
-  let minutes: number | string = new Date(date).getMinutes();
+  let currdate = new Date(date).toISOString().split('T')[1].split(':');
+  let hours = +currdate[0];
+
+  let minutes = currdate[1];
   const ampm = hours >= 12 ? "PM" : "AM";
 
   hours %= 12;
   hours = hours || 12;
-  minutes = minutes < 10 ? `0${minutes}` : minutes;
+	const minutesNum = +minutes;
+  minutes = minutesNum < 10 ? `0${minutesNum}` : minutes;
 
   const strTime = `${hours}:${minutes} ${ampm}`;
   return strTime;
@@ -47,6 +50,7 @@ const Message: React.FC<MsgProps> = ({
   UpdateInvitMsg,
 }) => {
   const msgTime = formatAMPM(date);
+	console.log('msgTime: ', msgTime);
   const me = localStorage.getItem("owner");
   const MsgInvitStatus = `${
     status === "Canceled"
