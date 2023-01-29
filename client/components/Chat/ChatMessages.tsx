@@ -13,11 +13,12 @@ import { motion } from "framer-motion";
 import { MessagesList } from "./MessagesList";
 import { ChatChnlProfile } from "./ChatChnlProfile";
 import { SettingOption } from "./SettingOption";
-import { conversations } from "@Types/dataTypes";
+import { conversations, MsgData } from "@Types/dataTypes";
 import { useRouter } from "next/router";
 import { CreateChannel } from "./CreateChannel";
 import { getImageBySize, useOutsideAlerter } from "@hooks/Functions";
 import { fetchBlockUnblockUser, fetchLeaveChannel } from "@hooks/useFetchData";
+import socket_notif from "config/socketNotif";
 
 interface MsgInfoProps {
   convData: conversations;
@@ -179,10 +180,52 @@ const ChatMessages: React.FC<Props> = ({
 }) => {
   const [showChnlProfile, setShowChnlProfile] = useState<boolean>(false);
   const [showUpdateChannel, setShowUpdateChannel] = useState<boolean>(false);
+  const [chatMessages, setChatMessages] = useState<MsgData[]>([]);
 
   const CloseChannelHandler = () => {
     setShowUpdateChannel(false);
   };
+
+  /* -------------------------------------------------------------------------- */
+  /*                              listen on new msg                             */
+  /* -------------------------------------------------------------------------- */
+
+  useEffect(() => {
+    socket_notif.on("newMsg", (response: any) => {
+      if (response.data.convId === convData.convId) {
+        socket_notif.emit(
+          "setMsgsAsRead",
+          { convId: convData.convId },
+          (responseEmit: any) => {
+            updateConversations(response.data.convId);
+          }
+        );
+        setChatMessages((previous) => [...previous, response.data]);
+      } else updateConversations(response.data.convId);
+    });
+    return () => {
+      socket_notif.off("newMsg");
+    };
+  }, [convData]);
+
+
+  /* -------------------------------------------------------------------------- */
+  /*                             fetch Messages List                            */
+  /* -------------------------------------------------------------------------- */
+
+  useEffect(() => {
+    if (convData.convId !== undefined) {
+      socket_notif.emit(
+        "getMsgs",
+        { convId: convData.convId },
+        (response: any) => {
+          setChatMessages(response.data);
+        }
+      );
+    }
+
+    return () => {};
+  }, [convData.convId]);
 
   useLayoutEffect(() => {
     if (showChnlProfile) setShowChnlProfile(false);
@@ -226,8 +269,9 @@ const ChatMessages: React.FC<Props> = ({
             <ChatChnlProfile {...convData} />
           ) : (
             <MessagesList
+              setChatMessages={setChatMessages}
+              chatMessages={chatMessages}
               convData={convData}
-              updateConversations={updateConversations}
             />
           )}
         </div>
