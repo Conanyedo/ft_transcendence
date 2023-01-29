@@ -8,7 +8,7 @@ import { useRouter } from "next/router";
 import { getImageBySize } from "@hooks/Functions";
 
 const formatAMPM = (date: Date) => {
-  let currdate = new Date(date).toISOString().split('T')[1].split(':');
+  let currdate = new Date(date).toISOString().split("T")[1].split(":");
   let hours = +currdate[0];
 
   let minutes = currdate[1];
@@ -16,7 +16,7 @@ const formatAMPM = (date: Date) => {
 
   hours %= 12;
   hours = hours || 12;
-	const minutesNum = +minutes;
+  const minutesNum = +minutes;
   minutes = minutesNum < 10 ? `0${minutesNum}` : minutes;
 
   const strTime = `${hours}:${minutes} ${ampm}`;
@@ -194,56 +194,16 @@ const Message: React.FC<MsgProps> = ({
 
 interface MsglistProps {
   convData: conversations;
-  updateConversations: (msgConvId: string) => void;
+  chatMessages: MsgData[];
+  setChatMessages: React.Dispatch<React.SetStateAction<MsgData[]>>;
 }
 
 export const MessagesList: React.FC<MsglistProps> = ({
   convData,
-  updateConversations,
+  chatMessages,
+  setChatMessages,
 }) => {
-  const [chatMessages, setChatMessages] = useState<MsgData[]>([]);
   const MessageRef = useRef<null | HTMLDivElement>(null);
-  const logedInUsr = localStorage.getItem("owner");
-
-  /* -------------------------------------------------------------------------- */
-  /*                             fetch Messages List                            */
-  /* -------------------------------------------------------------------------- */
-
-  useEffect(() => {
-    if (convData.convId !== undefined) {
-      socket_notif.emit(
-        "getMsgs",
-        { convId: convData.convId },
-        (response: any) => {
-          setChatMessages(response.data);
-        }
-      );
-    }
-
-    return () => {};
-  }, [convData.convId]);
-
-  /* -------------------------------------------------------------------------- */
-  /*                              listen on new msg                             */
-  /* -------------------------------------------------------------------------- */
-
-  useEffect(() => {
-    socket_notif.on("newMsg", (response: any) => {
-      if (response.data.convId === convData.convId) {
-        socket_notif.emit(
-          "setMsgsAsRead",
-          { convId: convData.convId },
-          (responseEmit: any) => {
-            updateConversations(response.data.convId);
-          }
-        );
-        setChatMessages((previous) => [...previous, response.data]);
-      } else updateConversations(response.data.convId);
-    });
-    return () => {
-      socket_notif.off("newMsg");
-    };
-  }, [convData]);
 
   useEffect(() => {
     MessageRef.current?.scrollIntoView({ behavior: "smooth" });

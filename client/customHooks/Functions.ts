@@ -54,10 +54,6 @@ export async function validation(name: string, setError: any) {
 		setError('NickName is Required');
 	else if (!(/^(?=.{4,25}$)(?![ _.-])(?!.*[_.-]{2})[a-zA-Z0-9 ._-]+(?<![ _.-])$/g).test(name))
 		setError('Invalid NickName');
-	else if (name.length > 20)
-		setError('Too Long!!');
-	else if (name.length < 4)
-		setError('Too short!!');
 	else
 		return false;
 	return true;
