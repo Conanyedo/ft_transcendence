@@ -72,7 +72,7 @@ const ChatMsgInfo: React.FC<MsgInfoProps> = ({
 
   const chatMsgProfileClickHandler = () => {
     if (convData.type === "Dm") router.push(`/profile/${convData.login}`);
-    else if (!showChnlProfile && convData.status !== "Left") {
+    else if (!showChnlProfile && convData.status !== "Left" && convData.status !== "Banned" && convData.status !== "Blocker") {
       if (convData.convId) updateConversations(convData.convId);
       setShowChnlProfile(true);
     }
@@ -115,7 +115,7 @@ const ChatMsgInfo: React.FC<MsgInfoProps> = ({
           </div>
 
           <div className={Styles.ChatMsgSettings} ref={refOption}>
-            {convData.status !== "Left" && (
+            {convData.status !== "Left" && convData.status !== "Banned" && (
               <img
                 src={ChatMsgSetting.src}
                 alt="ChatMsgSetting"
@@ -214,7 +214,7 @@ const ChatMessages: React.FC<Props> = ({
   /* -------------------------------------------------------------------------- */
 
   useEffect(() => {
-    if (convData.convId !== undefined) {
+    if (convData.convId !== undefined && convData.convId !== "0") {
       socket_notif.emit(
         "getMsgs",
         { convId: convData.convId },
