@@ -38,7 +38,7 @@ export const ChatMessageInput: React.FC<Props> = ({ convData }) => {
   };
 
   const sendMsg = () => {
-    if (EnteredMsg.length > 0) {
+    if (EnteredMsg.trim().length > 0) {
       socket_notif.emit(
         "sendMsg",
         {
@@ -121,7 +121,7 @@ export const ChatMessageInput: React.FC<Props> = ({ convData }) => {
               ></img>
             ) : null}
           </div>
-          {EnteredMsg.length > 0 ? (
+          {EnteredMsg.trim().length > 0 ? (
             <motion.div
               initial={{
                 opacity: 0,
