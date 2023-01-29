@@ -39,7 +39,7 @@ services:
       - POSTGRES_USER=Conanyedo
       - POSTGRES_PASSWORD=pongmania
       - POSTGRES_DB=pongmania
-      - TZ=GMT-1
+      - TZ=CET
 
 
 volumes:

@@ -1,30 +1,30 @@
-import styles from "@styles/Chat/ChatContainer.module.css";
-import { ChatConversations } from "@components/Chat/ChatConversations";
-import ChatMessages from "@components/Chat/ChatMessages";
-import { useEffect, useLayoutEffect, useState } from "react";
-import { conversations, initialconv, MsgData } from "@Types/dataTypes";
-import { fetchDATA, fetchLoginInfo } from "@hooks/useFetchData";
-import { useRouter } from "next/router";
+import styles from "@styles/Chat/ChatContainer.module.css"
+import { ChatConversations } from "@components/Chat/ChatConversations"
+import ChatMessages from "@components/Chat/ChatMessages"
+import { useEffect, useLayoutEffect, useState } from "react"
+import { conversations, initialconv, MsgData } from "@Types/dataTypes"
+import { fetchDATA, fetchLoginInfo } from "@hooks/useFetchData"
+import { useRouter } from "next/router"
 
 const Chat = () => {
-  const [isMobile, setIsMobile] = useState<boolean>(true);
-  const [convs, setConvs] = useState<conversations[]>([]);
-  const [convData, setConvData] = useState<conversations>(initialconv);
-  const [newConv, setNewConv] = useState<conversations>(initialconv);
-  const router = useRouter();
+	const [isMobile, setIsMobile] = useState<boolean>(true)
+	const [convs, setConvs] = useState<conversations[]>([])
+	const [convData, setConvData] = useState<conversations>(initialconv)
+	const [newConv, setNewConv] = useState<conversations>(initialconv)
+	const router = useRouter()
 
-  /* -------------------------------------------------------------------------- */
-  /*                             update conversation                            */
-  /* -------------------------------------------------------------------------- */
+	/* -------------------------------------------------------------------------- */
+	/*                             update conversation                            */
+	/* -------------------------------------------------------------------------- */
 
   const updateConversations = (msgConvId: string) => {
     if (msgConvId)
       fetchDATA(setNewConv, router, `chat/conversations/${msgConvId}`);
   };
 
-  /* -------------------------------------------------------------------------- */
-  /*                              check login info                              */
-  /* -------------------------------------------------------------------------- */
+	/* -------------------------------------------------------------------------- */
+	/*                              check login info                              */
+	/* -------------------------------------------------------------------------- */
 
   const getSelectConvId = () => {
     if (router.query.login) return router.query.login as string;
@@ -46,20 +46,20 @@ const Chat = () => {
   /*                             fetch conversation                             */
   /* -------------------------------------------------------------------------- */
 
-  useEffect(() => {
-    fetchDATA(setConvs, router, "chat/conversations");
-    const checkMobile = () => {
-      const mql = window.matchMedia("(max-width : 1024px)");
-      if (mql.matches) {
-        setIsMobile(true);
-      } else {
-        setIsMobile(false);
-      }
-    };
-    window.addEventListener("resize", checkMobile);
-    checkMobile();
-    return () => window.removeEventListener("resize", checkMobile);
-  }, []);
+	useEffect(() => {
+		fetchDATA(setConvs, router, "chat/conversations")
+		const checkMobile = () => {
+			const mql = window.matchMedia("(max-width : 1024px)")
+			if (mql.matches) {
+				setIsMobile(true)
+			} else {
+				setIsMobile(false)
+			}
+		}
+		window.addEventListener("resize", checkMobile)
+		checkMobile()
+		return () => window.removeEventListener("resize", checkMobile)
+	}, [])
 
   useEffect(() => {
     const convlist: conversations[] = [];
@@ -83,9 +83,9 @@ const Chat = () => {
     }
   }, [newConv]);
 
-  /* -------------------------------------------------------------------------- */
-  /*                             check if conv exist                            */
-  /* -------------------------------------------------------------------------- */
+	/* -------------------------------------------------------------------------- */
+	/*                             check if conv exist                            */
+	/* -------------------------------------------------------------------------- */
 
   useEffect(() => {
     const convId = getSelectConvId();
@@ -98,22 +98,18 @@ const Chat = () => {
     } else if (convId === "0") setConvData(initialconv);
   }, [router.query, convs]);
 
-  return (
-    <>
-      <div className={styles.ChatContainer}>
-        <ChatConversations
-          isMobile={isMobile}
-          convs={convs}
-          selectedConv={getSelectConvId()}
-          updateConversations={updateConversations}
-        />
-        <ChatMessages
-          isMobile={isMobile}
-          convData={convData}
-          updateConversations={updateConversations}
-        />
-      </div>
-    </>
-  );
-};
-export default Chat;
+	return (
+		<>
+			<div className={styles.ChatContainer}>
+				<ChatConversations
+					isMobile={isMobile}
+					convs={convs}
+					selectedConv={getSelectConvId()}
+					updateConversations={updateConversations}
+				/>
+				<ChatMessages isMobile={isMobile} convData={convData} updateConversations={updateConversations} />
+			</div>
+		</>
+	)
+}
+export default Chat

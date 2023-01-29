@@ -137,7 +137,8 @@ export class ChatService {
 			.query(`select conversations.id, count(*) from members join users on members."userId" = users.id join conversations on members."conversationId" = conversations.id where (users.login = '${login}' or users.login = '${user}') and conversations.type = 'Dm' group by conversations.id having count(*) = 2;`);
 		if (!conv.length)
 			return null;
-		const currDate = new Date(Date.now()).toISOString();
+		let currDate = new Date(Date.now()).toLocaleString("en-US", { timeZone: "CET" });
+		currDate = new Date(currDate).toISOString();
 		await this.memberRepository
 			.query(`update members set status = 'Blocker', "leftDate" = '${currDate}' FROM users where members."userId" = users.id AND members."conversationId" = '${conv[0].id}' AND users."login" = '${login}';`);
 		const sockets = await this.chatGateway.server.fetchSockets();
@@ -260,8 +261,8 @@ export class ChatService {
 			.query(`select members."joinDate", members."leftDate" from members where members."conversationId" = '${convId}' AND members."userId" = '${id}';`);
 		if (!dates.length)
 			return { err: 'Invalid data' };
-		const joinDate: string = new Date((dates[0].joinDate - new Date().getTimezoneOffset() * 60000)).toISOString();
-		const leftDate: string = (!dates[0].leftDate) ? dates[0].leftDate : new Date((dates[0].leftDate - new Date().getTimezoneOffset() * 60000)).toISOString();
+		const joinDate: string = new Date(dates[0].joinDate).toISOString();
+		const leftDate: string = (!dates[0].leftDate) ? dates[0].leftDate : new Date(dates[0].leftDate).toISOString();
 		let msgs: Message[] = [];
 		if (leftDate)
 			msgs = await this.messageRepository
@@ -275,8 +276,7 @@ export class ChatService {
 		const conv: Conversation = await this.getConvById(convId);
 		const newMsgs: msgDto[] = [];
 		await Promise.all(msgs.map(async (msg) => {
-			const newDate: Date = new Date(msg.createDate.getTime() - new Date().getTimezoneOffset() * 120000);
-			const msgSent: msgDto = { msg: msg.msg, sender: msg.sender, invitation: msg.invitation, status: msg.status, date: newDate, convId: conv.id, msgId: msg.id }
+			const msgSent: msgDto = { msg: msg.msg, sender: msg.sender, invitation: msg.invitation, status: msg.status, date: msg.createDate, convId: conv.id, msgId: msg.id }
 			if (conv.type === convType.Dm)
 				newMsgs.push(msgSent);
 			else {
@@ -353,8 +353,7 @@ export class ChatService {
 		await this.updateConvDate(conv.id, newMsg.createDate);
 		const fullname = await this.memberRepository
 			.query(`select users."fullname" from members Join users ON members."userId" = users.id where users.login = '${login}';`);
-		const newDate: Date = new Date(newMsg.createDate.getTime() - new Date().getTimezoneOffset() * 120000);
-		const msg: msgDto = { msg: data.msg, sender: login, fullname: fullname[0].fullname, invitation: newMsg.invitation, status: newMsg.status, date: newDate, convId: conv.id, msgId: newMsg.id };
+		const msg: msgDto = { msg: data.msg, sender: login, fullname: fullname[0].fullname, invitation: newMsg.invitation, status: newMsg.status, date: newMsg.createDate, convId: conv.id, msgId: newMsg.id };
 		return msg;
 	}
 
@@ -441,7 +440,8 @@ export class ChatService {
 				}
 			}
 		}
-		const currDate = new Date().toISOString();
+		let currDate = new Date(Date.now()).toLocaleString("en-US", { timeZone: "CET" });
+		currDate = new Date(currDate).toISOString()
 		await this.memberRepository
 			.query(`update members set "leftDate" = '${currDate}', "status" = 'Left' where members.id = '${exist[0].id}';`);
 		const sockets = await this.chatGateway.server.fetchSockets();
@@ -495,7 +495,8 @@ export class ChatService {
 			.query(`select from members Join users ON members."userId" = users.id where members."conversationId" = '${convId}' AND users."login" = '${login}' AND (members."status" = 'Owner' OR members."status" = 'Admin');`);
 		if (!exist.length)
 			return { err: 'Invalid data' };
-		const currDate = new Date(Date.now()).toISOString();
+		let currDate = new Date(Date.now()).toLocaleString("en-US", { timeZone: "CET" });
+		currDate = new Date(currDate).toISOString()
 		await this.memberRepository
 			.query(`update members set "leftDate" = '${currDate}', "status" = 'Banned' FROM users where members."userId" = users.id AND members."conversationId" = '${convId}' AND members."status" != 'Owner' AND users."login" = '${member}';`);
 		const sockets = await this.chatGateway.server.fetchSockets();
