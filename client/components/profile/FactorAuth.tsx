@@ -19,17 +19,7 @@ const FactorAuth = () => {
 		check2FA_JWT(setisValid, router)
 		setisMounted(true);
 	}, [])
-	if (!isValid) return <LoadingElm />
-	const CheckHandler = async () => {
-		if (await checkCode2FA(inputValue, router)) {
-			setisError(false)
-		} else setisError(true)
-	}
-	const sub = (e: React.FormEvent<HTMLFormElement>) => {
-		e.preventDefault()
-		if (inputValue.length === 6) CheckHandler()
-	}
-	if (!isMounted) return <></>
+	if (!isValid || !isMounted) return <LoadingElm />
 	return (
 		<>
 			<div className={classes.background}>
@@ -45,7 +35,10 @@ const FactorAuth = () => {
 						</div>
 					</div>
 					<div className={classes.inputContainer}>
-						<form onSubmit={sub}>
+						<form onSubmit={(e) => {
+							e.preventDefault()
+							if (goNext)
+								router.push(`${baseUrl}auth/2faRedirect`)}}>
 							<OtpInput
 								value={inputValue}
 								numInputs={6}
@@ -61,9 +54,9 @@ const FactorAuth = () => {
 									setInputValue(value)
 									if (value.length === 6) {
 										if (await checkCode2FA(value, router)) {
-											setisError(false)
 											setGoNext(true)
-										} else setisError(true)
+											if (isError) setisError(false)
+										} else if (!isError) setisError(true)
 									}
 								}}
 								shouldAutoFocus={true}

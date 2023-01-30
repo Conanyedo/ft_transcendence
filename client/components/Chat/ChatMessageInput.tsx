@@ -38,15 +38,17 @@ export const ChatMessageInput: React.FC<Props> = ({ convData }) => {
   };
 
   const sendMsg = () => {
-    if (EnteredMsg.length > 0) {
+    if (EnteredMsg.trim().length > 0) {
       socket_notif.emit(
         "sendMsg",
         {
           convId: convData.convId,
-          receiver: convData.login,
+          receiver: convData.type === "Dm" ? convData.login : undefined,
           msg: EnteredMsg,
         },
         (response: any) => {
+          if (convData.convId !== response.data)
+            router.push("/chat?login=" + response.data);
           setEnteredMsg("");
         }
       );
@@ -119,7 +121,7 @@ export const ChatMessageInput: React.FC<Props> = ({ convData }) => {
               ></img>
             ) : null}
           </div>
-          {EnteredMsg.length > 0 ? (
+          {EnteredMsg.trim().length > 0 ? (
             <motion.div
               initial={{
                 opacity: 0,

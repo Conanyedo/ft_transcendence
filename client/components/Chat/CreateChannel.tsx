@@ -107,8 +107,8 @@ export const CreateChannel: React.FC<Props> = ({
       } else if (convId) {
         await fetchUpdateChannel(state, convId, imageFileRef, setResponseError);
         updateConversations(convId);
-        CloseChannelHandler();
       }
+      CloseChannelHandler();
     }
     setErrorKey(err);
   };

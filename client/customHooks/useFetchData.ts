@@ -190,6 +190,27 @@ export const fetchDATA = async (set: any, router: NextRouter, Path: string) => {
     });
 };
 
+export const fetchUnreadMessage = async (
+  set: any,
+  router: NextRouter,
+  Path: string
+) => {
+  await axios
+    .get(`${baseUrl}${Path}`, {
+      headers: {},
+      withCredentials: true,
+    })
+    .then((res) => {
+      if (res.data.data) set(res.data.data);
+    })
+    .catch((err) => {
+      if (err.response.status === 401) {
+        socket_notif.disconnect();
+        router.replace("/");
+      }
+    });
+};
+
 export const fetchUserLogin = async (
   set: any,
   router: NextRouter,
@@ -230,35 +251,6 @@ export const joinChannel = async (convId: string, password?: string) => {
     });
 };
 
-export const JoinChannel = async (
-  data: any,
-  setError: Dispatch<SetStateAction<string>>
-) => {
-  const json = JSON.stringify({ convId: data.convId, password: data.password });
-
-  return await axios({
-    method: "post",
-    url: `${baseUrl}chat/joinChannel`,
-    headers: {
-      "Content-Type": "application/json",
-    },
-    data: json,
-    withCredentials: true,
-  })
-    .then((res) => {
-      setError(res.data.err);
-      if (res.data.err) return false;
-      return true;
-    })
-    .catch((err) => {
-      setError(err);
-      if (err.response.status === 401) {
-        socket_notif.disconnect();
-      }
-      return false;
-    });
-};
-
 export const fetchAddChnlMembers = async (data: string[], convId: string) => {
   const json = JSON.stringify({ members: data });
   return await axios({
@@ -292,7 +284,6 @@ export const checkCode2FA = async (code: string, router: NextRouter) => {
   })
     .then((res) => {
       if (res.data.err) return false;
-      router.replace("/");
       return true;
     })
     .catch((err) => {
@@ -343,13 +334,16 @@ export const fetchCreateChannel = async (
   data: any,
   setResponseError: Dispatch<SetStateAction<string>>
 ) => {
+  delete data.avatar;
   if (data.type !== "Protected") delete data.password;
+
   const json = JSON.stringify({
     name: data.name,
     type: data.type,
     members: [...data.members],
     password: data.password,
   });
+
   return await axios({
     method: "post",
     url: `${baseUrl}chat/createChannel`,
