@@ -5,7 +5,6 @@ export class updateProfileValidate {
 
 	@IsOptional()
 	@IsString()
-	@Length(4, 20)
 	@Matches(/^(?=.{4,25}$)(?![ _.-])(?!.*[_.-]{2})[a-zA-Z0-9 ._-]+(?<![ _.-])$/)
 	fullname: string;
 
