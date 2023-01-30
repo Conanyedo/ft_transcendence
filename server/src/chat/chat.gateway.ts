@@ -60,7 +60,10 @@ export class ChatGateway {
 			return { err: msg };
 		await this.chatService.updateUnreadMsgs(login, msg.convId);
 		const sockets: string[] = await this.chatService.getRoomSockets(login, msg.convId);
-		sockets.forEach((socket) => (this.server.to(socket).emit('newMsg', { data: msg })))
+		sockets.forEach((socket) => {
+			this.server.to(socket).emit('newMsgNotif', { data: msg })
+			this.server.to(socket).emit('newMsg', { data: msg })
+		})
 		return { data: msg.convId };
 	}
 

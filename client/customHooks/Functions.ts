@@ -23,17 +23,17 @@ export function useOutsideAlerter(ref: any, setToggle: (t: boolean) => void) {
 
 export function getRankUser(GamePoint: number): rankObj {
 	if (GamePoint <= 250)
-		return {rank: allRanks[4], color: '#BEB5B6', tier: unranked};
+		return { rank: allRanks[4], color: '#BEB5B6', tier: unranked };
 	else if (GamePoint <= 500)
-		return {rank: allRanks[3], color:'#82B3BF', tier: Jallou9};
+		return { rank: allRanks[3], color: '#82B3BF', tier: Jallou9 };
 	else if (GamePoint <= 800)
-		return {rank: allRanks[2], color:'#BD8A65', tier:Bronze};
+		return { rank: allRanks[2], color: '#BD8A65', tier: Bronze };
 	else if (GamePoint < 1600)
-		return {rank: allRanks[1], color:'#C2C4CD', tier:Silver};
+		return { rank: allRanks[1], color: '#C2C4CD', tier: Silver };
 	else if (GamePoint >= 1600)
-		return {rank: allRanks[0], color:'#CFA365', tier:Gold};
+		return { rank: allRanks[0], color: '#CFA365', tier: Gold };
 	else
-		return {rank: allRanks[4], color: '#BEB5B6', tier: unranked};
+		return { rank: allRanks[4], color: '#BEB5B6', tier: unranked };
 }
 
 export function getImageBySize(path: string, size: number) {
@@ -46,18 +46,14 @@ export function getImageBySize(path: string, size: number) {
 }
 
 export function eraseCookie(name: string) {
-    document.cookie = name+'=; Max-Age=0;';
+	document.cookie = name + '=; Max-Age=0;';
 }
 
 export async function validation(name: string, setError: any) {
 	if (!name)
 		setError('NickName is Required');
-	else if (!(/^(?=.{4,20}$)(?![ _.-])(?!.*[_.-]{2})[a-zA-Z0-9 ._-]+(?<![ _.-])$/g).test(name))
+	else if (!(/^(?=.{4,25}$)(?![ _.-])(?!.*[_.-]{2})[a-zA-Z0-9 ._-]+(?<![ _.-])$/g).test(name))
 		setError('Invalid NickName');
-	else if (name.length > 20)
-		setError('Too Long!!');
-	else if (name.length < 4)
-		setError('Too short!!');
 	else
 		return false;
 	return true;
